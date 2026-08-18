@@ -43,16 +43,23 @@ const ZyroCore = (function () {
     },
   };
 
+  // Clone manual — mais compatível que structuredClone (ausente em
+  // WebViews antigas, ex: navegador interno de Instagram/WhatsApp).
+  function clone(obj) {
+    try { return JSON.parse(JSON.stringify(obj)); }
+    catch (e) { return {}; }
+  }
+
   function load() {
     try {
       const raw = localStorage.getItem(STORE_KEY);
-      if (!raw) return structuredClone(DEFAULT_STATE);
+      if (!raw) return clone(DEFAULT_STATE);
       const parsed = JSON.parse(raw);
       // merge raso pra garantir que campos novos do DEFAULT_STATE existam
-      return deepMerge(structuredClone(DEFAULT_STATE), parsed);
+      return deepMerge(clone(DEFAULT_STATE), parsed);
     } catch (e) {
       console.warn('[ZyroCore] Falha ao carregar estado, resetando.', e);
-      return structuredClone(DEFAULT_STATE);
+      return clone(DEFAULT_STATE);
     }
   }
 
@@ -72,7 +79,8 @@ const ZyroCore = (function () {
   state.meta.lastSeen = Date.now();
 
   function save() {
-    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+    catch (e) { console.warn('[ZyroCore] Não foi possível salvar (localStorage bloqueado). O progresso vale só para esta sessão.', e); }
   }
 
   function simpleHash(s) {
@@ -162,7 +170,7 @@ const ZyroCore = (function () {
     getVisitedCount() { return state.visited.length; },
 
     // ── UTIL ──
-    reset() { state = structuredClone(DEFAULT_STATE); state.meta.createdAt = Date.now(); save(); },
+    reset() { state = clone(DEFAULT_STATE); state.meta.createdAt = Date.now(); save(); },
     raw() { return state; },
     save,
   };

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ZyroLog — Mapa de Pirapora</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+html, body { height: 100dvh; overflow: hidden; touch-action: none; }
+canvas#map { display: block; position: absolute; top: 0; left: 0; z-index: 0; }
+
+/* ── HUD TOPO ── */
+#hud-top {
+  position: absolute; top: max(env(safe-area-inset-top),8px);
+  left: 12px; right: 12px; z-index: 100;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  pointer-events: none;
+}
+.hpill {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(8px,2vw,11px); display: flex; align-items: center; gap: 7px;
+  pointer-events: auto;
+}
+.hp-ava { font-size: clamp(14px,3.5vw,20px); }
+.hp-name { color: var(--neon); font-weight: 700; font-size: clamp(9px,2.2vw,12px); }
+.hp-role { color: #444; font-size: clamp(7px,1.6vw,9px); letter-spacing: .1em; }
+
+#xp-wrap { position: absolute; top: max(env(safe-area-inset-top),8px); left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 6px; pointer-events: none; }
+.xpb { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-family: 'Share Tech Mono', monospace; font-size: clamp(8px,2vw,11px); display: flex; align-items: center; gap: 5px; }
+.xpb.xp  { border-color: rgba(179,108,255,.3); } .xpb.xp .v  { color: var(--xp); font-weight: 700; }
+.xpb.sat { border-color: rgba(247,147,26,.3); } .xpb.sat .v { color: var(--sat); font-weight: 700; }
+
+/* ── JOYSTICK ── */
+#jw { position: absolute; bottom: max(env(safe-area-inset-bottom),14px); left: 14px; z-index: 200; }
+#jbase { width: clamp(90px,21vw,118px); height: clamp(90px,21vw,118px); border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,.07), rgba(212,175,55,.02)); border: 1.5px solid rgba(212,175,55,.22); position: relative; touch-action: none; }
+#jstick { position: absolute; width: 42%; height: 42%; background: radial-gradient(circle at 35% 35%, rgba(212,175,55,.9), rgba(180,130,20,.7)); border: 1.5px solid rgba(255,255,255,.22); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%,-50%); box-shadow: 0 0 14px rgba(212,175,55,.4); }
+
+/* ── CARD DE ENTRADA NO POI ── */
+#poi-card {
+  position: absolute; bottom: max(env(safe-area-inset-bottom),120px);
+  left: 50%; transform: translateX(-50%) translateY(20px);
+  z-index: 400; min-width: 240px; max-width: min(90vw,340px);
+  background: linear-gradient(135deg, rgba(9,12,20,.98), rgba(20,14,4,.98));
+  border: 1px solid var(--gold); border-radius: 14px;
+  padding: 16px 20px; text-align: center;
+  opacity: 0; pointer-events: none;
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 40px rgba(212,175,55,.15), 0 8px 40px rgba(0,0,0,.6);
+}
+#poi-card.vis { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.pc-icon { font-size: clamp(32px,8vw,48px); filter: drop-shadow(0 0 12px var(--gold)); animation: pc-float 2.5s ease-in-out infinite; }
+@keyframes pc-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.pc-name { font-family: 'Press Start 2P', monospace; font-size: clamp(7px,1.8vw,10px); color: var(--gold); margin: 8px 0 4px; letter-spacing: .06em; }
+.pc-sub { font-size: clamp(9px,2vw,11px); color: rgba(255,255,255,.45); margin-bottom: 12px; line-height: 1.5; }
+.pc-visited { font-family: 'Share Tech Mono', monospace; font-size: clamp(7px,1.5vw,8px); color: var(--neon); margin-top: 6px; }
+
+/* ── TOAST override pos ── */
+#toast { top: 56px; }
+
+/* ── SPLASH inicial (redireciona pro cartório se não tem personagem) ── */
+#splash {
+  position: fixed; inset: 0; z-index: 9000; background: var(--ink);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+}
+.splash-logo { font-family: 'Press Start 2P', monospace; font-size: clamp(14px,4.5vw,26px); color: var(--gold); text-shadow: 0 0 40px rgba(212,175,55,.5); letter-spacing: .06em; text-align: center; line-height: 1.6; }
+.splash-sub { font-family: 'Share Tech Mono', monospace; font-size: clamp(8px,2vw,11px); color: rgba(0,255,178,.6); letter-spacing: .25em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-logo">ZYRO<span style="color:var(--neon)">LOG</span><br>PIRAPORA</div>
+  <div class="splash-sub">carregando o mundo…</div>
+</div>
+
+<canvas id="map"></canvas>
+
+<div id="hud-top">
+  <div class="hpill">
+    <span class="hp-ava" id="h-ava">🧑</span>
+    <div>
+      <div class="hp-name" id="h-name">VISITANTE</div>
+      <div class="hp-role" id="h-role">—</div>
+    </div>
+  </div>
+</div>
+
+<div id="xp-wrap">
+  <div class="xpb xp">⬡ <span class="v" id="pill-xp">0</span> XP</div>
+  <div class="xpb sat">₿ <span class="v" id="pill-sat">0</span> Sats</div>
+</div>
+
+<div id="jw"><div id="jbase"><div id="jstick"></div></div></div>
+
+<div id="poi-card">
+  <div class="pc-icon" id="pc-icon">📍</div>
+  <div class="pc-name" id="pc-name">POI</div>
+  <div class="pc-sub" id="pc-sub">Descrição</div>
+  <button class="btn btn-gold btn-block" id="pc-enter">▶ ACESSAR</button>
+  <div class="pc-visited" id="pc-visited"></div>
+</div>
+
+<script src="core.js"></script>
+<script>
+// ════════════════════════════════
+// SPLASH — redireciona ao Cartório se não tem personagem
+// ════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (!ZyroCore.hasCharacter()) {
+      window.location.href = 'cartorio.html';
+      return;
+    }
+    document.getElementById('splash').style.display = 'none';
+    const p = ZyroCore.getPlayer();
+    document.getElementById('h-ava').textContent = p.avatar || '🧑';
+    document.getElementById('h-name').textContent = p.name.toUpperCase();
+    document.getElementById('h-role').textContent = ({dm:'Comerciante', mb:'Motoboy', jx:'Jovem Explorador'})[p.role] || 'Explorador';
+    zRefreshStatPills();
+  }, 500);
+});
+
+// ════════════════════════════════
+// POIs DO MAPA DE PIRAPORA
+// ════════════════════════════════
+const WORLD = 2400;
+const POIS = [
+  { id:'romeiros', icon:'⛪', name:'PORTAL DOS ROMEIROS', desc:'Ponto de chegada. Selfie + story marcando a cidade.', color:'#F5C518', wx:.50, wy:.12, file:'romeiros.html' },
+  { id:'cartorio', icon:'🏛️', name:'CARTÓRIO DIGITAL',   desc:'Registro de personagem + tutorial de carteira Lightning.', color:'#00C8FF', wx:.22, wy:.28, file:'cartorio.html' },
+  { id:'barbearia', icon:'💈', name:'BARBEARIA DO CARLÃO', desc:'Customize seu personagem e compartilhe no Insta.', color:'#FF2D78', wx:.72, wy:.30, file:'barbearia.html' },
+  { id:'sk8', icon:'🛹', name:'PISTA DE SKATE',           desc:'Pratique, equipe, dispute o campeonato ou bata papo.', color:'#B36CFF', wx:.30, wy:.55, file:'sk8.html' },
+  { id:'igame', icon:'🎮', name:'ACESSE O PONTO',         desc:'Hub de tutoriais, jogos em alta e seu progresso.', color:'#00FFB2', wx:.62, wy:.62, file:'igame.html' },
+  { id:'pizzaria', icon:'🍕', name:'PIZZARIA VITORELLI',  desc:'Cardápio, cupons e missões valendo sats e pizza.', color:'#FF7B00', wx:.45, wy:.82, file:'pizzaria.html' },
+];
+
+const cvs = document.getElementById('map'); const ctx = cvs.getContext('2d');
+let player = { x: WORLD/2, y: WORLD*0.45, vx:0, vy:0, r:15 };
+let joy = { active:false, x:0, y:0 }, keys = {};
+let nearPOI = null, animT = 0, lastTime = 0;
+const identity = ZyroCore.getPlayer();
+
+function resize() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+const jb = document.getElementById('jbase'), js = document.getElementById('jstick');
+jb.addEventListener('touchstart', e=>{e.preventDefault();joy.active=true;}, {passive:false});
+jb.addEventListener('touchend',   e=>{e.preventDefault();resetJoy();}, {passive:false});
+jb.addEventListener('touchmove',  e=>{e.preventDefault();moveJoy(e);}, {passive:false});
+jb.addEventListener('mousedown', ()=>joy.active=true);
+document.addEventListener('mouseup', resetJoy);
+document.addEventListener('mousemove', moveJoy);
+document.addEventListener('keydown', e=>keys[e.key]=true);
+document.addEventListener('keyup',   e=>keys[e.key]=false);
+
+function resetJoy(){ joy.active=false; joy.x=0; joy.y=0; js.style.left='50%'; js.style.top='50%'; }
+function moveJoy(e){
+  if(!joy.active) return;
+  const rect=jb.getBoundingClientRect();
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  const px=e.touches?e.touches[0].clientX:e.clientX;
+  const py=e.touches?e.touches[0].clientY:e.clientY;
+  let dx=px-cx, dy=py-cy;
+  const max=rect.width/2-6;
+  const dist=Math.min(Math.hypot(dx,dy),max), ang=Math.atan2(dy,dx);
+  js.style.left=(rect.width/2+dist*Math.cos(ang))+'px';
+  js.style.top=(rect.height/2+dist*Math.sin(ang))+'px';
+  joy.x=Math.cos(ang)*(dist/max); joy.y=Math.sin(ang)*(dist/max);
+}
+function kIn(){
+  let kx=0,ky=0;
+  if(keys['ArrowLeft']||keys['a']) kx=-1; if(keys['ArrowRight']||keys['d']) kx=1;
+  if(keys['ArrowUp']||keys['w']) ky=-1; if(keys['ArrowDown']||keys['s']) ky=1;
+  if(kx&&ky){kx*=.707;ky*=.707;} return {x:kx,y:ky};
+}
+
+function update(dt){
+  const spd = 260;
+  const ki=kIn(), ix=joy.x||ki.x, iy=joy.y||ki.y;
+  player.vx += (ix*spd - player.vx) * 12 * dt;
+  player.vy += (iy*spd - player.vy) * 12 * dt;
+  player.x = Math.max(player.r, Math.min(WORLD-player.r, player.x + player.vx*dt));
+  player.y = Math.max(player.r, Math.min(WORLD-player.r, player.y + player.vy*dt));
+
+  let bp=null, bd=Infinity;
+  POIS.forEach(p=>{
+    const d = Math.hypot(player.x-p.wx*WORLD, player.y-p.wy*WORLD);
+    if(d<100 && d<bd){bd=d;bp=p;}
+  });
+  if(bp !== nearPOI){ nearPOI=bp; updateCard(bp); }
+}
+
+function updateCard(p){
+  const card=document.getElementById('poi-card');
+  if(!p){ card.classList.remove('vis'); return; }
+  document.getElementById('pc-icon').textContent=p.icon;
+  document.getElementById('pc-name').textContent=p.name;
+  document.getElementById('pc-sub').textContent=p.desc;
+  document.getElementById('pc-visited').textContent = ZyroCore.hasVisited(p.id) ? '✓ JÁ VISITADO' : '';
+  document.getElementById('pc-enter').onclick = () => { window.location.href = p.file; };
+  card.classList.add('vis');
+}
+
+function draw(ts){
+  animT=ts;
+  const W=cvs.width, H=cvs.height;
+  const camX=player.x-W/2, camY=player.y-H/2;
+  ctx.fillStyle='#080B14'; ctx.fillRect(0,0,W,H);
+  ctx.save(); ctx.translate(-camX,-camY);
+
+  const BLK=150, RD=26;
+  for(let gx=0; gx<WORLD; gx+=BLK) for(let gy=0; gy<WORLD; gy+=BLK){ ctx.fillStyle='#0E1525'; ctx.fillRect(gx+RD/2,gy+RD/2,BLK-RD,BLK-RD); }
+  ctx.fillStyle='#111B2C';
+  for(let gy=0; gy<WORLD; gy+=BLK) ctx.fillRect(0,gy,WORLD,RD);
+  for(let gx=0; gx<WORLD; gx+=BLK) ctx.fillRect(gx,0,RD,WORLD);
+
+  const pulse = 0.5+0.5*Math.sin(animT*.0018);
+  POIS.forEach(p=>{
+    const px=p.wx*WORLD, py=p.wy*WORLD;
+    const near = nearPOI===p;
+    const visited = ZyroCore.hasVisited(p.id);
+    const g = ctx.createRadialGradient(px,py,0,px,py,near?95:65);
+    g.addColorStop(0, hexA(p.color, near?.32+pulse*.1 : .1+pulse*.05));
+    g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,near?95:65,0,Math.PI*2); ctx.fill();
+
+    ctx.strokeStyle = hexA(p.color, .5+pulse*.3); ctx.lineWidth = near?3:2;
+    ctx.setLineDash([6,5]); ctx.beginPath(); ctx.arc(px,py,32,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.fillStyle = hexA(p.color, .14+pulse*.08);
+    ctx.beginPath(); ctx.arc(px,py,28,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle = hexA(p.color, near?.8:.5); ctx.lineWidth = near?2.5:1.5;
+    ctx.beginPath(); ctx.arc(px,py,28,0,Math.PI*2); ctx.stroke();
+
+    ctx.font = `${near?24:20}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(p.icon, px, py);
+    if(visited){ ctx.font='11px serif'; ctx.fillText('✓', px+22, py-22); }
+
+    ctx.font = `bold ${near?9:7}px "Oxanium",sans-serif`;
+    ctx.fillStyle = near ? p.color : 'rgba(255,255,255,0.4)';
+    ctx.fillText(p.name, px, py+38);
+  });
+
+  // player
+  const pp = 0.5+0.5*Math.sin(animT*.003);
+  ctx.fillStyle='rgba(0,0,0,.35)';
+  ctx.beginPath(); ctx.ellipse(player.x,player.y+player.r+2,player.r-2,5,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = hexA(identity.color||'#D4AF37', .65+pp*.3); ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.arc(player.x,player.y,player.r+5,0,Math.PI*2); ctx.stroke();
+  ctx.font = `${player.r*1.8}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(identity.avatar||'🧑', player.x, player.y);
+
+  ctx.restore();
+}
+
+function hexA(hex,a){
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function loop(ts){
+  const dt = Math.min((ts-lastTime)/1000, .1);
+  if(lastTime){ update(dt); draw(ts); }
+  lastTime = ts;
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

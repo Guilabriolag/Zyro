@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ZyroLog — Pista de Skate</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.menu-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+.menu-card { background: rgba(255,255,255,.02); border:1.5px solid var(--border); border-radius:12px; padding:18px 14px; text-align:center; cursor:pointer; transition: all .2s; }
+.menu-card:hover { transform: translateY(-4px); border-color: var(--xp); }
+.menu-card .mi { font-size: clamp(28px,7vw,38px); margin-bottom:8px; }
+.menu-card .mn { font-family:'Press Start 2P',monospace; font-size:clamp(7px,1.6vw,9px); color:#fff; line-height:1.6; }
+
+.panel { display:none; }
+.panel.active { display:block; animation: cin .3s ease; }
+@keyframes cin { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* gameplay canvas */
+#sk8-canvas-wrap { position:relative; width:100%; aspect-ratio: 16/9; background:#0a0f1a; border-radius:10px; overflow:hidden; border:1px solid var(--border); }
+#sk8-canvas { width:100%; height:100%; display:block; }
+#sk8-score { position:absolute; top:8px; left:10px; font-family:'Share Tech Mono',monospace; color:var(--neon); font-size:12px; }
+#sk8-msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; background:rgba(5,7,10,.75); text-align:center; padding: 16px; }
+
+.gear-item { display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,.02); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
+.gear-info { display:flex; align-items:center; gap:10px; }
+.gear-icon { font-size: 22px; }
+.gear-name { font-size:clamp(9px,2vw,11px); color:#fff; }
+.gear-price { font-family:'Share Tech Mono',monospace; font-size:clamp(8px,1.8vw,10px); color:var(--sat); }
+
+.chat-box { background: rgba(255,255,255,.02); border:1px solid var(--border); border-radius:10px; padding:12px; height:260px; overflow-y:auto; margin-bottom:10px; display:flex; flex-direction:column; gap:8px; }
+.chat-msg { font-size:clamp(9px,2vw,11px); line-height:1.5; }
+.chat-msg b { color: var(--neon); }
+.chat-input-row { display:flex; gap:8px; }
+.chat-input-row input { flex:1; }
+
+.rank-row { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.04); font-size: clamp(9px,2vw,11px); }
+.rank-row .pos { font-family:'Press Start 2P',monospace; font-size:9px; color: var(--gold); width:22px; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div>
+
+<header class="poi-header">
+  <a class="poi-back" href="index.html">◀ MAPA</a>
+  <div class="poi-title-wrap">
+    <span class="poi-icon">🛹</span>
+    <div><div class="poi-title">PISTA DE SKATE</div><div class="poi-sub">Zona de Ação</div></div>
+  </div>
+  <div class="stat-pills"><div class="stat-pill sat">₿ <span id="pill-sat">0</span></div><div class="stat-pill xp">⬡ <span id="pill-xp">0</span></div></div>
+</header>
+
+<div class="wrap">
+
+  <!-- MENU -->
+  <div class="panel active" id="panel-menu">
+    <div class="card">
+      <div class="sec-title">Escolha sua ação</div>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="showPanel('praticar')"><div class="mi">🏂</div><div class="mn">PRATICAR</div></div>
+        <div class="menu-card" onclick="showPanel('equipar')"><div class="mi">🛒</div><div class="mn">EQUIPAR</div></div>
+        <div class="menu-card" onclick="showPanel('campeonato')"><div class="mi">🏆</div><div class="mn">CAMPEONATO</div></div>
+        <div class="menu-card" onclick="showPanel('praca')"><div class="mi">💬</div><div class="mn">PRAÇA DA PISTA</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRATICAR (minigame) -->
+  <div class="panel" id="panel-praticar">
+    <div class="card">
+      <div class="sec-title">🏂 Praticar — Toque para saltar obstáculos</div>
+      <div id="sk8-canvas-wrap">
+        <canvas id="sk8-canvas"></canvas>
+        <div id="sk8-score">SCORE: 0</div>
+        <div id="sk8-msg">
+          <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--gold);">TOQUE PARA PULAR</div>
+          <button class="btn btn-neon" onclick="startGame()">▶ INICIAR</button>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-block" style="margin-top:12px;" onclick="showPanel('menu')">◀ VOLTAR</button>
+    </div>
+  </div>
+
+  <!-- EQUIPAR -->
+  <div class="panel" id="panel-equipar">
+    <div class="card">
+      <div class="sec-title">🛒 Loja de Equipamentos</div>
+      <div id="gear-list"></div>
+      <button class="btn btn-outline btn-block" style="margin-top:8px;" onclick="showPanel('menu')">◀ VOLTAR</button>
+    </div>
+  </div>
+
+  <!-- CAMPEONATO -->
+  <div class="panel" id="panel-campeonato">
+    <div class="card">
+      <div class="sec-title">🏆 Ranking do Campeonato</div>
+      <div id="rank-list"></div>
+      <button class="btn btn-gold btn-block" style="margin-top:12px;" onclick="inscrever()">🎟️ INSCREVER-SE NO CAMPEONATO</button>
+      <button class="btn btn-outline btn-block" style="margin-top:8px;" onclick="showPanel('menu')">◀ VOLTAR</button>
+    </div>
+  </div>
+
+  <!-- PRAÇA / CHAT -->
+  <div class="panel" id="panel-praca">
+    <div class="card">
+      <div class="sec-title">💬 Praça da Pista</div>
+      <div class="chat-box" id="chat-box"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Diga algo pra galera..." maxlength="120">
+        <button class="btn btn-neon" onclick="sendChat()">➤</button>
+      </div>
+      <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="showPanel('menu')">◀ VOLTAR</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="core.js"></script>
+<script>
+if (!ZyroCore.hasCharacter()) window.location.href = 'cartorio.html';
+ZyroCore.markVisited('sk8');
+zRefreshStatPills();
+
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'equipar') renderGear();
+  if (name === 'campeonato') renderRank();
+  if (name === 'praca') renderChat();
+}
+
+/* ── GEAR SHOP ── */
+const GEAR = [
+  { id:'shoes', icon:'👟', name:'Tênis de Grip Pro', price:40 },
+  { id:'deck',  icon:'🛹', name:'Shape Carbono X',   price:80 },
+  { id:'helmet',icon:'⛑️', name:'Capacete Neon',      price:35 },
+  { id:'pads',  icon:'🦾', name:'Joelheiras Reforçadas', price:25 },
+];
+function renderGear() {
+  const list = document.getElementById('gear-list');
+  const owned = ZyroCore.getGear();
+  list.innerHTML = GEAR.map(g => `
+    <div class="gear-item">
+      <div class="gear-info"><span class="gear-icon">${g.icon}</span><span class="gear-name">${g.name}</span></div>
+      ${owned.includes(g.id)
+        ? '<span class="tag ok">✓ EQUIPADO</span>'
+        : `<button class="btn btn-gold" style="padding:8px 12px;font-size:8px;" onclick="buyGear('${g.id}',${g.price})">₿${g.price}</button>`}
+    </div>`).join('');
+}
+function buyGear(id, price) {
+  if (!ZyroCore.spendSats(price)) { zToast('Sats insuficientes!', 'pink'); return; }
+  ZyroCore.equipGear(id);
+  zToast('Equipamento adquirido!', 'sat');
+  zRefreshStatPills();
+  renderGear();
+}
+
+/* ── CAMPEONATO ── */
+const GUILD_RANK = [
+  { name:'JULIA', avatar:'🏍️', score: 1520 },
+  { name:'MARCOS', avatar:'🧑‍💼', score: 2100 },
+  { name:'CARLOS', avatar:'🛹', score: 980 },
+  { name:'BIANCA', avatar:'🛍️', score: 430 },
+];
+function renderRank() {
+  const p = ZyroCore.getPlayer();
+  const all = [...GUILD_RANK, { name: p.name||'VOCÊ', avatar: p.avatar||'🧑', score: ZyroCore.getXP() }].sort((a,b)=>b.score-a.score);
+  document.getElementById('rank-list').innerHTML = all.map((r,i) => `
+    <div class="rank-row"><span class="pos">${i+1}º</span><span>${r.avatar}</span><span style="flex:1">${r.name}</span><span style="color:var(--neon)">${r.score} pts</span></div>
+  `).join('');
+}
+function inscrever() {
+  if (ZyroCore.completeMission('sk8-campeonato', { xp: 50, sats: 30 })) {
+    zToast('Inscrito no campeonato! +50 XP +30 Sats', 'ok');
+  } else {
+    zToast('Você já está inscrito!', '');
+  }
+  zRefreshStatPills(); renderRank();
+}
+
+/* ── CHAT LOCAL (demo, sem backend) ── */
+const CHAT_KEY = 'zyrolog_sk8_chat';
+const SEED_CHAT = [
+  { n:'CARLOS', m:'salve galera, bora treinar hoje?' },
+  { n:'BIANCA', m:'campeonato desse sábado tá osso 🔥' },
+];
+function renderChat() {
+  let msgs = JSON.parse(localStorage.getItem(CHAT_KEY) || 'null') || SEED_CHAT;
+  const box = document.getElementById('chat-box');
+  box.innerHTML = msgs.map(m => `<div class="chat-msg"><b>${m.n}:</b> ${m.m}</div>`).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const txt = input.value.trim();
+  if (!txt) return;
+  const p = ZyroCore.getPlayer();
+  let msgs = JSON.parse(localStorage.getItem(CHAT_KEY) || 'null') || SEED_CHAT;
+  msgs.push({ n: (p.name||'VOCÊ').toUpperCase(), m: txt });
+  localStorage.setItem(CHAT_KEY, JSON.stringify(msgs));
+  input.value = '';
+  renderChat();
+}
+
+/* ── MINIGAME: pular obstáculos ── */
+let gameRunning = false, gScore = 0, gT = 0;
+let gPlayer, gObstacles, gCanvas, gCtx, gSpeed;
+function startGame() {
+  document.getElementById('sk8-msg').style.display = 'none';
+  gCanvas = document.getElementById('sk8-canvas');
+  gCanvas.width = gCanvas.clientWidth; gCanvas.height = gCanvas.clientHeight;
+  gCtx = gCanvas.getContext('2d');
+  gPlayer = { x: 40, y: gCanvas.height-30, vy:0, onGround:true, r:12 };
+  gObstacles = []; gScore = 0; gSpeed = 4; gT = 0; gameRunning = true;
+  gCanvas.onpointerdown = jump;
+  requestAnimationFrame(gLoop);
+}
+function jump() {
+  if (!gameRunning) return;
+  if (gPlayer.onGround) { gPlayer.vy = -9.5; gPlayer.onGround = false; }
+}
+function gLoop() {
+  if (!gameRunning) return;
+  gT++;
+  gCtx.fillStyle = '#0a0f1a'; gCtx.fillRect(0,0,gCanvas.width,gCanvas.height);
+  const groundY = gCanvas.height - 18;
+  gCtx.strokeStyle = 'rgba(212,175,55,.2)'; gCtx.beginPath(); gCtx.moveTo(0,groundY); gCtx.lineTo(gCanvas.width,groundY); gCtx.stroke();
+
+  gPlayer.vy += 0.55; gPlayer.y += gPlayer.vy;
+  if (gPlayer.y > groundY-12) { gPlayer.y = groundY-12; gPlayer.vy = 0; gPlayer.onGround = true; }
+
+  if (gT % Math.max(40, 70-Math.floor(gScore/5)) === 0) {
+    gObstacles.push({ x: gCanvas.width, w: 14, h: 22 });
+  }
+  gSpeed = 4 + gScore*0.04;
+  gObstacles.forEach(o => o.x -= gSpeed);
+  gObstacles = gObstacles.filter(o => o.x > -20);
+
+  gCtx.fillStyle = '#FF2D78';
+  gObstacles.forEach(o => gCtx.fillRect(o.x, groundY-o.h, o.w, o.h));
+
+  gCtx.font = '22px serif'; gCtx.fillText('🛹', gPlayer.x-11, gPlayer.y+8);
+
+  // colisão
+  for (const o of gObstacles) {
+    if (gPlayer.x+8 > o.x && gPlayer.x-8 < o.x+o.w && gPlayer.y+10 > groundY-o.h) {
+      endGame(); return;
+    }
+  }
+
+  if (gT % 6 === 0) gScore++;
+  document.getElementById('sk8-score').textContent = 'SCORE: ' + gScore;
+  requestAnimationFrame(gLoop);
+}
+function endGame() {
+  gameRunning = false;
+  const xpEarned = Math.floor(gScore/2);
+  const satsEarned = Math.floor(gScore/4);
+  ZyroCore.addXP(xpEarned); ZyroCore.addSats(satsEarned);
+  zRefreshStatPills();
+  const msg = document.getElementById('sk8-msg');
+  msg.style.display = 'flex';
+  msg.innerHTML = `
+    <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--pink);">FIM DE JOGO</div>
+    <div style="font-family:'Share Tech Mono',monospace;color:var(--neon);">Score: ${gScore} · +${xpEarned} XP · +${satsEarned} Sats</div>
+    <button class="btn btn-neon" onclick="startGame()">↻ JOGAR DE NOVO</button>`;
+}
+</script>
+</body>
+</html>

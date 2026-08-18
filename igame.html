@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ZyroLog — Acesse o Ponto</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.profile-card { display:flex; align-items:center; gap:14px; }
+.profile-ava { font-size: clamp(40px,10vw,56px); }
+.profile-name { font-family:'Press Start 2P',monospace; font-size: clamp(10px,2.4vw,13px); color:#fff; }
+.profile-lvl { font-size: clamp(8px,1.8vw,10px); color: var(--gold); letter-spacing:.1em; margin-top:4px; }
+.xp-bar-wrap { height:6px; background: rgba(255,255,255,.06); border-radius:4px; overflow:hidden; margin-top:8px; }
+.xp-bar-fill { height:100%; background: linear-gradient(90deg,var(--xp),var(--gold)); transition: width .3s; }
+
+.accordion-item { border-bottom:1px solid rgba(255,255,255,.05); }
+.accordion-head { display:flex; align-items:center; justify-content:space-between; padding:12px 0; cursor:pointer; }
+.accordion-head .an { font-size: clamp(9px,2vw,11px); color:#fff; display:flex; align-items:center; gap:8px; }
+.accordion-head .arrow { color:#444; transition: transform .2s; }
+.accordion-head.open .arrow { transform: rotate(90deg); color: var(--neon); }
+.accordion-body { display:none; padding: 0 0 14px 26px; font-size: clamp(8px,1.8vw,10px); color:#888; line-height:1.7; }
+.accordion-body.open { display:block; }
+
+.game-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.game-icon { font-size: 26px; }
+.game-name { font-size: clamp(9px,2vw,11px); color:#fff; }
+.game-desc { font-size: clamp(8px,1.7vw,9px); color:#555; }
+
+.ach-grid { display:flex; flex-wrap:wrap; gap:10px; }
+.ach-badge { background: rgba(212,175,55,.06); border:1px solid var(--border); border-radius:10px; padding:10px 14px; text-align:center; min-width:80px; }
+.ach-badge .ai { font-size:22px; } .ach-badge .an2 { font-size: clamp(7px,1.5vw,8px); color:var(--gold); margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div>
+
+<header class="poi-header">
+  <a class="poi-back" href="index.html">◀ MAPA</a>
+  <div class="poi-title-wrap">
+    <span class="poi-icon">🎮</span>
+    <div><div class="poi-title">ACESSE O PONTO</div><div class="poi-sub">Hub Central</div></div>
+  </div>
+  <div class="stat-pills"><div class="stat-pill sat">₿ <span id="pill-sat">0</span></div><div class="stat-pill xp">⬡ <span id="pill-xp">0</span></div></div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <div class="profile-card">
+      <div class="profile-ava" id="p-ava">🧑</div>
+      <div style="flex:1;">
+        <div class="profile-name" id="p-name">—</div>
+        <div class="profile-lvl" id="p-lvl">Nível 1</div>
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" id="p-xpbar" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">📘 Tutorial Passo a Passo</div>
+    <div id="accordion"></div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">🔥 Jogos em Tendência</div>
+    <div id="game-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title">🏅 Suas Conquistas</div>
+    <div class="ach-grid" id="ach-grid"></div>
+  </div>
+
+</div>
+
+<script src="core.js"></script>
+<script>
+if (!ZyroCore.hasCharacter()) window.location.href = 'cartorio.html';
+ZyroCore.markVisited('igame');
+zRefreshStatPills();
+
+const p = ZyroCore.getPlayer();
+document.getElementById('p-ava').textContent = p.avatar || '🧑';
+document.getElementById('p-name').textContent = p.name.toUpperCase();
+const lvl = ZyroCore.getLevel();
+document.getElementById('p-lvl').textContent = `Nível ${lvl.level} · ${lvl.into}/${lvl.need} XP`;
+document.getElementById('p-xpbar').style.width = lvl.pct + '%';
+
+/* ── TUTORIAL ACCORDION ── */
+const TUTO = [
+  { t:'Como começar', c:'Vá até o Cartório Digital no mapa e crie seu personagem. Escolha seu papel (Comerciante, Motoboy ou Explorador) e receba 100 sats de bônus.' },
+  { t:'Baixar a carteira Lightning', c:'Instale a Wallet of Satoshi na App Store ou Play Store. Não precisa de conta — é só abrir e usar. Isso te dá um endereço Lightning para receber sats de verdade.' },
+  { t:'Como jogar', c:'Ande pelo mapa até os pontos de interesse (Barbearia, Skate, Pizzaria...). Cada um tem missões, minigames e recompensas em XP e sats.' },
+  { t:'Como resgatar seus sats', c:'Os sats acumulados no ZyroLog podem ser sacados para sua Wallet of Satoshi através dos parceiros locais credenciados (em breve, sistema de saque automático).' },
+];
+document.getElementById('accordion').innerHTML = TUTO.map((t,i) => `
+  <div class="accordion-item">
+    <div class="accordion-head" onclick="toggleAcc(${i})"><span class="an">📌 ${t.t}</span><span class="arrow">▶</span></div>
+    <div class="accordion-body" id="acc-b-${i}">${t.c}</div>
+  </div>`).join('');
+function toggleAcc(i) {
+  document.getElementById('acc-b-'+i).classList.toggle('open');
+  document.querySelectorAll('.accordion-head')[i].classList.toggle('open');
+}
+
+/* ── JOGOS EM TENDÊNCIA (mock) ── */
+const GAMES = [
+  { icon:'🛹', name:'Sk8 Runner', desc:'Disponível na Pista de Skate', link:'sk8.html' },
+  { icon:'🍕', name:'Pizza Rush', desc:'Disponível na Pizzaria Vitorelli', link:'pizzaria.html' },
+  { icon:'⚡', name:'Sats Quest', desc:'Complete missões pelo mapa', link:'index.html' },
+];
+document.getElementById('game-list').innerHTML = GAMES.map(g => `
+  <a href="${g.link}" style="text-decoration:none;">
+    <div class="game-item">
+      <span class="game-icon">${g.icon}</span>
+      <div style="flex:1;"><div class="game-name">${g.name}</div><div class="game-desc">${g.desc}</div></div>
+      <span style="color:#444;">▶</span>
+    </div>
+  </a>`).join('');
+
+/* ── CONQUISTAS ── */
+function renderAch() {
+  const list = ZyroCore.getAchievements();
+  const grid = document.getElementById('ach-grid');
+  grid.innerHTML = list.length
+    ? list.map(a => `<div class="ach-badge"><div class="ai">${a.icon}</div><div class="an2">${a.name}</div></div>`).join('')
+    : '<div style="color:#333;font-family:Share Tech Mono,monospace;font-size:10px;">Nenhuma conquista ainda. Explore Pirapora!</div>';
+}
+renderAch();
+</script>
+</body>
+</html>

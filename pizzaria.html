@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ZyroLog — Pizzaria Vitorelli</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom: 16px; }
+.tab { flex:1; text-align:center; padding: 10px 4px; font-family:'Press Start 2P',monospace; font-size: clamp(6px,1.5vw,8px); color:#444; cursor:pointer; border-bottom:2px solid transparent; }
+.tab.active { color: var(--orange); border-color: var(--orange); }
+.tabpanel { display:none; } .tabpanel.active { display:block; animation: cin .3s ease; }
+@keyframes cin { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.menu-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.mi-name { font-size: clamp(10px,2.2vw,12px); color:#fff; }
+.mi-desc { font-size: clamp(8px,1.7vw,9px); color:#555; margin-top:2px; }
+.mi-price { font-family:'Share Tech Mono',monospace; color:var(--orange); font-size: clamp(10px,2vw,12px); white-space:nowrap; }
+
+.task-card { background: rgba(255,255,255,.02); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:10px; }
+.task-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.task-icon { font-size: 20px; }
+.task-name { font-family:'Press Start 2P',monospace; font-size: clamp(7px,1.6vw,9px); color:#fff; }
+.task-desc { font-size: clamp(9px,1.9vw,10px); color:#888; line-height:1.5; margin-bottom:8px; }
+
+.rank-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.04); font-size: clamp(9px,2vw,11px); }
+.rank-row .pos { font-family:'Press Start 2P',monospace; font-size:9px; color: var(--gold); width:22px; }
+.prize-banner { background: linear-gradient(135deg, rgba(255,123,0,.1), rgba(212,175,55,.05)); border:1px solid var(--orange); border-radius:10px; padding:12px 16px; text-align:center; font-size: clamp(9px,2vw,11px); color:#fff; margin-bottom:14px; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div>
+
+<header class="poi-header">
+  <a class="poi-back" href="index.html">◀ MAPA</a>
+  <div class="poi-title-wrap">
+    <span class="poi-icon">🍕</span>
+    <div><div class="poi-title">PIZZARIA VITORELLI</div><div class="poi-sub">Mural de Tarefas</div></div>
+  </div>
+  <div class="stat-pills"><div class="stat-pill sat">₿ <span id="pill-sat">0</span></div><div class="stat-pill xp">⬡ <span id="pill-xp">0</span></div></div>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active" data-t="cardapio" onclick="showTab(this)">🍕 Cardápio</div>
+    <div class="tab" data-t="tarefas" onclick="showTab(this)">🎯 Tarefas</div>
+    <div class="tab" data-t="ranking" onclick="showTab(this)">🏆 Ranking</div>
+  </div>
+
+  <!-- CARDÁPIO -->
+  <div class="tabpanel active" id="tab-cardapio">
+    <div class="card" id="cardapio-list"></div>
+  </div>
+
+  <!-- TAREFAS -->
+  <div class="tabpanel" id="tab-tarefas">
+    <div class="card">
+      <div class="sec-title">🎯 Tarefas Disponíveis</div>
+      <div id="task-list"></div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div class="tabpanel" id="tab-ranking">
+    <div class="card">
+      <div class="prize-banner">🏆 O maior pontuador da semana ganha uma <b>pizza grande grátis</b>!</div>
+      <div class="sec-title">Ranking Semanal</div>
+      <div id="rank-list"></div>
+    </div>
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script>
+if (!ZyroCore.hasCharacter()) window.location.href = 'cartorio.html';
+ZyroCore.markVisited('pizzaria');
+zRefreshStatPills();
+
+function showTab(el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+el.dataset.t).classList.add('active');
+}
+
+/* ── CARDÁPIO ── */
+const MENU = [
+  { name:'Margherita', desc:'Molho, mussarela, manjericão', price:'R$ 42' },
+  { name:'Calabresa Vitorelli', desc:'Calabresa artesanal, cebola roxa', price:'R$ 46' },
+  { name:'Portuguesa', desc:'Presunto, ovo, ervilha, cebola', price:'R$ 48' },
+  { name:'Quatro Queijos', desc:'Mussarela, provolone, gorgonzola, parmesão', price:'R$ 52' },
+  { name:'Frango com Catupiry', desc:'Frango desfiado, catupiry original', price:'R$ 49' },
+];
+document.getElementById('cardapio-list').innerHTML = MENU.map(m => `
+  <div class="menu-item">
+    <div><div class="mi-name">${m.name}</div><div class="mi-desc">${m.desc}</div></div>
+    <div class="mi-price">${m.price}</div>
+  </div>`).join('');
+
+/* ── TAREFAS ── */
+const TASKS = [
+  { id:'cupom-100', icon:'🎟️', name:'DISTRIBUA CUPONS', desc:'Distribua 100 cupons da pizzaria. Cada cupom usado por um cliente rende 10 sats.', reward:'ver progresso' },
+  { id:'game-share', icon:'📱', name:'JOGUE E COMPARTILHE', desc:'Jogue o game da pizzaria e compartilhe sua pontuação no Stories marcando @vitorelli.', xp:40, sats:60 },
+  { id:'avaliacao', icon:'⭐', name:'AVALIE A PIZZARIA', desc:'Deixe uma avaliação 5 estrelas no Google/Instagram da Vitorelli.', xp:20, sats:30 },
+  { id:'indicacao', icon:'🤝', name:'INDIQUE UM AMIGO', desc:'Convide um amigo para se cadastrar no ZyroLog usando seu código.', xp:25, sats:50 },
+];
+function renderTasks() {
+  const list = document.getElementById('task-list');
+  list.innerHTML = TASKS.map(t => {
+    if (t.id === 'cupom-100') {
+      const n = ZyroCore.getCoupons();
+      return `
+        <div class="task-card">
+          <div class="task-top"><span class="task-icon">${t.icon}</span><span class="task-name">${t.name}</span></div>
+          <div class="task-desc">${t.desc}</div>
+          <div class="tag sat" style="margin-bottom:8px;">Progresso: ${n}/100 cupons</div><br>
+          <button class="btn btn-gold" style="padding:8px 12px;font-size:8px;" onclick="distribuirCupom()">+1 CUPOM DISTRIBUÍDO</button>
+        </div>`;
+    }
+    const done = ZyroCore.isMissionDone(t.id);
+    return `
+      <div class="task-card">
+        <div class="task-top"><span class="task-icon">${t.icon}</span><span class="task-name">${t.name}</span></div>
+        <div class="task-desc">${t.desc}</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="tag xp">+${t.xp} XP</span><span class="tag sat">+${t.sats} Sats</span>
+        </div>
+        <button class="btn ${done?'btn-outline':'btn-gold'}" style="padding:8px 12px;font-size:8px;margin-top:8px;" ${done?'disabled':''} onclick="completeTask('${t.id}',${t.xp},${t.sats})">
+          ${done ? '✓ CONCLUÍDA' : '▶ MARCAR COMO FEITA'}
+        </button>
+      </div>`;
+  }).join('');
+}
+function distribuirCupom() {
+  const n = ZyroCore.incrementCoupons(1);
+  ZyroCore.addSats(10);
+  zToast('Cupom registrado! +10 Sats', 'sat');
+  if (n >= 100) { ZyroCore.unlockAchievement('cupom-mestre','Mestre dos Cupons','🎟️'); zToast('🏅 Conquista: Mestre dos Cupons!', 'gold'); }
+  zRefreshStatPills(); renderTasks();
+}
+function completeTask(id, xp, sats) {
+  if (!ZyroCore.completeMission(id, { xp, sats })) return;
+  zToast(`Tarefa concluída! +${xp} XP +${sats} Sats`, 'ok');
+  zRefreshStatPills(); renderTasks();
+}
+renderTasks();
+
+/* ── RANKING ── */
+const GUILD_RANK = [
+  { name:'JULIA', avatar:'🏍️', score: 640 },
+  { name:'MARCOS', avatar:'🧑‍💼', score: 890 },
+  { name:'CARLOS', avatar:'🛹', score: 420 },
+];
+function renderRank() {
+  const p = ZyroCore.getPlayer();
+  const myScore = ZyroCore.getCoupons()*10 + ZyroCore.getXP();
+  const all = [...GUILD_RANK, { name: p.name||'VOCÊ', avatar: p.avatar||'🧑', score: myScore }].sort((a,b)=>b.score-a.score);
+  document.getElementById('rank-list').innerHTML = all.map((r,i) => `
+    <div class="rank-row"><span class="pos">${i+1}º</span><span>${r.avatar}</span><span style="flex:1">${r.name}</span><span style="color:var(--neon)">${r.score} pts</span></div>
+  `).join('');
+}
+renderRank();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ZyroLog — Barbearia do Carlão</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.preview { text-align:center; padding: 20px 0 26px; }
+.preview-ava { font-size: clamp(70px,18vw,100px); filter: drop-shadow(0 0 22px var(--pv-color,#D4AF37)); transition: filter .3s; }
+.preview-name { font-family:'Press Start 2P',monospace; font-size: clamp(10px,2.8vw,14px); color:#fff; margin-top:10px; }
+
+.opt-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.opt-btn { width: clamp(46px,11vw,60px); height: clamp(46px,11vw,60px); border-radius:10px; font-size: clamp(20px,5vw,28px); background: rgba(255,255,255,.03); border:1.5px solid rgba(255,255,255,.08); cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all .2s; }
+.opt-btn:hover { transform: scale(1.1); border-color: var(--pink); }
+.opt-btn.sel { border-color: var(--pink); background: rgba(255,45,120,.1); box-shadow: 0 0 12px rgba(255,45,120,.3); }
+
+.color-grid { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+.color-dot { width:34px; height:34px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition: all .2s; }
+.color-dot.sel { border-color:#fff; transform: scale(1.15); box-shadow: 0 0 12px currentColor; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div>
+
+<header class="poi-header">
+  <a class="poi-back" href="index.html">◀ MAPA</a>
+  <div class="poi-title-wrap">
+    <span class="poi-icon">💈</span>
+    <div><div class="poi-title">BARBEARIA DO CARLÃO</div><div class="poi-sub">Studio de Estilo</div></div>
+  </div>
+  <div class="stat-pills"><div class="stat-pill sat">₿ <span id="pill-sat">0</span></div><div class="stat-pill xp">⬡ <span id="pill-xp">0</span></div></div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="preview">
+      <div class="preview-ava" id="prev-ava" style="--pv-color:#D4AF37">🧑‍💼</div>
+      <div class="preview-name" id="prev-name">—</div>
+    </div>
+
+    <div class="sec-title">🎭 Avatar</div>
+    <div class="opt-grid" id="ava-grid"></div>
+
+    <div class="sec-title">🎨 Cor de Destaque</div>
+    <div class="color-grid" id="color-grid"></div>
+
+    <button class="btn btn-gold btn-block" onclick="saveLook()">💾 SALVAR VISUAL</button>
+    <button class="btn btn-outline btn-block" style="margin-top:8px;" onclick="shareInsta()">📸 COMPARTILHAR NO INSTAGRAM</button>
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script>
+if (!ZyroCore.hasCharacter()) window.location.href = 'cartorio.html';
+
+const AVATARS = ['🧑‍💼','👨‍💼','👩‍💼','🏍️','🛵','🛹','🧑‍🍳','🧑‍🔧','🧑‍💻','🧑‍🚀','🦺','🧑‍🎤'];
+const COLORS = ['#D4AF37','#00FFB2','#00C8FF','#FF2D78','#B36CFF','#F7931A','#39FF14','#FF7B00'];
+
+const p = ZyroCore.getPlayer();
+let chosen = { avatar: p.avatar, color: p.color || '#D4AF37' };
+
+function buildAva() {
+  const grid = document.getElementById('ava-grid');
+  AVATARS.forEach(a => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn' + (a===chosen.avatar ? ' sel' : '');
+    b.textContent = a;
+    b.onclick = () => { chosen.avatar = a; document.querySelectorAll('#ava-grid .opt-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); updatePreview(); };
+    grid.appendChild(b);
+  });
+}
+function buildColors() {
+  const grid = document.getElementById('color-grid');
+  COLORS.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'color-dot' + (c===chosen.color ? ' sel' : '');
+    d.style.background = c; d.style.color = c;
+    d.onclick = () => { chosen.color = c; document.querySelectorAll('.color-dot').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); updatePreview(); };
+    grid.appendChild(d);
+  });
+}
+function updatePreview() {
+  document.getElementById('prev-ava').textContent = chosen.avatar;
+  document.getElementById('prev-ava').style.setProperty('--pv-color', chosen.color);
+  document.getElementById('prev-name').textContent = p.name.toUpperCase();
+}
+function saveLook() {
+  ZyroCore.updateAppearance(chosen);
+  ZyroCore.markVisited('barbearia');
+  ZyroCore.completeMission('primeiro-visual', { xp: 15 });
+  zToast('Visual salvo! +15 XP', 'xp');
+}
+function shareInsta() {
+  zToast('Abrindo Instagram…', 'pink');
+  // Deep link para o app de câmera/stories do Instagram; cai no site se não tiver o app
+  const deepLink = 'instagram://story-camera';
+  const fallback = 'https://www.instagram.com/';
+  const t = setTimeout(() => { window.location.href = fallback; }, 1200);
+  window.location.href = deepLink;
+  window.addEventListener('blur', () => clearTimeout(t), { once:true });
+}
+
+buildAva(); buildColors(); updatePreview(); zRefreshStatPills();
+</script>
+</body>
+</html>

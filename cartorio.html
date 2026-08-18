@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ZyroLog — Cartório Digital</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(110px,26vw,180px),1fr)); gap: 10px; margin-bottom: 14px; }
+.role-card { background: rgba(255,255,255,.02); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px; cursor: pointer; text-align:center; transition: all .2s; }
+.role-card:hover { transform: translateY(-4px); border-color: var(--rc,#D4AF37); }
+.role-card.sel { border-color: var(--rc,#D4AF37); background: rgba(212,175,55,.06); box-shadow: 0 0 20px color-mix(in srgb, var(--rc,#D4AF37) 25%, transparent); }
+.role-icon { font-size: clamp(28px,7vw,40px); margin-bottom: 6px; }
+.role-name { font-family:'Press Start 2P',monospace; font-size: clamp(6px,1.5vw,8px); color:#fff; line-height:1.6; }
+.role-sub { font-size: clamp(8px,1.7vw,9px); color: var(--rc,#D4AF37); text-transform:uppercase; letter-spacing:.1em; margin-top:4px; }
+
+.step { display:none; }
+.step.active { display:block; animation: cin .35s ease; }
+@keyframes cin { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.tuto-step { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.tuto-num { width:26px; height:26px; border-radius:50%; background:rgba(0,200,255,.1); border:1px solid var(--cyber); color:var(--cyber); font-family:'Share Tech Mono',monospace; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tuto-text { font-size: clamp(9px,2vw,11px); color:#bbb; line-height:1.7; }
+.tuto-text b { color:#fff; }
+
+.hash-box { background: rgba(0,255,178,.04); border:1px solid rgba(0,255,178,.15); border-radius:8px; padding:12px 16px; font-family:'Share Tech Mono',monospace; font-size: clamp(8px,1.8vw,10px); color: rgba(0,255,178,.6); line-height:1.8; margin-top:10px; }
+.hash-box .v { color: var(--neon); }
+
+.sats-reveal { text-align:center; padding: 20px 0; }
+.sats-num { font-family:'Press Start 2P',monospace; font-size: clamp(28px,8vw,44px); color: var(--sat); text-shadow: 0 0 30px rgba(247,147,26,.4); }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div>
+
+<header class="poi-header">
+  <a class="poi-back" href="index.html">◀ MAPA</a>
+  <div class="poi-title-wrap">
+    <span class="poi-icon">🏛️</span>
+    <div><div class="poi-title">CARTÓRIO DIGITAL</div><div class="poi-sub">Registro de Cidadão</div></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- STEP 1: papel -->
+  <div class="step active" id="step-1">
+    <div class="card">
+      <div class="sec-title">⚔️ Escolha seu papel na Holding</div>
+      <div class="role-grid" id="role-grid">
+        <div class="role-card" data-role="dm" style="--rc:#D4AF37" onclick="pickRole(this)">
+          <div class="role-icon">🧑‍💼</div><div class="role-name">COMERCIANTE</div><div class="role-sub">Dungeon Master</div>
+        </div>
+        <div class="role-card" data-role="mb" style="--rc:#00FFB2" onclick="pickRole(this)">
+          <div class="role-icon">🏍️</div><div class="role-name">MOTOBOY</div><div class="role-sub">Player de Campo</div>
+        </div>
+        <div class="role-card" data-role="jx" style="--rc:#B36CFF" onclick="pickRole(this)">
+          <div class="role-icon">🛹</div><div class="role-name">JOVEM<br>EXPLORADOR</div><div class="role-sub">Scout</div>
+        </div>
+      </div>
+      <div class="field"><label>Nome de Operação</label><input type="text" id="f-name" placeholder="Como quer ser chamado?" maxlength="24" oninput="checkStep1()"></div>
+      <button class="btn btn-gold btn-block" id="btn-s1" disabled onclick="goStep(2)">PRÓXIMO ▶</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: tutorial wallet -->
+  <div class="step" id="step-2">
+    <div class="card">
+      <div class="sec-title">⚡ Habilite sua Carteira Lightning</div>
+      <p style="font-size:clamp(9px,2vw,11px);color:#888;line-height:1.7;margin-bottom:8px;">
+        Para receber e gastar sats no ZyroLog, você precisa de uma carteira Lightning. Recomendamos a <b style="color:#fff">Wallet of Satoshi</b> — simples, gratuita e sem cadastro complicado.
+      </p>
+      <div class="tuto-step"><div class="tuto-num">1</div><div class="tuto-text">Baixe o app <b>Wallet of Satoshi</b> na App Store ou Play Store.</div></div>
+      <div class="tuto-step"><div class="tuto-num">2</div><div class="tuto-text">Abra o app — <b>não precisa criar conta nem senha</b>, a carteira já vem pronta.</div></div>
+      <div class="tuto-step"><div class="tuto-num">3</div><div class="tuto-text">Toque em <b>Receber</b> para gerar seu primeiro endereço Lightning (algo como <i>seunome@walletofsatoshi.com</i>).</div></div>
+      <div class="tuto-step"><div class="tuto-num">4</div><div class="tuto-text">Volte aqui e confirme abaixo — a Holding vai te presentear com os <b>primeiros 100 sats</b>.</div></div>
+      <button class="btn btn-neon btn-block" style="margin-top:14px;" onclick="confirmWallet()">✓ JÁ INSTALEI MINHA CARTEIRA</button>
+      <button class="btn btn-outline btn-block" style="margin-top:8px;" onclick="skipWallet()">Fazer isso depois</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: confirmação + sats -->
+  <div class="step" id="step-3">
+    <div class="card" style="text-align:center;">
+      <div class="sec-title" style="justify-content:center;">🚀 Identidade Forjada</div>
+      <div id="conf-ava" style="font-size:clamp(48px,12vw,64px);">🧑</div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:clamp(10px,3vw,15px);color:#fff;margin:10px 0 4px;" id="conf-name">—</div>
+      <div style="font-size:clamp(9px,2vw,11px);color:var(--gold);letter-spacing:.15em;text-transform:uppercase;" id="conf-role">—</div>
+      <div class="hash-box" id="conf-hash">HASH: ——</div>
+
+      <div class="sats-reveal">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:clamp(8px,1.8vw,10px);color:#444;letter-spacing:.2em;margin-bottom:6px;">BÔNUS DE BOAS-VINDAS</div>
+        <div class="sats-num">+100 ₿</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:clamp(8px,1.8vw,9px);color:#333;margin-top:4px;">sats creditados na sua carteira ZyroLog</div>
+      </div>
+
+      <button class="btn btn-gold btn-block" onclick="launch()">▶ ENTRAR EM PIRAPORA</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="core.js"></script>
+<script>
+if (ZyroCore.hasCharacter()) {
+  // já tem personagem — pula direto pro mapa, a menos que queira recriar
+}
+
+const ROLE_AVATAR = { dm:'🧑‍💼', mb:'🏍️', jx:'🛹' };
+const ROLE_COLOR  = { dm:'#D4AF37', mb:'#00FFB2', jx:'#B36CFF' };
+const ROLE_LABEL  = { dm:'Comerciante · Dungeon Master', mb:'Motoboy · Player de Campo', jx:'Jovem Explorador · Scout' };
+let chosenRole = null;
+
+function pickRole(el) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  chosenRole = el.dataset.role;
+  checkStep1();
+}
+function checkStep1() {
+  const name = document.getElementById('f-name').value.trim();
+  document.getElementById('btn-s1').disabled = !(name && chosenRole);
+}
+function goStep(n) {
+  document.querySelectorAll('.step').forEach((s,i)=>s.classList.toggle('active', i===n-1));
+}
+function confirmWallet() { ZyroCore.connectWallet(); buildConfirm(); goStep(3); }
+function skipWallet() { buildConfirm(); goStep(3); }
+
+function buildConfirm() {
+  const name = document.getElementById('f-name').value.trim();
+  ZyroCore.createPlayer({ name, role: chosenRole, avatar: ROLE_AVATAR[chosenRole] });
+  ZyroCore.updateAppearance({ color: ROLE_COLOR[chosenRole] });
+  document.getElementById('conf-ava').textContent = ROLE_AVATAR[chosenRole];
+  document.getElementById('conf-name').textContent = name.toUpperCase();
+  document.getElementById('conf-role').textContent = ROLE_LABEL[chosenRole];
+  document.getElementById('conf-hash').innerHTML = `HASH DE IDENTIDADE: <span class="v">${ZyroCore.getPlayer().hash}</span>`;
+}
+
+function launch() {
+  ZyroCore.addSats(100);
+  ZyroCore.markVisited('cartorio');
+  ZyroCore.unlockAchievement('cidadao', 'Cidadão de Pirapora', '🪪');
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

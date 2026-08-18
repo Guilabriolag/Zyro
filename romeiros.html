@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ZyroLog — Portal dos Romeiros</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero { text-align:center; padding: 10px 0 20px; }
+.hero-icon { font-size: clamp(50px,13vw,72px); filter: drop-shadow(0 0 20px var(--goldL)); }
+.hero-title { font-family:'Press Start 2P',monospace; font-size: clamp(12px,3vw,16px); color:var(--gold); margin: 12px 0 6px; }
+.hero-sub { font-size: clamp(9px,2vw,11px); color: #888; line-height: 1.7; max-width: 480px; margin: 0 auto; }
+
+#preview-wrap { text-align:center; margin: 16px 0; }
+#preview-img { max-width: 100%; border-radius: 12px; border: 1px solid var(--border); display:none; }
+#cam-input { display:none; }
+
+.mirante-note { background: rgba(212,175,55,.05); border:1px solid var(--border); border-radius:10px; padding:12px 16px; font-size: clamp(8px,1.8vw,10px); color:#888; line-height:1.7; margin-top:12px; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-glow"></div>
+
+<header class="poi-header">
+  <a class="poi-back" href="index.html">◀ MAPA</a>
+  <div class="poi-title-wrap">
+    <span class="poi-icon">⛪</span>
+    <div><div class="poi-title">PORTAL DOS ROMEIROS</div><div class="poi-sub">Ponto de Chegada</div></div>
+  </div>
+  <div class="stat-pills"><div class="stat-pill sat">₿ <span id="pill-sat">0</span></div><div class="stat-pill xp">⬡ <span id="pill-xp">0</span></div></div>
+</header>
+
+<div class="wrap">
+  <div class="card hero">
+    <div class="hero-icon">⛪</div>
+    <div class="hero-title">BEM-VINDO A PIRAPORA</div>
+    <div class="hero-sub">Você chegou ao Mirante Turístico do Portal dos Romeiros. Tire uma selfie e compartilhe nos stories marcando a cidade — a Holding recompensa quem espalha a boa notícia.</div>
+
+    <div id="preview-wrap">
+      <img id="preview-img">
+    </div>
+    <input type="file" id="cam-input" accept="image/*" capture="user">
+
+    <button class="btn btn-gold btn-block" id="btn-selfie" onclick="takeSelfie()">📸 TIRAR SELFIE</button>
+    <button class="btn btn-neon btn-block" id="btn-share" style="display:none;margin-top:8px;" onclick="shareInsta()">📤 COMPARTILHAR NO INSTAGRAM</button>
+
+    <div class="mirante-note">💡 Marque <b style="color:#fff">@pirapora</b> no seu story para concorrer a recompensas semanais em sats.</div>
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script>
+if (!ZyroCore.hasCharacter()) window.location.href = 'cartorio.html';
+ZyroCore.markVisited('romeiros');
+zRefreshStatPills();
+
+const input = document.getElementById('cam-input');
+input.addEventListener('change', () => {
+  const file = input.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = document.getElementById('preview-img');
+  img.src = url; img.style.display = 'block';
+  document.getElementById('btn-share').style.display = 'flex';
+  if (ZyroCore.completeMission('primeira-selfie', { xp: 20, sats: 15 })) {
+    zToast('Selfie registrada! +20 XP +15 Sats', 'xp');
+    zRefreshStatPills();
+  }
+});
+function takeSelfie() { input.click(); }
+function shareInsta() {
+  zToast('Abrindo Instagram Stories…', 'pink');
+  const deepLink = 'instagram://story-camera';
+  const fallback = 'https://www.instagram.com/';
+  const t = setTimeout(() => { window.location.href = fallback; }, 1200);
+  window.location.href = deepLink;
+  window.addEventListener('blur', () => clearTimeout(t), { once:true });
+  if (ZyroCore.completeMission('primeiro-share', { xp: 25, sats: 20 })) {
+    zToast('+25 XP +20 Sats por compartilhar!', 'ok');
+    zRefreshStatPills();
+  }
+}
+</script>
+</body>
+</html>

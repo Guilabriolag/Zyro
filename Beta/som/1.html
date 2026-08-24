@@ -1,1 +1,126 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYRO — Audio Synth Corrected</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f0f1a; color: #66fcf1;
+    font-family: monospace;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh; padding: 20px;
+  }
+  .card {
+    background: #1f2833; border: 1px solid #45a29e;
+    padding: 24px; border-radius: 8px; width: 100%; max-width: 400px;
+    text-align: center;
+  }
+  .btn {
+    width: 100%; padding: 16px; border: none; border-radius: 6px;
+    background: #66fcf1; color: #0b0c10; font-weight: bold;
+    font-size: 16px; cursor: pointer; margin-top: 15px;
+  }
+  .btn:active { background: #45a29e; }
+  #status { margin-top: 15px; font-size: 13px; color: #c5c6c7; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🎛️ ZYRO — Sintetizador JS</h2>
+  <button id="playBtn" class="btn">TOCAR SOM</button>
+  <div id="status">Status: Desligado</div>
+</div>
+
+<script>
+let audioCtx = null;
+let isPlaying = false;
+let loopInterval = null;
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+// Bumbo Básico
+function playKick(time) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(150, time);
+  osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.15);
+
+  gain.gain.setValueAtTime(1, time);
+  gain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start(time);
+  osc.stop(time + 0.15);
+}
+
+// Sintetizador Agudo (Melodia Rítmica)
+function playSynth(time, freq) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(freq, time);
+
+  gain.gain.setValueAtTime(0.2, time);
+  gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start(time);
+  osc.stop(time + 0.1);
+}
+
+// Sequenciador simples
+function runSequencer() {
+  const now = audioCtx.currentTime;
+  
+  // Toca Bumbo no tempo 0
+  playKick(now);
+  
+  // Toca Bumbo no meio do loop
+  playKick(now + 0.3);
+
+  // Notas da melodia (frequências Hz)
+  const notes = [261.63, 329.63, 392.00, 523.25];
+  notes.forEach((freq, i) => {
+    playSynth(now + (i * 0.15), freq);
+  });
+}
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  initAudio();
+
+  if (!isPlaying) {
+    isPlaying = true;
+    document.getElementById('playBtn').innerText = "PARAR";
+    document.getElementById('status').innerText = "Status: Tocando...";
+
+    runSequencer();
+    loopInterval = setInterval(runSequencer, 600);
+  } else {
+    isPlaying = false;
+    clearInterval(loopInterval);
+    document.getElementById('playBtn').innerText = "TOCAR SOM";
+    document.getElementById('status').innerText = "Status: Parado";
+  }
+});
+</script>
+</body>
+</html>

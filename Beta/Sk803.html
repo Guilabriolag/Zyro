@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYRO 3D - Pista Conectada v6</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
+  #info {
+    position:absolute; top:10px; left:10px; z-index:10;
+    color:#66fcf1; font-size:13px; background:rgba(15,15,26,0.85);
+    padding:10px 14px; border-radius:6px; border:1px solid rgba(102,252,241,0.4);
+    max-width: 340px; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div id="info">
+  🛹 <b>ZYRO 3D v6</b><br>
+  • Esquerda: Quarter-pipe (90°)<br>
+  • Centro: Caixote com corrimão longitudinal<br>
+  • Direita: Rampa 45° conectada ao Mini-ramp<br>
+  • Mini-ramp: Integrado à continuação do platô<br>
+  <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd7dde2);
+scene.fog = new THREE.Fog(0xd7dde2, 50, 110);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(16, 14, 28);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(6, 2, 0);
+controls.enableDamping = true;
+
+const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+sun.position.set(-15, 25, 18);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+scene.add(sun);
+
+const concreteMat = new THREE.MeshStandardMaterial({ color: 0xc7c2b6, roughness: 0.9 });
+const metalMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.5, roughness: 0.4 });
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x7a9b5c });
+
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), grassMat);
+grass.rotation.x = -Math.PI/2;
+grass.receiveShadow = true;
+scene.add(grass);
+
+const RAMP_WIDTH = 6;
+const THICK = 0.3;
+
+function segment(x1, y1, z1, x2, y2, z2, width = RAMP_WIDTH, isTransverse = false){
+  const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+  const len = Math.hypot(dx, dy, dz);
+  const geo = new THREE.BoxGeometry(isTransverse ? width : len, THICK, isTransverse ? len : width);
+  const mesh = new THREE.Mesh(geo, concreteMat);
+  mesh.position.set((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
+
+  if(!isTransverse) {
+    mesh.rotation.z = Math.atan2(dy, dx);
+  } else {
+    mesh.rotation.x = -Math.atan2(dy, dz);
+  }
+
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+
+// Curva de 95° no eixo Z (Mini-ramp)
+function curve95Z(z0, y0, radius, xCenter, isFacingPositiveZ, segs = 14, width = 6){
+  const pts = [];
+  const totalAngle = 95 * Math.PI / 180;
+  const dir = isFacingPositiveZ ? 1 : -1;
+
+  for(let i=0; i<=segs; i++){
+    const t = (i/segs) * totalAngle;
+    const pz = z0 + dir * radius * Math.sin(t);
+    const py = y0 + radius * (1 - Math.cos(t));
+    pts.push([pz, py]);
+  }
+
+  for(let i=0; i<segs; i++){
+    segment(xCenter, pts[i][1], pts[i][0], xCenter, pts[i+1][1], pts[i+1][0], width, true);
+  }
+  return pts[segs];
+}
+
+// Corrimão do caixote
+function longRail(xCenter, yTop, z, length){
+  const g = new THREE.Group();
+  const barHeight = 0.42;
+  [-length/2, length/2].forEach(xOff => {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035, barHeight, 8), metalMat);
+    post.position.set(xOff, barHeight/2, 0);
+    post.castShadow = true;
+    g.add(post);
+  });
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03, length, 8), metalMat);
+  bar.rotation.z = Math.PI/2;
+  bar.position.set(0, barHeight, 0);
+  bar.castShadow = true;
+  g.add(bar);
+  g.position.set(xCenter, yTop, z);
+  scene.add(g);
+}
+
+const Z = 0;
+
+// ---------- 1. CAIXOTE CENTRAL ----------
+const run = 1.6;
+const angle35 = 35 * Math.PI/180;
+const hipHeight = run * Math.tan(angle35);
+const topFlat = 2.0;
+
+const xUpStart = -topFlat/2 - run;   
+const xUpEnd   = -topFlat/2;         
+const xDownStart = topFlat/2;        
+const xDownEnd  = topFlat/2 + run;   
+
+segment(xUpStart, 0, Z, xUpEnd, hipHeight, Z);
+segment(xUpEnd, hipHeight, Z, xDownStart, hipHeight, Z);
+segment(xDownStart, hipHeight, Z, xDownEnd, 0, Z);
+longRail(0, hipHeight + THICK/2, Z, topFlat + 0.4);
+
+// ---------- 2. ESQUERDA: QUARTER PIPE 90° ----------
+const GAP = 3.5;
+const xQuarterBase = xUpStart - GAP;
+segment(xUpStart, 0, Z, xQuarterBase, 0, Z);
+
+const radius = 3.5;
+for(let i=0; i<12; i++){
+  const t1 = (i/12) * (Math.PI/2);
+  const t2 = ((i+1)/12) * (Math.PI/2);
+  const px1 = xQuarterBase - radius * Math.sin(t1);
+  const py1 = radius * (1 - Math.cos(t1));
+  const px2 = xQuarterBase - radius * Math.sin(t2);
+  const py2 = radius * (1 - Math.cos(t2));
+  segment(px1, py1, Z, px2, py2, Z);
+}
+const xQuarterTop = xQuarterBase - radius;
+segment(xQuarterTop, radius, Z, xQuarterTop - 4.0, radius, Z);
+
+// ---------- 3. DIREITA: RAMPA RETA DE 45° ----------
+const xRampBase = xDownEnd + GAP;
+segment(xDownEnd, 0, Z, xRampBase, 0, Z);
+
+const ramp45Height = 3.5;
+const xRampTop = xRampBase + ramp45Height;
+
+segment(xRampBase, 0, Z, xRampTop, ramp45Height, Z);
+
+// ---------- 4. MINI-RAMP INTEGRADO AO PLATÔ DA 45° ----------
+// Conecta o topo da rampa 45° com o platô inicial
+const plateauLength = 3.0;
+const xMiniRampCenter = xRampTop + plateauLength;
+
+// Platô de transição no topo da 45°
+segment(xRampTop, ramp45Height, Z, xMiniRampCenter, ramp45Height, Z);
+
+// Configurações das curvas do mini-ramp saindo do platô
+const miniRampRadius = 3.2;
+const flatBottomZ = 4.0;
+const zWall1_Base = Z - flatBottomZ/2; // -2.0
+const zWall2_Base = Z + flatBottomZ/2; //  2.0
+const miniRampDeckWidth = 5.0;
+
+// Piso do platô entre as duas rampas do mini-ramp
+segment(xMiniRampCenter, ramp45Height, zWall1_Base, xMiniRampCenter, ramp45Height, zWall2_Base, miniRampDeckWidth, true);
+
+// Transição 1 (curva de 95° para trás no Z)
+let topWall1 = curve95Z(zWall1_Base, ramp45Height, miniRampRadius, xMiniRampCenter, false, 14, miniRampDeckWidth);
+segment(xMiniRampCenter, topWall1[1], topWall1[0], xMiniRampCenter, topWall1[1], topWall1[0] - 2.5, miniRampDeckWidth, true);
+
+// Transição 2 (curva de 95° para frente no Z)
+let topWall2 = curve95Z(zWall2_Base, ramp45Height, miniRampRadius, xMiniRampCenter, true, 14, miniRampDeckWidth);
+segment(xMiniRampCenter, topWall2[1], topWall2[0], xMiniRampCenter, topWall2[1], topWall2[0] + 2.5, miniRampDeckWidth, true);
+
+// ---------- 5. CENÁRIO ----------
+function lampPost(px, pz){
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,5.5,8), new THREE.MeshStandardMaterial({color:0x333333, metalness:0.4}));
+  pole.position.set(px, 2.75, pz);
+  pole.castShadow = true;
+  scene.add(pole);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.35,10,10), new THREE.MeshStandardMaterial({color:0xfff3c4, emissive:0xfff3c4, emissiveIntensity:0.25}));
+  head.position.set(px, 5.4, pz);
+  scene.add(head);
+}
+[[-14,-14],[18,-14],[-14,10],[18,10]].forEach(pp => lampPost(pp[0], pp[1]));
+
+function arvore(px, pz){
+  const g = new THREE.Group();
+  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.3,2,8), new THREE.MeshStandardMaterial({color:0x5a3d2b}));
+  tronco.position.y = 1; tronco.castShadow = true;
+  const copa = new THREE.Mesh(new THREE.SphereGeometry(1.6,10,10), new THREE.MeshStandardMaterial({color:0x3a7a45}));
+  copa.position.y = 2.8; copa.castShadow = true;
+  g.add(tronco, copa);
+  g.position.set(px,0,pz);
+  scene.add(g);
+}
+[[-20,-16],[22,-16],[-20,16],[22,16],[0,-18],[0,18]].forEach(pp => arvore(pp[0], pp[1]));
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

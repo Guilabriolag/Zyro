@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZYRO 3D - Pista Unificada v14</title>
+<title>ZYRO 3D - Pista Unificada v15 (Fechamento Ajustado)</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
@@ -17,10 +17,10 @@
 </head>
 <body>
 <div id="info">
-  🛹 <b>ZYRO 3D v14 — Pista Unificada e Fechada</b><br>
-  • Pistas coladas lateralmente com caixotes paralelos<br>
-  • Platô alto contínuo no topo do mini-ramp<br>
-  • Fechamento sólido em blocos de concreto nas laterais<br>
+  🛹 <b>ZYRO 3D v15 — Geometria de Fechamento Corrigida</b><br>
+  • Preenchimento lateral preciso sem vazamento nas rampas<br>
+  • Paredes de base alinhadas com o contorno da pista<br>
+  • Platôs superiores e mini-ramp com fechamento maciço<br>
   <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
 </div>
 
@@ -41,7 +41,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.target.set(5, 2, 2);
+controls.target.set(5, 2, 2.5);
 controls.enableDamping = true;
 
 const ambient = new THREE.AmbientLight(0xffffff, 0.55);
@@ -53,7 +53,7 @@ sun.shadow.mapSize.set(2048, 2048);
 scene.add(sun);
 
 const concreteMat = new THREE.MeshStandardMaterial({ color: 0xc7c2b6, roughness: 0.85 });
-const wallMat = new THREE.MeshStandardMaterial({ color: 0xa8a398, roughness: 0.95 });
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x9b968a, roughness: 0.95 });
 const metalMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.5, roughness: 0.4 });
 const grassMat = new THREE.MeshStandardMaterial({ color: 0x7a9b5c });
 
@@ -62,8 +62,34 @@ grass.rotation.x = -Math.PI/2;
 grass.receiveShadow = true;
 scene.add(grass);
 
-const RAMP_WIDTH = 5.0; 
+const RAMP_WIDTH = 5.0;
 const THICK = 0.3;
+
+function buildSideWall(x1, y1, x2, y2, zCenter, width){
+  const dx = x2 - x1;
+  const len = Math.abs(dx);
+  const minY = Math.min(y1, y2);
+  const maxY = Math.max(y1, y2);
+  
+  if (maxY <= 0.05) return;
+
+  const wallShape = new THREE.Shape();
+  wallShape.moveTo(x1, 0);
+  wallShape.lineTo(x1, y1);
+  wallShape.lineTo(x2, y2);
+  wallShape.lineTo(x2, 0);
+  wallShape.closePath();
+
+  const extrudeSettings = { depth: width, bevelEnabled: false };
+  const geo = new THREE.ExtrudeGeometry(wallShape, extrudeSettings);
+  const wall = new THREE.Mesh(geo, wallMat);
+  
+  // Posiciona a extrusão no eixo Z correto
+  wall.position.z = zCenter - width / 2;
+  wall.castShadow = true;
+  wall.receiveShadow = true;
+  scene.add(wall);
+}
 
 function segment(x1, y1, z1, x2, y2, z2, width = RAMP_WIDTH){
   const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
@@ -75,15 +101,7 @@ function segment(x1, y1, z1, x2, y2, z2, width = RAMP_WIDTH){
   mesh.castShadow = true; mesh.receiveShadow = true;
   scene.add(mesh);
 
-  // Paredes laterais de fechamento
-  const avgY = (y1 + y2) / 2;
-  if(avgY > 0.2) {
-    const wallGeo = new THREE.BoxGeometry(len, avgY, width);
-    const wall = new THREE.Mesh(wallGeo, wallMat);
-    wall.position.set((x1+x2)/2, avgY/2, (z1+z2)/2);
-    wall.castShadow = true; wall.receiveShadow = true;
-    scene.add(wall);
-  }
+  buildSideWall(x1, y1, x2, y2, z1, width);
 
   return mesh;
 }
@@ -124,10 +142,10 @@ function longRail(xCenter, yTop, z, length){
 }
 
 // ==========================================
-// CONFIGURAÇÃO DE EIXOS (PISTAS COLADAS)
+// CONFIGURAÇÕES GERAIS E EIXOS (COLADOS)
 // ==========================================
-const Z1 = 0;             // Pista Lado 1
-const Z2 = RAMP_WIDTH;    // Pista Lado 2 (Grudada no limite da largura)
+const Z1 = 0;             
+const Z2 = RAMP_WIDTH;    
 
 const miniRampHeight = 3.6;
 const miniRampRadius = 3.6;
@@ -146,10 +164,10 @@ const xP1_MiniBase2 = xP1_MiniBase1 - flatBottomLength;
 segment(xP1_MiniBase1, 0, Z1, xP1_MiniBase2, 0, Z1);
 const topP1_MiniLeft = curveUp(xP1_MiniBase2, 0, miniRampRadius, 95, Z1, -1, 14);
 
-// Platô Alto no final do Mini-Ramp
+// Platô Alto no topo do Mini-Ramp
 segment(xP1_MiniBase1, miniRampHeight, Z1, xP1_MiniBase1 + 2.5, miniRampHeight, Z1);
 
-// 2. Platô Alto na saída do Mini-ramp
+// 2. Platô Alto de ligação
 const plateauHighLen1 = 2.0;
 const xP1_PlateauHighEnd = topP1_MiniLeft[0] - plateauHighLen1;
 segment(topP1_MiniLeft[0], miniRampHeight, Z1, xP1_PlateauHighEnd, miniRampHeight, Z1);
@@ -158,7 +176,7 @@ segment(topP1_MiniLeft[0], miniRampHeight, Z1, xP1_PlateauHighEnd, miniRampHeigh
 const xP1_Ramp45DownEnd = xP1_PlateauHighEnd - miniRampHeight;
 segment(xP1_PlateauHighEnd, miniRampHeight, Z1, xP1_Ramp45DownEnd, 0, Z1);
 
-// 4. Platô Baixo
+// 4. Platô Baixo de entrada
 const xP1_CaixoteStart = xP1_Ramp45DownEnd - 2.5;
 segment(xP1_Ramp45DownEnd, 0, Z1, xP1_CaixoteStart, 0, Z1);
 
@@ -197,7 +215,7 @@ curveUp(xP1_MiniBase1, 0, miniRampRadius, 95, Z2, 1, 14);
 segment(xP1_MiniBase1, 0, Z2, xP1_MiniBase2, 0, Z2);
 const topP2_MiniLeft = curveUp(xP1_MiniBase2, 0, miniRampRadius, 95, Z2, -1, 14);
 
-// Platô Alto no final do Mini-Ramp (Unificado no topo)
+// Platô Alto no topo do Mini-Ramp
 segment(xP1_MiniBase1, miniRampHeight, Z2, xP1_MiniBase1 + 2.5, miniRampHeight, Z2);
 
 // 2. Platô Alto Curto

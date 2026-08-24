@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYRO 3D — Complexo Esportivo Integrado (Ajustado)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
+  #info {
+    position:absolute; top:10px; left:10px; z-index:10;
+    color:#66fcf1; font-size:13px; background:rgba(15,15,26,0.88);
+    padding:10px 14px; border-radius:6px; border:1px solid rgba(102,252,241,0.4);
+    max-width: 460px; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div id="info">
+  🛹🌳🏀 <b>ZYRO 3D — Layout do Complexo Ajustado</b><br>
+  • **Esquerda:** Avenida asfaltada contínua e calçada de passeio livre<br>
+  • **Topo:** Academia ao ar livre acoplada atrás da pracinha circular<br>
+  • **Direita:** Alambrado perimetral contínuo fechando o lado oposto à avenida<br>
+  • **Paisagismo:** Canteiros floridos e árvores distribuídas<br>
+  <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd7dde2);
+scene.fog = new THREE.Fog(0xd7dde2, 80, 220);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0, 50, 40);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0, -10);
+controls.enableDamping = true;
+
+// Iluminação
+scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+const sun = new THREE.DirectionalLight(0xffffff, 0.95);
+sun.position.set(-30, 60, 30);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+scene.add(sun);
+
+// Materiais
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x7ca962, roughness: 0.9 });
+const concreteMat = new THREE.MeshStandardMaterial({ color: 0xc7c2b6, roughness: 0.85 });
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x9b968a, roughness: 0.95 });
+const metalMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.5, roughness: 0.4 });
+const pathMat = new THREE.MeshStandardMaterial({ color: 0xa3a3a3, roughness: 0.8 });
+const roadMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.9 });
+const benchMat = new THREE.MeshStandardMaterial({ color: 0xf4c430, roughness: 0.5 });
+const bushMat = new THREE.MeshStandardMaterial({ color: 0x388e3c, roughness: 0.7 });
+const treeMat = new THREE.MeshStandardMaterial({ color: 0x81c784, roughness: 0.8 });
+const gymEquipMat = new THREE.MeshStandardMaterial({ color: 0x1976d2, metalness: 0.3 });
+const flowerRedMat = new THREE.MeshStandardMaterial({ color: 0xe53935 });
+const flowerYellowMat = new THREE.MeshStandardMaterial({ color: 0xffeb3b });
+const courtFloorMat = new THREE.MeshStandardMaterial({ color: 0x2b5b84, roughness: 0.6 });
+const courtBorderMat = new THREE.MeshStandardMaterial({ color: 0xc7522a, roughness: 0.6 });
+const lineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+const fenceMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, wireframe: true });
+
+// Gramado Base
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(160, 240), grassMat);
+grass.rotation.x = -Math.PI/2;
+grass.receiveShadow = true;
+scene.add(grass);
+
+// ==================================================
+// 1. AVENIDA / RUA (ESQUERDA)
+// ==================================================
+const avenue = new THREE.Mesh(new THREE.PlaneGeometry(10, 200), roadMat);
+avenue.rotation.x = -Math.PI/2;
+avenue.position.set(-22, 0.01, -10);
+avenue.receiveShadow = true;
+scene.add(avenue);
+
+// Faixa Amarela da Avenida
+const roadLine = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 200), flowerYellowMat);
+roadLine.rotation.x = -Math.PI/2;
+roadLine.position.set(-22, 0.02, -10);
+scene.add(roadLine);
+
+// ==================================================
+// 2. CALÇADA PRINCIPAL CONTÍNUA (ESQUERDA)
+// ==================================================
+const mainWalkway = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 180), pathMat);
+mainWalkway.rotation.x = -Math.PI/2;
+mainWalkway.position.set(-14, 0.02, -10);
+mainWalkway.receiveShadow = true;
+scene.add(mainWalkway);
+
+// ==================================================
+// 3. PISTA DE SKATE (CENTRO)
+// ==================================================
+const RAMP_WIDTH = 5.0, THICK = 0.3, Z1 = -2.5, Z2 = 2.5;
+
+function buildSideWall(x1, y1, x2, y2, zCenter, width){
+  if (Math.max(y1, y2) <= 0.05) return;
+  const shape = new THREE.Shape();
+  shape.moveTo(x1, 0); shape.lineTo(x1, y1);
+  shape.lineTo(x2, y2); shape.lineTo(x2, 0); shape.closePath();
+  const wall = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: width, bevelEnabled: false }), wallMat);
+  wall.position.z = zCenter - width / 2;
+  wall.castShadow = true; wall.receiveShadow = true;
+  scene.add(wall);
+}
+
+function segment(x1, y1, z1, x2, y2, z2, width = RAMP_WIDTH){
+  const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+  const len = Math.hypot(dx, dy, dz);
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(len, THICK, width), concreteMat);
+  mesh.position.set((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
+  mesh.rotation.z = Math.atan2(dy, dx);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  scene.add(mesh);
+  buildSideWall(x1, y1, x2, y2, z1, width);
+}
+
+function curveUp(x0, y0, radius, angleDeg, z, dirX, segs = 14){
+  const pts = [];
+  const total = angleDeg * Math.PI / 180;
+  for(let i=0; i<=segs; i++){
+    const t = (i/segs) * total;
+    pts.push([x0 + dirX * radius * Math.sin(t), y0 + radius * (1 - Math.cos(t))]);
+  }
+  for(let i=0; i<segs; i++) segment(pts[i][0], pts[i][1], z, pts[i+1][0], pts[i+1][1], z);
+  return pts[segs];
+}
+
+const miniH = 3.6, miniR = 3.6, flatL = 4.5, runC = 2.0, hipH = 1.4, X_BACK = -16.0;
+
+// Lado Z1
+curveUp(22, 0, miniR, 95, Z1, 1);
+segment(22, 0, Z1, 22 - flatL, 0, Z1);
+const topLeft1 = curveUp(22 - flatL, 0, miniR, 95, Z1, -1);
+segment(22, miniH, Z1, 25, miniH, Z1);
+segment(topLeft1[0], miniH, Z1, topLeft1[0] - 3.5, miniH, Z1);
+segment(topLeft1[0] - 3.5, miniH, Z1, topLeft1[0] - 3.5 - miniH, 0, Z1);
+segment(topLeft1[0] - 3.5 - miniH, 0, Z1, topLeft1[0] - 7.5, 0, Z1);
+segment(topLeft1[0] - 7.5, 0, Z1, topLeft1[0] - 7.5 - runC, hipH, Z1);
+segment(topLeft1[0] - 7.5 - runC, hipH, Z1, topLeft1[0] - 10.5 - runC, hipH, Z1);
+segment(topLeft1[0] - 10.5 - runC, hipH, Z1, topLeft1[0] - 10.5 - 2*runC, 0, Z1);
+segment(topLeft1[0] - 10.5 - 2*runC, 0, Z1, X_BACK, 0, Z1);
+
+// Lado Z2
+curveUp(22, 0, miniR, 95, Z2, 1);
+segment(22, 0, Z2, 22 - flatL, 0, Z2);
+const topLeft2 = curveUp(22 - flatL, 0, miniR, 95, Z2, -1);
+segment(22, miniH, Z2, 25, miniH, Z2);
+segment(topLeft2[0], miniH, Z2, topLeft2[0] - 1.8, miniH, Z2);
+for(let i=0; i<12; i++){
+  const t1 = (i/12)*(Math.PI/2), t2 = ((i+1)/12)*(Math.PI/2);
+  segment(topLeft2[0] - 1.8 - miniR*(1-Math.cos(t1)), miniH - miniR*Math.sin(t1), Z2,
+          topLeft2[0] - 1.8 - miniR*(1-Math.cos(t2)), miniH - miniR*Math.sin(t2), Z2);
+}
+segment(topLeft2[0] - 1.8 - miniR, 0, Z2, topLeft2[0] - 7.5, 0, Z2);
+segment(topLeft2[0] - 7.5, 0, Z2, topLeft2[0] - 7.5 - runC, hipH, Z2);
+segment(topLeft2[0] - 7.5 - runC, hipH, Z2, topLeft2[0] - 10.5 - runC, hipH, Z2);
+segment(topLeft2[0] - 10.5 - runC, hipH, Z2, topLeft2[0] - 10.5 - 2*runC, 0, Z2);
+segment(topLeft2[0] - 10.5 - 2*runC, 0, Z2, X_BACK, 0, Z2);
+
+// ==================================================
+// 4. MEIA QUADRA DE BASQUETE (FUNDO / DIREITA)
+// ==================================================
+const courtL = 12.0, courtW = 10.0, courtX = 25.0;
+const courtFloor = new THREE.Mesh(new THREE.BoxGeometry(courtL, 0.08, courtW), courtFloorMat);
+courtFloor.position.set(courtX + courtL/2, 0.04, 0);
+scene.add(courtFloor);
+
+const courtBorder = new THREE.Mesh(new THREE.BoxGeometry(courtL + 0.6, 0.06, courtW + 0.6), courtBorderMat);
+courtBorder.position.set(courtX + courtL/2, 0.03, 0);
+scene.add(courtBorder);
+
+// Tabela
+const hoop = new THREE.Group();
+const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 4.0, 12), metalMat); pole.position.y = 2.0; hoop.add(pole);
+const board = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.1, 1.7), lineMat); board.position.set(-0.6, 3.3, 0); hoop.add(board);
+const rim = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.03, 8, 16), new THREE.MeshStandardMaterial({ color: 0xff4500 }));
+rim.rotation.x = Math.PI/2; rim.position.set(-0.9, 2.95, 0); hoop.add(rim);
+hoop.position.set(courtX + courtL - 0.5, 0, 0);
+scene.add(hoop);
+
+// ==================================================
+// 5. PRACINHA CIRCULAR & ACADEMIA AO AR LIVRE (TOPO)
+// ==================================================
+const parkX = -22.0;
+
+// Rotatória da Pracinha
+const plaza = new THREE.Mesh(new THREE.RingGeometry(3.5, 8.5, 32), pathMat);
+plaza.rotation.x = -Math.PI/2; plaza.position.set(parkX, 0.02, 0);
+scene.add(plaza);
+
+const centerBed = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 0.3, 24), bushMat);
+centerBed.position.set(parkX, 0.15, 0);
+scene.add(centerBed);
+
+// Academia ao Ar Livre (Atrás da Pracinha)
+const gymPath = new THREE.Mesh(new THREE.PlaneGeometry(12, 10), pathMat);
+gymPath.rotation.x = -Math.PI/2; gymPath.position.set(parkX - 12, 0.02, 0);
+scene.add(gymPath);
+
+function addGymEquipment(x, z){
+  const eq = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.8), gymEquipMat); base.position.y = 0.9; eq.add(base);
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.04, 8, 12), metalMat); handle.position.y = 1.6; eq.add(handle);
+  eq.position.set(x, 0, z);
+  scene.add(eq);
+}
+addGymEquipment(parkX - 14, -2.5); addGymEquipment(parkX - 14, 2.5);
+addGymEquipment(parkX - 10, -2.5); addGymEquipment(parkX - 10, 2.5);
+
+// ==================================================
+// 6. ALAMBRADO PERIMETRAL (LADO DIREITO E FUNDO)
+// ==================================================
+const fenceH = 3.5;
+function addFence(x1, z1, x2, z2){
+  const dx = x2 - x1, dz = z2 - z1;
+  const len = Math.hypot(dx, dz);
+  const fence = new THREE.Mesh(new THREE.BoxGeometry(len, fenceH, 0.06), fenceMat);
+  fence.position.set((x1+x2)/2, fenceH/2, (z1+z2)/2);
+  fence.rotation.y = Math.atan2(dz, dx);
+  scene.add(fence);
+}
+
+// Alambrado contornando o lado oposto à rua
+addFence(courtX + courtL + 1, -courtW/2 - 2, courtX + courtL + 1, courtW/2 + 2); // Fundo Quadra
+addFence(-16, courtW/2 + 2, courtX + courtL + 1, courtW/2 + 2); // Lateral Direita Inteira
+
+// ==================================================
+// 7. PAISAGISMO (CANTEIROS E ÁRVORES)
+// ==================================================
+function addTree(x, z){
+  const t = new THREE.Group();
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 2.5), new THREE.MeshStandardMaterial({color:0x5a3d2b})); trunk.position.y = 1.25; t.add(trunk);
+  const foliage = new THREE.Mesh(new THREE.SphereGeometry(1.8, 12, 12), treeMat); foliage.position.y = 3.2; t.add(foliage);
+  t.position.set(x, 0, z);
+  scene.add(t);
+}
+
+// Árvores verde-claro conforme marcações no mapa
+[[-14, -8], [-14, 8], [-2, 8], [8, 8], [18, 8], [-28, -6], [-28, 6]].forEach(pt => addTree(pt[0], pt[1]));
+
+// Canteiros Curvados
+function addBushBed(x, z, w, h, rot){
+  const b = new THREE.Mesh(new THREE.BoxGeometry(w, 0.2, h), bushMat);
+  b.position.set(x, 0.1, z); b.rotation.y = rot;
+  scene.add(b);
+}
+addBushBed(-18, 7, 8, 2, -0.3);
+addBushBed(-18, -7, 8, 2, 0.3);
+addBushBed(-8, 7, 10, 2, 0);
+
+// Loop de Animação
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

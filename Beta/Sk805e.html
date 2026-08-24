@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYRO 3D - Meia Quadra Isolada</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
+  #info {
+    position:absolute; top:10px; left:10px; z-index:10;
+    color:#66fcf1; font-size:13px; background:rgba(15,15,26,0.85);
+    padding:10px 14px; border-radius:6px; border:1px solid rgba(102,252,241,0.4);
+    max-width: 420px; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div id="info">
+  🏀 <b>Meia Quadra de Basquete — Protótipo Isolado</b><br>
+  • Comprimento ampliado para melhor proporção de jogo<br>
+  • Cesta invertida para o lado correto de ataque<br>
+  • Alambrados no fundo e lateral<br>
+  <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd7dde2);
+scene.fog = new THREE.Fog(0xd7dde2, 40, 120);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(12, 12, 18);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.5, 0);
+controls.enableDamping = true;
+
+const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+sun.position.set(-10, 20, 15);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+scene.add(sun);
+
+// Materiais
+const courtFloorMat = new THREE.MeshStandardMaterial({ color: 0x2b5b84, roughness: 0.6 });
+const courtBorderMat = new THREE.MeshStandardMaterial({ color: 0xc7522a, roughness: 0.6 });
+const lineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+const metalMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.5, roughness: 0.4 });
+const fenceMat = new THREE.MeshStandardMaterial({ color: 0x444444, wireframe: true });
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x7a9b5c });
+
+// Gramado
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), grassMat);
+grass.rotation.x = -Math.PI/2;
+grass.receiveShadow = true;
+scene.add(grass);
+
+// Dimensões Ampliadas da Meia Quadra
+const COURT_LENGTH = 14.0; // Mais comprida
+const COURT_WIDTH = 10.0;  // Mesma largura total das 2 pistas
+const FENCE_HEIGHT = 3.8;
+
+// Grupo Central da Quadra
+const courtGroup = new THREE.Group();
+
+// Piso Principal
+const floor = new THREE.Mesh(new THREE.BoxGeometry(COURT_LENGTH, 0.08, COURT_WIDTH), courtFloorMat);
+floor.position.set(0, 0.04, 0);
+floor.receiveShadow = true;
+courtGroup.add(floor);
+
+// Borda Externa em tom contrastante
+const border = new THREE.Mesh(new THREE.BoxGeometry(COURT_LENGTH + 0.8, 0.06, COURT_WIDTH + 0.8), courtBorderMat);
+border.position.set(0, 0.03, 0);
+border.receiveShadow = true;
+courtGroup.add(border);
+
+// Marcações em Linha
+function addLine(x, z, w, d){
+  const line = new THREE.Mesh(new THREE.BoxGeometry(w, 0.09, d), lineMat);
+  line.position.set(x, 0.045, z);
+  courtGroup.add(line);
+}
+
+// Linhas do Garrafão (Lado oposto - Cesta no fundo em X positivo)
+const basketX = COURT_LENGTH / 2 - 1.2;
+
+// Garrafão
+addLine(basketX - 2.5, 0, 5.0, 3.6);
+addLine(basketX - 5.0, 0, 0.1, 3.6);
+
+// Arco de 3 Pontos
+const arcGeo = new THREE.RingGeometry(5.8, 5.92, 32, 1, Math.PI / 2, Math.PI);
+const arcMesh = new THREE.Mesh(arcGeo, lineMat);
+arcMesh.rotation.x = -Math.PI / 2;
+arcMesh.position.set(basketX, 0.085, 0);
+courtGroup.add(arcMesh);
+
+// Estrutura do Alambrado (Fundo da cesta + Lateral fechada em Z positivo)
+function addFencePanel(x, y, z, w, h, d){
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), fenceMat);
+  mesh.position.set(x, y, z);
+  courtGroup.add(mesh);
+}
+
+// Alambrado de Fundo (Atrás da cesta)
+addFencePanel(COURT_LENGTH / 2, FENCE_HEIGHT / 2, 0, 0.1, FENCE_HEIGHT, COURT_WIDTH);
+
+// Alambrado Lateral Fechado
+addFencePanel(0, FENCE_HEIGHT / 2, COURT_WIDTH / 2, COURT_LENGTH, FENCE_HEIGHT, 0.1);
+
+// Postes de Sustentação
+function fencePost(px, pz){
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, FENCE_HEIGHT, 8), metalMat);
+  post.position.set(px, FENCE_HEIGHT / 2, pz);
+  post.castShadow = true;
+  courtGroup.add(post);
+}
+
+fencePost(COURT_LENGTH / 2, -COURT_WIDTH / 2);
+fencePost(COURT_LENGTH / 2, COURT_WIDTH / 2);
+fencePost(-COURT_LENGTH / 2, COURT_WIDTH / 2);
+fencePost(0, COURT_WIDTH / 2);
+
+// Tabela e Cesta de Basquete (Virada para o centro da quadra)
+const hoopGroup = new THREE.Group();
+
+const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 4.0, 12), metalMat);
+pole.position.set(0, 2.0, 0);
+pole.castShadow = true;
+hoopGroup.add(pole);
+
+// Braço de suporte
+const arm = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.1, 0.1), metalMat);
+arm.position.set(-0.4, 3.3, 0);
+hoopGroup.add(arm);
+
+// Tabela
+const backboard = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.1, 1.7), lineMat);
+backboard.position.set(-0.8, 3.4, 0);
+backboard.castShadow = true;
+hoopGroup.add(backboard);
+
+// Aro
+const rim = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.03, 8, 16), new THREE.MeshStandardMaterial({ color: 0xff4500 }));
+rim.rotation.x = Math.PI / 2;
+rim.position.set(-1.1, 3.05, 0);
+rim.castShadow = true;
+hoopGroup.add(rim);
+
+hoopGroup.position.set(basketX + 0.8, 0, 0);
+courtGroup.add(hoopGroup);
+
+scene.add(courtGroup);
+
+// Iluminação da Quadra (Refletores)
+function courtLight(px, pz){
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 6.0, 8), metalMat);
+  pole.position.set(px, 3.0, pz);
+  pole.castShadow = true;
+  scene.add(pole);
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.2, 0.4), metalMat);
+  head.position.set(px, 6.0, pz);
+  scene.add(head);
+
+  const spot = new THREE.SpotLight(0xfff3c4, 1.2, 25, Math.PI / 3, 0.4);
+  spot.position.set(px, 5.9, pz);
+  spot.target.position.set(px, 0, 0);
+  scene.add(spot);
+  scene.add(spot.target);
+}
+
+courtLight(COURT_LENGTH / 2 - 1, COURT_WIDTH / 2 + 0.5);
+courtLight(-COURT_LENGTH / 2 + 1, COURT_WIDTH / 2 + 0.5);
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

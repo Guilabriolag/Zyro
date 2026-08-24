@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYRO 3D - Pracinha de Exercícios Isolada</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
+  #info {
+    position:absolute; top:10px; left:10px; z-index:10;
+    color:#66fcf1; font-size:13px; background:rgba(15,15,26,0.85);
+    padding:10px 14px; border-radius:6px; border:1px solid rgba(102,252,241,0.4);
+    max-width: 420px; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div id="info">
+  🌳🏋️ <b>Pracinha de Exercícios — Protótipo Isolado</b><br>
+  • Caminhos cinzas com praça central circular<br>
+  • Canteiros floridos verdes centrais e laterais<br>
+  • Bancos amarelos voltados para os caminhos<br>
+  • Área de academia ao ar livre na parte inferior<br>
+  <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd7dde2);
+scene.fog = new THREE.Fog(0xd7dde2, 50, 150);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0, 25, 25);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0, 0);
+controls.enableDamping = true;
+
+// Iluminação
+const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+sun.position.set(-15, 30, 20);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+scene.add(sun);
+
+// Materiais
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x6b8e4e, roughness: 0.9 });
+const pathMat = new THREE.MeshStandardMaterial({ color: 0x9e9e9e, roughness: 0.8 });
+const benchMat = new THREE.MeshStandardMaterial({ color: 0xf4c430, roughness: 0.5 }); // Amarelo
+const benchFrameMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.3 });
+const bushMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.7 });
+const flowerRedMat = new THREE.MeshStandardMaterial({ color: 0xe53935 });
+const flowerYellowMat = new THREE.MeshStandardMaterial({ color: 0xffeb3b });
+const gymFloorMat = new THREE.MeshStandardMaterial({ color: 0x757575, roughness: 0.7 });
+const gymEquipMat = new THREE.MeshStandardMaterial({ color: 0x1e88e5, metalness: 0.6, roughness: 0.3 }); // Azul
+
+// Gramado Base
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(60, 80), grassMat);
+grass.rotation.x = -Math.PI/2;
+grass.receiveShadow = true;
+scene.add(grass);
+
+const parkGroup = new THREE.Group();
+
+// --------------------------------------------------
+// 1. CAMINHOS E CALÇADAS (CINZA)
+// --------------------------------------------------
+function addPath(w, h, x, z, rot=0) {
+  const geo = new THREE.PlaneGeometry(w, h);
+  const mesh = new THREE.Mesh(geo, pathMat);
+  mesh.rotation.x = -Math.PI/2;
+  mesh.rotation.z = rot;
+  mesh.position.set(x, 0.01, z);
+  mesh.receiveShadow = true;
+  parkGroup.add(mesh);
+}
+
+// Caminho Lateral Principal (Esquerda no desenho)
+addPath(2.5, 50, -10, 0);
+
+// Conector do caminho lateral para a praça circular
+addPath(2.5, 3.5, -7.5, -6, Math.PI/2);
+
+// Praça Circular Central
+const ringGeo = new THREE.RingGeometry(3.5, 8.5, 32);
+const ringMesh = new THREE.Mesh(ringGeo, pathMat);
+ringMesh.rotation.x = -Math.PI/2;
+ringMesh.position.set(0, 0.01, -6);
+ringMesh.receiveShadow = true;
+parkGroup.add(ringMesh);
+
+// Caminhos que descem da praça circular até a academia
+addPath(2.2, 10, -4, 2);
+addPath(2.2, 10, 4, 2);
+
+// Área da Academia ao Ar Livre (Piso Retangular na parte inferior)
+const gymArea = new THREE.Mesh(new THREE.PlaneGeometry(14, 9), gymFloorMat);
+gymArea.rotation.x = -Math.PI/2;
+gymArea.position.set(0, 0.012, 11);
+gymArea.receiveShadow = true;
+parkGroup.add(gymArea);
+
+// Bordas do piso da academia
+const gymBorder = new THREE.Mesh(new THREE.BoxGeometry(14.4, 0.05, 9.4), pathMat);
+gymBorder.position.set(0, 0.01, 11);
+parkGroup.add(gymBorder);
+
+
+// --------------------------------------------------
+// 2. CANTEIROS E FLORES (VERDE)
+// --------------------------------------------------
+function addFlowerBed(w, h, x, z, rot=0) {
+  const g = new THREE.Group();
+  const bed = new THREE.Mesh(new THREE.BoxGeometry(w, 0.3, h), bushMat);
+  bed.castShadow = true; bed.receiveShadow = true;
+  g.add(bed);
+
+  // Detalhes de flores no canteiro
+  const numFlowers = Math.floor(w * h * 1.5);
+  for(let i=0; i<numFlowers; i++){
+    const mat = Math.random() > 0.5 ? flowerRedMat : flowerYellowMat;
+    const fl = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), mat);
+    fl.position.set(
+      (Math.random() - 0.5) * (w - 0.2),
+      0.2,
+      (Math.random() - 0.5) * (h - 0.2)
+    );
+    g.add(fl);
+  }
+  g.position.set(x, 0.15, z);
+  g.rotation.y = rot;
+  parkGroup.add(g);
+}
+
+// Canteiro Central da Rotatória (Centro do círculo)
+const centerBed = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 0.35, 24), bushMat);
+centerBed.position.set(0, 0.17, -6);
+centerBed.castShadow = true;
+parkGroup.add(centerBed);
+
+// Flores no canteiro central
+for(let i=0; i<25; i++){
+  const r = Math.random() * 2.6;
+  const a = Math.random() * Math.PI * 2;
+  const mat = Math.random() > 0.5 ? flowerRedMat : flowerYellowMat;
+  const fl = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), mat);
+  fl.position.set(Math.cos(a)*r, 0.4, -6 + Math.sin(a)*r);
+  parkGroup.add(fl);
+}
+
+// Canteiro Topo (Barra Verde Superior)
+addFlowerBed(14, 1.2, 0, -17);
+
+// Canteiro Lateral Direita (Topo)
+addFlowerBed(1.2, 7, 9.5, -6);
+
+// Canteiro Lateral Esquerda (Meio)
+addFlowerBed(1.2, 8, -6, 2);
+
+// Canteiros Lateral Direita (Meio e Baixo)
+addFlowerBed(1.2, 6, 6.5, 1);
+addFlowerBed(1.2, 6, 8, 9);
+
+
+// --------------------------------------------------
+// 3. BANCOS DE PRACINHA (AMARELOS)
+// --------------------------------------------------
+function addBench(x, z, rotY) {
+  const g = new THREE.Group();
+  
+  // Assento amarelo
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.08, 0.5), benchMat);
+  seat.position.y = 0.45;
+  seat.castShadow = true;
+  g.add(seat);
+
+  // Encosto amarelo
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.4, 0.06), benchMat);
+  back.position.set(0, 0.7, -0.22);
+  back.castShadow = true;
+  g.add(back);
+
+  // Pés pretos
+  [-0.8, 0.8].forEach(px => {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.45, 0.48), benchFrameMat);
+    leg.position.set(px, 0.225, 0);
+    g.add(leg);
+  });
+
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parkGroup.add(g);
+}
+
+// Bancos da Rotatória (virados para a calçada)
+addBench(-3.2, -12.5, Math.PI / 6);
+addBench(3.2, -12.5, -Math.PI / 6);
+
+// Banco entre os caminhos centrais (virado para o caminho)
+addBench(0, -1.8, 0);
+
+
+// --------------------------------------------------
+// 4. ACADEMIA AO AR LIVRE (AZUL)
+// --------------------------------------------------
+function addGymEquipment(x, z, type) {
+  const g = new THREE.Group();
+  
+  if(type === 'twister') {
+    // Aparelho Rotação Dupla
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.8, 12), gymEquipMat);
+    pole.position.y = 0.9;
+    g.add(pole);
+    [-0.5, 0.5].forEach(dx => {
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.06, 16), gymEquipMat);
+      disc.position.set(dx, 0.1, 0);
+      g.add(disc);
+      const handle = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.03, 8, 16), gymEquipMat);
+      handle.position.set(dx, 1.4, 0);
+      g.add(handle);
+    });
+  } else if(type === 'simulator') {
+    // Simulador de Caminhada
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.6, 0.8), gymEquipMat);
+    frame.position.y = 0.8;
+    g.add(frame);
+  } else {
+    // Barra / Aparelho de Alongamento
+    const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.0, 12), gymEquipMat);
+    p1.position.set(-0.6, 1.0, 0);
+    const p2 = p1.clone();
+    p2.position.set(0.6, 1.0, 0);
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.3, 12), gymEquipMat);
+    bar.rotation.z = Math.PI/2;
+    bar.position.set(0, 1.9, 0);
+    g.add(p1, p2, bar);
+  }
+
+  g.position.set(x, 0, z);
+  parkGroup.add(g);
+}
+
+// Aparelhos de Academia Azuis na área inferior
+addGymEquipment(-4, 9.5, 'twister');
+addGymEquipment(4, 9.5, 'simulator');
+addGymEquipment(-3.5, 13, 'stretch');
+addGymEquipment(3.5, 13, 'twister');
+
+scene.add(parkGroup);
+
+// Iluminação da Praça (Postes)
+function parkLamp(x, z){
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 4.0, 8), benchFrameMat);
+  pole.position.set(x, 2.0, z);
+  pole.castShadow = true;
+  scene.add(pole);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 10), new THREE.MeshStandardMaterial({color:0xfff3c4, emissive:0xfff3c4, emissiveIntensity:0.3}));
+  head.position.set(x, 4.0, z);
+  scene.add(head);
+}
+
+parkLamp(-8, -6);
+parkLamp(8, -6);
+parkLamp(0, 11);
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

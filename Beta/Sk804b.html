@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZYRO 3D - Pista Dupla Paralela v10</title>
+<title>ZYRO 3D - Pista Dupla Paralela v11</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
@@ -17,9 +17,10 @@
 </head>
 <body>
 <div id="info">
-  🛹 <b>ZYRO 3D v10 — Pista Dupla Paralela</b><br>
-  • Pista 1 (Z=0): Platô elevado com 45° curva + Mini-ramp<br>
-  • Pista 2 (Z=8): Extensão com 45° curva até o platô + Mini-ramp integrado<br>
+  🛹 <b>ZYRO 3D v11 — Pista Dupla Paralela</b><br>
+  • Pista 1 (Z=0): Layout padrão + Mini-ramp<br>
+  • Pista 2 (Z=8): Platô curto → 45° curva → Caixote → Platô baixo → Rampa 45° padrão<br>
+  • Mini-ramp paralelo no final<br>
   <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
 </div>
 
@@ -117,7 +118,7 @@ function longRail(xCenter, yTop, z, length){
 }
 
 // ==========================================
-// ---------- PISTA 1 (Z = 0) - ELEVADA ----------
+// ---------- PISTA 1 (Z = 0) ----------
 // ==========================================
 const Z1 = 0;
 const run1 = 1.6;
@@ -153,8 +154,8 @@ segment(xQuarterBase1 - radius1, radius1, Z1, xQuarterBase1 - radius1 - 4.0, rad
 const xRampBase1 = xDownEnd1 + GAP;
 segment(xDownEnd1, 0, Z1, xRampBase1, 0, Z1);
 
-const ramp45Height1 = 3.2; 
-const topCurve1 = curveUp(xRampBase1, 0, ramp45Height1, 45, Z1, 1, 14, RAMP_WIDTH);
+const ramp45Height = 3.2; 
+const topCurve1 = curveUp(xRampBase1, 0, ramp45Height, 45, Z1, 1, 14, RAMP_WIDTH);
 
 const plateau45Length = 2.5;
 const xPlateau45End1 = topCurve1[0] + plateau45Length;
@@ -173,35 +174,44 @@ segment(topWall2[0], topWall2[1], Z1, topWall2[0] + 3.0, topWall2[1], Z1);
 
 
 // ===================================================
-// ---------- PISTA 2 (Z = 8) - FLUXO CONTINUO ----------
+// ---------- PISTA 2 (Z = 8) - AJUSTADA ----------
 // ===================================================
 const Z2 = 8;
-const hipHeight2 = 1.0;
+const startPlateauHeight = 3.2;
+const shortPlateauLength = 1.2; // Platô bem curto
 
-// Entrada da 45° curva na descida/início
-const topCurveStart2 = curveUp(xQuarterBase1 - radius1, radius1, 3.2, 45, Z2, 1, 14, RAMP_WIDTH);
-segment(xQuarterBase1 - radius1 - 3.0, radius1, Z2, topCurveStart2[0], radius1, Z2);
+// 1. Platô curto inicial no topo
+const xStartP2 = xQuarterBase1 - radius1 - 3.0;
+const xShortPlateauEnd = xStartP2 + shortPlateauLength;
+segment(xStartP2, startPlateauHeight, Z2, xShortPlateauEnd, startPlateauHeight, Z2);
 
-// Caixote Central Pista 2
+// 2. Rampa 45° curva descendo para o chão (y=0)
+const topCurveStart2 = curveUp(xShortPlateauEnd, 0, startPlateauHeight, 45, Z2, 1, 14, RAMP_WIDTH);
+
+// Platô reto na base no chão conectando ao caixote
+segment(topCurveStart2[0], 0, Z2, xUpStart1, 0, Z2);
+
+// 3. Caixote paralelo
+const hipHeight2 = 1.4;
 segment(xUpStart1, 0, Z2, xUpEnd1, hipHeight2, Z2);
 segment(xUpEnd1, hipHeight2, Z2, xDownStart1, hipHeight2, Z2);
 segment(xDownStart1, hipHeight2, Z2, xDownEnd1, 0, Z2);
 longRail(0, hipHeight2 + THICK/2, Z2, topFlat + 0.4);
 
-// Extensão após o caixote
-const xExtendStart2 = xDownEnd1;
-const xExtendEnd2 = xRampBase1 + 4.0;
-segment(xExtendStart2, 0, Z2, xExtendEnd2, 0, Z2);
+// 4. Platô baixo na saída do caixote
+const xLowPlateauEnd = xDownEnd1 + 3.0;
+segment(xDownEnd1, 0, Z2, xLowPlateauEnd, 0, Z2);
 
-// 45° Curva subindo até a altura do platô
-const topCurveEnd2 = curveUp(xExtendEnd2, 0, miniRampRadius, 45, Z2, 1, 14, RAMP_WIDTH);
+// 5. Rampa de 45° reta subindo até a altura padrão (3.2)
+const xRampTopP2 = xLowPlateauEnd + ramp45Height;
+segment(xLowPlateauEnd, 0, Z2, xRampTopP2, ramp45Height, Z2);
 
-// Platô intermediário conectando a subida da 45° curva ao Mini-ramp
-const xPlateauEnd2 = topCurveEnd2[0] + 2.5;
-segment(topCurveEnd2[0], topCurveEnd2[1], Z2, xPlateauEnd2, topCurveEnd2[1], Z2);
+// Platô superior final da 45° da Pista 2
+const xPlateau45End2 = xRampTopP2 + plateau45Length;
+segment(xRampTopP2, ramp45Height, Z2, xPlateau45End2, ramp45Height, Z2);
 
-// Mini-ramp acoplado no final da Pista 2
-const xP2_Wall1_Base = xPlateauEnd2 + miniRampRadius;
+// 6. Mini-ramp paralelo acoplado
+const xP2_Wall1_Base = xPlateau45End2 + miniRampRadius;
 curveUp(xP2_Wall1_Base, 0, miniRampRadius, 95, Z2, -1, 14, RAMP_WIDTH);
 
 const xP2_Wall2_Base = xP2_Wall1_Base + flatBottomLength;

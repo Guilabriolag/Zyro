@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYRO 3D - Pista + Meia Quadra de Basquete v18</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { overflow:hidden; background:#0b0c10; font-family:'Segoe UI',sans-serif; }
+  #info {
+    position:absolute; top:10px; left:10px; z-index:10;
+    color:#66fcf1; font-size:13px; background:rgba(15,15,26,0.85);
+    padding:10px 14px; border-radius:6px; border:1px solid rgba(102,252,241,0.4);
+    max-width: 420px; line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div id="info">
+  🛹🏀 <b>ZYRO 3D v18 — Pista de Skate + Meia Quadra</b><br>
+  • Meia quadra acoplada no fundo do mini-ramp<br>
+  • Largura idêntica à soma das duas pistas (10m)<br>
+  • Alambrados na lateral e no fundo da cesta<br>
+  <span style="color:#aaa; font-size:11px;">Arraste para girar | Scroll para zoom</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd7dde2);
+scene.fog = new THREE.Fog(0xd7dde2, 50, 140);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(38, 22, 30);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(12, 2, 2.5);
+controls.enableDamping = true;
+
+const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+scene.add(ambient);
+const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+sun.position.set(-15, 25, 18);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+scene.add(sun);
+
+const concreteMat = new THREE.MeshStandardMaterial({ color: 0xc7c2b6, roughness: 0.85 });
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x9b968a, roughness: 0.95 });
+const metalMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.5, roughness: 0.4 });
+const courtFloorMat = new THREE.MeshStandardMaterial({ color: 0x2b5b84, roughness: 0.6 });
+const lineMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
+const fenceMat = new THREE.MeshStandardMaterial({ color: 0x555555, wireframe: true });
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x7a9b5c });
+
+const grass = new THREE.Mesh(new THREE.PlaneGeometry(180, 180), grassMat);
+grass.rotation.x = -Math.PI/2;
+grass.receiveShadow = true;
+scene.add(grass);
+
+const RAMP_WIDTH = 5.0;
+const THICK = 0.3;
+
+function buildSideWall(x1, y1, x2, y2, zCenter, width){
+  const maxY = Math.max(y1, y2);
+  if (maxY <= 0.05) return;
+
+  const wallShape = new THREE.Shape();
+  wallShape.moveTo(x1, 0);
+  wallShape.lineTo(x1, y1);
+  wallShape.lineTo(x2, y2);
+  wallShape.lineTo(x2, 0);
+  wallShape.closePath();
+
+  const extrudeSettings = { depth: width, bevelEnabled: false };
+  const geo = new THREE.ExtrudeGeometry(wallShape, extrudeSettings);
+  const wall = new THREE.Mesh(geo, wallMat);
+  
+  wall.position.z = zCenter - width / 2;
+  wall.castShadow = true;
+  wall.receiveShadow = true;
+  scene.add(wall);
+}
+
+function segment(x1, y1, z1, x2, y2, z2, width = RAMP_WIDTH){
+  const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+  const len = Math.hypot(dx, dy, dz);
+  const geo = new THREE.BoxGeometry(len, THICK, width);
+  const mesh = new THREE.Mesh(geo, concreteMat);
+  mesh.position.set((x1+x2)/2, (y1+y2)/2, (z1+z2)/2);
+  mesh.rotation.z = Math.atan2(dy, dx);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  scene.add(mesh);
+
+  buildSideWall(x1, y1, x2, y2, z1, width);
+  return mesh;
+}
+
+function curveUp(x0, y0, radius, angleDeg, z, dirX, segs = 14, width = RAMP_WIDTH){
+  const pts = [];
+  const totalAngle = angleDeg * Math.PI / 180;
+
+  for(let i=0; i<=segs; i++){
+    const t = (i/segs) * totalAngle;
+    const px = x0 + dirX * radius * Math.sin(t);
+    const py = y0 + radius * (1 - Math.cos(t));
+    pts.push([px, py]);
+  }
+
+  for(let i=0; i<segs; i++){
+    segment(pts[i][0], pts[i][1], z, pts[i+1][0], pts[i+1][1], z, width);
+  }
+  return pts[segs];
+}
+
+function longRail(xCenter, yTop, z, length){
+  const g = new THREE.Group();
+  const barHeight = 0.42;
+  [-length/2, length/2].forEach(xOff => {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035, barHeight, 8), metalMat);
+    post.position.set(xOff, barHeight/2, 0);
+    post.castShadow = true;
+    g.add(post);
+  });
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03, length, 8), metalMat);
+  bar.rotation.z = Math.PI/2;
+  bar.position.set(0, barHeight, 0);
+  bar.castShadow = true;
+  g.add(bar);
+  g.position.set(xCenter, yTop, z);
+  scene.add(g);
+}
+
+// ==========================================
+// CONFIGURAÇÕES GERAIS E EIXOS
+// ==========================================
+const Z1 = 0;             
+const Z2 = RAMP_WIDTH;    
+
+const miniRampHeight = 3.6;
+const miniRampRadius = 3.6;
+const flatBottomLength = 4.5;
+const topFlat = 3.0;
+const runCaixote = 2.0;
+const hipHeight = 1.4;
+
+const X_BACK_LIMIT = -16.0;
+
+// ==========================================
+// ---------- LADO 1 (Z = 0) ----------
+// ==========================================
+const xP1_MiniBase1 = 22;
+curveUp(xP1_MiniBase1, 0, miniRampRadius, 95, Z1, 1, 14);
+const xP1_MiniBase2 = xP1_MiniBase1 - flatBottomLength;
+segment(xP1_MiniBase1, 0, Z1, xP1_MiniBase2, 0, Z1);
+const topP1_MiniLeft = curveUp(xP1_MiniBase2, 0, miniRampRadius, 95, Z1, -1, 14);
+
+segment(xP1_MiniBase1, miniRampHeight, Z1, xP1_MiniBase1 + 4.0, miniRampHeight, Z1);
+
+const plateauHighLen1 = 3.5;
+const xP1_PlateauHighEnd = topP1_MiniLeft[0] - plateauHighLen1;
+segment(topP1_MiniLeft[0], miniRampHeight, Z1, xP1_PlateauHighEnd, miniRampHeight, Z1);
+
+const xP1_Ramp45DownEnd = xP1_PlateauHighEnd - miniRampHeight;
+segment(xP1_PlateauHighEnd, miniRampHeight, Z1, xP1_Ramp45DownEnd, 0, Z1);
+
+const xP1_CaixoteStart = xP1_Ramp45DownEnd - 4.0;
+segment(xP1_Ramp45DownEnd, 0, Z1, xP1_CaixoteStart, 0, Z1);
+
+const xP1_CaixoteTopStart = xP1_CaixoteStart - runCaixote;
+const xP1_CaixoteTopEnd = xP1_CaixoteTopStart - topFlat;
+const xP1_CaixoteDownEnd = xP1_CaixoteTopEnd - runCaixote;
+
+segment(xP1_CaixoteStart, 0, Z1, xP1_CaixoteTopStart, hipHeight, Z1);
+segment(xP1_CaixoteTopStart, hipHeight, Z1, xP1_CaixoteTopEnd, hipHeight, Z1);
+segment(xP1_CaixoteTopEnd, hipHeight, Z1, xP1_CaixoteDownEnd, 0, Z1);
+longRail((xP1_CaixoteTopStart + xP1_CaixoteTopEnd)/2, hipHeight + THICK/2, Z1, topFlat + 0.4);
+
+const xP1_QuarterBase = xP1_CaixoteDownEnd - 4.5;
+segment(xP1_CaixoteDownEnd, 0, Z1, xP1_QuarterBase, 0, Z1);
+
+const radius90 = 4.5;
+for(let i=0; i<12; i++){
+  const t1 = (i/12) * (Math.PI/2);
+  const t2 = ((i+1)/12) * (Math.PI/2);
+  const px1 = xP1_QuarterBase - radius90 * Math.sin(t1);
+  const py1 = radius90 * (1 - Math.cos(t1));
+  const px2 = xP1_QuarterBase - radius90 * Math.sin(t2);
+  const py2 = radius90 * (1 - Math.cos(t2));
+  segment(px1, py1, Z1, px2, py2, Z1);
+}
+segment(xP1_QuarterBase - radius90, radius90, Z1, X_BACK_LIMIT, radius90, Z1);
+
+// ==========================================
+// ---------- LADO 2 (Z = 5) ----------
+// ==========================================
+curveUp(xP1_MiniBase1, 0, miniRampRadius, 95, Z2, 1, 14);
+segment(xP1_MiniBase1, 0, Z2, xP1_MiniBase2, 0, Z2);
+const topP2_MiniLeft = curveUp(xP1_MiniBase2, 0, miniRampRadius, 95, Z2, -1, 14);
+
+segment(xP1_MiniBase1, miniRampHeight, Z2, xP1_MiniBase1 + 4.0, miniRampHeight, Z2);
+
+const plateauShortLen2 = 1.8;
+const xP2_PlateauShortEnd = topP2_MiniLeft[0] - plateauShortLen2;
+segment(topP2_MiniLeft[0], miniRampHeight, Z2, xP2_PlateauShortEnd, miniRampHeight, Z2);
+
+for(let i=0; i<12; i++){
+  const t1 = (i/12) * (Math.PI/2);
+  const t2 = ((i+1)/12) * (Math.PI/2);
+  const px1 = xP2_PlateauShortEnd - miniRampRadius * (1 - Math.cos(t1));
+  const py1 = miniRampHeight - miniRampRadius * Math.sin(t1);
+  const px2 = xP2_PlateauShortEnd - miniRampRadius * (1 - Math.cos(t2));
+  const py2 = miniRampHeight - miniRampRadius * Math.sin(t2);
+  segment(px1, py1, Z2, px2, py2, Z2);
+}
+
+const xP2_DropBottom = xP2_PlateauShortEnd - miniRampRadius;
+segment(xP2_DropBottom, 0, Z2, xP1_CaixoteStart, 0, Z2);
+
+segment(xP1_CaixoteStart, 0, Z2, xP1_CaixoteTopStart, hipHeight, Z2);
+segment(xP1_CaixoteTopStart, hipHeight, Z2, xP1_CaixoteTopEnd, hipHeight, Z2);
+segment(xP1_CaixoteTopEnd, hipHeight, Z2, xP1_CaixoteDownEnd, 0, Z2);
+longRail((xP1_CaixoteTopStart + xP1_CaixoteTopEnd)/2, hipHeight + THICK/2, Z2, topFlat + 0.4);
+
+const xP2_Ramp45Top = X_BACK_LIMIT + 3.5; 
+const xP2_Ramp45Start = xP2_Ramp45Top + miniRampHeight;
+
+segment(xP1_CaixoteDownEnd, 0, Z2, xP2_Ramp45Start, 0, Z2);
+segment(xP2_Ramp45Start, 0, Z2, xP2_Ramp45Top, miniRampHeight, Z2);
+segment(xP2_Ramp45Top, miniRampHeight, Z2, X_BACK_LIMIT, miniRampHeight, Z2);
+
+// ==========================================
+// ---------- MEIA QUADRA DE BASQUETE ----------
+// ==========================================
+const courtLength = 12.0; 
+const courtWidth = RAMP_WIDTH * 2; // 10.0m de largura unificada
+const courtXStart = xP1_MiniBase1 + 4.0; // Encostado no final da rampa
+const courtXEnd = courtXStart + courtLength;
+const courtZMin = -RAMP_WIDTH / 2;
+const courtZMax = RAMP_WIDTH + RAMP_WIDTH / 2;
+
+// Piso da Quadra
+const courtFloor = new THREE.Mesh(
+  new THREE.BoxGeometry(courtLength, 0.05, courtWidth),
+  courtFloorMat
+);
+courtFloor.position.set(courtXStart + courtLength/2, 0.025, (courtZMin + courtZMax)/2);
+courtFloor.receiveShadow = true;
+scene.add(courtFloor);
+
+// Estrutura do Alambrado (Fundo e Lateral ZMax)
+const fenceHeight = 3.5;
+
+function addFencePanel(x, y, z, w, h, d, rotY = 0){
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), fenceMat);
+  mesh.position.set(x, y, z);
+  mesh.rotation.y = rotY;
+  scene.add(mesh);
+}
+
+// Alambrado de Fundo (Atrás da cesta - x = courtXStart)
+addFencePanel(courtXStart, fenceHeight/2, (courtZMin + courtZMax)/2, 0.1, fenceHeight, courtWidth);
+
+// Alambrado Lateral (Z = courtZMax)
+addFencePanel(courtXStart + courtLength/2, fenceHeight/2, courtZMax, courtLength, fenceHeight, 0.1);
+
+// Postes do Alambrado
+function fencePost(px, pz){
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, fenceHeight, 8), metalMat);
+  post.position.set(px, fenceHeight/2, pz);
+  post.castShadow = true;
+  scene.add(post);
+}
+fencePost(courtXStart, courtZMin);
+fencePost(courtXStart, courtZMax);
+fencePost(courtXStart + courtLength, courtZMax);
+fencePost(courtXStart + courtLength/2, courtZMax);
+
+// Tabela e Cesta de Basquete
+const hoopGroup = new THREE.Group();
+const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.8, 12), metalMat);
+pole.position.set(0, 1.9, 0);
+pole.castShadow = true;
+hoopGroup.add(pole);
+
+const backboard = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.1, 1.6), lineMat);
+backboard.position.set(-0.3, 3.2, 0);
+backboard.castShadow = true;
+hoopGroup.add(backboard);
+
+const rim = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.03, 8, 16), new THREE.MeshStandardMaterial({color: 0xff4500}));
+rim.rotation.x = Math.PI/2;
+rim.position.set(-0.6, 2.9, 0);
+rim.castShadow = true;
+hoopGroup.add(rim);
+
+hoopGroup.position.set(courtXStart + 1.2, 0, (courtZMin + courtZMax)/2);
+scene.add(hoopGroup);
+
+// Marcações em Linha Branca
+function courtLine(x, z, w, d){
+  const line = new THREE.Mesh(new THREE.BoxGeometry(w, 0.06, d), lineMat);
+  line.position.set(x, 0.055, z);
+  scene.add(line);
+}
+// Garrafão
+courtLine(courtXStart + 2.4, (courtZMin + courtZMax)/2, 4.8, 3.6);
+
+// ---------- CENÁRIO ----------
+function lampPost(px, pz){
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,5.5,8), new THREE.MeshStandardMaterial({color:0x333333, metalness:0.4}));
+  pole.position.set(px, 2.75, pz);
+  pole.castShadow = true;
+  scene.add(pole);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.35,10,10), new THREE.MeshStandardMaterial({color:0xfff3c4, emissive:0xfff3c4, emissiveIntensity:0.25}));
+  head.position.set(px, 5.4, pz);
+  scene.add(head);
+}
+[[-18,-8],[38,-8],[-18,16],[38,16]].forEach(pp => lampPost(pp[0], pp[1]));
+
+function arvore(px, pz){
+  const g = new THREE.Group();
+  const tronco = new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.3,2,8), new THREE.MeshStandardMaterial({color:0x5a3d2b}));
+  tronco.position.y = 1; tronco.castShadow = true;
+  const copa = new THREE.Mesh(new THREE.SphereGeometry(1.6,10,10), new THREE.MeshStandardMaterial({color:0x3a7a45}));
+  copa.position.y = 2.8; copa.castShadow = true;
+  g.add(tronco, copa);
+  g.position.set(px,0,pz);
+  scene.add(g);
+}
+[[-24,-12],[42,-12],[-24,18],[42,18],[4,-12],[4,18]].forEach(pp => arvore(pp[0], pp[1]));
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

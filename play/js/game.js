@@ -1,848 +1,1289 @@
-/* ============================================================
-   ZYRO — STYLE.CSS
-   Interface do container do jogo
-   Compatível com game.js v18
-   ============================================================ */
-
-:root {
-  --bg: #0b0e14;
-  --panel: rgba(16, 20, 28, 0.94);
-  --panel-soft: rgba(16, 20, 28, 0.78);
-
-  --border: #26344a;
-  --border-soft: rgba(95, 208, 160, 0.28);
-
-  --accent: #5fd0a0;
-  --accent-soft: rgba(95, 208, 160, 0.18);
-
-  --text: #c9d3e0;
-  --muted: #6c7891;
-
-  --danger: #e0705f;
-}
-
-/* ============================================================
-   RESET
-   ============================================================ */
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-
-  overflow: hidden;
-
-  background: var(--bg);
-
-  font-family:
-    "SF Mono",
-    "JetBrains Mono",
-    "Courier New",
-    monospace;
-
-  color: var(--text);
-
-  touch-action: none;
-  overscroll-behavior: none;
-}
-
-/* ============================================================
-   CONTAINER PRINCIPAL
-   ============================================================ */
-
-#game-shell {
-  position: fixed;
-  inset: 0;
-
-  width: 100vw;
-  height: 100vh;
-
-  overflow: hidden;
-
-  background: var(--bg);
-}
-
-/* ============================================================
-   CANVAS THREE.JS
-   ============================================================ */
-
-#zyro-canvas {
-  position: absolute;
-
-  inset: 0;
-
-  display: block;
-
-  width: 100%;
-  height: 100%;
-
-  outline: none;
-
-  touch-action: none;
-
-  z-index: 1;
-}
-
-/* ============================================================
-   HUD SUPERIOR
-   ============================================================ */
-
-#hud-top {
-  position: fixed;
-
-  top: 0;
-  left: 0;
-  right: 0;
-
-  z-index: 10;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  padding:
-    max(14px, env(safe-area-inset-top))
-    16px
-    10px;
-
-  pointer-events: none;
-}
-
-#hud-title {
-  font-size: 11px;
-
-  letter-spacing: 0.14em;
-
-  text-transform: uppercase;
-
-  color: var(--muted);
-
-  text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.7);
-}
-
-#hud-title b {
-  color: var(--accent);
-
-  font-weight: 600;
-}
-
-#hud-coords {
-  font-size: 11px;
-
-  line-height: 1.5;
-
-  text-align: right;
-
-  color: var(--muted);
-
-  text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.7);
-}
-
-#hud-coords span {
-  color: var(--text);
-}
-
-/* ============================================================
-   BOTÃO DE PAUSE / MENU
-   ============================================================ */
-
-#pause-btn {
-  position: fixed;
-
-  top:
-    max(14px, env(safe-area-inset-top));
-
-  right: 16px;
-
-  z-index: 20;
-
-  width: 42px;
-  height: 42px;
-
-  border-radius: 50%;
-
-  border: 1px solid var(--border);
-
-  background: var(--panel-soft);
-
-  color: var(--accent);
-
-  font-family: inherit;
-
-  font-size: 13px;
-
-  backdrop-filter: blur(8px);
-
-  cursor: pointer;
-
-  pointer-events: auto;
-}
-
-#pause-btn:active {
-  background: var(--accent-soft);
-
-  transform: scale(0.96);
-}
-
-/* ============================================================
-   JOYSTICK
-   ============================================================ */
-
-#joy-zone {
-  position: fixed;
-
-  left: 0;
-  bottom: 0;
-
-  z-index: 15;
-
-  width: min(220px, 44vw);
-  height: min(220px, 44vw);
-
-  margin:
-    0
-    0
-    max(24px, env(safe-area-inset-bottom))
-    24px;
-
-  border-radius: 50%;
-
-  touch-action: none;
-
-  pointer-events: auto;
-}
-
-#joy-base {
-  position: absolute;
-
-  inset: 0;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(95, 208, 160, 0.04),
-      rgba(255, 255, 255, 0.015)
+// ============================================================
+// ZYRO — GAME.JS
+// Núcleo do jogo
+// Jogador + câmera + joystick + movimento + gravidade
+// ============================================================
+
+(() => {
+  "use strict";
+
+  // ==========================================================
+  // CONFIGURAÇÃO
+  // ==========================================================
+
+  const CONFIG = {
+    player: {
+      height: 1.8,
+      radius: 0.35,
+      speed: 5.0,
+      jumpForce: 6.5,
+      gravity: 18.0
+    },
+
+    camera: {
+      distance: 7.5,
+      height: 4.5,
+      lookHeight: 1.0,
+      smooth: 7.0
+    },
+
+    world: {
+      minX: -80,
+      maxX: 80,
+      minZ: -45,
+      maxZ: 55
+    }
+  };
+
+
+  // ==========================================================
+  // ESTADO GLOBAL ZYRO
+  // ==========================================================
+
+  const ZYRO = {
+
+    scene: null,
+    camera: null,
+    renderer: null,
+    controls: null,
+
+    player: null,
+    playerMesh: null,
+
+    paused: false,
+
+    clock: null,
+
+    input: {
+      x: 0,
+      z: 0,
+      jump: false,
+      action: false
+    },
+
+    state: {
+      initialized: false
+    },
+
+    pause() {
+      this.paused = !this.paused;
+      return this.paused;
+    },
+
+    getState() {
+      return {
+        paused: this.paused,
+        player: this.player,
+        input: this.input
+      };
+    }
+  };
+
+
+  window.ZYRO = ZYRO;
+
+
+  // ==========================================================
+  // CENA
+  // ==========================================================
+
+  const scene = new THREE.Scene();
+
+  scene.background =
+    new THREE.Color(0xd7dde2);
+
+  scene.fog =
+    new THREE.Fog(
+      0xd7dde2,
+      70,
+      180
     );
 
-  border: 1px solid var(--border);
-
-  box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.18),
-    0 4px 20px rgba(0, 0, 0, 0.18);
-
-  backdrop-filter: blur(4px);
-
-  pointer-events: none;
-}
-
-#joy-knob {
-  position: absolute;
-
-  left: 29%;
-  top: 29%;
-
-  width: 42%;
-  height: 42%;
-
-  border-radius: 50%;
-
-  background: var(--accent-soft);
-
-  border: 1px solid var(--accent);
-
-  box-shadow:
-    0 0 18px rgba(95, 208, 160, 0.12);
-
-  transform: translate(0, 0);
-
-  transition: transform 0.04s linear;
-
-  pointer-events: none;
-}
-
-/* ============================================================
-   ÁREA DOS BOTÕES DE AÇÃO
-   ============================================================ */
-
-#action-controls {
-  position: fixed;
-
-  right: 0;
-  bottom: 0;
-
-  z-index: 15;
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  gap: 14px;
-
-  margin:
-    0
-    24px
-    max(30px, env(safe-area-inset-bottom))
-    0;
-
-  pointer-events: auto;
-}
-
-/* ============================================================
-   BOTÃO DE PULO
-   ============================================================ */
-
-#jump-btn,
-#action-btn {
-  width: 64px;
-  height: 64px;
-
-  border-radius: 50%;
-
-  background: var(--panel);
-
-  border: 1px solid var(--accent);
-
-  color: var(--accent);
-
-  font-family: inherit;
-
-  font-size: 10px;
-
-  letter-spacing: 0.06em;
-
-  text-transform: uppercase;
-
-  cursor: pointer;
-
-  backdrop-filter: blur(8px);
-
-  box-shadow:
-    0 5px 20px rgba(0, 0, 0, 0.25);
-
-  touch-action: manipulation;
-}
-
-#jump-btn:active,
-#action-btn:active {
-  background: var(--accent-soft);
-
-  transform: scale(0.94);
-}
-
-/* ============================================================
-   CASO OS BOTÕES NÃO ESTEJAM DENTRO DE #action-controls
-   ============================================================ */
-
-#jump-btn {
-  position: fixed;
-
-  right: 104px;
-
-  bottom:
-    max(30px, env(safe-area-inset-bottom));
-
-  z-index: 15;
-}
-
-#action-btn {
-  position: fixed;
-
-  right: 24px;
-
-  bottom:
-    max(30px, env(safe-area-inset-bottom));
-
-  z-index: 15;
-}
-
-/*
-   Se o HTML colocar os dois dentro de #action-controls,
-   estas regras de position ainda funcionam de forma segura
-   para a primeira versão.
-*/
-
-/* ============================================================
-   PAINEL LATERAL
-   ============================================================ */
-
-#panel-toggle {
-  position: fixed;
-
-  top:
-    max(14px, env(safe-area-inset-top));
-
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  z-index: 20;
-
-  padding: 8px 16px;
-
-  border-radius: 20px;
-
-  border: 1px solid var(--border);
-
-  background: var(--panel);
-
-  color: var(--text);
-
-  font-family: inherit;
-
-  font-size: 11px;
-
-  letter-spacing: 0.08em;
-
-  text-transform: uppercase;
-
-  cursor: pointer;
-
-  pointer-events: auto;
-
-  backdrop-filter: blur(8px);
-}
-
-#panel-toggle:active {
-  background: var(--accent-soft);
-}
-
-/* ============================================================
-   PAINEL
-   ============================================================ */
-
-#panel {
-  position: fixed;
-
-  top: 0;
-  right: 0;
-
-  z-index: 30;
-
-  width: min(300px, 82vw);
-  height: 100%;
-
-  padding:
-    max(20px, env(safe-area-inset-top))
-    16px
-    max(16px, env(safe-area-inset-bottom));
-
-  overflow-y: auto;
-
-  background: var(--panel);
-
-  border-left: 1px solid var(--border);
-
-  backdrop-filter: blur(10px);
-
-  transform: translateX(100%);
-
-  transition:
-    transform 0.25s ease;
-
-  pointer-events: auto;
-}
-
-#panel.open {
-  transform: translateX(0);
-}
-
-#panel h2 {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  margin: 0 0 14px;
-
-  color: var(--muted);
-
-  font-size: 12px;
-
-  letter-spacing: 0.12em;
-
-  text-transform: uppercase;
-}
-
-#panel h2 button {
-  border: 0;
-
-  background: transparent;
-
-  color: var(--muted);
-
-  font-family: inherit;
-
-  font-size: 18px;
-
-  cursor: pointer;
-}
-
-/* ============================================================
-   ENTIDADES
-   ============================================================ */
-
-.entity-row {
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 10px 0;
-
-  border-bottom: 1px solid var(--border);
-
-  font-size: 12px;
-}
-
-.entity-dot {
-  width: 10px;
-  height: 10px;
-
-  flex-shrink: 0;
-
-  border-radius: 2px;
-}
-
-.entity-info {
-  flex: 1;
-
-  min-width: 0;
-}
-
-.entity-info b {
-  display: block;
-
-  color: var(--text);
-
-  font-size: 12px;
-}
-
-.entity-info span {
-  display: block;
-
-  color: var(--muted);
-
-  font-size: 10px;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-}
-
-.entity-remove {
-  padding: 4px 8px;
-
-  border: 1px solid var(--danger);
-
-  border-radius: 6px;
-
-  background: transparent;
-
-  color: var(--danger);
-
-  font-family: inherit;
-
-  font-size: 10px;
-
-  cursor: pointer;
-}
-
-.empty-note {
-  padding: 12px 0;
-
-  color: var(--muted);
-
-  font-size: 11px;
-
-  line-height: 1.6;
-}
-
-/* ============================================================
-   LISTA DE SPAWN
-   ============================================================ */
-
-#spawn-list {
-  margin-top: 20px;
-}
-
-.spawn-btn {
-  width: 100%;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  margin-bottom: 8px;
-
-  padding: 10px 12px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 8px;
-
-  background: rgba(255, 255, 255, 0.025);
-
-  color: var(--text);
-
-  font-family: inherit;
-
-  font-size: 12px;
-
-  text-align: left;
-
-  cursor: pointer;
-}
-
-.spawn-btn:active {
-  background: var(--accent-soft);
-
-  border-color: var(--accent);
-}
-
-/* ============================================================
-   PAINEL DE PAUSE
-   ============================================================ */
-
-#pause-overlay {
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 40;
-
-  display: none;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background: rgba(5, 8, 12, 0.58);
-
-  backdrop-filter: blur(5px);
-
-  pointer-events: auto;
-}
-
-#pause-overlay.show {
-  display: flex;
-}
-
-#pause-card {
-  width: min(340px, 82vw);
-
-  padding: 24px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 14px;
-
-  background: var(--panel);
-
-  text-align: center;
-
-  box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.35);
-}
-
-#pause-card h2 {
-  margin-bottom: 8px;
-
-  color: var(--accent);
-
-  font-size: 16px;
-
-  letter-spacing: 0.08em;
-
-  text-transform: uppercase;
-}
-
-#pause-card p {
-  color: var(--muted);
-
-  font-size: 11px;
-
-  line-height: 1.6;
-}
-
-/* ============================================================
-   TOAST / EVENTOS
-   ============================================================ */
-
-#event-toast {
-  position: fixed;
-
-  left: 50%;
-  bottom:
-    max(150px, calc(env(safe-area-inset-bottom) + 150px));
-
-  z-index: 25;
-
-  max-width: 82vw;
-
-  padding: 10px 16px;
-
-  border: 1px solid var(--border);
-
-  border-radius: 8px;
-
-  background: var(--panel);
-
-  color: var(--text);
-
-  font-size: 11px;
-
-  text-align: center;
-
-  opacity: 0;
-
-  pointer-events: none;
-
-  transform:
-    translateX(-50%)
-    translateY(20px);
-
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-#event-toast.show {
-  opacity: 1;
-
-  transform:
-    translateX(-50%)
-    translateY(0);
-}
-
-#event-toast b {
-  color: var(--accent);
-}
-
-/* ============================================================
-   ESTADO PAUSADO
-   ============================================================ */
-
-body.paused #joy-zone,
-body.paused #jump-btn,
-body.paused #action-btn {
-  opacity: 0.45;
-}
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
-
-@media (max-width: 700px) {
-
-  #hud-title {
-    font-size: 9px;
+  ZYRO.scene = scene;
+
+
+  // ==========================================================
+  // CÂMERA
+  // ==========================================================
+
+  const camera =
+    new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth /
+      window.innerHeight,
+      0.1,
+      1000
+    );
+
+  camera.position.set(
+    8,
+    6,
+    10
+  );
+
+  ZYRO.camera = camera;
+
+
+  // ==========================================================
+  // RENDERER
+  // ==========================================================
+
+  const renderer =
+    new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: "high-performance"
+    });
+
+  renderer.setPixelRatio(
+    Math.min(
+      window.devicePixelRatio || 1,
+      2
+    )
+  );
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+  );
+
+  renderer.shadowMap.enabled = true;
+
+  renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+  renderer.outputEncoding =
+    THREE.sRGBEncoding;
+
+  renderer.domElement.id =
+    "zyro-canvas";
+
+  const shell =
+    document.getElementById(
+      "game-shell"
+    );
+
+  if (shell) {
+    shell.appendChild(
+      renderer.domElement
+    );
+  } else {
+    document.body.appendChild(
+      renderer.domElement
+    );
   }
 
-  #hud-coords {
-    font-size: 9px;
+  ZYRO.renderer = renderer;
+
+
+  // ==========================================================
+  // ILUMINAÇÃO
+  // ==========================================================
+
+  const ambient =
+    new THREE.AmbientLight(
+      0xffffff,
+      0.65
+    );
+
+  scene.add(ambient);
+
+
+  const sun =
+    new THREE.DirectionalLight(
+      0xffffff,
+      1.1
+    );
+
+  sun.position.set(
+    -25,
+    45,
+    25
+  );
+
+  sun.castShadow = true;
+
+  sun.shadow.mapSize.set(
+    2048,
+    2048
+  );
+
+  sun.shadow.camera.left = -80;
+  sun.shadow.camera.right = 80;
+  sun.shadow.camera.top = 80;
+  sun.shadow.camera.bottom = -80;
+
+  scene.add(sun);
+
+
+  // ==========================================================
+  // CÂMERA DE TERCEIRA PESSOA
+  // ==========================================================
+
+  let cameraYaw = Math.PI;
+  let cameraPitch = 0.28;
+
+  let cameraTarget =
+    new THREE.Vector3();
+
+  let cameraPosition =
+    new THREE.Vector3();
+
+  let cameraLook =
+    new THREE.Vector3();
+
+
+  // ==========================================================
+  // JOGADOR
+  // ==========================================================
+
+  const player = {
+
+    x: -4,
+    y: 0,
+    z: 7,
+
+    vx: 0,
+    vy: 0,
+    vz: 0,
+
+    grounded: true,
+
+    radius:
+      CONFIG.player.radius,
+
+    height:
+      CONFIG.player.height,
+
+    speed:
+      CONFIG.player.speed
+  };
+
+  ZYRO.player = player;
+
+
+  // ==========================================================
+  // MATERIAL DO PLAYER
+  // ==========================================================
+
+  const playerMaterial =
+    new THREE.MeshStandardMaterial({
+      color: 0x5fd0a0,
+      roughness: 0.65
+    });
+
+
+  // Corpo
+
+  const body =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        0.35,
+        0.9,
+        6,
+        12
+      ),
+      playerMaterial
+    );
+
+  body.position.y =
+    0.85;
+
+  body.castShadow = true;
+
+  body.receiveShadow = true;
+
+  scene.add(body);
+
+  ZYRO.playerMesh = body;
+
+
+  // ==========================================================
+  // MARCADOR DE DIREÇÃO
+  // ==========================================================
+
+  const directionMaterial =
+    new THREE.MeshStandardMaterial({
+      color: 0xffffff
+    });
+
+  const direction =
+    new THREE.Mesh(
+      new THREE.ConeGeometry(
+        0.12,
+        0.35,
+        8
+      ),
+      directionMaterial
+    );
+
+  direction.rotation.x =
+    Math.PI / 2;
+
+  direction.position.set(
+    0,
+    0.95,
+    -0.48
+  );
+
+  body.add(direction);
+
+
+  // ==========================================================
+  // INPUT
+  // ==========================================================
+
+  const keys = {};
+
+
+  window.addEventListener(
+    "keydown",
+    event => {
+
+      keys[
+        event.key.toLowerCase()
+      ] = true;
+
+      if (
+        event.key === " "
+      ) {
+
+        event.preventDefault();
+
+        ZYRO.input.jump =
+          true;
+      }
+
+    }
+  );
+
+
+  window.addEventListener(
+    "keyup",
+    event => {
+
+      keys[
+        event.key.toLowerCase()
+      ] = false;
+
+    }
+  );
+
+
+  // ==========================================================
+  // JOYSTICK
+  // ==========================================================
+
+  const joyZone =
+    document.getElementById(
+      "joy-zone"
+    );
+
+  const joyKnob =
+    document.getElementById(
+      "joy-knob"
+    );
+
+  let joystickActive = false;
+
+  let joystickPointerId = null;
+
+  let joystickCenter = {
+    x: 0,
+    y: 0
+  };
+
+  let joystickVector = {
+    x: 0,
+    y: 0
+  };
+
+
+  function getJoystickCenter() {
+
+    if (!joyZone) {
+      return {
+        x: 0,
+        y: 0
+      };
+    }
+
+    const rect =
+      joyZone.getBoundingClientRect();
+
+    return {
+      x:
+        rect.left +
+        rect.width / 2,
+
+      y:
+        rect.top +
+        rect.height / 2
+    };
+
   }
 
-  #panel {
-    width: min(320px, 88vw);
+
+  function joystickStart(
+    pointerId,
+    x,
+    y
+  ) {
+
+    if (!joyZone)
+      return;
+
+    joystickActive =
+      true;
+
+    joystickPointerId =
+      pointerId;
+
+    joystickCenter =
+      getJoystickCenter();
+
+    joystickMove(
+      x,
+      y
+    );
+
   }
 
-  #joy-zone {
-    width: min(190px, 42vw);
-    height: min(190px, 42vw);
 
-    margin-left: 18px;
+  function joystickMove(
+    x,
+    y
+  ) {
+
+    if (
+      !joystickActive
+    )
+      return;
+
+    const rect =
+      joyZone.getBoundingClientRect();
+
+    const maxRadius =
+      rect.width / 2;
+
+    let dx =
+      x -
+      joystickCenter.x;
+
+    let dy =
+      y -
+      joystickCenter.y;
+
+    const distance =
+      Math.hypot(
+        dx,
+        dy
+      );
+
+    if (
+      distance >
+      maxRadius
+    ) {
+
+      dx =
+        dx /
+        distance *
+        maxRadius;
+
+      dy =
+        dy /
+        distance *
+        maxRadius;
+
+    }
+
+    joystickVector.x =
+      dx /
+      maxRadius;
+
+    joystickVector.y =
+      dy /
+      maxRadius;
+
+    if (joyKnob) {
+
+      joyKnob.style.transform =
+        `translate(${dx}px, ${dy}px)`;
+
+    }
+
   }
 
-  #jump-btn {
-    right: 96px;
+
+  function joystickEnd() {
+
+    joystickActive =
+      false;
+
+    joystickPointerId =
+      null;
+
+    joystickVector.x = 0;
+    joystickVector.y = 0;
+
+    if (joyKnob) {
+
+      joyKnob.style.transform =
+        "translate(0,0)";
+
+    }
+
   }
 
-  #action-btn {
-    right: 18px;
+
+  if (joyZone) {
+
+    joyZone.addEventListener(
+      "pointerdown",
+      event => {
+
+        event.preventDefault();
+
+        joyZone.setPointerCapture(
+          event.pointerId
+        );
+
+        joystickStart(
+          event.pointerId,
+          event.clientX,
+          event.clientY
+        );
+
+      }
+    );
+
+
+    joyZone.addEventListener(
+      "pointermove",
+      event => {
+
+        if (
+          event.pointerId !==
+          joystickPointerId
+        )
+          return;
+
+        event.preventDefault();
+
+        joystickMove(
+          event.clientX,
+          event.clientY
+        );
+
+      }
+    );
+
+
+    joyZone.addEventListener(
+      "pointerup",
+      event => {
+
+        if (
+          event.pointerId !==
+          joystickPointerId
+        )
+          return;
+
+        joystickEnd();
+
+      }
+    );
+
+
+    joyZone.addEventListener(
+      "pointercancel",
+      joystickEnd
+    );
+
   }
 
-}
 
-/* ============================================================
-   TELAS MUITO PEQUENAS
-   ============================================================ */
+  // ==========================================================
+  // BOTÃO DE PULO
+  // ==========================================================
 
-@media (max-height: 520px) {
+  const jumpButton =
+    document.getElementById(
+      "jump-btn"
+    );
 
-  #joy-zone {
-    width: 145px;
-    height: 145px;
 
-    margin-bottom: 14px;
+  if (jumpButton) {
+
+    jumpButton.addEventListener(
+      "pointerdown",
+      event => {
+
+        event.preventDefault();
+
+        ZYRO.input.jump =
+          true;
+
+      }
+    );
+
   }
 
-  #jump-btn,
-  #action-btn {
-    width: 54px;
-    height: 54px;
 
-    bottom: 18px;
+  // ==========================================================
+  // BOTÃO DE INTERAÇÃO
+  // ==========================================================
+
+  const actionButton =
+    document.getElementById(
+      "action-btn"
+    );
+
+
+  if (actionButton) {
+
+    actionButton.addEventListener(
+      "pointerdown",
+      event => {
+
+        event.preventDefault();
+
+        ZYRO.input.action =
+          true;
+
+      }
+    );
+
   }
 
-  #jump-btn {
-    right: 88px;
+
+  // ==========================================================
+  // MOVIMENTO DO JOGADOR
+  // ==========================================================
+
+  function updateInput() {
+
+    let x =
+      joystickVector.x;
+
+    let z =
+      joystickVector.y;
+
+
+    // Teclado
+
+    if (
+      keys["a"] ||
+      keys["arrowleft"]
+    ) {
+
+      x -= 1;
+
+    }
+
+
+    if (
+      keys["d"] ||
+      keys["arrowright"]
+    ) {
+
+      x += 1;
+
+    }
+
+
+    if (
+      keys["w"] ||
+      keys["arrowup"]
+    ) {
+
+      z -= 1;
+
+    }
+
+
+    if (
+      keys["s"] ||
+      keys["arrowdown"]
+    ) {
+
+      z += 1;
+
+    }
+
+
+    const length =
+      Math.hypot(
+        x,
+        z
+      );
+
+
+    if (
+      length > 1
+    ) {
+
+      x /= length;
+      z /= length;
+
+    }
+
+
+    ZYRO.input.x =
+      x;
+
+    ZYRO.input.z =
+      z;
+
   }
 
-  #action-btn {
-    right: 16px;
+
+  // ==========================================================
+  // MOVIMENTO RELATIVO À CÂMERA
+  // ==========================================================
+
+  function updatePlayer(
+    dt
+  ) {
+
+    updateInput();
+
+
+    if (
+      ZYRO.paused
+    ) {
+
+      player.vx = 0;
+      player.vz = 0;
+
+      return;
+
+    }
+
+
+    let inputX =
+      ZYRO.input.x;
+
+    let inputZ =
+      ZYRO.input.z;
+
+
+    const inputLength =
+      Math.hypot(
+        inputX,
+        inputZ
+      );
+
+
+    if (
+      inputLength >
+      0.05
+    ) {
+
+      inputX /=
+        Math.max(
+          inputLength,
+          1
+        );
+
+      inputZ /=
+        Math.max(
+          inputLength,
+          1
+        );
+
+
+      // Direção horizontal da câmera
+
+      const forwardX =
+        -Math.sin(
+          cameraYaw
+        );
+
+      const forwardZ =
+        -Math.cos(
+          cameraYaw
+        );
+
+
+      const rightX =
+        Math.cos(
+          cameraYaw
+        );
+
+      const rightZ =
+        -Math.sin(
+          cameraYaw
+        );
+
+
+      const moveX =
+        rightX * inputX +
+        forwardX * (-inputZ);
+
+
+      const moveZ =
+        rightZ * inputX +
+        forwardZ * (-inputZ);
+
+
+      player.vx =
+        moveX *
+        player.speed;
+
+      player.vz =
+        moveZ *
+        player.speed;
+
+
+      // Rotaciona o personagem
+
+      const angle =
+        Math.atan2(
+          moveX,
+          moveZ
+        );
+
+      body.rotation.y =
+        angle;
+
+    } else {
+
+      player.vx *=
+        Math.pow(
+          0.001,
+          dt
+        );
+
+      player.vz *=
+        Math.pow(
+          0.001,
+          dt
+        );
+
+    }
+
+
+    // Movimento horizontal
+
+    player.x +=
+      player.vx *
+      dt;
+
+    player.z +=
+      player.vz *
+      dt;
+
+
+    // Limites provisórios do mundo
+
+    player.x =
+      Math.max(
+        CONFIG.world.minX,
+        Math.min(
+          CONFIG.world.maxX,
+          player.x
+        )
+      );
+
+    player.z =
+      Math.max(
+        CONFIG.world.minZ,
+        Math.min(
+          CONFIG.world.maxZ,
+          player.z
+        )
+      );
+
+
+    // ======================================================
+    // PULO
+    // ======================================================
+
+    if (
+      ZYRO.input.jump &&
+      player.grounded
+    ) {
+
+      player.vy =
+        CONFIG.player.jumpForce;
+
+      player.grounded =
+        false;
+
+    }
+
+    ZYRO.input.jump =
+      false;
+
+
+    // ======================================================
+    // GRAVIDADE
+    // ======================================================
+
+    player.vy -=
+      CONFIG.player.gravity *
+      dt;
+
+    player.y +=
+      player.vy *
+      dt;
+
+
+    // Chão provisório
+
+    if (
+      player.y <= 0
+    ) {
+
+      player.y = 0;
+
+      player.vy = 0;
+
+      player.grounded =
+        true;
+
+    }
+
+
+    // Atualiza mesh
+
+    body.position.set(
+      player.x,
+      player.y +
+      CONFIG.player.height / 2,
+      player.z
+    );
+
   }
 
-}
 
-/* ============================================================
-   DESKTOP
-   ============================================================ */
+  // ==========================================================
+  // CÂMERA
+  // ==========================================================
 
-@media (min-width: 1000px) {
+  function updateCamera(
+    dt
+  ) {
 
-  #joy-zone {
-    width: 180px;
-    height: 180px;
+    const target =
+      new THREE.Vector3(
+        player.x,
+        player.y +
+        CONFIG.camera.lookHeight,
+        player.z
+      );
+
+
+    cameraTarget.lerp(
+      target,
+      1 -
+      Math.exp(
+        -CONFIG.camera.smooth *
+        dt
+      )
+    );
+
+
+    const horizontalDistance =
+      CONFIG.camera.distance *
+      Math.cos(
+        cameraPitch
+      );
+
+
+    const verticalDistance =
+      CONFIG.camera.distance *
+      Math.sin(
+        cameraPitch
+      );
+
+
+    const desiredX =
+      player.x +
+      Math.sin(
+        cameraYaw
+      ) *
+      horizontalDistance;
+
+
+    const desiredZ =
+      player.z +
+      Math.cos(
+        cameraYaw
+      ) *
+      horizontalDistance;
+
+
+    const desiredY =
+      player.y +
+      CONFIG.camera.height +
+      verticalDistance;
+
+
+    cameraPosition.set(
+      desiredX,
+      desiredY,
+      desiredZ
+    );
+
+
+    camera.position.lerp(
+      cameraPosition,
+      1 -
+      Math.exp(
+        -CONFIG.camera.smooth *
+        dt
+      )
+    );
+
+
+    cameraLook.copy(
+      cameraTarget
+    );
+
+
+    camera.lookAt(
+      cameraLook
+    );
+
   }
 
-  #jump-btn,
-  #action-btn {
-    width: 58px;
-    height: 58px;
+
+  // ==========================================================
+  // CÂMERA TOUCH / MOUSE
+  // Arrastar fora do joystick gira a câmera.
+  // ==========================================================
+
+  let cameraDragging =
+    false;
+
+  let cameraPointerId =
+    null;
+
+  let lastPointerX = 0;
+  let lastPointerY = 0;
+
+
+  renderer.domElement.addEventListener(
+    "pointerdown",
+    event => {
+
+      if (
+        event.pointerType ===
+        "mouse" &&
+        event.button !== 0
+      ) {
+
+        return;
+
+      }
+
+
+      cameraDragging =
+        true;
+
+      cameraPointerId =
+        event.pointerId;
+
+      lastPointerX =
+        event.clientX;
+
+      lastPointerY =
+        event.clientY;
+
+      renderer.domElement.setPointerCapture(
+        event.pointerId
+      );
+
+    }
+  );
+
+
+  renderer.domElement.addEventListener(
+    "pointermove",
+    event => {
+
+      if (
+        !cameraDragging ||
+        event.pointerId !==
+        cameraPointerId
+      ) {
+
+        return;
+
+      }
+
+
+      const dx =
+        event.clientX -
+        lastPointerX;
+
+      const dy =
+        event.clientY -
+        lastPointerY;
+
+
+      lastPointerX =
+        event.clientX;
+
+      lastPointerY =
+        event.clientY;
+
+
+      cameraYaw -=
+        dx *
+        0.006;
+
+
+      cameraPitch -=
+        dy *
+        0.004;
+
+
+      cameraPitch =
+        Math.max(
+          -0.05,
+          Math.min(
+            0.85,
+            cameraPitch
+          )
+        );
+
+    }
+  );
+
+
+  renderer.domElement.addEventListener(
+    "pointerup",
+    event => {
+
+      if (
+        event.pointerId ===
+        cameraPointerId
+      ) {
+
+        cameraDragging =
+          false;
+
+        cameraPointerId =
+          null;
+
+      }
+
+    }
+  );
+
+
+  renderer.domElement.addEventListener(
+    "pointercancel",
+    () => {
+
+      cameraDragging =
+        false;
+
+      cameraPointerId =
+        null;
+
+    }
+  );
+
+
+  // ==========================================================
+  // RESIZE
+  // ==========================================================
+
+  function resize() {
+
+    const width =
+      window.innerWidth;
+
+    const height =
+      window.innerHeight;
+
+
+    camera.aspect =
+      width /
+      height;
+
+    camera.updateProjectionMatrix();
+
+
+    renderer.setSize(
+      width,
+      height
+    );
+
   }
 
-}
 
-/* ============================================================
-   ACESSIBILIDADE / REDUÇÃO DE MOVIMENTO
-   ============================================================ */
+  window.addEventListener(
+    "resize",
+    resize
+  );
 
-@media (prefers-reduced-motion: reduce) {
 
-  #panel,
-  #event-toast,
-  #joy-knob {
-    transition: none;
+  // ==========================================================
+  // LOOP
+  // ==========================================================
+
+  const clock =
+    new THREE.Clock();
+
+  ZYRO.clock =
+    clock;
+
+
+  function animate() {
+
+    requestAnimationFrame(
+      animate
+    );
+
+
+    const dt =
+      Math.min(
+        clock.getDelta(),
+        0.05
+      );
+
+
+    if (
+      !ZYRO.paused
+    ) {
+
+      updatePlayer(
+        dt
+      );
+
+    }
+
+
+    updateCamera(
+      dt
+    );
+
+
+    renderer.render(
+      scene,
+      camera
+    );
+
   }
 
-}
+
+  // ==========================================================
+  // BOOT
+  // ==========================================================
+
+  ZYRO.state.initialized =
+    true;
+
+
+  console.log(
+    "ZYRO GAME iniciado."
+  );
+
+
+  animate();
+
+})();

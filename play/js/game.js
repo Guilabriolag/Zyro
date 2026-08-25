@@ -85,13 +85,13 @@
 
   // ==========================================================
   // CENA
+  // FIX: o evento "zyro:game-ready" só é disparado depois que
+  // ZYRO.scene já existe. Antes disso, world.js escutava o
+  // evento, checava window.ZYRO.scene (ainda null) e desistia
+  // silenciosamente — o mundo nunca era anexado à cena.
   // ==========================================================
 
   const scene = new THREE.Scene();
-
-window.dispatchEvent(
-  new Event("zyro:game-ready")
-);
 
   scene.background =
     new THREE.Color(0xd7dde2);
@@ -104,6 +104,11 @@ window.dispatchEvent(
     );
 
   ZYRO.scene = scene;
+
+  // Só dispara o evento depois que ZYRO.scene está de fato pronto
+  window.dispatchEvent(
+    new Event("zyro:game-ready")
+  );
 
 
   // ==========================================================
@@ -155,6 +160,10 @@ window.dispatchEvent(
   renderer.shadowMap.type =
     THREE.PCFSoftShadowMap;
 
+  // NOTE: THREE.sRGBEncoding foi removido na r162. Estamos na
+  // r160 via CDN, então ainda funciona (com warning no console).
+  // Ao atualizar a versão do three.js, trocar por:
+  //   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.outputEncoding =
     THREE.sRGBEncoding;
 

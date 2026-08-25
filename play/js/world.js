@@ -842,30 +842,39 @@
 
   function attachToScene() {
 
-    if (
-      window.ZYRO &&
-      window.ZYRO.scene
-    ) {
+  if (!window.ZYRO) {
+    console.log("ZYRO ainda não existe.");
+    return;
+  }
 
-      if (
-        !window.ZYRO.scene.getObjectByName(
-          "ZYRO_WORLD"
-        )
-      ) {
+  if (!window.ZYRO.scene) {
+    console.log("ZYRO existe, mas a cena ainda não existe.");
+    return;
+  }
 
-        window.ZYRO.scene.add(
-          worldGroup
-        );
+  if (
+    !window.ZYRO.scene.getObjectByName(
+      "ZYRO_WORLD"
+    )
+  ) {
 
-      }
+    window.ZYRO.scene.add(
+      worldGroup
+    );
 
-      console.log(
-        "ZYRO WORLD conectado."
-      );
+    console.log(
+      "ZYRO WORLD ADICIONADO À CENA."
+    );
 
-    }
+  } else {
+
+    console.log(
+      "ZYRO WORLD já estava na cena."
+    );
 
   }
+
+}
 
 
   // ==========================================================

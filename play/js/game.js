@@ -89,6 +89,10 @@
 
   const scene = new THREE.Scene();
 
+window.dispatchEvent(
+  new Event("zyro:game-ready")
+);
+
   scene.background =
     new THREE.Color(0xd7dde2);
 

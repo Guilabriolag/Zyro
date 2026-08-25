@@ -1,151 +1,161 @@
+// ============================================================
+// ZYRO — WORLD.JS
+// Mundo 3D do complexo
+// Compatível com GAME.JS
+// ============================================================
+
 (() => {
   "use strict";
 
-  // ============================================================
-  // ZYRO — WORLD.JS
-  // Mundo 3D do complexo
-  //
-  // Este arquivo é carregado ANTES do game.js.
-  // Por isso ele espera o ZYRO.scene ser criado pelo game.js.
-  // ============================================================
-
+  // ==========================================================
+  // CONFIGURAÇÃO DO COMPLEXO
+  // ==========================================================
 
   const WORLD = {
+    avenueZ: 0,
 
-    initialized: false,
+    sidewalk: {
+      x: 0,
+      z: 4,
+      width: 12,
+      depth: 4
+    },
 
-    objects: {},
+    plaza: {
+      x: 10,
+      z: 14,
+      width: 18,
+      depth: 14
+    },
 
-    materials: {},
+    court: {
+      x: -10,
+      z: 18,
+      width: 18,
+      depth: 30
+    },
 
-    config: {
+    skate: {
+      x: -24,
+      z: 14,
+      width: 12,
+      depth: 22
+    },
 
-      // --------------------------------------------------------
-      // COMPLEXO
-      // --------------------------------------------------------
-
-      complex: {
-        x: 0,
-        z: 0
-      },
-
-      // --------------------------------------------------------
-      // AVENIDA
-      // --------------------------------------------------------
-
-      avenue: {
-        x: 0,
-        z: 18,
-        width: 18,
-        length: 150
-      },
-
-      // --------------------------------------------------------
-      // CALÇADA DA AVENIDA
-      // --------------------------------------------------------
-
-      sidewalk: {
-        x: 0,
-        z: 7,
-        width: 4,
-        length: 150
-      },
-
-      // --------------------------------------------------------
-      // QUADRA
-      // --------------------------------------------------------
-
-      court: {
-        x: 8,
-        z: -2,
-        width: 15,
-        depth: 25
-      },
-
-      // --------------------------------------------------------
-      // PISTA
-      // --------------------------------------------------------
-
-      skatepark: {
-        x: -10,
-        z: -1,
-        width: 25,
-        depth: 18
-      },
-
-      // --------------------------------------------------------
-      // PRAÇA
-      // --------------------------------------------------------
-
-      plaza: {
-        x: -3,
-        z: -18,
-        width: 25,
-        depth: 14
-      },
-
-      // --------------------------------------------------------
-      // MINI RAMP
-      // --------------------------------------------------------
-
-      miniRamp: {
-        x: -10,
-        z: 2,
-        width: 7,
-        depth: 11
-      },
-
-      // --------------------------------------------------------
-      // ESTAÇÃO DE EXERCÍCIO
-      // --------------------------------------------------------
-
-      exercise: {
-        x: 9,
-        z: -17
-      }
-
+    gym: {
+      x: 13,
+      z: 29,
+      width: 10,
+      depth: 7
     }
-
   };
 
 
-  window.ZYRO_WORLD = WORLD;
+  // ==========================================================
+  // GRUPO PRINCIPAL
+  // ==========================================================
+
+  const worldGroup = new THREE.Group();
+
+  worldGroup.name = "ZYRO_WORLD";
+
+  window.ZYRO_WORLD = worldGroup;
 
 
-  // ============================================================
-  // UTILITÁRIOS
-  // ============================================================
+  // ==========================================================
+  // MATERIAIS
+  // ==========================================================
 
-  function createMaterial(
-    color,
-    roughness = 0.8,
-    metalness = 0
-  ) {
+  const materials = {
 
-    return new THREE.MeshStandardMaterial({
+    ground:
+      new THREE.MeshStandardMaterial({
+        color: 0x899196,
+        roughness: 0.95
+      }),
 
-      color,
+    asphalt:
+      new THREE.MeshStandardMaterial({
+        color: 0x30363b,
+        roughness: 0.9
+      }),
 
-      roughness,
+    sidewalk:
+      new THREE.MeshStandardMaterial({
+        color: 0xc9c9c3,
+        roughness: 0.9
+      }),
 
-      metalness
+    grass:
+      new THREE.MeshStandardMaterial({
+        color: 0x55734d,
+        roughness: 1
+      }),
 
-    });
+    plaza:
+      new THREE.MeshStandardMaterial({
+        color: 0xb8b4aa,
+        roughness: 0.9
+      }),
 
-  }
+    court:
+      new THREE.MeshStandardMaterial({
+        color: 0x4d5960,
+        roughness: 0.85
+      }),
+
+    courtLine:
+      new THREE.MeshBasicMaterial({
+        color: 0xe9e4d6
+      }),
+
+    skate:
+      new THREE.MeshStandardMaterial({
+        color: 0x777b7d,
+        roughness: 0.8
+      }),
+
+    ramp:
+      new THREE.MeshStandardMaterial({
+        color: 0x62676a,
+        roughness: 0.8
+      }),
+
+    metal:
+      new THREE.MeshStandardMaterial({
+        color: 0x444b50,
+        metalness: 0.65,
+        roughness: 0.45
+      }),
+
+    wood:
+      new THREE.MeshStandardMaterial({
+        color: 0x826c4d,
+        roughness: 0.85
+      }),
+
+    exercise:
+      new THREE.MeshStandardMaterial({
+        color: 0x3f5558,
+        metalness: 0.55,
+        roughness: 0.5
+      })
+  };
 
 
-  function box(
-    scene,
+  // ==========================================================
+  // HELPERS
+  // ==========================================================
+
+  function addBox(
     name,
-    width,
-    height,
-    depth,
     x,
     y,
     z,
-    material,
-    castShadow = true
+    width,
+    height,
+    depth,
+    material
   ) {
 
     const geometry =
@@ -161,40 +171,32 @@
         material
       );
 
+    mesh.name = name;
+
     mesh.position.set(
       x,
       y,
       z
     );
 
-    mesh.castShadow =
-      castShadow;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
 
-    mesh.receiveShadow =
-      true;
-
-    mesh.name =
-      name;
-
-    scene.add(mesh);
-
-    WORLD.objects[name] =
-      mesh;
+    worldGroup.add(mesh);
 
     return mesh;
-
   }
 
 
-  function cylinder(
-    scene,
+  function addCylinder(
     name,
-    radius,
-    height,
     x,
     y,
     z,
-    material
+    radius,
+    height,
+    material,
+    segments = 16
   ) {
 
     const geometry =
@@ -202,7 +204,7 @@
         radius,
         radius,
         height,
-        16
+        segments
       );
 
     const mesh =
@@ -211,1205 +213,721 @@
         material
       );
 
+    mesh.name = name;
+
     mesh.position.set(
       x,
       y,
       z
     );
 
-    mesh.castShadow =
-      true;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
 
-    mesh.receiveShadow =
-      true;
-
-    mesh.name =
-      name;
-
-    scene.add(mesh);
-
-    WORLD.objects[name] =
-      mesh;
+    worldGroup.add(mesh);
 
     return mesh;
-
   }
 
 
-  // ============================================================
-  // MATERIAIS
-  // ============================================================
-
-  function createMaterials() {
-
-    WORLD.materials.ground =
-      createMaterial(
-        0x777b72,
-        0.95
-      );
-
-    WORLD.materials.avenue =
-      createMaterial(
-        0x34383d,
-        0.95
-      );
-
-    WORLD.materials.sidewalk =
-      createMaterial(
-        0xb9b8ae,
-        0.9
-      );
-
-    WORLD.materials.grass =
-      createMaterial(
-        0x526b42,
-        1
-      );
-
-    WORLD.materials.concrete =
-      createMaterial(
-        0x8c8d88,
-        0.95
-      );
-
-    WORLD.materials.plaza =
-      createMaterial(
-        0x9b9991,
-        0.9
-      );
-
-    WORLD.materials.court =
-      createMaterial(
-        0x466f57,
-        0.8
-      );
-
-    WORLD.materials.ramp =
-      createMaterial(
-        0x686b6d,
-        0.85
-      );
-
-    WORLD.materials.metal =
-      createMaterial(
-        0x565b60,
-        0.55,
-        0.35
-      );
-
-    WORLD.materials.white =
-      createMaterial(
-        0xe5e5df,
-        0.7
-      );
-
-    WORLD.materials.black =
-      createMaterial(
-        0x202327,
-        0.8
-      );
-
-  }
-
-
-  // ============================================================
+  // ==========================================================
   // TERRENO BASE
-  // ============================================================
+  // ==========================================================
 
-  function createGround(scene) {
-
-    const material =
-      WORLD.materials.ground;
-
-    box(
-      scene,
-      "world-ground",
-      180,
-      0.3,
-      130,
-      0,
-      -0.15,
-      5,
-      material,
-      false
-    );
-
-  }
+  addBox(
+    "terreno",
+    0,
+    -0.3,
+    20,
+    150,
+    0.6,
+    110,
+    materials.ground
+  );
 
 
-  // ============================================================
+  // ==========================================================
   // AVENIDA
-  // ============================================================
+  // ==========================================================
 
-  function createAvenue(scene) {
-
-    const a =
-      WORLD.config.avenue;
-
-    box(
-      scene,
-      "avenue",
-      a.width,
-      0.12,
-      a.length,
-      a.x,
-      0.02,
-      a.z,
-      WORLD.materials.avenue,
-      false
-    );
+  addBox(
+    "avenida",
+    0,
+    0.02,
+    -8,
+    150,
+    0.08,
+    14,
+    materials.asphalt
+  );
 
 
-    // ----------------------------------------------------------
-    // FAIXA CENTRAL
-    // ----------------------------------------------------------
+  // Faixas simples
 
-    const stripeMaterial =
-      WORLD.materials.white;
+  for (
+    let x = -65;
+    x <= 65;
+    x += 12
+  ) {
 
-
-    for (
-      let z = a.z - a.length / 2 + 5;
-      z < a.z + a.length / 2;
-      z += 10
-    ) {
-
-      box(
-        scene,
-        "road-marking-" + z,
-        0.25,
-        0.025,
-        5,
-        a.x,
-        0.09,
-        z,
-        stripeMaterial,
-        false
-      );
-
-    }
-
-  }
-
-
-  // ============================================================
-  // CALÇADA DA AVENIDA
-  // ============================================================
-
-  function createSidewalk(scene) {
-
-    const s =
-      WORLD.config.sidewalk;
-
-    box(
-      scene,
-      "avenue-sidewalk",
-      s.width,
-      0.22,
-      s.length,
-      s.x,
-      0.11,
-      s.z,
-      WORLD.materials.sidewalk,
-      false
-    );
-
-  }
-
-
-  // ============================================================
-  // CANTEIRO
-  // ============================================================
-
-  function createGrassStrip(scene) {
-
-    box(
-      scene,
-      "avenue-grass-strip",
-      5,
-      0.12,
-      150,
-      0,
-      0.06,
-      0,
-      WORLD.materials.grass,
-      false
-    );
-
-  }
-
-
-  // ============================================================
-  // QUADRA
-  // ============================================================
-
-  function createCourt(scene) {
-
-    const c =
-      WORLD.config.court;
-
-
-    // Piso
-
-    box(
-      scene,
-      "court-floor",
-      c.width,
+    addBox(
+      "faixa_avenida",
+      x,
+      0.08,
+      -8,
+      6,
+      0.025,
       0.18,
-      c.depth,
-      c.x,
-      0.09,
-      c.z,
-      WORLD.materials.court,
-      false
-    );
-
-
-    // ----------------------------------------------------------
-    // LINHAS
-    // ----------------------------------------------------------
-
-    const line =
-      WORLD.materials.white;
-
-
-    box(
-      scene,
-      "court-line-long",
-      0.08,
-      0.025,
-      c.depth - 1,
-      c.x,
-      0.20,
-      c.z,
-      line,
-      false
-    );
-
-
-    box(
-      scene,
-      "court-line-center",
-      c.width - 1,
-      0.025,
-      0.08,
-      c.x,
-      0.20,
-      c.z,
-      line,
-      false
-    );
-
-
-    // ----------------------------------------------------------
-    // CESTAS
-    // ----------------------------------------------------------
-
-    createBasket(
-      scene,
-      c.x,
-      c.z - c.depth / 2 + 1
-    );
-
-    createBasket(
-      scene,
-      c.x,
-      c.z + c.depth / 2 - 1
+      materials.courtLine
     );
 
   }
 
 
-  function createBasket(
-    scene,
-    x,
-    z
-  ) {
+  // ==========================================================
+  // ÚNICA CALÇADA PRINCIPAL DA AVENIDA
+  // ==========================================================
 
-    cylinder(
-      scene,
-      "basket-pole-" + x + "-" + z,
-      0.08,
-      3,
-      x,
-      1.5,
+  addBox(
+    "calcada_avenida",
+    0,
+    0.12,
+    1,
+    150,
+    0.22,
+    5,
+    materials.sidewalk
+  );
+
+
+  // Pequeno canteiro entre calçada e complexo
+
+  addBox(
+    "canteiro_avenida",
+    0,
+    0.08,
+    4.5,
+    150,
+    0.16,
+    2.5,
+    materials.grass
+  );
+
+
+  // ==========================================================
+  // PRAÇA
+  // ==========================================================
+
+  addBox(
+    "praca",
+    WORLD.plaza.x,
+    0.22,
+    WORLD.plaza.z,
+    WORLD.plaza.width,
+    0.4,
+    WORLD.plaza.depth,
+    materials.plaza
+  );
+
+
+  // ==========================================================
+  // ÁREA DA QUADRA
+  // ==========================================================
+
+  addBox(
+    "quadra",
+    WORLD.court.x,
+    0.18,
+    WORLD.court.z,
+    WORLD.court.width,
+    0.32,
+    WORLD.court.depth,
+    materials.court
+  );
+
+
+  // ==========================================================
+  // MARCAÇÕES DA QUADRA
+  // ==========================================================
+
+  const courtX =
+    WORLD.court.x;
+
+  const courtZ =
+    WORLD.court.z;
+
+  const cw =
+    WORLD.court.width;
+
+  const cd =
+    WORLD.court.depth;
+
+
+  // Linha central
+
+  addBox(
+    "quadra_linha_central",
+    courtX,
+    0.36,
+    courtZ,
+    cw - 1,
+    0.025,
+    0.12,
+    materials.courtLine
+  );
+
+
+  // Linhas laterais
+
+  addBox(
+    "quadra_linha_esquerda",
+    courtX - cw / 2 + 0.35,
+    0.36,
+    courtZ,
+    0.12,
+    0.025,
+    cd - 0.7,
+    materials.courtLine
+  );
+
+
+  addBox(
+    "quadra_linha_direita",
+    courtX + cw / 2 - 0.35,
+    0.36,
+    courtZ,
+    0.12,
+    0.025,
+    cd - 0.7,
+    materials.courtLine
+  );
+
+
+  // Linhas de fundo
+
+  addBox(
+    "quadra_linha_fundo_1",
+    courtX,
+    0.36,
+    courtZ - cd / 2 + 0.35,
+    cw - 0.7,
+    0.025,
+    0.12,
+    materials.courtLine
+  );
+
+
+  addBox(
+    "quadra_linha_fundo_2",
+    courtX,
+    0.36,
+    courtZ + cd / 2 - 0.35,
+    cw - 0.7,
+    0.025,
+    0.12,
+    materials.courtLine
+  );
+
+
+  // ==========================================================
+  // POSTES DE BASQUETE
+  // ==========================================================
+
+  function basketballHoop(z) {
+
+    addBox(
+      "poste_basquete",
+      courtX,
+      1.9,
       z,
-      WORLD.materials.metal
+      0.18,
+      3.6,
+      0.18,
+      materials.metal
     );
 
-
-    box(
-      scene,
-      "basket-board-" + x + "-" + z,
-      1.4,
-      0.9,
-      0.08,
-      x,
-      2.7,
+    addBox(
+      "tabela_basquete",
+      courtX,
+      3.3,
       z,
-      WORLD.materials.white
+      2.0,
+      1.2,
+      0.12,
+      materials.courtLine
     );
 
-
-    const ring =
-      new THREE.Mesh(
-        new THREE.TorusGeometry(
-          0.35,
-          0.045,
-          8,
-          24
-        ),
-        WORLD.materials.metal
-      );
-
-    ring.position.set(
-      x,
-      2.35,
-      z +
-      (z < 0 ? 0.3 : -0.3)
-    );
-
-    ring.rotation.x =
-      Math.PI / 2;
-
-    ring.castShadow =
-      true;
-
-    scene.add(ring);
-
-  }
-
-
-  // ============================================================
-  // PISTA DE SKATE
-  // ============================================================
-
-  function createSkatepark(scene) {
-
-    const p =
-      WORLD.config.skatepark;
-
-
-    // Base
-
-    box(
-      scene,
-      "skatepark-base",
-      p.width,
-      0.20,
-      p.depth,
-      p.x,
-      0.10,
-      p.z,
-      WORLD.materials.concrete,
-      false
-    );
-
-
-    // ----------------------------------------------------------
-    // PLATAFORMA / BLOCO
-    // ----------------------------------------------------------
-
-    box(
-      scene,
-      "skatepark-platform",
-      5,
-      0.9,
-      7,
-      p.x + 5,
-      0.45,
-      p.z - 4,
-      WORLD.materials.ramp
-    );
-
-
-    // ----------------------------------------------------------
-    // QUARTER
-    // ----------------------------------------------------------
-
-    createQuarter(
-      scene,
-      p.x - 6,
-      p.z + 1,
-      5,
-      8
-    );
-
-
-    // ----------------------------------------------------------
-    // FUN BOX
-    // ----------------------------------------------------------
-
-    box(
-      scene,
-      "skate-funbox",
-      3.5,
-      0.65,
-      4.5,
-      p.x,
-      0.325,
-      p.z - 1,
-      WORLD.materials.ramp
-    );
-
-
-    // ----------------------------------------------------------
-    // RAIL
-    // ----------------------------------------------------------
-
-    createRail(
-      scene,
-      p.x + 4,
-      0.8,
-      p.z + 3,
-      4
-    );
-
-  }
-
-
-  // ============================================================
-  // QUARTER / RAMPA
-  // ============================================================
-
-  function createQuarter(
-    scene,
-    x,
-    z,
-    width,
-    depth
-  ) {
-
-    const group =
-      new THREE.Group();
-
-    group.name =
-      "skate-quarter";
-
-
-    const shape =
-      new THREE.Shape();
-
-    shape.moveTo(
-      0,
-      0
-    );
-
-    shape.lineTo(
-      depth,
-      0
-    );
-
-    shape.lineTo(
-      depth,
-      3
-    );
-
-    shape.quadraticCurveTo(
-      depth * 0.5,
-      3,
-      0,
-      0
-    );
-
-
-    const geometry =
-      new THREE.ExtrudeGeometry(
-        shape,
-        {
-          depth: width,
-          bevelEnabled: false
-        }
-      );
-
-
-    const mesh =
-      new THREE.Mesh(
-        geometry,
-        WORLD.materials.ramp
-      );
-
-
-    mesh.rotation.x =
-      -Math.PI / 2;
-
-    mesh.position.set(
-      x,
-      0.05,
-      z
-    );
-
-
-    mesh.castShadow =
-      true;
-
-    mesh.receiveShadow =
-      true;
-
-
-    group.add(mesh);
-
-    scene.add(group);
-
-    WORLD.objects[
-      "skate-quarter"
-    ] = group;
-
-  }
-
-
-  // ============================================================
-  // RAIL
-  // ============================================================
-
-  function createRail(
-    scene,
-    x,
-    y,
-    z,
-    length
-  ) {
-
-    const group =
-      new THREE.Group();
-
-
-    const bar =
-      new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          0.055,
-          0.055,
-          length,
-          10
-        ),
-        WORLD.materials.metal
-      );
-
-
-    bar.rotation.z =
-      Math.PI / 2;
-
-    bar.position.set(
-      0,
+    addCylinder(
+      "aro_basquete",
+      courtX,
+      2.85,
+      z - 0.45,
       0.35,
-      0
+      0.08,
+      materials.metal,
+      24
     );
 
-    group.add(bar);
+  }
+
+
+  basketballHoop(
+    courtZ - cd / 2 + 0.7
+  );
+
+  basketballHoop(
+    courtZ + cd / 2 - 0.7
+  );
+
+
+  // ==========================================================
+  // PISTA DE SKATE
+  // ==========================================================
+
+  addBox(
+    "pista_skate",
+    WORLD.skate.x,
+    0.15,
+    WORLD.skate.z,
+    WORLD.skate.width,
+    0.3,
+    WORLD.skate.depth,
+    materials.skate
+  );
+
+
+  // ==========================================================
+  // MINI RAMP
+  // ==========================================================
+
+  const rampX =
+    WORLD.skate.x;
+
+  const rampZ =
+    WORLD.skate.z + 4;
+
+
+  const rampGroup =
+    new THREE.Group();
+
+  rampGroup.name =
+    "mini_ramp";
+
+
+  const rampBase =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        8,
+        0.6,
+        5
+      ),
+      materials.ramp
+    );
+
+  rampBase.position.y =
+    0.45;
+
+  rampBase.castShadow = true;
+  rampBase.receiveShadow = true;
+
+  rampGroup.add(
+    rampBase
+  );
+
+
+  const rampLeft =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        8,
+        1.6,
+        2.2
+      ),
+      materials.ramp
+    );
+
+  rampLeft.position.set(
+    0,
+    1.0,
+    -1.4
+  );
+
+  rampLeft.rotation.x =
+    -0.32;
+
+  rampLeft.castShadow = true;
+
+  rampGroup.add(
+    rampLeft
+  );
+
+
+  const rampRight =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        8,
+        1.6,
+        2.2
+      ),
+      materials.ramp
+    );
+
+  rampRight.position.set(
+    0,
+    1.0,
+    1.4
+  );
+
+  rampRight.rotation.x =
+    0.32;
+
+  rampRight.castShadow = true;
+
+  rampGroup.add(
+    rampRight
+  );
+
+
+  rampGroup.position.set(
+    rampX,
+    0,
+    rampZ
+  );
+
+  worldGroup.add(
+    rampGroup
+  );
+
+
+  // ==========================================================
+  // ESTAÇÃO DE EXERCÍCIO
+  // ==========================================================
+
+  const gymX =
+    WORLD.gym.x;
+
+  const gymZ =
+    WORLD.gym.z;
+
+
+  addCylinder(
+    "academia_poste_1",
+    gymX - 3,
+    1.3,
+    gymZ,
+    0.12,
+    2.6,
+    materials.exercise
+  );
+
+
+  addCylinder(
+    "academia_poste_2",
+    gymX + 3,
+    1.3,
+    gymZ,
+    0.12,
+    2.6,
+    materials.exercise
+  );
+
+
+  addCylinder(
+    "academia_barra",
+    gymX,
+    2.4,
+    gymZ,
+    0.09,
+    6,
+    materials.exercise
+  );
+
+
+  // ==========================================================
+  // BANCOS DA PRAÇA
+  // ==========================================================
+
+  function addBench(
+    x,
+    z,
+    rotation = 0
+  ) {
+
+    const group =
+      new THREE.Group();
+
+    const seat =
+      new THREE.Mesh(
+        new THREE.BoxGeometry(
+          2.2,
+          0.16,
+          0.55
+        ),
+        materials.wood
+      );
+
+    seat.position.y =
+      0.8;
+
+    seat.castShadow = true;
+
+    group.add(seat);
 
 
     const leg1 =
       new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          0.045,
-          0.045,
-          0.35,
-          8
+        new THREE.BoxGeometry(
+          0.12,
+          0.8,
+          0.12
         ),
-        WORLD.materials.metal
+        materials.metal
       );
 
     leg1.position.set(
-      -length / 2 + 0.3,
-      0.175,
+      -0.75,
+      0.4,
       0
     );
+
+    group.add(leg1);
 
 
     const leg2 =
       leg1.clone();
 
     leg2.position.x =
-      length / 2 - 0.3;
+      0.75;
 
-
-    group.add(
-      leg1,
-      leg2
-    );
+    group.add(leg2);
 
 
     group.position.set(
       x,
-      y,
+      0,
       z
     );
 
+    group.rotation.y =
+      rotation;
 
-    scene.add(group);
-
-  }
-
-
-  // ============================================================
-  // MINI RAMP
-  // ============================================================
-
-  function createMiniRamp(scene) {
-
-    const r =
-      WORLD.config.miniRamp;
-
-
-    // ----------------------------------------------------------
-    // Base
-    // ----------------------------------------------------------
-
-    box(
-      scene,
-      "mini-ramp-base",
-      r.width,
-      0.25,
-      r.depth,
-      r.x,
-      0.125,
-      r.z,
-      WORLD.materials.ramp
-    );
-
-
-    // ----------------------------------------------------------
-    // Lado A
-    // ----------------------------------------------------------
-
-    createQuarter(
-      scene,
-      r.x - r.width / 2,
-      r.z - r.depth / 2,
-      r.width,
-      r.depth / 2
-    );
-
-
-    // ----------------------------------------------------------
-    // Lado B
-    // ----------------------------------------------------------
-
-    createQuarter(
-      scene,
-      r.x - r.width / 2,
-      r.z,
-      r.width,
-      r.depth / 2
+    worldGroup.add(
+      group
     );
 
   }
 
 
-  // ============================================================
-  // PRAÇA
-  // ============================================================
-
-  function createPlaza(scene) {
-
-    const p =
-      WORLD.config.plaza;
+  addBench(
+    WORLD.plaza.x - 5,
+    WORLD.plaza.z,
+    Math.PI / 2
+  );
 
 
-    box(
-      scene,
-      "plaza-floor",
-      p.width,
-      0.20,
-      p.depth,
-      p.x,
-      0.10,
-      p.z,
-      WORLD.materials.plaza,
-      false
-    );
+  addBench(
+    WORLD.plaza.x + 5,
+    WORLD.plaza.z,
+    Math.PI / 2
+  );
 
 
-    // ----------------------------------------------------------
-    // BANCOS
-    // ----------------------------------------------------------
+  // ==========================================================
+  // ÁRVORES — SOMENTE DENTRO DO COMPLEXO
+  // Não colocamos árvores na faixa da avenida.
+  // ==========================================================
 
-    createBench(
-      scene,
-      p.x - 6,
-      0.5,
-      p.z
-    );
-
-
-    createBench(
-      scene,
-      p.x + 6,
-      0.5,
-      p.z
-    );
-
-
-    // ----------------------------------------------------------
-    // ÁREA CENTRAL
-    // ----------------------------------------------------------
-
-    cylinder(
-      scene,
-      "plaza-center",
-      2.5,
-      0.12,
-      p.x,
-      0.25,
-      p.z,
-      WORLD.materials.concrete
-    );
-
-  }
-
-
-  function createBench(
-    scene,
+  function addTree(
     x,
-    y,
     z
   ) {
 
-    box(
-      scene,
-      "bench-seat-" + x + "-" + z,
-      2.5,
-      0.18,
-      0.55,
-      x,
-      y,
-      z,
-      WORLD.materials.metal
-    );
+    const tree =
+      new THREE.Group();
 
-
-    box(
-      scene,
-      "bench-back-" + x + "-" + z,
-      2.5,
-      0.75,
-      0.12,
-      x,
-      y + 0.4,
-      z + 0.22,
-      WORLD.materials.metal
-    );
-
-  }
-
-
-  // ============================================================
-  // ESTAÇÃO DE EXERCÍCIO
-  // ============================================================
-
-  function createExerciseStation(scene) {
-
-    const e =
-      WORLD.config.exercise;
-
-
-    // Barras laterais
-
-    cylinder(
-      scene,
-      "exercise-post-left",
-      0.08,
-      2.3,
-      e.x - 1.2,
-      1.15,
-      e.z,
-      WORLD.materials.metal
-    );
-
-
-    cylinder(
-      scene,
-      "exercise-post-right",
-      0.08,
-      2.3,
-      e.x + 1.2,
-      1.15,
-      e.z,
-      WORLD.materials.metal
-    );
-
-
-    // Barra superior
-
-    const bar =
-      new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          0.08,
-          0.08,
-          2.4,
-          12
-        ),
-        WORLD.materials.metal
-      );
-
-
-    bar.rotation.z =
-      Math.PI / 2;
-
-    bar.position.set(
-      e.x,
-      2.25,
-      e.z
-    );
-
-
-    bar.castShadow =
-      true;
-
-    scene.add(bar);
-
-
-    // Banco
-
-    box(
-      scene,
-      "exercise-bench",
-      2.4,
-      0.3,
-      0.65,
-      e.x,
-      0.55,
-      e.z + 1.2,
-      WORLD.materials.metal
-    );
-
-  }
-
-
-  // ============================================================
-  // VEGETAÇÃO
-  // ============================================================
-
-  function createTree(
-    scene,
-    x,
-    z,
-    scale = 1
-  ) {
 
     const trunk =
       new THREE.Mesh(
         new THREE.CylinderGeometry(
-          0.16 * scale,
-          0.22 * scale,
-          1.8 * scale,
-          8
+          0.22,
+          0.3,
+          2.2,
+          10
         ),
-        new THREE.MeshStandardMaterial({
-          color: 0x654c37
-        })
+        materials.wood
       );
 
+    trunk.position.y =
+      1.1;
 
-    trunk.position.set(
-      x,
-      0.9 * scale,
-      z
+    trunk.castShadow = true;
+
+    tree.add(
+      trunk
     );
-
-
-    trunk.castShadow =
-      true;
 
 
     const crown =
       new THREE.Mesh(
         new THREE.SphereGeometry(
-          1.2 * scale,
+          1.25,
           12,
           10
         ),
         new THREE.MeshStandardMaterial({
-          color: 0x416044
+          color: 0x426044,
+          roughness: 1
         })
       );
 
+    crown.position.y =
+      2.7;
 
-    crown.position.set(
-      x,
-      2.25 * scale,
-      z
-    );
+    crown.castShadow = true;
 
-
-    crown.castShadow =
-      true;
-
-
-    scene.add(
-      trunk,
+    tree.add(
       crown
     );
 
-  }
 
-
-  // ============================================================
-  // ILHAS / ÁREAS VERDES DA PRAÇA
-  // ============================================================
-
-  function createPlazaGreenery(scene) {
-
-    const p =
-      WORLD.config.plaza;
-
-
-    createTree(
-      scene,
-      p.x - 8,
-      p.z - 3,
-      0.9
-    );
-
-
-    createTree(
-      scene,
-      p.x + 8,
-      p.z + 3,
-      0.9
-    );
-
-  }
-
-
-  // ============================================================
-  // LUMINÁRIAS
-  // ============================================================
-
-  function createLamp(
-    scene,
-    x,
-    z
-  ) {
-
-    cylinder(
-      scene,
-      "lamp-pole-" + x + "-" + z,
-      0.07,
-      3.5,
+    tree.position.set(
       x,
-      1.75,
-      z,
-      WORLD.materials.metal
-    );
-
-
-    const lamp =
-      new THREE.Mesh(
-        new THREE.SphereGeometry(
-          0.18,
-          10,
-          8
-        ),
-        new THREE.MeshStandardMaterial({
-          color: 0xffe6ad,
-          emissive: 0x553d15
-        })
-      );
-
-
-    lamp.position.set(
-      x,
-      3.5,
+      0,
       z
     );
 
-
-    scene.add(lamp);
-
-  }
-
-
-  function createLights(scene) {
-
-    createLamp(
-      scene,
-      -5,
-      6
-    );
-
-
-    createLamp(
-      scene,
-      5,
-      6
-    );
-
-
-    createLamp(
-      scene,
-      -15,
-      -12
-    );
-
-
-    createLamp(
-      scene,
-      8,
-      -12
+    worldGroup.add(
+      tree
     );
 
   }
 
 
-  // ============================================================
-  // GRADE VISUAL DISCRETA
-  // ============================================================
-
-  function createGrid(scene) {
-
-    const material =
-      new THREE.LineBasicMaterial({
-        color: 0x9a9a92,
-        transparent: true,
-        opacity: 0.14
-      });
+  addTree(
+    WORLD.plaza.x + 6,
+    WORLD.plaza.z + 4
+  );
 
 
-    const size = 120;
-    const divisions = 30;
+  addTree(
+    WORLD.plaza.x - 6,
+    WORLD.plaza.z + 4
+  );
 
 
-    const grid =
-      new THREE.GridHelper(
-        size,
-        divisions,
-        0x777777,
-        0xaaaaaa
-      );
+  // ==========================================================
+  // ILUMINAÇÃO LOCAL
+  // ==========================================================
 
-
-    grid.material =
-      material;
-
-
-    grid.position.y =
-      0.01;
-
-
-    scene.add(grid);
-
-    WORLD.objects.grid =
-      grid;
-
-  }
-
-
-  // ============================================================
-  // MONTAGEM DO MUNDO
-  // ============================================================
-
-  function buildWorld(scene) {
-
-    if (
-      WORLD.initialized
-    ) {
-      return;
-    }
-
-
-    createMaterials();
-
-
-    createGround(
-      scene
+  const plazaLight =
+    new THREE.PointLight(
+      0xffffff,
+      0.35,
+      30
     );
 
+  plazaLight.position.set(
+    WORLD.plaza.x,
+    7,
+    WORLD.plaza.z
+  );
 
-    createAvenue(
-      scene
-    );
-
-
-    createSidewalk(
-      scene
-    );
-
-
-    createGrassStrip(
-      scene
-    );
+  worldGroup.add(
+    plazaLight
+  );
 
 
-    createCourt(
-      scene
-    );
+  // ==========================================================
+  // ADICIONA O MUNDO À CENA
+  // ==========================================================
 
-
-    createSkatepark(
-      scene
-    );
-
-
-    createMiniRamp(
-      scene
-    );
-
-
-    createPlaza(
-      scene
-    );
-
-
-    createExerciseStation(
-      scene
-    );
-
-
-    createPlazaGreenery(
-      scene
-    );
-
-
-    createLights(
-      scene
-    );
-
-
-    createGrid(
-      scene
-    );
-
-
-    WORLD.initialized =
-      true;
-
-
-    console.log(
-      "ZYRO WORLD iniciado."
-    );
-
-  }
-
-
-  // ============================================================
-  // ESPERA O GAME.JS CRIAR A CENA
-  // ============================================================
-
-  function waitForScene() {
+  function attachToScene() {
 
     if (
       window.ZYRO &&
       window.ZYRO.scene
     ) {
 
-      buildWorld(
-        window.ZYRO.scene
-      );
+      if (
+        !window.ZYRO.scene.getObjectByName(
+          "ZYRO_WORLD"
+        )
+      ) {
 
-      return;
+        window.ZYRO.scene.add(
+          worldGroup
+        );
+
+      }
+
+      console.log(
+        "ZYRO WORLD conectado."
+      );
 
     }
 
+  }
 
-    requestAnimationFrame(
-      waitForScene
+
+  // ==========================================================
+  // TENTATIVA IMEDIATA
+  // ==========================================================
+
+  attachToScene();
+
+
+  // ==========================================================
+  // CASO O GAME AINDA NÃO TENHA CRIADO A CENA
+  // ==========================================================
+
+  if (
+    !window.ZYRO ||
+    !window.ZYRO.scene
+  ) {
+
+    window.addEventListener(
+      "zyro:game-ready",
+      attachToScene,
+      {
+        once: true
+      }
     );
 
   }
 
 
-  waitForScene();
+  // ==========================================================
+  // API DO WORLD
+  // ==========================================================
+
+  window.ZYRO_WORLD_API = {
+
+    group: worldGroup,
+
+    getObject(name) {
+
+      return worldGroup.getObjectByName(
+        name
+      );
+
+    },
+
+    getPosition(name) {
+
+      const object =
+        this.getObject(name);
+
+      if (!object)
+        return null;
+
+      return {
+        x: object.position.x,
+        y: object.position.y,
+        z: object.position.z
+      };
+
+    }
+
+  };
 
 
 })();

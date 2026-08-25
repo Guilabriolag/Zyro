@@ -1,5 +1,3 @@
-ZYRO — index.html
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,19 +20,17 @@ ZYRO — index.html
 <body>
 
   <!-- =========================================================
-       CONTAINER PRINCIPAL DO ZYRO
+       CASCA PRINCIPAL
        ========================================================= -->
 
   <div id="zyro-app">
 
     <!-- =======================================================
-         VIEWPORT DO JOGO
-         O Three.js será inserido aqui pelo main.js
+         ÁREA DO JOGO
+         O game.js cria o canvas do Three.js aqui.
          ======================================================= -->
 
-    <main id="game-container">
-
-      <canvas id="game-canvas"></canvas>
+    <main id="game-shell">
 
       <!-- =====================================================
            HUD SUPERIOR
@@ -56,7 +52,7 @@ ZYRO — index.html
 
 
       <!-- =====================================================
-           BOTÃO DE MENU / PAUSE
+           BOTÃO DE MENU
            ===================================================== -->
 
       <button
@@ -78,9 +74,11 @@ ZYRO — index.html
       <div id="interaction-hud">
 
         <div id="interaction-target">
+
           <span id="interaction-icon">•</span>
 
           <div>
+
             <strong id="interaction-title">
               Nada por perto
             </strong>
@@ -88,7 +86,9 @@ ZYRO — index.html
             <small id="interaction-description">
               Explore o complexo
             </small>
+
           </div>
+
         </div>
 
       </div>
@@ -96,13 +96,14 @@ ZYRO — index.html
 
       <!-- =====================================================
            JOYSTICK
+           IDs compatíveis com game.js
            ===================================================== -->
 
-      <div id="joystick-zone">
+      <div id="joy-zone">
 
-        <div id="joystick-base">
+        <div id="joy-base">
 
-          <div id="joystick-knob"></div>
+          <div id="joy-knob"></div>
 
         </div>
 
@@ -110,11 +111,27 @@ ZYRO — index.html
 
 
       <!-- =====================================================
-           BOTÃO DE INTERAÇÃO
+           BOTÃO DE PULO
            ===================================================== -->
 
       <button
-        id="interaction-button"
+        id="jump-btn"
+        class="action-button jump-button"
+        type="button"
+        aria-label="Pular"
+      >
+        <span class="action-icon">↑</span>
+        <span>Pular</span>
+      </button>
+
+
+      <!-- =====================================================
+           BOTÃO DE INTERAÇÃO
+           ID compatível com game.js
+           ===================================================== -->
+
+      <button
+        id="action-btn"
         class="action-button"
         type="button"
       >
@@ -202,7 +219,7 @@ ZYRO — index.html
 
 
       <!-- =====================================================
-           MENU DO JOGADOR
+           PAINEL DO PERSONAGEM
            ===================================================== -->
 
       <section
@@ -213,6 +230,7 @@ ZYRO — index.html
         <div class="side-panel-header">
 
           <div>
+
             <span class="panel-kicker">
               PLAYER
             </span>
@@ -220,6 +238,7 @@ ZYRO — index.html
             <h2>
               Meu personagem
             </h2>
+
           </div>
 
           <button
@@ -248,24 +267,35 @@ ZYRO — index.html
         <div class="character-info">
 
           <div class="info-row">
+
             <span>Nome</span>
+
             <strong id="character-name">
               Player
             </strong>
+
           </div>
 
+
           <div class="info-row">
+
             <span>Estado</span>
+
             <strong id="character-status">
               Normal
             </strong>
+
           </div>
 
+
           <div class="info-row">
+
             <span>Posição</span>
+
             <strong id="character-position">
               0 / 0
             </strong>
+
           </div>
 
         </div>
@@ -285,6 +315,7 @@ ZYRO — index.html
         <div class="side-panel-header">
 
           <div>
+
             <span class="panel-kicker">
               ZYRO
             </span>
@@ -292,6 +323,7 @@ ZYRO — index.html
             <h2>
               Menu
             </h2>
+
           </div>
 
           <button
@@ -345,7 +377,7 @@ ZYRO — index.html
 
 
       <!-- =====================================================
-           TOAST / EVENTOS
+           TOAST
            ===================================================== -->
 
       <div
@@ -355,7 +387,7 @@ ZYRO — index.html
 
 
       <!-- =====================================================
-           CARREGAMENTO
+           LOADING
            ===================================================== -->
 
       <div id="loading-screen">
@@ -367,7 +399,9 @@ ZYRO — index.html
           </div>
 
           <div class="loading-line">
+
             <span id="loading-progress"></span>
+
           </div>
 
           <div id="loading-text">
@@ -385,22 +419,31 @@ ZYRO — index.html
 
   <!-- =========================================================
        THREE.JS
+       Deve carregar ANTES do game.js
        ========================================================= -->
 
   <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-  </script>
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js">
+    src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js">
   </script>
 
 
   <!-- =========================================================
-       ZYRO
+       WORLD
        ========================================================= -->
 
-  <script type="module" src="./js/main.js"></script>
+  <script
+    src="./js/world.js">
+  </script>
+
+
+  <!-- =========================================================
+       GAME
+       ========================================================= -->
+
+  <script
+    src="./js/game.js">
+  </script>
+
 
 </body>
 </html>

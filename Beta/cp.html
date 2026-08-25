@@ -3,34 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZYRO 3D — Complexo Esportivo Integrado</title>
+<title>ZYRO 3D v18 — Complexo Esportivo Alinhado e Aberto</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-body {
-  overflow: hidden;
-  background: #0b0c10;
-  font-family: "Segoe UI", sans-serif;
+body{
+  overflow:hidden;
+  background:#0b0c10;
+  font-family:"Segoe UI",sans-serif;
 }
 
-#info {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
-  color: #66fcf1;
-  font-size: 13px;
-  background: rgba(15,15,26,.88);
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid rgba(102,252,241,.4);
-  max-width: 480px;
-  line-height: 1.45;
+#info{
+  position:absolute;
+  top:10px;
+  left:10px;
+  z-index:10;
+  color:#66fcf1;
+  font-size:13px;
+  background:rgba(15,15,26,.88);
+  padding:10px 14px;
+  border-radius:6px;
+  border:1px solid rgba(102,252,241,.4);
+  max-width:520px;
+  line-height:1.45;
+}
+
+#info b{
+  color:#66fcf1;
 }
 </style>
 </head>
@@ -38,12 +42,12 @@ body {
 <body>
 
 <div id="info">
-  🛹 🏀 🌳 🏋️ <b>ZYRO 3D — Complexo Esportivo Integrado</b><br>
-  • Pista de skate preservada<br>
-  • Meia quadra com alambrado alto<br>
-  • Praça circular conectada à academia<br>
-  • Alambrado baixo contornando praça e academia<br>
-  • Avenida paralela e calçada contínua<br>
+  🛹 🏀 🌳 🏋️ <b>ZYRO 3D v18 — Complexo Alinhado e Aberto</b><br>
+  • Praça, pista e quadra alinhadas<br>
+  • Calçada contínua atravessando o complexo<br>
+  • Alambrado alto somente na proteção da quadra<br>
+  • Alambrado médio/baixo contornando praça e academia<br>
+  • Frente voltada para a avenida totalmente aberta<br>
   <span style="color:#aaa;font-size:11px">
     Arraste para girar | Scroll para zoom
   </span>
@@ -55,190 +59,249 @@ body {
 <script>
 
 // ============================================================
-// CENA
+// 1. CENA
 // ============================================================
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0xd7dde2);
-scene.fog = new THREE.Fog(0xd7dde2, 70, 220);
+scene.background =
+  new THREE.Color(0xd7dde2);
 
-const camera = new THREE.PerspectiveCamera(
-  55,
-  innerWidth / innerHeight,
-  0.1,
-  1000
+scene.fog =
+  new THREE.Fog(
+    0xd7dde2,
+    70,
+    220
+  );
+
+const camera =
+  new THREE.PerspectiveCamera(
+    55,
+    innerWidth / innerHeight,
+    .1,
+    1000
+  );
+
+camera.position.set(
+  48,
+  42,
+  58
 );
 
-camera.position.set(42, 42, 58);
+const renderer =
+  new THREE.WebGLRenderer({
+    antialias:true
+  });
 
-const renderer = new THREE.WebGLRenderer({
-  antialias: true
-});
+renderer.setSize(
+  innerWidth,
+  innerHeight
+);
 
-renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type =
+  THREE.PCFSoftShadowMap;
 
-document.body.appendChild(renderer.domElement);
-
-const controls = new THREE.OrbitControls(
-  camera,
+document.body.appendChild(
   renderer.domElement
 );
 
-controls.target.set(0, 0, 2);
+const controls =
+  new THREE.OrbitControls(
+    camera,
+    renderer.domElement
+  );
+
+controls.target.set(
+  0,
+  0,
+  4
+);
+
 controls.enableDamping = true;
 
 
 // ============================================================
-// ILUMINAÇÃO
+// 2. ILUMINAÇÃO
 // ============================================================
 
 scene.add(
-  new THREE.AmbientLight(0xffffff, 0.65)
+  new THREE.AmbientLight(
+    0xffffff,
+    .65
+  )
 );
 
-const sun = new THREE.DirectionalLight(
-  0xffffff,
-  0.95
+const sun =
+  new THREE.DirectionalLight(
+    0xffffff,
+    .95
+  );
+
+sun.position.set(
+  -30,
+  50,
+  30
 );
 
-sun.position.set(-30, 50, 30);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.mapSize.set(
+  2048,
+  2048
+);
 
 scene.add(sun);
 
 
 // ============================================================
-// MATERIAIS
+// 3. MATERIAIS
 // ============================================================
 
 const grassMat =
   new THREE.MeshStandardMaterial({
-    color: 0x6b8e4e,
-    roughness: .9
+    color:0x6b8e4e,
+    roughness:.9
   });
 
 const concreteMat =
   new THREE.MeshStandardMaterial({
-    color: 0xc7c2b6,
-    roughness: .85
+    color:0xc7c2b6,
+    roughness:.85
   });
 
 const wallMat =
   new THREE.MeshStandardMaterial({
-    color: 0x9b968a,
-    roughness: .95
+    color:0x9b968a,
+    roughness:.95
   });
 
 const metalMat =
   new THREE.MeshStandardMaterial({
-    color: 0x222222,
-    metalness: .55,
-    roughness: .4
+    color:0x222222,
+    metalness:.55,
+    roughness:.4
   });
 
 const pathMat =
   new THREE.MeshStandardMaterial({
-    color: 0x9e9e9e,
-    roughness: .8
+    color:0x9e9e9e,
+    roughness:.8
   });
 
 const roadMat =
   new THREE.MeshStandardMaterial({
-    color: 0x303030,
-    roughness: .9
+    color:0x303030,
+    roughness:.9
   });
 
 const benchMat =
   new THREE.MeshStandardMaterial({
-    color: 0xf4c430,
-    roughness: .5
+    color:0xf4c430,
+    roughness:.5
   });
 
 const bushMat =
   new THREE.MeshStandardMaterial({
-    color: 0x2e7d32,
-    roughness: .7
+    color:0x2e7d32,
+    roughness:.7
   });
 
 const treeMat =
   new THREE.MeshStandardMaterial({
-    color: 0x3f8248,
-    roughness: .8
+    color:0x3f8248,
+    roughness:.8
   });
 
 const courtFloorMat =
   new THREE.MeshStandardMaterial({
-    color: 0x2b5b84,
-    roughness: .6
+    color:0x2b5b84,
+    roughness:.6
   });
 
 const courtBorderMat =
   new THREE.MeshStandardMaterial({
-    color: 0xc7522a,
-    roughness: .6
+    color:0xc7522a,
+    roughness:.6
   });
 
 const lineMat =
   new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: .4
+    color:0xffffff,
+    roughness:.4
   });
 
 const fenceHighMat =
   new THREE.MeshStandardMaterial({
-    color: 0x333333,
-    wireframe: true,
-    transparent: true,
-    opacity: .8
+    color:0x333333,
+    wireframe:true,
+    transparent:true,
+    opacity:.82
   });
 
 const fenceLowMat =
   new THREE.MeshStandardMaterial({
-    color: 0x444444,
-    wireframe: true,
-    transparent: true,
-    opacity: .9
+    color:0x444444,
+    wireframe:true,
+    transparent:true,
+    opacity:.88
   });
 
 const gymMat =
   new THREE.MeshStandardMaterial({
-    color: 0x1976d2,
-    metalness: .4,
-    roughness: .35
+    color:0x1976d2,
+    metalness:.4,
+    roughness:.35
   });
 
 
 // ============================================================
-// GRAMADO
+// 4. GRAMADO BASE
 // ============================================================
 
-const grass = new THREE.Mesh(
-  new THREE.PlaneGeometry(190, 230),
-  grassMat
-);
+const grass =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      190,
+      230
+    ),
+    grassMat
+  );
 
-grass.rotation.x = -Math.PI / 2;
+grass.rotation.x =
+  -Math.PI/2;
+
 grass.receiveShadow = true;
 
 scene.add(grass);
 
 
 // ============================================================
-// GRUPOS PRINCIPAIS
+// 5. GRUPOS DO COMPLEXO
 // ============================================================
 
-const roadGroup = new THREE.Group();
-const sidewalkGroup = new THREE.Group();
-const skateGroup = new THREE.Group();
-const courtGroup = new THREE.Group();
-const plazaGroup = new THREE.Group();
-const gymGroup = new THREE.Group();
-const fenceGroup = new THREE.Group();
-const landscapeGroup = new THREE.Group();
+const roadGroup =
+  new THREE.Group();
+
+const sidewalkGroup =
+  new THREE.Group();
+
+const skateGroup =
+  new THREE.Group();
+
+const courtGroup =
+  new THREE.Group();
+
+const plazaGroup =
+  new THREE.Group();
+
+const gymGroup =
+  new THREE.Group();
+
+const fenceGroup =
+  new THREE.Group();
+
+const landscapeGroup =
+  new THREE.Group();
 
 scene.add(
   roadGroup,
@@ -253,18 +316,46 @@ scene.add(
 
 
 // ============================================================
-// AVENIDA
+// 6. EIXO PRINCIPAL DO COMPLEXO
 // ============================================================
+//
+// Tudo é organizado em torno deste eixo Z.
+// A pista fica no centro.
+// A praça fica alinhada ao mesmo eixo.
+// A quadra fica no prolongamento.
+// A calçada atravessa tudo.
+//
+
+const MAIN_Z = 2.5;
 
 const ROAD_Z = -20;
 
-const road = new THREE.Mesh(
-  new THREE.PlaneGeometry(170, 11),
-  roadMat
+const SIDEWALK_Z =
+  -9;
+
+
+// ============================================================
+// 7. AVENIDA
+// ============================================================
+
+const road =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      180,
+      11
+    ),
+    roadMat
+  );
+
+road.rotation.x =
+  -Math.PI/2;
+
+road.position.set(
+  0,
+  .01,
+  ROAD_Z
 );
 
-road.rotation.x = -Math.PI / 2;
-road.position.set(0, .01, ROAD_Z);
 road.receiveShadow = true;
 
 roadGroup.add(road);
@@ -272,25 +363,42 @@ roadGroup.add(road);
 
 // Faixa central
 
-const roadLine = new THREE.Mesh(
-  new THREE.PlaneGeometry(170, .22),
-  new THREE.MeshStandardMaterial({
-    color: 0xffeb3b
-  })
+const roadDivider =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      180,
+      .22
+    ),
+    new THREE.MeshStandardMaterial({
+      color:0xffeb3b
+    })
+  );
+
+roadDivider.rotation.x =
+  -Math.PI/2;
+
+roadDivider.position.set(
+  0,
+  .025,
+  ROAD_Z
 );
 
-roadLine.rotation.x = -Math.PI / 2;
-roadLine.position.set(0, .025, ROAD_Z);
-
-roadGroup.add(roadLine);
+roadGroup.add(
+  roadDivider
+);
 
 
 // Meio-fio
 
-const curb = new THREE.Mesh(
-  new THREE.BoxGeometry(170, .18, .35),
-  concreteMat
-);
+const curb =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      180,
+      .18,
+      .35
+    ),
+    concreteMat
+  );
 
 curb.position.set(
   0,
@@ -302,57 +410,36 @@ roadGroup.add(curb);
 
 
 // ============================================================
-// CALÇADA PRINCIPAL
+// 8. CALÇADA PARALELA À AVENIDA
 // ============================================================
 
-const SIDEWALK_Z = -9;
+const mainSidewalk =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      180,
+      3.4
+    ),
+    pathMat
+  );
 
-const sidewalk = new THREE.Mesh(
-  new THREE.PlaneGeometry(170, 3.4),
-  pathMat
-);
+mainSidewalk.rotation.x =
+  -Math.PI/2;
 
-sidewalk.rotation.x = -Math.PI / 2;
-sidewalk.position.set(
+mainSidewalk.position.set(
   0,
   .025,
   SIDEWALK_Z
 );
 
-sidewalk.receiveShadow = true;
+mainSidewalk.receiveShadow = true;
 
-sidewalkGroup.add(sidewalk);
-
-
-// ============================================================
-// FAIXA DE PEDESTRES
-// ============================================================
-
-function pedestrianCrossing(x) {
-
-  for (let i = -3; i <= 3; i++) {
-
-    const stripe = new THREE.Mesh(
-      new THREE.BoxGeometry(.55, .035, 3.2),
-      lineMat
-    );
-
-    stripe.position.set(
-      x + i * .85,
-      .045,
-      SIDEWALK_Z
-    );
-
-    sidewalkGroup.add(stripe);
-  }
-}
-
-pedestrianCrossing(-27);
-pedestrianCrossing(23);
+sidewalkGroup.add(
+  mainSidewalk
+);
 
 
 // ============================================================
-// PISTA DE SKATE
+// 9. PISTA DE SKATE
 // ============================================================
 
 const RAMP_WIDTH = 5;
@@ -362,38 +449,60 @@ const Z1 = 0;
 const Z2 = RAMP_WIDTH;
 
 function buildSideWall(
-  x1, y1,
-  x2, y2,
+  x1,
+  y1,
+  x2,
+  y2,
   zCenter,
   width
-) {
+){
 
-  if (Math.max(y1, y2) <= .05)
-    return;
+  if(
+    Math.max(y1,y2) <= .05
+  ) return;
 
-  const shape = new THREE.Shape();
+  const shape =
+    new THREE.Shape();
 
-  shape.moveTo(x1, 0);
-  shape.lineTo(x1, y1);
-  shape.lineTo(x2, y2);
-  shape.lineTo(x2, 0);
+  shape.moveTo(
+    x1,
+    0
+  );
+
+  shape.lineTo(
+    x1,
+    y1
+  );
+
+  shape.lineTo(
+    x2,
+    y2
+  );
+
+  shape.lineTo(
+    x2,
+    0
+  );
+
   shape.closePath();
 
-  const geo = new THREE.ExtrudeGeometry(
-    shape,
-    {
-      depth: width,
-      bevelEnabled: false
-    }
-  );
+  const geo =
+    new THREE.ExtrudeGeometry(
+      shape,
+      {
+        depth:width,
+        bevelEnabled:false
+      }
+    );
 
-  const wall = new THREE.Mesh(
-    geo,
-    wallMat
-  );
+  const wall =
+    new THREE.Mesh(
+      geo,
+      wallMat
+    );
 
   wall.position.z =
-    zCenter - width / 2;
+    zCenter - width/2;
 
   wall.castShadow = true;
   wall.receiveShadow = true;
@@ -403,26 +512,36 @@ function buildSideWall(
 
 
 function segment(
-  x1, y1, z1,
-  x2, y2, z2,
-  width = RAMP_WIDTH
-) {
+  x1,y1,z1,
+  x2,y2,z2,
+  width=RAMP_WIDTH
+){
 
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const dz = z2 - z1;
+  const dx =
+    x2-x1;
+
+  const dy =
+    y2-y1;
+
+  const dz =
+    z2-z1;
 
   const len =
-    Math.hypot(dx, dy, dz);
+    Math.hypot(
+      dx,
+      dy,
+      dz
+    );
 
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(
-      len,
-      THICK,
-      width
-    ),
-    concreteMat
-  );
+  const mesh =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        len,
+        THICK,
+        width
+      ),
+      concreteMat
+    );
 
   mesh.position.set(
     (x1+x2)/2,
@@ -431,7 +550,10 @@ function segment(
   );
 
   mesh.rotation.z =
-    Math.atan2(dy, dx);
+    Math.atan2(
+      dy,
+      dx
+    );
 
   mesh.castShadow = true;
   mesh.receiveShadow = true;
@@ -439,8 +561,10 @@ function segment(
   skateGroup.add(mesh);
 
   buildSideWall(
-    x1, y1,
-    x2, y2,
+    x1,
+    y1,
+    x2,
+    y2,
     z1,
     width
   );
@@ -454,22 +578,23 @@ function curveUp(
   angleDeg,
   z,
   dirX,
-  segs = 14
-) {
+  segs=14
+){
 
-  const pts = [];
+  const pts=[];
 
   const total =
-    angleDeg * Math.PI / 180;
+    angleDeg *
+    Math.PI/180;
 
-  for (
-    let i = 0;
-    i <= segs;
+  for(
+    let i=0;
+    i<=segs;
     i++
-  ) {
+  ){
 
     const t =
-      (i / segs) * total;
+      (i/segs)*total;
 
     pts.push([
       x0 +
@@ -479,15 +604,15 @@ function curveUp(
 
       y0 +
       radius *
-      (1 - Math.cos(t))
+      (1-Math.cos(t))
     ]);
   }
 
-  for (
-    let i = 0;
-    i < segs;
+  for(
+    let i=0;
+    i<segs;
     i++
-  ) {
+  ){
 
     segment(
       pts[i][0],
@@ -504,9 +629,9 @@ function curveUp(
 }
 
 
-// ============================================================
-// PISTA — DIMENSÕES
-// ============================================================
+// ------------------------------------------------------------
+// Dimensões da pista
+// ------------------------------------------------------------
 
 const miniRampHeight = 3.6;
 const miniRampRadius = 3.6;
@@ -518,13 +643,15 @@ const hipHeight = 1.4;
 const X_BACK_LIMIT = -16;
 
 const xMini1 = 22;
+
 const xMini2 =
-  xMini1 - flatBottomLength;
+  xMini1 -
+  flatBottomLength;
 
 
-// ============================================================
-// PISTA — LADO 1
-// ============================================================
+// ------------------------------------------------------------
+// Lado 1
+// ------------------------------------------------------------
 
 curveUp(
   xMini1,
@@ -558,13 +685,13 @@ segment(
   xMini1,
   miniRampHeight,
   Z1,
-  xMini1 + 3,
+  xMini1+3,
   miniRampHeight,
   Z1
 );
 
 const plateau1 =
-  topMini1[0] - 3.5;
+  topMini1[0]-3.5;
 
 segment(
   topMini1[0],
@@ -576,7 +703,8 @@ segment(
 );
 
 const ramp45End =
-  plateau1 - miniRampHeight;
+  plateau1 -
+  miniRampHeight;
 
 segment(
   plateau1,
@@ -588,7 +716,7 @@ segment(
 );
 
 const caixoteStart =
-  ramp45End - 4;
+  ramp45End-4;
 
 segment(
   ramp45End,
@@ -600,13 +728,16 @@ segment(
 );
 
 const caixoteTopStart =
-  caixoteStart - runCaixote;
+  caixoteStart -
+  runCaixote;
 
 const caixoteTopEnd =
-  caixoteTopStart - topFlat;
+  caixoteTopStart -
+  topFlat;
 
 const caixoteDown =
-  caixoteTopEnd - runCaixote;
+  caixoteTopEnd -
+  runCaixote;
 
 segment(
   caixoteStart,
@@ -636,7 +767,7 @@ segment(
 );
 
 const quarterBase =
-  caixoteDown - 4.5;
+  caixoteDown-4.5;
 
 segment(
   caixoteDown,
@@ -647,16 +778,13 @@ segment(
   Z1
 );
 
-
-// Curva final
-
 const radius90 = 4.5;
 
-for (
-  let i = 0;
-  i < 12;
+for(
+  let i=0;
+  i<12;
   i++
-) {
+){
 
   const a1 =
     (i/12) *
@@ -698,9 +826,9 @@ segment(
 );
 
 
-// ============================================================
-// PISTA — LADO 2
-// ============================================================
+// ------------------------------------------------------------
+// Lado 2
+// ------------------------------------------------------------
 
 curveUp(
   xMini1,
@@ -734,13 +862,13 @@ segment(
   xMini1,
   miniRampHeight,
   Z2,
-  xMini1 + 3,
+  xMini1+3,
   miniRampHeight,
   Z2
 );
 
 const plateau2 =
-  topMini2[0] - 1.8;
+  topMini2[0]-1.8;
 
 segment(
   topMini2[0],
@@ -751,14 +879,11 @@ segment(
   Z2
 );
 
-
-// Curva de descida
-
-for (
-  let i = 0;
-  i < 12;
+for(
+  let i=0;
+  i<12;
   i++
-) {
+){
 
   const a1 =
     (i/12) *
@@ -792,13 +917,12 @@ for (
 }
 
 const dropBottom =
-  plateau2 - miniRampRadius;
+  plateau2-miniRampRadius;
 
 segment(
   dropBottom,
   0,
   Z2,
-
   caixoteStart,
   0,
   Z2
@@ -808,7 +932,6 @@ segment(
   caixoteStart,
   0,
   Z2,
-
   caixoteTopStart,
   hipHeight,
   Z2
@@ -818,7 +941,6 @@ segment(
   caixoteTopStart,
   hipHeight,
   Z2,
-
   caixoteTopEnd,
   hipHeight,
   Z2
@@ -828,7 +950,6 @@ segment(
   caixoteTopEnd,
   hipHeight,
   Z2,
-
   caixoteDown,
   0,
   Z2
@@ -838,16 +959,16 @@ segment(
 // Rampa 45° recuada
 
 const ramp45Top =
-  X_BACK_LIMIT + 3.5;
+  X_BACK_LIMIT+3.5;
 
 const ramp45Start =
-  ramp45Top + miniRampHeight;
+  ramp45Top+
+  miniRampHeight;
 
 segment(
   caixoteDown,
   0,
   Z2,
-
   ramp45Start,
   0,
   Z2
@@ -857,7 +978,6 @@ segment(
   ramp45Start,
   0,
   Z2,
-
   ramp45Top,
   miniRampHeight,
   Z2
@@ -867,7 +987,6 @@ segment(
   ramp45Top,
   miniRampHeight,
   Z2,
-
   X_BACK_LIMIT,
   miniRampHeight,
   Z2
@@ -875,18 +994,90 @@ segment(
 
 
 // ============================================================
-// MEIA QUADRA DE BASQUETE
+// 10. CALÇADA TRANSVERSAL PELO COMPLEXO
+// ============================================================
+//
+// Esta é a mudança principal da v18.
+//
+// A calçada passa entre a quadra e a praça,
+// atravessa a região da pista e continua até a praça.
+//
+// Ela NÃO fecha a frente da avenida.
+//
+
+const CONNECTOR_X =
+  7;
+
+const connector =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      3.2,
+      55
+    ),
+    pathMat
+  );
+
+connector.rotation.x =
+  -Math.PI/2;
+
+connector.position.set(
+  CONNECTOR_X,
+  .035,
+  14
+);
+
+connector.receiveShadow = true;
+
+sidewalkGroup.add(
+  connector
+);
+
+
+// Ligação da calçada à avenida
+
+const avenueConnector =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      3.2,
+      7
+    ),
+    pathMat
+  );
+
+avenueConnector.rotation.x =
+  -Math.PI/2;
+
+avenueConnector.position.set(
+  CONNECTOR_X,
+  .04,
+  -12.5
+);
+
+sidewalkGroup.add(
+  avenueConnector
+);
+
+
+// ============================================================
+// 11. MEIA QUADRA
 // ============================================================
 
-const COURT_X = 24;
-const COURT_L = 13;
-const COURT_W = 10;
+const COURT_X =
+  25;
+
+const COURT_L =
+  13;
+
+const COURT_W =
+  10;
+
+const COURT_Z =
+  MAIN_Z;
+
 
 const courtCenterX =
-  COURT_X + COURT_L/2;
-
-const courtCenterZ =
-  RAMP_WIDTH/2;
+  COURT_X+
+  COURT_L/2;
 
 
 // Piso
@@ -904,10 +1095,14 @@ const courtFloor =
 courtFloor.position.set(
   courtCenterX,
   .04,
-  courtCenterZ
+  COURT_Z
 );
 
-courtGroup.add(courtFloor);
+courtFloor.receiveShadow = true;
+
+courtGroup.add(
+  courtFloor
+);
 
 
 // Borda
@@ -925,10 +1120,12 @@ const courtBorder =
 courtBorder.position.set(
   courtCenterX,
   .03,
-  courtCenterZ
+  COURT_Z
 );
 
-courtGroup.add(courtBorder);
+courtGroup.add(
+  courtBorder
+);
 
 
 // Linhas
@@ -938,7 +1135,7 @@ function courtLine(
   z,
   w,
   d
-) {
+){
 
   const line =
     new THREE.Mesh(
@@ -960,30 +1157,28 @@ function courtLine(
 }
 
 
-// Garrafão
-
 const basketX =
-  COURT_X + COURT_L - 1.2;
+  COURT_X+
+  COURT_L-
+  1.2;
+
 
 courtLine(
-  basketX - 2.5,
-  courtCenterZ,
+  basketX-2.5,
+  COURT_Z,
   5,
   3.6
 );
 
-
-// Linha de fundo
-
 courtLine(
-  basketX - 5,
-  courtCenterZ,
+  basketX-5,
+  COURT_Z,
   .1,
   3.6
 );
 
 
-// Arco
+// Arco de três pontos
 
 const arcGeo =
   new THREE.RingGeometry(
@@ -1007,14 +1202,16 @@ arc.rotation.x =
 arc.position.set(
   basketX,
   .1,
-  courtCenterZ
+  COURT_Z
 );
 
-courtGroup.add(arc);
+courtGroup.add(
+  arc
+);
 
 
 // ============================================================
-// TABELA E CESTA
+// 12. TABELA
 // ============================================================
 
 const hoopGroup =
@@ -1031,9 +1228,12 @@ const hoopPole =
     metalMat
   );
 
-hoopPole.position.y = 2;
+hoopPole.position.y =
+  2;
 
-hoopGroup.add(hoopPole);
+hoopGroup.add(
+  hoopPole
+);
 
 
 const board =
@@ -1052,7 +1252,9 @@ board.position.set(
   0
 );
 
-hoopGroup.add(board);
+hoopGroup.add(
+  board
+);
 
 
 const rim =
@@ -1064,7 +1266,7 @@ const rim =
       20
     ),
     new THREE.MeshStandardMaterial({
-      color: 0xff4500
+      color:0xff4500
     })
   );
 
@@ -1077,84 +1279,97 @@ rim.position.set(
   0
 );
 
-hoopGroup.add(rim);
-
+hoopGroup.add(
+  rim
+);
 
 hoopGroup.position.set(
-  basketX + .8,
+  basketX+.8,
   0,
-  courtCenterZ
+  COURT_Z
 );
 
-courtGroup.add(hoopGroup);
+courtGroup.add(
+  hoopGroup
+);
 
 
 // ============================================================
-// ALAMBRADO ALTO DA QUADRA
+// 13. ALAMBRADO ALTO DA QUADRA
 // ============================================================
+//
+// Alto somente onde realmente protege a quadra:
+//
+// 1. atrás da tabela
+// 2. lateral externa da quadra
+//
+// A frente voltada para a avenida permanece aberta.
+//
 
-const HIGH_FENCE_H = 3.8;
+const HIGH_H =
+  3.8;
 
-function highFence(
-  x,
-  z,
-  w,
-  d
-) {
 
-  const panel =
-    new THREE.Mesh(
-      new THREE.BoxGeometry(
-        w,
-        HIGH_FENCE_H,
-        d
-      ),
-      fenceHighMat
-    );
+// Painel de fundo
 
-  panel.position.set(
-    x,
-    HIGH_FENCE_H/2,
-    z
+const courtBackFence =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .08,
+      HIGH_H,
+      COURT_W
+    ),
+    fenceHighMat
   );
 
-  fenceGroup.add(panel);
-}
+courtBackFence.position.set(
+  COURT_X+COURT_L,
+  HIGH_H/2,
+  COURT_Z
+);
 
-
-// Atrás da tabela
-
-highFence(
-  COURT_X + COURT_L/2,
-  COURT_W/2 + courtCenterZ,
-  COURT_L,
-  .08
+fenceGroup.add(
+  courtBackFence
 );
 
 
-// Lateral da quadra
+// Lateral
 
-highFence(
-  COURT_X + COURT_L,
-  courtCenterZ,
-  .08,
-  COURT_W
+const courtSideFence =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      COURT_L,
+      HIGH_H,
+      .08
+    ),
+    fenceHighMat
+  );
+
+courtSideFence.position.set(
+  courtCenterX,
+  HIGH_H/2,
+  COURT_Z+
+  COURT_W/2
+);
+
+fenceGroup.add(
+  courtSideFence
 );
 
 
-// Postes do alambrado alto
+// Postes
 
 function highPost(
   x,
   z
-) {
+){
 
   const post =
     new THREE.Mesh(
       new THREE.CylinderGeometry(
         .06,
         .06,
-        HIGH_FENCE_H,
+        HIGH_H,
         8
       ),
       metalMat
@@ -1162,31 +1377,35 @@ function highPost(
 
   post.position.set(
     x,
-    HIGH_FENCE_H/2,
+    HIGH_H/2,
     z
   );
 
-  fenceGroup.add(post);
-}
-
-
-for (
-  let x = COURT_X;
-  x <= COURT_X+COURT_L;
-  x += 3
-) {
-
-  highPost(
-    x,
-    courtCenterZ + COURT_W/2
+  fenceGroup.add(
+    post
   );
 }
 
-for (
-  let z = courtCenterZ-COURT_W/2;
-  z <= courtCenterZ+COURT_W/2;
-  z += 2.5
-) {
+
+for(
+  let x=COURT_X;
+  x<=COURT_X+COURT_L;
+  x+=2.5
+){
+
+  highPost(
+    x,
+    COURT_Z+
+    COURT_W/2
+  );
+}
+
+
+for(
+  let z=COURT_Z-COURT_W/2;
+  z<=COURT_Z+COURT_W/2;
+  z+=2.5
+){
 
   highPost(
     COURT_X+COURT_L,
@@ -1196,11 +1415,20 @@ for (
 
 
 // ============================================================
-// PRAÇA CIRCULAR
+// 14. PRAÇA ALINHADA
 // ============================================================
+//
+// A praça agora está no mesmo eixo Z da pista e da quadra.
+// Ela fica à esquerda da pista, mas o centro está alinhado
+// transversalmente com o complexo.
+//
 
-const PLAZA_X = -25;
-const PLAZA_Z = RAMP_WIDTH + 10;
+const PLAZA_X =
+  -25;
+
+const PLAZA_Z =
+  MAIN_Z;
+
 
 const plaza =
   new THREE.Mesh(
@@ -1221,12 +1449,14 @@ plaza.position.set(
   PLAZA_Z
 );
 
-plazaGroup.add(plaza);
+plazaGroup.add(
+  plaza
+);
 
 
 // Canteiro central
 
-const centerBed =
+const plazaBed =
   new THREE.Mesh(
     new THREE.CylinderGeometry(
       3.2,
@@ -1237,38 +1467,41 @@ const centerBed =
     bushMat
   );
 
-centerBed.position.set(
+plazaBed.position.set(
   PLAZA_X,
   .15,
   PLAZA_Z
 );
 
-plazaGroup.add(centerBed);
+plazaGroup.add(
+  plazaBed
+);
 
 
 // Flores
 
 const redFlower =
   new THREE.MeshStandardMaterial({
-    color: 0xe53935
+    color:0xe53935
   });
 
 const yellowFlower =
   new THREE.MeshStandardMaterial({
-    color: 0xffeb3b
+    color:0xffeb3b
   });
 
-for (
-  let i = 0;
-  i < 30;
+for(
+  let i=0;
+  i<30;
   i++
-) {
+){
 
-  const a =
-    Math.random() * Math.PI * 2;
+  const angle =
+    Math.random()*
+    Math.PI*2;
 
-  const r =
-    Math.random() * 2.5;
+  const radius =
+    Math.random()*2.5;
 
   const flower =
     new THREE.Mesh(
@@ -1277,67 +1510,106 @@ for (
         7,
         7
       ),
-      Math.random() > .5
+      Math.random()>.5
         ? redFlower
         : yellowFlower
     );
 
   flower.position.set(
-    PLAZA_X +
-    Math.cos(a)*r,
+    PLAZA_X+
+    Math.cos(angle)*
+    radius,
 
     .4,
 
-    PLAZA_Z +
-    Math.sin(a)*r
+    PLAZA_Z+
+    Math.sin(angle)*
+    radius
   );
 
-  plazaGroup.add(flower);
+  plazaGroup.add(
+    flower
+  );
 }
 
 
 // ============================================================
-// CAMINHO DE LIGAÇÃO À PRAÇA
+// 15. CALÇADA DA PRAÇA ATÉ A PISTA
 // ============================================================
+//
+// A praça se conecta diretamente ao corredor.
+// Não existe bloqueio no meio do caminho.
+//
 
-const plazaConnector =
+const plazaToSkate =
   new THREE.Mesh(
     new THREE.PlaneGeometry(
-      3,
-      16
+      3.2,
+      24
     ),
     pathMat
   );
 
-plazaConnector.rotation.x =
+plazaToSkate.rotation.x =
   -Math.PI/2;
 
-plazaConnector.position.set(
-  PLAZA_X,
-  .03,
-  1.5
+plazaToSkate.position.set(
+  -15,
+  .035,
+  MAIN_Z
 );
 
-plazaGroup.add(
-  plazaConnector
+sidewalkGroup.add(
+  plazaToSkate
+);
+
+
+// Conexão entre essa calçada e a calçada transversal
+
+const plazaJunction =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      17,
+      3.2
+    ),
+    pathMat
+  );
+
+plazaJunction.rotation.x =
+  -Math.PI/2;
+
+plazaJunction.position.set(
+  -6.5,
+  .037,
+  MAIN_Z
+);
+
+sidewalkGroup.add(
+  plazaJunction
 );
 
 
 // ============================================================
-// ACADEMIA
+// 16. ACADEMIA
 // ============================================================
+//
+// Academia posicionada depois da praça.
+// O alambrado baixo contorna a academia,
+// mas não fecha a frente da avenida.
+//
 
 const GYM_X =
-  PLAZA_X - 12;
+  PLAZA_X;
 
 const GYM_Z =
-  PLAZA_Z;
+  20;
+
 
 const gymFloor =
   new THREE.Mesh(
     new THREE.PlaneGeometry(
-      10,
-      12
+      12,
+      10
     ),
     pathMat
   );
@@ -1351,7 +1623,9 @@ gymFloor.position.set(
   GYM_Z
 );
 
-gymGroup.add(gymFloor);
+gymGroup.add(
+  gymFloor
+);
 
 
 // Equipamentos
@@ -1360,10 +1634,11 @@ function addGymEquipment(
   x,
   z,
   type
-) {
+){
 
   const g =
     new THREE.Group();
+
 
   const pole =
     new THREE.Mesh(
@@ -1382,9 +1657,11 @@ function addGymEquipment(
   g.add(pole);
 
 
-  if (type === "twister") {
+  if(
+    type==="twister"
+  ){
 
-    const disc1 =
+    const d1 =
       new THREE.Mesh(
         new THREE.CylinderGeometry(
           .35,
@@ -1395,24 +1672,24 @@ function addGymEquipment(
         gymMat
       );
 
-    disc1.position.set(
+    d1.position.set(
       -.45,
       .12,
       0
     );
 
-    const disc2 =
-      disc1.clone();
+    const d2 =
+      d1.clone();
 
-    disc2.position.x =
+    d2.position.x =
       .45;
 
     g.add(
-      disc1,
-      disc2
+      d1,
+      d2
     );
 
-  } else {
+  }else{
 
     const bar =
       new THREE.Mesh(
@@ -1443,41 +1720,51 @@ function addGymEquipment(
 
 addGymEquipment(
   GYM_X-3,
-  GYM_Z-3,
+  GYM_Z-2.5,
   "twister"
 );
 
 addGymEquipment(
   GYM_X+3,
-  GYM_Z-3,
+  GYM_Z-2.5,
   "bar"
 );
 
 addGymEquipment(
   GYM_X-3,
-  GYM_Z+3,
+  GYM_Z+2.5,
   "bar"
 );
 
 addGymEquipment(
   GYM_X+3,
-  GYM_Z+3,
+  GYM_Z+2.5,
   "twister"
 );
 
 
 // ============================================================
-// ALAMBRADO BAIXO
+// 17. ALAMBRADO MÉDIO/BAIXO
 // ============================================================
+//
+// Altura intermediária:
+// suficientemente visível e protetiva,
+// mas sem criar sensação de muro.
+//
+// IMPORTANTE:
+// não existe trecho fechando a frente da avenida.
+//
 
-const LOW_H = 1.15;
+const LOW_H =
+  1.15;
+
 
 function lowFence(
   x1,
   z1,
   x2,
   z2
-) {
+){
 
   const dx =
     x2-x1;
@@ -1486,7 +1773,14 @@ function lowFence(
     z2-z1;
 
   const len =
-    Math.hypot(dx,dz);
+    Math.hypot(
+      dx,
+      dz
+    );
+
+  if(len<=.1)
+    return;
+
 
   const panel =
     new THREE.Mesh(
@@ -1505,9 +1799,14 @@ function lowFence(
   );
 
   panel.rotation.y =
-    Math.atan2(dz,dx);
+    Math.atan2(
+      dz,
+      dx
+    );
 
-  fenceGroup.add(panel);
+  fenceGroup.add(
+    panel
+  );
 
 
   // Corrimão
@@ -1527,7 +1826,10 @@ function lowFence(
     Math.PI/2;
 
   rail.rotation.y =
-    Math.atan2(dz,dx);
+    Math.atan2(
+      dz,
+      dx
+    );
 
   rail.position.set(
     (x1+x2)/2,
@@ -1535,10 +1837,12 @@ function lowFence(
     (z1+z2)/2
   );
 
-  fenceGroup.add(rail);
+  fenceGroup.add(
+    rail
+  );
 
 
-  // Postes a cada ~2.5m
+  // Postes
 
   const count =
     Math.max(
@@ -1546,20 +1850,20 @@ function lowFence(
       Math.ceil(len/2.5)
     );
 
-  for (
-    let i = 0;
-    i <= count;
+  for(
+    let i=0;
+    i<=count;
     i++
-  ) {
+  ){
 
     const t =
       i/count;
 
     const px =
-      x1 + dx*t;
+      x1+dx*t;
 
     const pz =
-      z1 + dz*t;
+      z1+dz*t;
 
     const post =
       new THREE.Mesh(
@@ -1578,102 +1882,139 @@ function lowFence(
       pz
     );
 
-    fenceGroup.add(post);
+    fenceGroup.add(
+      post
+    );
   }
 }
 
 
 // ============================================================
-// TRAJETO DO ALAMBRADO BAIXO
+// 18. CONTORNO ABERTO
 // ============================================================
 //
-// Começa depois da pista de skate.
-// Vai até a roda da praça,
-// contorna a praça,
-// segue até a academia,
-// faz a curva e termina junto da calçada.
-// ============================================================
+// O contorno começa depois da área de skate,
+// passa pela lateral da praça,
+// contorna a academia,
+// e termina na calçada.
+//
+// A frente da avenida NÃO recebe alambrado.
+//
+// Também deixamos aberturas para entrada e circulação.
+//
 
-
-// Trecho vindo da pista
+// Saída lateral da pista
 
 lowFence(
   X_BACK_LIMIT,
-  RAMP_WIDTH + 1,
-  -25,
-  RAMP_WIDTH + 1
+  Z2+1.2,
+  -23,
+  Z2+1.2
 );
 
 
 // Aproximação da praça
 
 lowFence(
-  -25,
-  RAMP_WIDTH + 1,
-  PLAZA_X - 8,
-  PLAZA_Z - 8
+  -23,
+  Z2+1.2,
+  PLAZA_X-8,
+  PLAZA_Z-8
 );
 
 
-// Contorno da praça — lado inferior
+// Contorno inferior da praça
 
 lowFence(
-  PLAZA_X - 8,
-  PLAZA_Z - 8,
-  PLAZA_X + 8,
-  PLAZA_Z - 8
+  PLAZA_X-8,
+  PLAZA_Z-8,
+  PLAZA_X+5,
+  PLAZA_Z-8
 );
 
 
-// Contorno — lado direito
+// Lado direito da praça
 
 lowFence(
-  PLAZA_X + 8,
-  PLAZA_Z - 8,
-  PLAZA_X + 8,
-  PLAZA_Z + 3
+  PLAZA_X+8,
+  PLAZA_Z-5,
+  PLAZA_X+8,
+  PLAZA_Z+5
 );
 
 
-// Curva em direção à academia
+// Trecho de saída da praça
 
 lowFence(
-  PLAZA_X + 8,
-  PLAZA_Z + 3,
-  GYM_X + 5,
-  GYM_Z + 6
+  PLAZA_X+8,
+  PLAZA_Z+5,
+  PLAZA_X+5,
+  GYM_Z-5
 );
 
 
-// Contorno da academia
+// Lado da academia
 
 lowFence(
-  GYM_X + 5,
-  GYM_Z + 6,
-  GYM_X - 5,
-  GYM_Z + 6
+  PLAZA_X+5,
+  GYM_Z-5,
+  GYM_X+6,
+  GYM_Z+5
 );
 
 
-// Último trecho entrando na calçada
+// Fundo da academia
 
 lowFence(
-  GYM_X - 5,
-  GYM_Z + 6,
-  GYM_X - 5,
-  SIDEWALK_Z
+  GYM_X+6,
+  GYM_Z+5,
+  GYM_X-6,
+  GYM_Z+5
 );
 
 
 // ============================================================
-// BANCOS
+// 19. ABERTURA DA FRENTE DA AVENIDA
+// ============================================================
+//
+// Nenhum alambrado é colocado nesta linha.
+// A entrada permanece completamente livre.
+//
+// Criamos apenas uma calçada de acesso.
+//
+
+const avenueAccess =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      5,
+      7
+    ),
+    pathMat
+  );
+
+avenueAccess.rotation.x =
+  -Math.PI/2;
+
+avenueAccess.position.set(
+  PLAZA_X,
+  .04,
+  -4.5
+);
+
+sidewalkGroup.add(
+  avenueAccess
+);
+
+
+// ============================================================
+// 20. BANCOS
 // ============================================================
 
 function addBench(
   x,
   z,
   rotation
-) {
+){
 
   const g =
     new THREE.Group();
@@ -1715,7 +2056,7 @@ function addBench(
 
 
   [-.8,.8].forEach(
-    px => {
+    px=>{
 
       const leg =
         new THREE.Mesh(
@@ -1751,38 +2092,42 @@ function addBench(
 }
 
 
-// Bancos virados para a avenida
+// Bancos voltados para a avenida
 
 addBench(
-  PLAZA_X - 3,
-  PLAZA_Z - 7,
+  PLAZA_X-3,
+  PLAZA_Z-7,
   0
 );
 
 addBench(
-  PLAZA_X + 3,
-  PLAZA_Z - 7,
+  PLAZA_X+3,
+  PLAZA_Z-7,
   0
 );
 
 
-// Banco adicional na conexão
+// Banco na ligação da praça
 
 addBench(
   PLAZA_X,
-  PLAZA_Z - 1.5,
+  PLAZA_Z-1.5,
   Math.PI/2
 );
 
 
 // ============================================================
-// ÁRVORES
+// 21. ÁRVORES
 // ============================================================
+//
+// As árvores ficam fora da pista, da rua e das calçadas.
+// Não ficam mais no meio da rua.
+//
 
 function addTree(
   x,
   z
-) {
+){
 
   const g =
     new THREE.Group();
@@ -1797,7 +2142,7 @@ function addTree(
         10
       ),
       new THREE.MeshStandardMaterial({
-        color: 0x5a3d2b
+        color:0x5a3d2b
       })
     );
 
@@ -1833,44 +2178,50 @@ function addTree(
 }
 
 
-// Arborização alinhada ao lado da avenida
+// Linha arborizada junto à avenida,
+// mas fora da faixa de circulação.
 
 [
-  [-35,-14],
-  [-25,-14],
-  [-15,-14],
-  [-5,-14],
-  [5,-14],
-  [15,-14],
-  [25,-14],
-  [35,-14]
+  [-38,-14],
+  [-30,-14],
+  [-20,-14],
+  [-10,-14],
+  [0,-14],
+  [10,-14],
+  [20,-14],
+  [32,-14],
+  [40,-14]
 ].forEach(
-  p => addTree(p[0],p[1])
+  p=>addTree(
+    p[0],
+    p[1]
+  )
 );
 
 
-// Árvores mais espaçadas dentro do complexo
+// Árvores externas ao complexo
 
 [
-  [-38,10],
-  [-12,13],
-  [12,13],
-  [38,13],
-  [-38,30],
-  [38,30]
+  [-40,14],
+  [-40,30],
+  [42,14],
+  [42,30]
 ].forEach(
-  p => addTree(p[0],p[1])
+  p=>addTree(
+    p[0],
+    p[1]
+  )
 );
 
 
 // ============================================================
-// ILUMINAÇÃO URBANA
+// 22. POSTES DE ILUMINAÇÃO
 // ============================================================
 
 function lamp(
   x,
   z
-) {
+){
 
   const pole =
     new THREE.Mesh(
@@ -1889,7 +2240,9 @@ function lamp(
     z
   );
 
-  landscapeGroup.add(pole);
+  landscapeGroup.add(
+    pole
+  );
 
 
   const head =
@@ -1900,9 +2253,9 @@ function lamp(
         10
       ),
       new THREE.MeshStandardMaterial({
-        color: 0xfff3c4,
-        emissive: 0xfff3c4,
-        emissiveIntensity: .3
+        color:0xfff3c4,
+        emissive:0xfff3c4,
+        emissiveIntensity:.3
       })
     );
 
@@ -1912,65 +2265,79 @@ function lamp(
     z
   );
 
-  landscapeGroup.add(head);
+  landscapeGroup.add(
+    head
+  );
 }
 
 
 lamp(
-  PLAZA_X - 8,
+  PLAZA_X-8,
   PLAZA_Z
 );
 
 lamp(
-  PLAZA_X + 8,
+  PLAZA_X+8,
   PLAZA_Z
 );
 
 lamp(
-  GYM_X,
-  GYM_Z + 7
+  GYM_X-7,
+  GYM_Z
 );
 
 lamp(
-  COURT_X + COURT_L + 3,
-  courtCenterZ
+  COURT_X+COURT_L+3,
+  COURT_Z
+);
+
+lamp(
+  10,
+  -5
 );
 
 
 // ============================================================
-// RESPIRO ENTRE PISTA E QUADRA
+// 23. ÁREA DE CIRCULAÇÃO LIVRE
 // ============================================================
 //
-// Corredor livre de circulação.
-// Não colocar obstáculos nesta faixa.
-// ============================================================
+// Esta faixa fica deliberadamente sem obstáculos.
+// É o corredor visual e de circulação entre as áreas.
+//
 
-const corridor =
+const freeCorridor =
   new THREE.Mesh(
     new THREE.PlaneGeometry(
-      3,
-      RAMP_WIDTH + 4
+      5,
+      42
     ),
-    pathMat
+    new THREE.MeshStandardMaterial({
+      color:0x888888,
+      roughness:.9
+    })
   );
 
-corridor.rotation.x =
+freeCorridor.rotation.x =
   -Math.PI/2;
 
-corridor.position.set(
-  21,
-  .026,
-  courtCenterZ
+freeCorridor.position.set(
+  7,
+  .018,
+  2.5
 );
 
-scene.add(corridor);
+freeCorridor.receiveShadow = true;
+
+sidewalkGroup.add(
+  freeCorridor
+);
 
 
 // ============================================================
-// ANIMAÇÃO
+// 24. ANIMAÇÃO
 // ============================================================
 
-function animate() {
+function animate(){
 
   requestAnimationFrame(
     animate
@@ -1988,12 +2355,12 @@ animate();
 
 
 // ============================================================
-// RESPONSIVO
+// 25. RESPONSIVO
 // ============================================================
 
 addEventListener(
   "resize",
-  () => {
+  ()=>{
 
     camera.aspect =
       innerWidth /

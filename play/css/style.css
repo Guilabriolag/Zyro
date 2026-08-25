@@ -1,0 +1,1030 @@
+ZYRO — css/style.css
+
+/* ============================================================
+   ZYRO — SISTEMA VISUAL PRINCIPAL
+   ============================================================ */
+
+:root {
+
+  --bg: #080b10;
+  --panel: rgba(10, 14, 21, 0.94);
+  --panel-soft: rgba(15, 20, 29, 0.82);
+
+  --line: rgba(140, 160, 185, 0.18);
+  --line-strong: rgba(140, 160, 185, 0.35);
+
+  --text: #d9e2ec;
+  --text-dim: #78869a;
+
+  --accent: #5fd0a0;
+  --accent-soft: rgba(95, 208, 160, 0.15);
+  --accent-strong: rgba(95, 208, 160, 0.35);
+
+  --danger: #e0705f;
+
+  --radius: 12px;
+}
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+html,
+body {
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: var(--bg);
+
+  font-family:
+    "SF Mono",
+    "JetBrains Mono",
+    "Roboto Mono",
+    "Courier New",
+    monospace;
+
+  color: var(--text);
+
+  touch-action: none;
+
+  overscroll-behavior: none;
+}
+
+
+button {
+
+  font: inherit;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+/* ============================================================
+   APP
+   ============================================================ */
+
+#zyro-app {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+}
+
+
+/* ============================================================
+   GAME CONTAINER
+   ============================================================ */
+
+#game-container {
+
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #10151d;
+}
+
+
+/* ============================================================
+   THREE.JS CANVAS
+   ============================================================ */
+
+#game-canvas {
+
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  outline: none;
+
+  touch-action: none;
+}
+
+
+/* ============================================================
+   HUD
+   ============================================================ */
+
+#game-hud {
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  padding:
+    max(16px, env(safe-area-inset-top))
+    18px
+    12px;
+
+  pointer-events: none;
+
+  z-index: 20;
+}
+
+
+.hud-brand {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.5);
+}
+
+
+.brand-main {
+
+  color: var(--accent);
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  letter-spacing: .18em;
+}
+
+
+.brand-sub {
+
+  color: rgba(220,230,240,.55);
+
+  font-size: 8px;
+
+  letter-spacing: .2em;
+}
+
+
+.hud-status {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 3px;
+
+  font-size: 9px;
+
+  letter-spacing: .12em;
+
+  text-transform: uppercase;
+
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.6);
+}
+
+
+#player-name {
+
+  color: var(--text);
+}
+
+
+#player-state {
+
+  color: var(--accent);
+}
+
+
+/* ============================================================
+   BOTÕES HUD
+   ============================================================ */
+
+.hud-button {
+
+  position: absolute;
+
+  top:
+    max(58px, calc(env(safe-area-inset-top) + 48px));
+
+  right: 18px;
+
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 4px;
+
+  background: rgba(10,14,21,.72);
+
+  border:
+    1px solid var(--line-strong);
+
+  border-radius: 50%;
+
+  backdrop-filter: blur(8px);
+
+  z-index: 25;
+}
+
+
+.hud-button span {
+
+  width: 15px;
+  height: 1px;
+
+  background: var(--text);
+}
+
+
+/* ============================================================
+   INTERACTION HUD
+   ============================================================ */
+
+#interaction-hud {
+
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 120px;
+
+  transform: translateX(-50%);
+
+  z-index: 18;
+
+  pointer-events: none;
+}
+
+
+#interaction-target {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 8px 13px;
+
+  background: rgba(8,11,16,.76);
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 8px;
+
+  backdrop-filter: blur(8px);
+
+  opacity: .8;
+}
+
+
+#interaction-icon {
+
+  color: var(--accent);
+
+  font-size: 16px;
+}
+
+
+#interaction-target strong {
+
+  display: block;
+
+  color: var(--text);
+
+  font-size: 10px;
+
+  letter-spacing: .06em;
+
+  text-transform: uppercase;
+}
+
+
+#interaction-target small {
+
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--text-dim);
+
+  font-size: 8px;
+}
+
+
+/* ============================================================
+   JOYSTICK
+   ============================================================ */
+
+#joystick-zone {
+
+  position: absolute;
+
+  left: 0;
+  bottom: 0;
+
+  width: min(230px, 44vw);
+  height: min(230px, 44vw);
+
+  margin:
+    0
+    0
+    max(22px, env(safe-area-inset-bottom))
+    22px;
+
+  z-index: 30;
+
+  touch-action: none;
+}
+
+
+#joystick-base {
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.015)
+    );
+
+  border:
+    1px solid rgba(150,170,195,.28);
+
+  box-shadow:
+    inset 0 0 30px rgba(0,0,0,.18);
+}
+
+
+#joystick-knob {
+
+  position: absolute;
+
+  width: 40%;
+  height: 40%;
+
+  left: 30%;
+  top: 30%;
+
+  border-radius: 50%;
+
+  background: var(--accent-soft);
+
+  border:
+    1px solid var(--accent);
+
+  box-shadow:
+    0 0 18px rgba(95,208,160,.12);
+
+  transform: translate(0,0);
+
+  transition:
+    transform .04s linear;
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   BOTÃO INTERAGIR
+   ============================================================ */
+
+.action-button {
+
+  position: absolute;
+
+  right: 26px;
+  bottom:
+    max(30px, env(safe-area-inset-bottom));
+
+  width: 76px;
+  height: 76px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 4px;
+
+  border-radius: 50%;
+
+  background: rgba(8,11,16,.82);
+
+  border:
+    1px solid var(--accent);
+
+  color: var(--accent);
+
+  font-size: 8px;
+
+  letter-spacing: .08em;
+
+  text-transform: uppercase;
+
+  backdrop-filter: blur(8px);
+
+  z-index: 30;
+}
+
+
+.action-icon {
+
+  font-size: 18px;
+
+  line-height: 1;
+}
+
+
+.action-button:active {
+
+  background:
+    var(--accent-soft);
+
+  transform: scale(.95);
+}
+
+
+/* ============================================================
+   PAUSE
+   ============================================================ */
+
+.small-action-button {
+
+  position: absolute;
+
+  right: 116px;
+
+  bottom:
+    max(40px, env(safe-area-inset-bottom));
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  background: rgba(8,11,16,.76);
+
+  border:
+    1px solid var(--line-strong);
+
+  color: var(--text);
+
+  font-size: 10px;
+
+  z-index: 30;
+}
+
+
+.small-action-button:active {
+
+  background:
+    rgba(255,255,255,.1);
+}
+
+
+/* ============================================================
+   OVERLAY
+   ============================================================ */
+
+.overlay-screen {
+
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background:
+    rgba(4,7,11,.64);
+
+  backdrop-filter: blur(8px);
+
+  z-index: 100;
+}
+
+
+.overlay-panel {
+
+  width: min(340px, 84vw);
+
+  padding: 28px;
+
+  background: var(--panel);
+
+  border:
+    1px solid var(--line-strong);
+
+  border-radius: var(--radius);
+
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.45);
+}
+
+
+.overlay-header {
+
+  margin-bottom: 24px;
+}
+
+
+.overlay-kicker,
+.panel-kicker {
+
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--accent);
+
+  font-size: 8px;
+
+  letter-spacing: .18em;
+
+  text-transform: uppercase;
+}
+
+
+.overlay-header h1 {
+
+  font-size: 24px;
+
+  font-weight: 500;
+
+  letter-spacing: .08em;
+}
+
+
+/* ============================================================
+   MENUS
+   ============================================================ */
+
+.pause-actions,
+.menu-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+
+.menu-action {
+
+  width: 100%;
+
+  min-height: 44px;
+
+  padding: 10px 14px;
+
+  background: rgba(255,255,255,.025);
+
+  border:
+    1px solid var(--line);
+
+  border-radius: 8px;
+
+  color: var(--text);
+
+  text-align: left;
+
+  font-size: 10px;
+
+  letter-spacing: .08em;
+
+  text-transform: uppercase;
+}
+
+
+.menu-action:hover,
+.menu-action:active {
+
+  background:
+    rgba(255,255,255,.06);
+
+  border-color:
+    var(--line-strong);
+}
+
+
+.menu-action.primary {
+
+  color: var(--accent);
+
+  border-color:
+    var(--accent-strong);
+
+  background:
+    var(--accent-soft);
+}
+
+
+/* ============================================================
+   SIDE PANEL
+   ============================================================ */
+
+.side-panel {
+
+  position: absolute;
+
+  top: 0;
+  right: 0;
+
+  width: min(350px, 88vw);
+  height: 100%;
+
+  padding:
+    max(24px, env(safe-area-inset-top))
+    20px
+    24px;
+
+  background: var(--panel);
+
+  border-left:
+    1px solid var(--line-strong);
+
+  backdrop-filter: blur(12px);
+
+  overflow-y: auto;
+
+  z-index: 110;
+}
+
+
+.side-panel-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  margin-bottom: 22px;
+}
+
+
+.side-panel-header h2 {
+
+  font-size: 16px;
+
+  font-weight: 500;
+}
+
+
+.close-button {
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  border:
+    1px solid var(--line);
+
+  color: var(--text-dim);
+
+  font-size: 20px;
+
+  line-height: 1;
+}
+
+
+/* ============================================================
+   PERSONAGEM
+   ============================================================ */
+
+.character-preview {
+
+  width: 100%;
+  height: 260px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(95,208,160,.08),
+      transparent 65%
+    );
+
+  border:
+    1px solid var(--line);
+
+  border-radius: var(--radius);
+}
+
+
+.character-placeholder {
+
+  width: 90px;
+  height: 150px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px dashed var(--accent-strong);
+
+  color: var(--accent);
+
+  font-size: 9px;
+
+  letter-spacing: .1em;
+}
+
+
+.character-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+  border-top:
+    1px solid var(--line);
+}
+
+
+.info-row {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: 13px 0;
+
+  border-bottom:
+    1px solid var(--line);
+
+  font-size: 10px;
+}
+
+
+.info-row span {
+
+  color: var(--text-dim);
+}
+
+
+.info-row strong {
+
+  color: var(--text);
+
+  font-weight: 400;
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+#event-toast {
+
+  position: absolute;
+
+  left: 50%;
+
+  bottom: 190px;
+
+  transform:
+    translate(-50%, 15px);
+
+  max-width: 80vw;
+
+  padding: 9px 14px;
+
+  background: var(--panel);
+
+  border:
+    1px solid var(--line-strong);
+
+  border-radius: 8px;
+
+  color: var(--text);
+
+  font-size: 9px;
+
+  text-align: center;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+
+  z-index: 120;
+}
+
+
+#event-toast.show {
+
+  opacity: 1;
+
+  transform:
+    translate(-50%, 0);
+}
+
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+
+#loading-screen {
+
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: var(--bg);
+
+  z-index: 200;
+
+  transition:
+    opacity .4s ease;
+}
+
+
+.loading-content {
+
+  width: min(300px, 70vw);
+
+  text-align: center;
+}
+
+
+.loading-logo {
+
+  margin-bottom: 22px;
+
+  color: var(--accent);
+
+  font-size: 24px;
+
+  font-weight: 700;
+
+  letter-spacing: .2em;
+}
+
+
+.loading-line {
+
+  width: 100%;
+  height: 2px;
+
+  overflow: hidden;
+
+  background:
+    rgba(255,255,255,.08);
+}
+
+
+#loading-progress {
+
+  display: block;
+
+  width: 0%;
+  height: 100%;
+
+  background: var(--accent);
+
+  transition:
+    width .25s ease;
+}
+
+
+#loading-text {
+
+  margin-top: 10px;
+
+  color: var(--text-dim);
+
+  font-size: 8px;
+
+  letter-spacing: .08em;
+
+  text-transform: uppercase;
+}
+
+
+/* ============================================================
+   UTILITÁRIO
+   ============================================================ */
+
+.hidden {
+
+  display: none !important;
+}
+
+
+/* ============================================================
+   DESKTOP
+   ============================================================ */
+
+@media (min-width: 900px) {
+
+  #joystick-zone {
+
+    width: 180px;
+    height: 180px;
+
+    opacity: .82;
+  }
+
+  .action-button {
+
+    width: 68px;
+    height: 68px;
+  }
+
+}
+
+
+/* ============================================================
+   TELAS PEQUENAS
+   ============================================================ */
+
+@media (max-height: 600px) {
+
+  #joystick-zone {
+
+    width: 150px;
+    height: 150px;
+  }
+
+  #interaction-hud {
+
+    bottom: 90px;
+  }
+
+}

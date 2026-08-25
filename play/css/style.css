@@ -1,47 +1,41 @@
-ZYRO — css/style.css
-
 /* ============================================================
-   ZYRO — SISTEMA VISUAL PRINCIPAL
+   ZYRO — STYLE.CSS
+   Interface do container do jogo
+   Compatível com game.js v18
    ============================================================ */
 
 :root {
+  --bg: #0b0e14;
+  --panel: rgba(16, 20, 28, 0.94);
+  --panel-soft: rgba(16, 20, 28, 0.78);
 
-  --bg: #080b10;
-  --panel: rgba(10, 14, 21, 0.94);
-  --panel-soft: rgba(15, 20, 29, 0.82);
-
-  --line: rgba(140, 160, 185, 0.18);
-  --line-strong: rgba(140, 160, 185, 0.35);
-
-  --text: #d9e2ec;
-  --text-dim: #78869a;
+  --border: #26344a;
+  --border-soft: rgba(95, 208, 160, 0.28);
 
   --accent: #5fd0a0;
-  --accent-soft: rgba(95, 208, 160, 0.15);
-  --accent-strong: rgba(95, 208, 160, 0.35);
+  --accent-soft: rgba(95, 208, 160, 0.18);
+
+  --text: #c9d3e0;
+  --muted: #6c7891;
 
   --danger: #e0705f;
-
-  --radius: 12px;
 }
-
 
 /* ============================================================
    RESET
    ============================================================ */
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
-
 
 html,
 body {
-
   width: 100%;
   height: 100%;
 
@@ -52,252 +46,545 @@ body {
   font-family:
     "SF Mono",
     "JetBrains Mono",
-    "Roboto Mono",
     "Courier New",
     monospace;
 
   color: var(--text);
 
   touch-action: none;
-
   overscroll-behavior: none;
 }
 
-
-button {
-
-  font: inherit;
-
-  color: inherit;
-
-  cursor: pointer;
-
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-
 /* ============================================================
-   APP
+   CONTAINER PRINCIPAL
    ============================================================ */
 
-#zyro-app {
-
+#game-shell {
   position: fixed;
-
   inset: 0;
 
-  width: 100%;
-  height: 100%;
-
-  overflow: hidden;
-}
-
-
-/* ============================================================
-   GAME CONTAINER
-   ============================================================ */
-
-#game-container {
-
-  position: relative;
-
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 
   overflow: hidden;
 
-  background: #10151d;
+  background: var(--bg);
 }
 
-
 /* ============================================================
-   THREE.JS CANVAS
+   CANVAS THREE.JS
    ============================================================ */
 
-#game-canvas {
-
+#zyro-canvas {
   position: absolute;
 
   inset: 0;
 
+  display: block;
+
   width: 100%;
   height: 100%;
-
-  display: block;
 
   outline: none;
 
   touch-action: none;
+
+  z-index: 1;
 }
 
-
 /* ============================================================
-   HUD
+   HUD SUPERIOR
    ============================================================ */
 
-#game-hud {
-
-  position: absolute;
+#hud-top {
+  position: fixed;
 
   top: 0;
   left: 0;
   right: 0;
 
+  z-index: 10;
+
   display: flex;
-
   justify-content: space-between;
-
   align-items: flex-start;
 
   padding:
-    max(16px, env(safe-area-inset-top))
-    18px
-    12px;
+    max(14px, env(safe-area-inset-top))
+    16px
+    10px;
 
   pointer-events: none;
-
-  z-index: 20;
 }
 
+#hud-title {
+  font-size: 11px;
 
-.hud-brand {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 3px;
-
-  text-shadow:
-    0 2px 8px rgba(0,0,0,.5);
-}
-
-
-.brand-main {
-
-  color: var(--accent);
-
-  font-size: 15px;
-
-  font-weight: 700;
-
-  letter-spacing: .18em;
-}
-
-
-.brand-sub {
-
-  color: rgba(220,230,240,.55);
-
-  font-size: 8px;
-
-  letter-spacing: .2em;
-}
-
-
-.hud-status {
-
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: flex-end;
-
-  gap: 3px;
-
-  font-size: 9px;
-
-  letter-spacing: .12em;
+  letter-spacing: 0.14em;
 
   text-transform: uppercase;
 
+  color: var(--muted);
+
   text-shadow:
-    0 2px 8px rgba(0,0,0,.6);
+    0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
+#hud-title b {
+  color: var(--accent);
 
-#player-name {
+  font-weight: 600;
+}
 
+#hud-coords {
+  font-size: 11px;
+
+  line-height: 1.5;
+
+  text-align: right;
+
+  color: var(--muted);
+
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+#hud-coords span {
   color: var(--text);
 }
 
-
-#player-state {
-
-  color: var(--accent);
-}
-
-
 /* ============================================================
-   BOTÕES HUD
+   BOTÃO DE PAUSE / MENU
    ============================================================ */
 
-.hud-button {
-
-  position: absolute;
+#pause-btn {
+  position: fixed;
 
   top:
-    max(58px, calc(env(safe-area-inset-top) + 48px));
+    max(14px, env(safe-area-inset-top));
 
-  right: 18px;
+  right: 16px;
 
-  width: 44px;
-  height: 44px;
+  z-index: 20;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  border: 1px solid var(--border);
+
+  background: var(--panel-soft);
+
+  color: var(--accent);
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  backdrop-filter: blur(8px);
+
+  cursor: pointer;
+
+  pointer-events: auto;
+}
+
+#pause-btn:active {
+  background: var(--accent-soft);
+
+  transform: scale(0.96);
+}
+
+/* ============================================================
+   JOYSTICK
+   ============================================================ */
+
+#joy-zone {
+  position: fixed;
+
+  left: 0;
+  bottom: 0;
+
+  z-index: 15;
+
+  width: min(220px, 44vw);
+  height: min(220px, 44vw);
+
+  margin:
+    0
+    0
+    max(24px, env(safe-area-inset-bottom))
+    24px;
+
+  border-radius: 50%;
+
+  touch-action: none;
+
+  pointer-events: auto;
+}
+
+#joy-base {
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(95, 208, 160, 0.04),
+      rgba(255, 255, 255, 0.015)
+    );
+
+  border: 1px solid var(--border);
+
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.18),
+    0 4px 20px rgba(0, 0, 0, 0.18);
+
+  backdrop-filter: blur(4px);
+
+  pointer-events: none;
+}
+
+#joy-knob {
+  position: absolute;
+
+  left: 29%;
+  top: 29%;
+
+  width: 42%;
+  height: 42%;
+
+  border-radius: 50%;
+
+  background: var(--accent-soft);
+
+  border: 1px solid var(--accent);
+
+  box-shadow:
+    0 0 18px rgba(95, 208, 160, 0.12);
+
+  transform: translate(0, 0);
+
+  transition: transform 0.04s linear;
+
+  pointer-events: none;
+}
+
+/* ============================================================
+   ÁREA DOS BOTÕES DE AÇÃO
+   ============================================================ */
+
+#action-controls {
+  position: fixed;
+
+  right: 0;
+  bottom: 0;
+
+  z-index: 15;
 
   display: flex;
 
   flex-direction: column;
 
-  justify-content: center;
-
   align-items: center;
 
-  gap: 4px;
+  gap: 14px;
 
-  background: rgba(10,14,21,.72);
+  margin:
+    0
+    24px
+    max(30px, env(safe-area-inset-bottom))
+    0;
 
-  border:
-    1px solid var(--line-strong);
+  pointer-events: auto;
+}
+
+/* ============================================================
+   BOTÃO DE PULO
+   ============================================================ */
+
+#jump-btn,
+#action-btn {
+  width: 64px;
+  height: 64px;
 
   border-radius: 50%;
 
+  background: var(--panel);
+
+  border: 1px solid var(--accent);
+
+  color: var(--accent);
+
+  font-family: inherit;
+
+  font-size: 10px;
+
+  letter-spacing: 0.06em;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
   backdrop-filter: blur(8px);
 
-  z-index: 25;
+  box-shadow:
+    0 5px 20px rgba(0, 0, 0, 0.25);
+
+  touch-action: manipulation;
 }
 
+#jump-btn:active,
+#action-btn:active {
+  background: var(--accent-soft);
 
-.hud-button span {
-
-  width: 15px;
-  height: 1px;
-
-  background: var(--text);
+  transform: scale(0.94);
 }
-
 
 /* ============================================================
-   INTERACTION HUD
+   CASO OS BOTÕES NÃO ESTEJAM DENTRO DE #action-controls
    ============================================================ */
 
-#interaction-hud {
+#jump-btn {
+  position: fixed;
 
-  position: absolute;
+  right: 104px;
+
+  bottom:
+    max(30px, env(safe-area-inset-bottom));
+
+  z-index: 15;
+}
+
+#action-btn {
+  position: fixed;
+
+  right: 24px;
+
+  bottom:
+    max(30px, env(safe-area-inset-bottom));
+
+  z-index: 15;
+}
+
+/*
+   Se o HTML colocar os dois dentro de #action-controls,
+   estas regras de position ainda funcionam de forma segura
+   para a primeira versão.
+*/
+
+/* ============================================================
+   PAINEL LATERAL
+   ============================================================ */
+
+#panel-toggle {
+  position: fixed;
+
+  top:
+    max(14px, env(safe-area-inset-top));
 
   left: 50%;
 
-  bottom: 120px;
-
   transform: translateX(-50%);
 
-  z-index: 18;
+  z-index: 20;
 
-  pointer-events: none;
+  padding: 8px 16px;
+
+  border-radius: 20px;
+
+  border: 1px solid var(--border);
+
+  background: var(--panel);
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+
+  backdrop-filter: blur(8px);
 }
 
+#panel-toggle:active {
+  background: var(--accent-soft);
+}
 
-#interaction-target {
+/* ============================================================
+   PAINEL
+   ============================================================ */
+
+#panel {
+  position: fixed;
+
+  top: 0;
+  right: 0;
+
+  z-index: 30;
+
+  width: min(300px, 82vw);
+  height: 100%;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    16px
+    max(16px, env(safe-area-inset-bottom));
+
+  overflow-y: auto;
+
+  background: var(--panel);
+
+  border-left: 1px solid var(--border);
+
+  backdrop-filter: blur(10px);
+
+  transform: translateX(100%);
+
+  transition:
+    transform 0.25s ease;
+
+  pointer-events: auto;
+}
+
+#panel.open {
+  transform: translateX(0);
+}
+
+#panel h2 {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  margin: 0 0 14px;
+
+  color: var(--muted);
+
+  font-size: 12px;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+#panel h2 button {
+  border: 0;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  font-family: inherit;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+/* ============================================================
+   ENTIDADES
+   ============================================================ */
+
+.entity-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 12px;
+}
+
+.entity-dot {
+  width: 10px;
+  height: 10px;
+
+  flex-shrink: 0;
+
+  border-radius: 2px;
+}
+
+.entity-info {
+  flex: 1;
+
+  min-width: 0;
+}
+
+.entity-info b {
+  display: block;
+
+  color: var(--text);
+
+  font-size: 12px;
+}
+
+.entity-info span {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 10px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.entity-remove {
+  padding: 4px 8px;
+
+  border: 1px solid var(--danger);
+
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: var(--danger);
+
+  font-family: inherit;
+
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+.empty-note {
+  padding: 12px 0;
+
+  color: var(--muted);
+
+  font-size: 11px;
+
+  line-height: 1.6;
+}
+
+/* ============================================================
+   LISTA DE SPAWN
+   ============================================================ */
+
+#spawn-list {
+  margin-top: 20px;
+}
+
+.spawn-btn {
+  width: 100%;
 
   display: flex;
 
@@ -305,567 +592,124 @@ button {
 
   gap: 10px;
 
-  padding: 8px 13px;
+  margin-bottom: 8px;
 
-  background: rgba(8,11,16,.76);
+  padding: 10px 12px;
 
-  border:
-    1px solid var(--line);
+  border: 1px solid var(--border);
 
   border-radius: 8px;
 
-  backdrop-filter: blur(8px);
-
-  opacity: .8;
-}
-
-
-#interaction-icon {
-
-  color: var(--accent);
-
-  font-size: 16px;
-}
-
-
-#interaction-target strong {
-
-  display: block;
+  background: rgba(255, 255, 255, 0.025);
 
   color: var(--text);
 
-  font-size: 10px;
+  font-family: inherit;
 
-  letter-spacing: .06em;
-
-  text-transform: uppercase;
-}
-
-
-#interaction-target small {
-
-  display: block;
-
-  margin-top: 3px;
-
-  color: var(--text-dim);
-
-  font-size: 8px;
-}
-
-
-/* ============================================================
-   JOYSTICK
-   ============================================================ */
-
-#joystick-zone {
-
-  position: absolute;
-
-  left: 0;
-  bottom: 0;
-
-  width: min(230px, 44vw);
-  height: min(230px, 44vw);
-
-  margin:
-    0
-    0
-    max(22px, env(safe-area-inset-bottom))
-    22px;
-
-  z-index: 30;
-
-  touch-action: none;
-}
-
-
-#joystick-base {
-
-  position: absolute;
-
-  inset: 0;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255,255,255,.055),
-      rgba(255,255,255,.015)
-    );
-
-  border:
-    1px solid rgba(150,170,195,.28);
-
-  box-shadow:
-    inset 0 0 30px rgba(0,0,0,.18);
-}
-
-
-#joystick-knob {
-
-  position: absolute;
-
-  width: 40%;
-  height: 40%;
-
-  left: 30%;
-  top: 30%;
-
-  border-radius: 50%;
-
-  background: var(--accent-soft);
-
-  border:
-    1px solid var(--accent);
-
-  box-shadow:
-    0 0 18px rgba(95,208,160,.12);
-
-  transform: translate(0,0);
-
-  transition:
-    transform .04s linear;
-
-  pointer-events: none;
-}
-
-
-/* ============================================================
-   BOTÃO INTERAGIR
-   ============================================================ */
-
-.action-button {
-
-  position: absolute;
-
-  right: 26px;
-  bottom:
-    max(30px, env(safe-area-inset-bottom));
-
-  width: 76px;
-  height: 76px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  align-items: center;
-
-  gap: 4px;
-
-  border-radius: 50%;
-
-  background: rgba(8,11,16,.82);
-
-  border:
-    1px solid var(--accent);
-
-  color: var(--accent);
-
-  font-size: 8px;
-
-  letter-spacing: .08em;
-
-  text-transform: uppercase;
-
-  backdrop-filter: blur(8px);
-
-  z-index: 30;
-}
-
-
-.action-icon {
-
-  font-size: 18px;
-
-  line-height: 1;
-}
-
-
-.action-button:active {
-
-  background:
-    var(--accent-soft);
-
-  transform: scale(.95);
-}
-
-
-/* ============================================================
-   PAUSE
-   ============================================================ */
-
-.small-action-button {
-
-  position: absolute;
-
-  right: 116px;
-
-  bottom:
-    max(40px, env(safe-area-inset-bottom));
-
-  width: 42px;
-  height: 42px;
-
-  border-radius: 50%;
-
-  background: rgba(8,11,16,.76);
-
-  border:
-    1px solid var(--line-strong);
-
-  color: var(--text);
-
-  font-size: 10px;
-
-  z-index: 30;
-}
-
-
-.small-action-button:active {
-
-  background:
-    rgba(255,255,255,.1);
-}
-
-
-/* ============================================================
-   OVERLAY
-   ============================================================ */
-
-.overlay-screen {
-
-  position: absolute;
-
-  inset: 0;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  background:
-    rgba(4,7,11,.64);
-
-  backdrop-filter: blur(8px);
-
-  z-index: 100;
-}
-
-
-.overlay-panel {
-
-  width: min(340px, 84vw);
-
-  padding: 28px;
-
-  background: var(--panel);
-
-  border:
-    1px solid var(--line-strong);
-
-  border-radius: var(--radius);
-
-  box-shadow:
-    0 20px 70px rgba(0,0,0,.45);
-}
-
-
-.overlay-header {
-
-  margin-bottom: 24px;
-}
-
-
-.overlay-kicker,
-.panel-kicker {
-
-  display: block;
-
-  margin-bottom: 6px;
-
-  color: var(--accent);
-
-  font-size: 8px;
-
-  letter-spacing: .18em;
-
-  text-transform: uppercase;
-}
-
-
-.overlay-header h1 {
-
-  font-size: 24px;
-
-  font-weight: 500;
-
-  letter-spacing: .08em;
-}
-
-
-/* ============================================================
-   MENUS
-   ============================================================ */
-
-.pause-actions,
-.menu-list {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 9px;
-}
-
-
-.menu-action {
-
-  width: 100%;
-
-  min-height: 44px;
-
-  padding: 10px 14px;
-
-  background: rgba(255,255,255,.025);
-
-  border:
-    1px solid var(--line);
-
-  border-radius: 8px;
-
-  color: var(--text);
+  font-size: 12px;
 
   text-align: left;
 
-  font-size: 10px;
+  cursor: pointer;
+}
 
-  letter-spacing: .08em;
+.spawn-btn:active {
+  background: var(--accent-soft);
+
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   PAINEL DE PAUSE
+   ============================================================ */
+
+#pause-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 40;
+
+  display: none;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: rgba(5, 8, 12, 0.58);
+
+  backdrop-filter: blur(5px);
+
+  pointer-events: auto;
+}
+
+#pause-overlay.show {
+  display: flex;
+}
+
+#pause-card {
+  width: min(340px, 82vw);
+
+  padding: 24px;
+
+  border: 1px solid var(--border);
+
+  border-radius: 14px;
+
+  background: var(--panel);
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+#pause-card h2 {
+  margin-bottom: 8px;
+
+  color: var(--accent);
+
+  font-size: 16px;
+
+  letter-spacing: 0.08em;
 
   text-transform: uppercase;
 }
 
+#pause-card p {
+  color: var(--muted);
 
-.menu-action:hover,
-.menu-action:active {
+  font-size: 11px;
 
-  background:
-    rgba(255,255,255,.06);
-
-  border-color:
-    var(--line-strong);
+  line-height: 1.6;
 }
-
-
-.menu-action.primary {
-
-  color: var(--accent);
-
-  border-color:
-    var(--accent-strong);
-
-  background:
-    var(--accent-soft);
-}
-
 
 /* ============================================================
-   SIDE PANEL
-   ============================================================ */
-
-.side-panel {
-
-  position: absolute;
-
-  top: 0;
-  right: 0;
-
-  width: min(350px, 88vw);
-  height: 100%;
-
-  padding:
-    max(24px, env(safe-area-inset-top))
-    20px
-    24px;
-
-  background: var(--panel);
-
-  border-left:
-    1px solid var(--line-strong);
-
-  backdrop-filter: blur(12px);
-
-  overflow-y: auto;
-
-  z-index: 110;
-}
-
-
-.side-panel-header {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  margin-bottom: 22px;
-}
-
-
-.side-panel-header h2 {
-
-  font-size: 16px;
-
-  font-weight: 500;
-}
-
-
-.close-button {
-
-  width: 34px;
-  height: 34px;
-
-  border-radius: 50%;
-
-  background: transparent;
-
-  border:
-    1px solid var(--line);
-
-  color: var(--text-dim);
-
-  font-size: 20px;
-
-  line-height: 1;
-}
-
-
-/* ============================================================
-   PERSONAGEM
-   ============================================================ */
-
-.character-preview {
-
-  width: 100%;
-  height: 260px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 20px;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(95,208,160,.08),
-      transparent 65%
-    );
-
-  border:
-    1px solid var(--line);
-
-  border-radius: var(--radius);
-}
-
-
-.character-placeholder {
-
-  width: 90px;
-  height: 150px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border:
-    1px dashed var(--accent-strong);
-
-  color: var(--accent);
-
-  font-size: 9px;
-
-  letter-spacing: .1em;
-}
-
-
-.character-info {
-
-  display: flex;
-
-  flex-direction: column;
-
-  border-top:
-    1px solid var(--line);
-}
-
-
-.info-row {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  padding: 13px 0;
-
-  border-bottom:
-    1px solid var(--line);
-
-  font-size: 10px;
-}
-
-
-.info-row span {
-
-  color: var(--text-dim);
-}
-
-
-.info-row strong {
-
-  color: var(--text);
-
-  font-weight: 400;
-}
-
-
-/* ============================================================
-   TOAST
+   TOAST / EVENTOS
    ============================================================ */
 
 #event-toast {
-
-  position: absolute;
+  position: fixed;
 
   left: 50%;
+  bottom:
+    max(150px, calc(env(safe-area-inset-bottom) + 150px));
 
-  bottom: 190px;
+  z-index: 25;
 
-  transform:
-    translate(-50%, 15px);
+  max-width: 82vw;
 
-  max-width: 80vw;
+  padding: 10px 16px;
 
-  padding: 9px 14px;
-
-  background: var(--panel);
-
-  border:
-    1px solid var(--line-strong);
+  border: 1px solid var(--border);
 
   border-radius: 8px;
 
+  background: var(--panel);
+
   color: var(--text);
 
-  font-size: 9px;
+  font-size: 11px;
 
   text-align: center;
 
@@ -873,158 +717,132 @@ button {
 
   pointer-events: none;
 
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
+  transform:
+    translateX(-50%)
+    translateY(20px);
 
-  z-index: 120;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-
 #event-toast.show {
-
   opacity: 1;
 
   transform:
-    translate(-50%, 0);
+    translateX(-50%)
+    translateY(0);
 }
 
-
-/* ============================================================
-   LOADING
-   ============================================================ */
-
-#loading-screen {
-
-  position: absolute;
-
-  inset: 0;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background: var(--bg);
-
-  z-index: 200;
-
-  transition:
-    opacity .4s ease;
-}
-
-
-.loading-content {
-
-  width: min(300px, 70vw);
-
-  text-align: center;
-}
-
-
-.loading-logo {
-
-  margin-bottom: 22px;
-
+#event-toast b {
   color: var(--accent);
-
-  font-size: 24px;
-
-  font-weight: 700;
-
-  letter-spacing: .2em;
 }
-
-
-.loading-line {
-
-  width: 100%;
-  height: 2px;
-
-  overflow: hidden;
-
-  background:
-    rgba(255,255,255,.08);
-}
-
-
-#loading-progress {
-
-  display: block;
-
-  width: 0%;
-  height: 100%;
-
-  background: var(--accent);
-
-  transition:
-    width .25s ease;
-}
-
-
-#loading-text {
-
-  margin-top: 10px;
-
-  color: var(--text-dim);
-
-  font-size: 8px;
-
-  letter-spacing: .08em;
-
-  text-transform: uppercase;
-}
-
 
 /* ============================================================
-   UTILITÁRIO
+   ESTADO PAUSADO
    ============================================================ */
 
-.hidden {
-
-  display: none !important;
+body.paused #joy-zone,
+body.paused #jump-btn,
+body.paused #action-btn {
+  opacity: 0.45;
 }
 
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+  #hud-title {
+    font-size: 9px;
+  }
+
+  #hud-coords {
+    font-size: 9px;
+  }
+
+  #panel {
+    width: min(320px, 88vw);
+  }
+
+  #joy-zone {
+    width: min(190px, 42vw);
+    height: min(190px, 42vw);
+
+    margin-left: 18px;
+  }
+
+  #jump-btn {
+    right: 96px;
+  }
+
+  #action-btn {
+    right: 18px;
+  }
+
+}
+
+/* ============================================================
+   TELAS MUITO PEQUENAS
+   ============================================================ */
+
+@media (max-height: 520px) {
+
+  #joy-zone {
+    width: 145px;
+    height: 145px;
+
+    margin-bottom: 14px;
+  }
+
+  #jump-btn,
+  #action-btn {
+    width: 54px;
+    height: 54px;
+
+    bottom: 18px;
+  }
+
+  #jump-btn {
+    right: 88px;
+  }
+
+  #action-btn {
+    right: 16px;
+  }
+
+}
 
 /* ============================================================
    DESKTOP
    ============================================================ */
 
-@media (min-width: 900px) {
+@media (min-width: 1000px) {
 
-  #joystick-zone {
-
+  #joy-zone {
     width: 180px;
     height: 180px;
-
-    opacity: .82;
   }
 
-  .action-button {
-
-    width: 68px;
-    height: 68px;
+  #jump-btn,
+  #action-btn {
+    width: 58px;
+    height: 58px;
   }
 
 }
 
-
 /* ============================================================
-   TELAS PEQUENAS
+   ACESSIBILIDADE / REDUÇÃO DE MOVIMENTO
    ============================================================ */
 
-@media (max-height: 600px) {
+@media (prefers-reduced-motion: reduce) {
 
-  #joystick-zone {
-
-    width: 150px;
-    height: 150px;
-  }
-
-  #interaction-hud {
-
-    bottom: 90px;
+  #panel,
+  #event-toast,
+  #joy-knob {
+    transition: none;
   }
 
 }

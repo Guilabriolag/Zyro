@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1,
+             maximum-scale=1,
+             user-scalable=no,
+             viewport-fit=cover"
+  >
+
+  <title>ZYRO — Zoológico</title>
+
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/zoologico.css">
+</head>
+
+<body>
+
+  <div id="zyro-app">
+
+    <main id="game-shell">
+
+      <header id="game-hud">
+        <div class="hud-brand">
+          <span class="brand-main">ZYRO</span>
+          <span class="brand-sub">ZOOLÓGICO</span>
+        </div>
+
+        <div class="hud-status">
+          <span id="player-name">PLAYER</span>
+          <span id="player-state">ONLINE</span>
+        </div>
+      </header>
+
+      <button id="menu-button" class="hud-button" type="button" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div id="acquired-chip" class="acquired-chip hidden"></div>
+
+      <div id="interaction-hud">
+        <div id="interaction-target">
+          <span id="interaction-icon">•</span>
+          <div>
+            <strong id="interaction-title">Nada por perto</strong>
+            <small id="interaction-description">Explore o zoológico</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== HUD DO BIOMA ==================== -->
+      <div id="bioma-hud" class="bioma-hud hidden">
+        <div id="bioma-label" class="bioma-label">Bioma</div>
+
+        <div id="vitals-panel" class="vitals-panel hidden">
+          <div class="vital-row"><span>Batimento</span><b id="vital-batimento">—</b></div>
+          <div class="vital-row"><span>Fome</span><b id="vital-fome">—</b></div>
+          <div class="vital-row"><span>Energia</span><b id="vital-energia">—</b></div>
+          <div class="vital-row"><span>Vínculo</span><b id="vital-vinculo">—</b></div>
+        </div>
+
+        <div class="bioma-actions">
+          <button id="bioma-feed" type="button">Alimentar</button>
+          <button id="bioma-pet" type="button">Brincar</button>
+          <button id="bioma-sleep" type="button">Dormir</button>
+          <button id="bioma-observe" type="button">Observar</button>
+        </div>
+      </div>
+
+      <div id="joy-zone">
+        <div id="joy-base">
+          <div id="joy-knob"></div>
+        </div>
+      </div>
+
+      <button id="jump-btn" class="action-button jump-button" type="button" aria-label="Pular">
+        <span class="action-icon">↑</span>
+        <span>Pular</span>
+      </button>
+
+      <button id="action-btn" class="action-button" type="button">
+        <span class="action-icon">↗</span>
+        <span>Interagir</span>
+      </button>
+
+      <button id="pause-button" class="small-action-button" type="button">
+        II
+      </button>
+
+      <section id="pause-screen" class="overlay-screen hidden">
+        <div class="overlay-panel">
+          <div class="overlay-header">
+            <span class="overlay-kicker">ZYRO</span>
+            <h1>PAUSADO</h1>
+          </div>
+
+          <div class="pause-actions">
+            <button id="resume-button" class="menu-action primary" type="button">Continuar</button>
+            <button id="character-button" class="menu-action" type="button">Personagem</button>
+            <button id="inventory-button" class="menu-action" type="button">Inventário</button>
+            <button id="settings-button" class="menu-action" type="button">Configurações</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="player-panel" class="side-panel hidden">
+        <div class="side-panel-header">
+          <div>
+            <span class="panel-kicker">PLAYER</span>
+            <h2>Meu personagem</h2>
+          </div>
+          <button id="close-player-panel" class="close-button" type="button">×</button>
+        </div>
+
+        <div class="character-preview">
+          <div id="character-preview-model" class="character-placeholder">PLAYER</div>
+        </div>
+
+        <div class="character-info">
+          <div class="info-row">
+            <span>Nome</span>
+            <strong id="character-name">Player</strong>
+          </div>
+          <div class="info-row">
+            <span>Estado</span>
+            <strong id="character-status">Normal</strong>
+          </div>
+          <div class="info-row">
+            <span>Posição</span>
+            <strong id="character-position">0 / 0</strong>
+          </div>
+          <div class="info-row">
+            <span>Piso</span>
+            <strong id="character-floor">Térreo</strong>
+          </div>
+        </div>
+      </section>
+
+      <section id="main-menu" class="side-panel hidden">
+        <div class="side-panel-header">
+          <div>
+            <span class="panel-kicker">ZYRO</span>
+            <h2>Menu</h2>
+          </div>
+          <button id="close-main-menu" class="close-button" type="button">×</button>
+        </div>
+
+        <div class="menu-list">
+          <button class="menu-action primary" type="button" data-menu="continue">Continuar</button>
+          <button class="menu-action" type="button" data-menu="character">Personagem</button>
+          <button class="menu-action" type="button" data-menu="inventory">Inventário</button>
+          <button class="menu-action" type="button" data-menu="settings">Configurações</button>
+        </div>
+      </section>
+
+      <div id="event-toast" aria-live="polite"></div>
+
+      <div id="loading-screen">
+        <div class="loading-content">
+          <div class="loading-logo">ZYRO</div>
+          <div class="loading-line">
+            <span id="loading-progress"></span>
+          </div>
+          <div id="loading-text">Inicializando zoológico...</div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="./js/world.js"></script>
+  <script src="./js/game.js"></script>
+  <script src="./js/entities.js"></script>
+  <script src="./js/bioma.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/zoologico-ui.js"></script>
+
+</body>
+</html>

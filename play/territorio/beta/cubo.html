@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Aquário 3D Mínimo</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: system-ui, sans-serif;
+    color: white;
+    overflow: hidden;
+    perspective: 1000px; /* Define a profundidade da cena 3D */
+  }
+
+  /* O contêiner que gira o aquário no espaço 3D */
+  .aquarium-container {
+    width: 320px;
+    height: 320px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(15deg) rotateY(-20deg);
+    animation: rotateTank 12s infinite linear;
+  }
+
+  @keyframes rotateTank {
+    0% { transform: rotateX(10deg) rotateY(0deg); }
+    50% { transform: rotateX(10deg) rotateY(180deg); }
+    100% { transform: rotateX(10deg) rotateY(360deg); }
+  }
+
+  /* Paredes do Aquário (Caixa 3D) */
+  .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+  }
+
+  .back {
+    background: linear-gradient(to bottom, #8fe3ff, #2f9fd6);
+    transform: translateZ(-160px);
+  }
+  .left {
+    background: rgba(79, 195, 232, 0.15);
+    width: 320px;
+    transform: rotateY(-90deg) translateZ(160px);
+  }
+  .right {
+    background: rgba(79, 195, 232, 0.15);
+    width: 320px;
+    transform: rotateY(90deg) translateZ(160px);
+  }
+  .bottom {
+    background: #ffe9b3;
+    height: 320px;
+    transform: rotateX(90deg) translateZ(160px);
+  }
+  .front {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateZ(160px);
+    pointer-events: none; /* Deixa o mouse passar se quiser interagir depois */
+  }
+
+  /* Elementos flutuando dentro do 3D (Peixes simulados) */
+  .fish {
+    position: absolute;
+    font-size: 32px;
+    transform-style: preserve-3d;
+    animation: swim 4s infinite ease-in-out alternate;
+  }
+
+  #fish1 { top: 100px; left: 50px; transform: translateZ(-50px); animation-duration: 5s; }
+  #fish2 { top: 180px; left: 180px; transform: translateZ(80px); animation-duration: 3.5s; }
+  #fish3 { top: 80px; left: 220px; transform: translateZ(0px); animation-duration: 4.2s; }
+
+  @keyframes swim {
+    0% { transform: translateZ(var(--z)) translateX(0px) translateY(0px); }
+    50% { transform: translateZ(var(--z)) translateX(40px) translateY(-15px); }
+    100% { transform: translateZ(var(--z)) translateX(-20px) translateY(10px); }
+  }
+
+  .instruction {
+    position: absolute;
+    bottom: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+  <div class="aquarium-container">
+    <div class="face back"></div>
+    <div class="face left"></div>
+    <div class="face right"></div>
+    <div class="face bottom"></div>
+    <div class="face front"></div>
+
+    <div class="fish" id="fish1" style="--z: -80px;">🐠</div>
+    <div class="fish" id="fish2" style="--z: 60px;">🐟</div>
+    <div class="fish" id="fish3" style="--z: 10px;">🐡</div>
+  </div>
+
+  <div class="instruction">Esboço 3D puro com CSS (sem dependências)</div>
+
+</body>
+</html>

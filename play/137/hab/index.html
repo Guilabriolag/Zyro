@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>ZYRO — Habitat (teste)</title>
+<style>
+  :root{
+    --void:#0b1220; --panel:#10162696; --line:#2a3550; --accent:#5df1c9;
+    --pink:#ff79d0; --amber:#ffc46b; --ink:#eaf6ff; --dim:#8892b0;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--void);
+    font-family:'SF Mono','JetBrains Mono','Courier New',monospace;color:var(--ink);
+    overscroll-behavior:none;touch-action:none}
+  #world{position:fixed;inset:0;display:block}
+
+  /* ---------- loading ---------- */
+  #loading-screen{position:fixed;inset:0;background:var(--void);z-index:100;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    transition:opacity .5s;letter-spacing:.1em;font-size:12px;color:var(--dim)}
+  #loading-screen b{color:var(--accent);font-size:16px;letter-spacing:.2em}
+  #loading-screen.hidden{opacity:0;pointer-events:none}
+
+  /* ---------- HUD topo ---------- */
+  #hud-top{position:fixed;top:0;left:0;right:0;padding:max(14px,env(safe-area-inset-top)) 16px 10px;
+    display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:10}
+  #hud-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  #hud-title b{color:var(--accent);font-weight:600}
+
+  /* ---------- botão smartphone ---------- */
+  #btn-phone{pointer-events:auto;width:38px;height:38px;border-radius:50%;
+    border:1px solid rgba(93,241,201,.4);background:var(--panel);backdrop-filter:blur(8px);
+    color:var(--accent);font-size:16px}
+
+  /* ---------- caixa de interação ---------- */
+  #interaction-box{position:fixed;left:50%;bottom:132px;transform:translateX(-50%);
+    z-index:10;background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);
+    border-radius:14px;padding:9px 18px;text-align:center;min-width:220px;max-width:82vw;
+    opacity:.55;transition:opacity .25s,border-color .25s}
+  #interaction-box.active{opacity:1;border-color:rgba(93,241,201,.5)}
+  #interaction-box strong{display:block;font-size:13px;color:var(--ink);margin-bottom:2px}
+  #interaction-box small{font-size:10px;color:var(--dim);line-height:1.4}
+
+  /* ---------- joystick ---------- */
+  #joypad{position:fixed;left:22px;bottom:34px;z-index:15;width:104px;height:104px;border-radius:50%;
+    background:radial-gradient(circle,rgba(93,241,201,.08),rgba(2,6,14,.5));
+    border:1px solid rgba(93,241,201,.3);touch-action:none}
+  #joynub{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,var(--accent) 45%,#0b3a30 100%);
+    box-shadow:0 0 14px rgba(93,241,201,.6);transition:transform .05s linear;pointer-events:none}
+
+  /* ---------- botões de ação (pular / interagir) ---------- */
+  #action-buttons{position:fixed;right:20px;bottom:30px;z-index:15;display:flex;flex-direction:column;
+    gap:12px;align-items:center}
+  .action-btn{width:64px;height:64px;border-radius:50%;border:1px solid var(--line);
+    background:var(--panel);backdrop-filter:blur(8px);color:var(--ink);font-size:11px;
+    letter-spacing:.06em;text-transform:uppercase;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px}
+  .action-btn span{font-size:18px}
+  #btn-interact.ready{border-color:var(--accent);color:var(--accent);box-shadow:0 0 16px rgba(93,241,201,.4)}
+  #btn-jump{border-color:rgba(255,196,107,.4);color:var(--amber)}
+
+  /* ---------- toast de evento ---------- */
+  #event-toast{position:fixed;top:66px;left:50%;transform:translateX(-50%) translateY(-14px);
+    z-index:20;background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--line);
+    border-radius:12px;padding:10px 16px;font-size:11px;color:var(--dim);text-align:center;
+    max-width:86vw;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
+  #event-toast b{color:var(--accent)}
+  #event-toast span{color:var(--ink)}
+  #event-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---------- smartphone overlay ---------- */
+  #phone-overlay{position:fixed;inset:0;z-index:50;background:rgba(2,4,10,.72);backdrop-filter:blur(4px);
+    display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+  #phone-overlay.open{opacity:1;pointer-events:auto}
+  #phone-body{width:min(300px,84vw);aspect-ratio:9/19;background:#05060c;border:6px solid #1a1f2e;
+    border-radius:38px;box-shadow:0 0 40px rgba(93,241,201,.15);display:flex;flex-direction:column;
+    overflow:hidden;transform:scale(.9);transition:transform .3s}
+  #phone-overlay.open #phone-body{transform:scale(1)}
+  #phone-screen{flex:1;background:linear-gradient(180deg,#0d1424,#070a14);padding:22px 16px 16px;
+    display:flex;flex-direction:column;overflow:auto}
+  #phone-status{display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:14px}
+  #phone-app-title{font-size:15px;color:var(--ink);margin:0 0 3px}
+  #phone-app-sub{font-size:10px;color:var(--dim);margin:0 0 16px}
+  .phone-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .phone-card{background:rgba(255,255,255,.04);border:1px solid rgba(93,241,201,.18);border-radius:14px;
+    padding:12px 10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .phone-card span.ic{font-size:18px}
+  .phone-card b{font-size:11px;color:var(--ink)}
+  .phone-card small{font-size:8.5px;color:var(--dim);line-height:1.3}
+  .phone-card .tag{margin-top:auto;font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--amber);border:1px solid rgba(255,196,107,.35);border-radius:6px;padding:2px 6px}
+  #phone-close{margin-top:14px;align-self:center;background:transparent;border:1px solid rgba(255,255,255,.15);
+    color:var(--dim);border-radius:10px;padding:8px 18px;font-family:inherit;font-size:10px}
+
+  #drag-hint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;
+    font-size:10px;color:var(--dim);letter-spacing:.5px;opacity:.6;pointer-events:none;text-align:center}
+</style>
+</head>
+<body>
+
+<canvas id="world"></canvas>
+
+<div id="loading-screen"><b>ZYRO</b>carregando habitat…</div>
+
+<div id="hud-top">
+  <div id="hud-title">habitat<br><b>teste — bichinhos & lojas</b></div>
+  <button id="btn-phone">📱</button>
+</div>
+
+<div id="event-toast"></div>
+<div id="drag-hint">arraste a tela pra girar a câmera</div>
+
+<div id="interaction-box">
+  <strong id="interaction-title">Nada por perto</strong>
+  <small id="interaction-description">Explore o habitat</small>
+</div>
+
+<div id="joypad"><div id="joynub"></div></div>
+
+<div id="action-buttons">
+  <button class="action-btn" id="btn-jump"><span>⤒</span>pular</button>
+  <button class="action-btn" id="btn-interact"><span>✦</span>usar</button>
+</div>
+
+<div id="phone-overlay">
+  <div id="phone-body">
+    <div id="phone-screen">
+      <div id="phone-status"><span>21:04</span><span>◍ ZYRO NET</span></div>
+      <p id="phone-app-title">App do Habitante</p>
+      <p id="phone-app-sub">Funções chegando em breve</p>
+      <div class="phone-grid">
+        <div class="phone-card"><span class="ic">🐾</span><b>Meus bichinhos</b><small>Veja e cuide dos companheiros adquiridos</small><span class="tag">em breve</span></div>
+        <div class="phone-card"><span class="ic">🛍️</span><b>Carteira</b><small>Itens e moedas coletadas no habitat</small><span class="tag">em breve</span></div>
+        <div class="phone-card"><span class="ic">🗺️</span><b>Mapa</b><small>Andares, lago e pontos ainda não visitados</small><span class="tag">em breve</span></div>
+        <div class="phone-card"><span class="ic">📡</span><b>Scanner</b><small>Diagnóstico dimensional das criaturas</small><span class="tag">em breve</span></div>
+        <div class="phone-card"><span class="ic">👥</span><b>Amigos</b><small>Visite o habitat de outros jogadores</small><span class="tag">em breve</span></div>
+        <div class="phone-card"><span class="ic">⚙️</span><b>Ajustes</b><small>Câmera, som e controles</small><span class="tag">em breve</span></div>
+      </div>
+      <button id="phone-close">fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

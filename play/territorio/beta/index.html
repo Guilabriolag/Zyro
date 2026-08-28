@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#070b12">
+  <title>ZYRO — Complexo / Habitat 0001</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <canvas id="world"></canvas>
+
+  <header id="topbar">
+    <div class="brand"><b>ZYRO</b><span id="worldLabel">COMPLEXO</span></div>
+    <div class="world-state"><span class="dot"></span><span id="stateLabel">online</span></div>
+    <button id="menuBtn" class="round">☰</button>
+  </header>
+
+  <aside id="sidePanel" class="panel">
+    <div class="panel-head">
+      <div><small>SHELL</small><h2 id="panelTitle">Mundo</h2></div>
+      <button id="closePanel" class="x">×</button>
+    </div>
+    <div id="panelBody"></div>
+  </aside>
+
+  <div id="prompt" class="prompt hidden"></div>
+  <div id="toast" class="toast"></div>
+
+  <div id="joyZone" aria-label="Joystick">
+    <div id="joyBase"></div><div id="joyKnob"></div>
+  </div>
+  <button id="actionBtn" class="action">INTERAGIR</button>
+  <button id="inventoryBtn" class="smallAction">MOCHILA</button>
+  <button id="habitatBtn" class="smallAction habitatBtn">HABITAT</button>
+
+  <div id="bathModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-kicker">BANHEIRO · CADASTRO COMPLEMENTAR</div>
+      <h1>Identidade do Player</h1>
+      <p>Complete o registro para liberar o guichê e os estandes.</p>
+      <label>sexo <select id="playerSex"><option>feminino</option><option>masculino</option><option>outro</option><option>prefiro não informar</option></select></label>
+      <label>nome social <input id="playerSocial" placeholder="como quer aparecer"></label>
+      <button id="bathSaveBtn" class="primary">CONCLUIR CADASTRO</button>
+    </div>
+  </div>
+
+  <div id="registerModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-kicker">TOTEM · PRIMEIRO REGISTRO</div>
+      <h1>Quem está chegando?</h1>
+      <p>Cadastre seu Player para liberar o primeiro circuito do Complexo.</p>
+      <label>nome <input id="playerName" placeholder="seu nome"></label>
+      <label>idade <input id="playerAge" type="number" min="1" max="120" placeholder="idade"></label>
+      <label>signo de nascimento <select id="playerSign"><option>áries</option><option>touro</option><option>gêmeos</option><option>câncer</option><option>leão</option><option>virgem</option><option>libra</option><option>escorpião</option><option>sagitário</option><option>capricórnio</option><option>aquário</option><option>peixes</option></select></label>
+      <button id="registerBtn" class="primary">REGISTRAR PLAYER</button>
+    </div>
+  </div>
+
+  <script type="module" src="./Game.js"></script>
+</body>
+</html>

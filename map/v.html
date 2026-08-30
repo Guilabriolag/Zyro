@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerenciador & Visualizador de Biblioteca FGG</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --panel-bg: #1e293b;
+      --card-bg: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #475569;
+      --danger: #ef4444;
+      --success: #22c55e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--panel-bg);
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    button, .btn-label {
+      background-color: var(--panel-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    button:hover, .btn-label:hover {
+      background-color: var(--card-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    button.primary {
+      background-color: var(--accent);
+      color: #000;
+      border: none;
+    }
+
+    button.primary:hover {
+      background-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr 340px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Coluna Esquerda: Biblioteca */
+    .sidebar {
+      background-color: var(--panel-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 0.5rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+
+    .file-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+
+    .file-item {
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .file-item:hover, .file-item.active {
+      border-color: var(--accent);
+      background-color: var(--card-bg);
+    }
+
+    .file-item .title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      word-break: break-all;
+    }
+
+    .file-item .meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Coluna Central: Visualizador */
+    .viewer {
+      background-color: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viewer-header {
+      padding: 0.75rem 1rem;
+      background-color: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .viewer-content {
+      flex: 1;
+      padding: 1rem;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    pre {
+      background-color: #050811;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: #38bdf8;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+      flex: 1;
+      overflow: auto;
+    }
+
+    /* Coluna Direita: Detalhes & Formulário */
+    .details-panel {
+      background-color: var(--panel-bg);
+      border-left: 1px solid var(--border);
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .danger-btn {
+      background-color: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      margin-top: auto;
+    }
+
+    .danger-btn:hover {
+      background-color: var(--danger);
+      color: #fff;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Header & Ações Globais -->
+  <header>
+    <h1>📁 Biblioteca & Visualizador FGG</h1>
+    <div class="toolbar">
+      <label class="btn-label">
+        📥 Importar JSON
+        <input type="file" id="import-json" accept=".json" class="hidden" onchange="importLibrary(event)" />
+      </label>
+      <button onclick="exportLibrary()">📤 Exportar JSON</button>
+      <button class="primary" onclick="openNewFileDialog()">+ Cadastrar FGG</button>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    
+    <!-- Painel Esquerdo: Lista de Arquivos FGG -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <input type="text" id="search-input" class="search-box" placeholder="Buscar arquivo por nome ou tag..." oninput="renderFileList()" />
+      </div>
+      <div class="file-list" id="file-list">
+        <!-- Lista gerada dinamicamente via JS -->
+      </div>
+    </div>
+
+    <!-- Painel Central: Visualizador de Conteúdo -->
+    <div class="viewer">
+      <div class="viewer-header" id="viewer-header">
+        Nenhum arquivo selecionado
+      </div>
+      <div class="viewer-content">
+        <div id="drop-zone" style="border: 2px dashed var(--border); padding: 2rem; text-align: center; border-radius: 8px; color: var(--text-muted);">
+          Arraste e solte um arquivo .FGG aqui para carregar rapidamente ou cadastre manualmente.
+          <input type="file" id="file-drop-input" class="hidden" onchange="handleFileDrop(event)" />
+        </div>
+        <pre id="code-preview">// Selecione um arquivo na lista para visualizar seu conteúdo ou estrutura JSON/Hex.</pre>
+      </div>
+    </div>
+
+    <!-- Painel Direito: Formulário e Editar Registro -->
+    <div class="details-panel">
+      <div class="panel-title" id="form-title">Detalhes do Arquivo</div>
+      
+      <form id="fgg-form" onsubmit="saveFileRecord(event)">
+        <input type="hidden" id="file-id" />
+        
+        <div class="form-group">
+          <label for="file-name">Nome do Arquivo FGG*</label>
+          <input type="text" id="file-name" placeholder="ex: modelo_terreno.fgg" required />
+        </div>
+
+        <div class="form-group">
+          <label for="file-category">Categoria / Tag</label>
+          <input type="text" id="file-category" placeholder="ex: Geospacial, 3D, Projeto A" />
+        </div>
+
+        <div class="form-group">
+          <label for="file-size">Tamanho do Arquivo</label>
+          <input type="text" id="file-size" placeholder="ex: 1.2 MB ou 450 KB" />
+        </div>
+
+        <div class="form-group">
+          <label for="file-desc">Descrição / Anotações</label>
+          <textarea id="file-desc" placeholder="Adicione observações sobre a versão ou uso deste FGG..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="file-raw">Conteúdo / Dados em Texto / JSON</label>
+          <textarea id="file-raw" style="font-family: monospace; font-size: 0.75rem;" placeholder="Cole o código/conteúdo do arquivo aqui para salvar na biblioteca..."></textarea>
+        </div>
+
+        <button type="submit" class="primary" style="margin-top: 0.5rem;">💾 Salvar Registro</button>
+      </form>
+
+      <button id="delete-btn" class="danger-btn hidden" onclick="deleteCurrentFile()">🗑️ Excluir da Biblioteca</button>
+    </div>
+
+  </div>
+
+  <script>
+    // --- ESTADO DA APLICAÇÃO ---
+    const STORAGE_KEY = 'FGG_LIBRARY_DATA';
+    let library = [];
+    let selectedFileId = null;
+
+    // --- CARREGAMENTO INICIAL ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFromLocalStorage();
+      renderFileList();
+      
+      // Suporte a Drag & Drop na central
+      const dropZone = document.getElementById('drop-zone');
+      dropZone.addEventListener('click', () => document.getElementById('file-drop-input').click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--accent)'; });
+      dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'var(--border)'; });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--border)';
+        if (e.dataTransfer.files.length) {
+          processUploadedFile(e.dataTransfer.files[0]);
+        }
+      });
+    });
+
+    // --- PERSISTÊNCIA LOCAL (LocalStorage) ---
+    function loadFromLocalStorage() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try {
+          library = JSON.parse(data);
+        } catch (e) {
+          console.error("Erro ao carregar dados do LocalStorage", e);
+          library = [];
+        }
+      } else {
+        // Exemplo inicial de demonstração
+        library = [
+          {
+            id: 'demo-1',
+            name: 'amostra_terreno.fgg',
+            category: '3D Terreno',
+            size: '128 KB',
+            updatedAt: new Date().toLocaleDateString('pt-BR'),
+            description: 'Arquivo FGG de exemplo com malha 3D e pontos de curva.',
+            content: '{\n  "fggVersion": "1.0",\n  "header": {\n    "type": "TerrainMesh",\n    "points": 1450\n  },\n  "data": [0.12, 4.55, 12.00, 8.44]\n}'
+          }
+        ];
+        saveToLocalStorage();
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
+    }
+
+    // --- RENDERIZAÇÃO DA LISTA ---
+    function renderFileList() {
+      const listContainer = document.getElementById('file-list');
+      const query = document.getElementById('search-input').value.toLowerCase();
+      listContainer.innerHTML = '';
+
+      const filtered = library.filter(item => 
+        item.name.toLowerCase().includes(query) || 
+        (item.category && item.category.toLowerCase().includes(query))
+      );
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem; padding: 1rem; text-align: center;">Nenhum arquivo FGG encontrado.</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `file-item ${item.id === selectedFileId ? 'active' : ''}`;
+        div.onclick = () => selectFile(item.id);
+        div.innerHTML = `
+          <div class="title">${item.name}</div>
+          <div class="meta">
+            <span>${item.category || 'Sem tag'}</span>
+            <span>${item.size || '-'}</span>
+          </div>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+
+    // --- SELEÇÃO DE ARQUIVO ---
+    function selectFile(id) {
+      selectedFileId = id;
+      const file = library.find(item => item.id === id);
+      if (!file) return;
+
+      // Preenche formulário
+      document.getElementById('file-id').value = file.id;
+      document.getElementById('file-name').value = file.name;
+      document.getElementById('file-category').value = file.category || '';
+      document.getElementById('file-size').value = file.size || '';
+      document.getElementById('file-desc').value = file.description || '';
+      document.getElementById('file-raw').value = file.content || '';
+
+      // Preenche visualizador
+      document.getElementById('viewer-header').innerText = `${file.name} — Atualizado em: ${file.updatedAt || 'N/A'}`;
+      document.getElementById('code-preview').textContent = file.content || '// Este arquivo não possui dados ou código bruto cadastrado.';
+
+      // Atualiza interface
+      document.getElementById('form-title').innerText = 'Editar Registro FGG';
+      document.getElementById('delete-btn').classList.remove('hidden');
+      renderFileList();
+    }
+
+    // --- NOVO REGISTRO ---
+    function openNewFileDialog() {
+      selectedFileId = null;
+      document.getElementById('fgg-form').reset();
+      document.getElementById('file-id').value = '';
+      document.getElementById('form-title').innerText = 'Cadastrar Novo FGG';
+      document.getElementById('viewer-header').innerText = 'Cadastrando novo registro...';
+      document.getElementById('code-preview').textContent = '// Insira ou cole o conteúdo do arquivo no painel à direita.';
+      document.getElementById('delete-btn').classList.add('hidden');
+      renderFileList();
+    }
+
+    // --- SALVAR REGISTRO ---
+    function saveFileRecord(e) {
+      e.preventDefault();
+      const id = document.getElementById('file-id').value || 'fgg-' + Date.now();
+      const name = document.getElementById('file-name').value;
+      const category = document.getElementById('file-category').value;
+      const size = document.getElementById('file-size').value;
+      const description = document.getElementById('file-desc').value;
+      const content = document.getElementById('file-raw').value;
+
+      const existingIndex = library.findIndex(item => item.id === id);
+
+      const record = {
+        id,
+        name,
+        category,
+        size,
+        description,
+        content,
+        updatedAt: new Date().toLocaleDateString('pt-BR')
+      };
+
+      if (existingIndex >= 0) {
+        library[existingIndex] = record;
+      } else {
+        library.push(record);
+      }
+
+      saveToLocalStorage();
+      selectFile(id);
+    }
+
+    // --- EXCLUIR REGISTRO ---
+    function deleteCurrentFile() {
+      if (!selectedFileId) return;
+      if (confirm('Tem certeza que deseja remover este arquivo da sua biblioteca local?')) {
+        library = library.filter(item => item.id !== selectedFileId);
+        saveToLocalStorage();
+        openNewFileDialog();
+      }
+    }
+
+    // --- HANDLE UPLOAD/DROP DE ARQUIVO REAL ---
+    function handleFileDrop(e) {
+      if (e.target.files.length) {
+        processUploadedFile(e.target.files[0]);
+      }
+    }
+
+    function processUploadedFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        openNewFileDialog();
+        document.getElementById('file-name').value = file.name;
+        document.getElementById('file-size').value = (file.size / 1024).toFixed(1) + ' KB';
+        document.getElementById('file-category').value = file.name.split('.').pop().toUpperCase();
+        document.getElementById('file-raw').value = evt.target.result;
+        document.getElementById('code-preview').textContent = evt.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    // --- EXPORTAR JSON DA BIBLIOTECA ---
+    function exportLibrary() {
+      if (library.length === 0) {
+        alert('A biblioteca está vazia!');
+        return;
+      }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(library, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `biblioteca_fgg_backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // --- IMPORTAR JSON DA BIBLIOTECA ---
+    function importLibrary(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          if (Array.isArray(importedData)) {
+            library = importedData;
+            saveToLocalStorage();
+            renderFileList();
+            alert('Biblioteca importada com sucesso!');
+          } else {
+            alert('O arquivo JSON não possui o formato de biblioteca válido.');
+          }
+        } catch (err) {
+          alert('Erro ao processar o arquivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>

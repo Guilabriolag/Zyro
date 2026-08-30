@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>FGG Studio Full - 2D SVG & 3D Three.js</title>
+  <title>FGG Studio Full - Mobile Drawer 3D</title>
   
-  <!-- Carregamento do Three.js e OrbitControls para 3D -->
+  <!-- CDNs do Three.js e OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
@@ -38,26 +38,25 @@
 
     header {
       background-color: var(--panel-bg);
-      padding: 0.8rem 1rem;
+      padding: 0.6rem 1rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      z-index: 10;
     }
 
-    header h1 { font-size: 1.1rem; color: var(--accent); font-weight: 700; }
-    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
+    header h1 { font-size: 1rem; color: var(--accent); font-weight: 700; }
 
     .mobile-tabs {
       display: flex;
       background-color: var(--panel-bg);
       border-bottom: 1px solid var(--border);
-      overflow-x: auto;
+      z-index: 10;
     }
 
     .tab-btn {
       flex: 1;
-      min-width: 80px;
       padding: 0.75rem 0.2rem;
       background: none;
       border: none;
@@ -67,7 +66,6 @@
       text-align: center;
       border-bottom: 3px solid transparent;
       cursor: pointer;
-      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -99,7 +97,7 @@
     .tab-content {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      padding: 1rem;
+      padding: 0.8rem;
       overflow-y: auto;
       display: none;
       flex-direction: column;
@@ -125,27 +123,93 @@
       background-color: var(--panel-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      cursor: pointer;
     }
     .file-item.active { border-color: var(--accent); background-color: var(--card-bg); }
-    .file-item .title { font-weight: 600; font-size: 0.95rem; word-break: break-all; }
-    .file-item .meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; display: flex; justify-content: space-between; }
+    .file-item .title { font-weight: 600; font-size: 0.95rem; }
 
-    /* Toolbar e Canvas */
+    /* Toolbar e Visualizador */
     .viewer-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background-color: var(--panel-bg);
-      padding: 0.6rem;
+      padding: 0.5rem;
       border-radius: 8px;
       border: 1px solid var(--border);
+      z-index: 5;
+    }
+
+    #rendered-view {
+      background-color: #020617;
+      border-radius: 8px;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    #three-canvas-container, #svg-canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+    }
+
+    /* BARRA RETRÁTIL (BOTTOM DRAWER) DO EDITOR DE CÓDIGO */
+    .code-drawer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--panel-bg);
+      border-top: 2px solid var(--accent);
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      flex-direction: column;
+      transition: height 0.25s ease;
+      height: 40px; /* Recolhido por padrão */
+      z-index: 20;
+      box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+    }
+
+    .drawer-handle {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+      background: var(--card-bg);
+      border-radius: 14px 14px 0 0;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .drawer-pill {
+      width: 36px;
+      height: 4px;
+      background-color: var(--text-muted);
+      border-radius: 2px;
+      position: absolute;
+      top: 6px;
+    }
+
+    .drawer-content {
+      flex: 1;
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: hidden;
     }
 
     .code-textarea {
       background-color: #050811;
-      padding: 1rem;
+      padding: 0.8rem;
       border-radius: 8px;
       border: 1px solid var(--border);
       color: #38bdf8;
@@ -157,34 +221,6 @@
       width: 100%;
     }
 
-    #rendered-view {
-      background-color: #020617;
-      border-radius: 8px;
-      flex: 1;
-      min-height: 280px;
-      overflow: hidden;
-      border: 2px dashed var(--border);
-      position: relative;
-    }
-
-    #rendered-view.unlocked {
-      border-color: var(--warning);
-      background-color: #0f172a;
-    }
-
-    #rendered-view.unlocked * {
-      cursor: move !important;
-      outline: 1px dashed #38bdf8;
-    }
-
-    /* Estilos do Canvas 3D */
-    #three-canvas-container {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0; left: 0;
-    }
-
     .hidden { display: none !important; }
 
     @media (min-width: 850px) {
@@ -192,87 +228,81 @@
       .main-content { display: grid; grid-template-columns: 280px 1fr 320px; }
       .tab-content { position: relative; display: flex !important; border-right: 1px solid var(--border); }
       #tab-writer { display: none !important; }
+      .code-drawer { position: relative; height: 180px !important; border-radius: 8px; border: 1px solid var(--border); }
+      .drawer-handle { display: none; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>⚡ FGG Live Studio 3D</h1>
-    <div class="header-actions">
-      <span id="save-status" style="font-size:0.75rem; color:var(--success)">Sincronizado</span>
-      <button onclick="exportLibrary()">📤</button>
-    </div>
+    <h1>⚡ FGG Studio 3D</h1>
+    <span id="save-status" style="font-size:0.75rem; color:var(--success)">Sincronizado</span>
   </header>
 
   <nav class="mobile-tabs">
     <button class="tab-btn active" onclick="switchTab('tab-list')">📋 Lista</button>
     <button class="tab-btn" onclick="switchTab('tab-writer')">✍️ Escrever</button>
-    <button class="tab-btn" onclick="switchTab('tab-viewer')">👁️ Studio / Canvas</button>
+    <button class="tab-btn" onclick="switchTab('tab-viewer')">🎮 Studio 3D</button>
     <button class="tab-btn" onclick="switchTab('tab-form')">⚙️ Dados</button>
   </nav>
 
   <div class="main-content">
     
-    <!-- ABA 1: LISTA -->
+    <!-- ABA 1: LISTA DE PROJETOS -->
     <div class="tab-content active" id="tab-list">
       <input type="text" id="search-input" class="search-box" placeholder="🔍 Buscar arquivo..." oninput="renderFileList()" />
       <button class="primary" style="width: 100%; margin-top: 0.2rem;" onclick="openNewFileDialog()">+ Novo Projeto</button>
       <div class="file-list" id="file-list"></div>
     </div>
 
-    <!-- ABA 2: SCRATCHPAD / ESCREVER DO ZERO -->
+    <!-- ABA 2: ESCREVER DO ZERO -->
     <div class="tab-content" id="tab-writer">
       <div class="viewer-toolbar">
-        <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent);">✍️ Escrever Código Livre</span>
-        <button onclick="clearWriter()" style="font-size: 0.75rem;">🧹 Limpar</button>
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent);">✍️ Escrever Código Libre</span>
       </div>
-      <textarea id="scratchpad-editor" class="code-textarea" placeholder="// Cole seu SVG ou script de Three.js aqui..."></textarea>
+      <textarea id="scratchpad-editor" class="code-textarea" placeholder="// Digite seu código aqui..."></textarea>
       <button class="primary" style="padding: 0.8rem;" onclick="saveScratchpadToLibrary()">➕ Salvar na Biblioteca</button>
     </div>
 
-    <!-- ABA 3: PREVIEW & EDITOR AO VIVO -->
-    <div class="tab-content" id="tab-viewer">
+    <!-- ABA 3: CANVAS & DRAWER DO EDITOR -->
+    <div class="tab-content" id="tab-viewer" style="padding:0.4rem; position:relative; overflow:hidden;">
+      
       <div class="viewer-toolbar">
         <select id="engine-selector" onchange="changeEngine(this.value)">
           <option value="threejs">🎮 Engine 3D (Three.js)</option>
           <option value="svg">🎨 Engine 2D (SVG)</option>
         </select>
-        <button id="lock-btn" onclick="toggleCanvasLock()">🔒 Travado</button>
+        <button onclick="toggleDrawer()">💻 Abrir Código</button>
       </div>
 
-      <!-- ÁREA DE RENDERIZAÇÃO (2D / 3D) -->
+      <!-- CANVAS PRINCIPAL -->
       <div id="rendered-view">
-        <div id="three-canvas-container" class="hidden"></div>
-        <div id="svg-canvas-container" style="width:100%; height:100%;"></div>
+        <div id="three-canvas-container"></div>
+        <div id="svg-canvas-container" class="hidden"></div>
       </div>
-      
-      <div style="display:flex; flex-direction:column; gap:0.3rem;">
-        <label style="font-size:0.75rem; color:var(--text-muted)">Código Fonte em Tempo Real:</label>
-        <textarea id="live-code-editor" class="code-textarea" style="height: 120px;" oninput="handleLiveEdit()" spellcheck="false"></textarea>
+
+      <!-- BARRA RETRÁTIL (DRAWER) DO EDITOR DE CÓDIGO -->
+      <div class="code-drawer" id="code-drawer">
+        <div class="drawer-handle" id="drawer-handle" onclick="toggleDrawer()">
+          <div class="drawer-pill"></div>
+          <span id="drawer-label" style="margin-top:4px;">▲ Puxar Editor de Código</span>
+        </div>
+        <div class="drawer-content">
+          <textarea id="live-code-editor" class="code-textarea" oninput="handleLiveEdit()" spellcheck="false"></textarea>
+        </div>
       </div>
+
     </div>
 
-    <!-- ABA 4: DADOS E FORMULÁRIO -->
+    <!-- ABA 4: METADADOS -->
     <div class="tab-content" id="tab-form">
       <form id="fgg-form" onsubmit="saveFileRecord(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
         <input type="hidden" id="file-id" />
-
         <div class="form-group">
-          <label for="file-name">Nome do Arquivo*</label>
-          <input type="text" id="file-name" placeholder="ex: maquete_3d.js" required />
+          <label style="font-size:0.8rem; color:var(--text-muted)">Nome do Arquivo*</label>
+          <input type="text" id="file-name" class="search-box" placeholder="ex: maquete_3d.js" required />
         </div>
-
-        <div class="form-group">
-          <label for="file-category">Engine / Tipo</label>
-          <input type="text" id="file-category" placeholder="ex: 3D Three.js, SVG" />
-        </div>
-
-        <div class="form-group">
-          <label for="file-desc">Anotações</label>
-          <textarea id="file-desc" placeholder="Detalhes do projeto..."></textarea>
-        </div>
-
         <button type="submit" class="primary" style="padding: 0.8rem;">💾 Salvar Alterações</button>
       </form>
       <button id="delete-btn" class="danger hidden" style="margin-top: 0.5rem; padding: 0.7rem;" onclick="deleteCurrentFile()">🗑️ Excluir Registro</button>
@@ -281,84 +311,58 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'FGG_STUDIO_3D_V2';
+    const STORAGE_KEY = 'FGG_STUDIO_3D_DRAWER_V1';
     let library = [];
     let selectedFileId = null;
     let currentEngine = 'threejs';
-    let isUnlocked = false;
+    let isDrawerOpen = false;
 
-    // Variaveis Globais do Three.js
-    let scene, camera, renderer, controls, animFrameId;
+    // Variaveis Three.js
+    let scene, camera, renderer, controls;
 
-    // SCRIPT 3D PADRÃO DAS 3 CASAS (THREE.JS)
+    // SCRIPT PADRÃO 3D COM 3 CASAS
     const defaultThreeJSCode = `// --- PROJETO DE 3 CASAS EM THREE.JS 3D ---
-// Função de Renderização das Casas
 (function buildScene(scene) {
-  // 1. Gramado / Solo
-  const groundGeo = new THREE.PlaneGeometry(30, 20);
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0x15803d });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
+  // 1. Gramado
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(30, 20), new THREE.MeshStandardMaterial({ color: 0x15803d }));
   ground.rotation.x = -Math.PI / 2;
   scene.add(ground);
 
-  // --- CASA 1: TÉRREA (Amarela/Vermelha) ---
-  const c1Group = new THREE.Group();
-  c1Group.position.set(-8, 0, 0);
+  // --- CASA 1: TÉRREA ---
+  const c1 = new THREE.Group(); c1.position.set(-8, 0, 0);
+  const b1 = new THREE.Mesh(new THREE.BoxGeometry(4, 2.5, 4), new THREE.MeshStandardMaterial({ color: 0xfde047 }));
+  b1.position.y = 1.25; c1.add(b1);
+  const r1 = new THREE.Mesh(new THREE.ConeGeometry(3.5, 1.8, 4), new THREE.MeshStandardMaterial({ color: 0xdc2626 }));
+  r1.position.y = 3.4; r1.rotation.y = Math.PI / 4; c1.add(r1);
+  scene.add(c1);
 
-  const base1 = new THREE.Mesh(new THREE.BoxGeometry(4, 2.5, 4), new THREE.MeshStandardMaterial({ color: 0xfde047 }));
-  base1.position.y = 1.25;
-  c1Group.add(base1);
+  // --- CASA 2: SOBRADO 2 ANDARES ---
+  const c2 = new THREE.Group(); c2.position.set(0, 0, 0);
+  const b2_1 = new THREE.Mesh(new THREE.BoxGeometry(5, 2.5, 4), new THREE.MeshStandardMaterial({ color: 0xe2e8f0 }));
+  b2_1.position.y = 1.25; c2.add(b2_1);
+  const b2_2 = new THREE.Mesh(new THREE.BoxGeometry(5, 2.2, 4), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+  b2_2.position.y = 3.6; c2.add(b2_2);
+  const r2 = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.4, 4.2), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+  r2.position.y = 4.8; c2.add(r2);
+  scene.add(c2);
 
-  const roof1 = new THREE.Mesh(new THREE.ConeGeometry(3.5, 1.8, 4), new THREE.MeshStandardMaterial({ color: 0xdc2626 }));
-  roof1.position.y = 3.4;
-  roof1.rotation.y = Math.PI / 4;
-  c1Group.add(roof1);
-  scene.add(c1Group);
-
-  // --- CASA 2: SOBRADO 2 ANDARES (Cinza/Azul) ---
-  const c2Group = new THREE.Group();
-  c2Group.position.set(0, 0, 0);
-
-  const terreo2 = new THREE.Mesh(new THREE.BoxGeometry(5, 2.5, 4), new THREE.MeshStandardMaterial({ color: 0xe2e8f0 }));
-  terreo2.position.y = 1.25;
-  c2Group.add(terreo2);
-
-  const andar2 = new THREE.Mesh(new THREE.BoxGeometry(5, 2.2, 4), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
-  andar2.position.y = 3.6;
-  c2Group.add(andar2);
-
-  const roof2 = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.4, 4.2), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
-  roof2.position.y = 4.8;
-  c2Group.add(roof2);
-  scene.add(c2Group);
-
-  // --- CASA 3: 3 ANDARES (Tijolo/Moderna) ---
-  const c3Group = new THREE.Group();
-  c3Group.position.set(8, 0, 0);
-
+  // --- CASA 3: 3 ANDARES ---
+  const c3 = new THREE.Group(); c3.position.set(8, 0, 0);
   const a1 = new THREE.Mesh(new THREE.BoxGeometry(4.5, 2.2, 4), new THREE.MeshStandardMaterial({ color: 0xef4444 }));
-  a1.position.y = 1.1;
-  c3Group.add(a1);
-
+  a1.position.y = 1.1; c3.add(a1);
   const a2 = new THREE.Mesh(new THREE.BoxGeometry(4.5, 2.2, 4), new THREE.MeshStandardMaterial({ color: 0xdc2626 }));
-  a2.position.y = 3.3;
-  c3Group.add(a2);
-
+  a2.position.y = 3.3; c3.add(a2);
   const a3 = new THREE.Mesh(new THREE.BoxGeometry(4, 2.0, 3.8), new THREE.MeshStandardMaterial({ color: 0xb91c1c }));
-  a3.position.y = 5.4;
-  c3Group.add(a3);
-
-  const roof3 = new THREE.Mesh(new THREE.ConeGeometry(3.2, 1.5, 4), new THREE.MeshStandardMaterial({ color: 0x450a0a }));
-  roof3.position.y = 7.1;
-  roof3.rotation.y = Math.PI / 4;
-  c3Group.add(roof3);
-  scene.add(c3Group);
+  a3.position.y = 5.4; c3.add(a3);
+  const r3 = new THREE.Mesh(new THREE.ConeGeometry(3.2, 1.5, 4), new THREE.MeshStandardMaterial({ color: 0x450a0a }));
+  r3.position.y = 7.1; r3.rotation.y = Math.PI / 4; c3.add(r3);
+  scene.add(c3);
 })(scene);`;
 
     window.addEventListener('DOMContentLoaded', () => {
       initThreeJS();
+      setupDrawerDrag();
       loadFromLocalStorage();
-      renderFileList();
     });
 
     function switchTab(tabId) {
@@ -369,39 +373,92 @@
       if (idx !== -1) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
     }
 
-    /* INICIALIZAÇÃO DA ENGINE 3D */
+    /* CONTROLE DA BARRA RETRÁTIL (DRAWER) */
+    function toggleDrawer() {
+      const drawer = document.getElementById('code-drawer');
+      const label = document.getElementById('drawer-label');
+
+      if (isDrawerOpen) {
+        drawer.style.height = '40px';
+        label.innerText = '▲ Puxar Editor de Código';
+        isDrawerOpen = false;
+      } else {
+        drawer.style.height = '50%';
+        label.innerText = '▼ Recolher Editor';
+        isDrawerOpen = true;
+      }
+      setTimeout(resizeThreeCanvas, 300);
+    }
+
+    function setupDrawerDrag() {
+      const handle = document.getElementById('drawer-handle');
+      const drawer = document.getElementById('code-drawer');
+      let startY = 0, startHeight = 0;
+
+      handle.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+        startHeight = drawer.offsetHeight;
+      }, { passive: true });
+
+      handle.addEventListener('touchmove', (e) => {
+        const deltaY = startY - e.touches[0].clientY;
+        let newHeight = startHeight + deltaY;
+        if (newHeight > 40 && newHeight < window.innerHeight * 0.8) {
+          drawer.style.height = `${newHeight}px`;
+        }
+      }, { passive: true });
+
+      handle.addEventListener('touchend', () => {
+        const currentHeight = drawer.offsetHeight;
+        if (currentHeight > 100) {
+          isDrawerOpen = true;
+          document.getElementById('drawer-label').innerText = '▼ Recolher Editor';
+        } else {
+          isDrawerOpen = false;
+          drawer.style.height = '40px';
+          document.getElementById('drawer-label').innerText = '▲ Puxar Editor de Código';
+        }
+        resizeThreeCanvas();
+      });
+    }
+
+    /* THREE.JS ENGINE */
     function initThreeJS() {
       const container = document.getElementById('three-canvas-container');
-      container.innerHTML = '';
-
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x020617);
 
-      camera = new THREE.PerspectiveCamera(50, container.clientWidth / (container.clientHeight || 300), 0.1, 1000);
+      camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
       camera.position.set(0, 8, 18);
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(container.clientWidth, container.clientHeight || 300);
+      renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
       container.appendChild(renderer.domElement);
 
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Luzes
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
       scene.add(ambientLight);
-
       const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
       dirLight.position.set(10, 20, 15);
       scene.add(dirLight);
 
       function animate() {
-        animFrameId = requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
       }
       animate();
+    }
+
+    function resizeThreeCanvas() {
+      if (!renderer || !camera) return;
+      const container = document.getElementById('three-canvas-container');
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
     }
 
     function changeEngine(engine) {
@@ -422,37 +479,24 @@
 
     function renderThreeCode() {
       if (!scene) return;
-      // Limpa objetos antigos da cena mantendo luzes
       for (let i = scene.children.length - 1; i >= 0; i--) {
         const obj = scene.children[i];
         if (obj.type === 'Mesh' || obj.type === 'Group') scene.remove(obj);
       }
-
       const code = document.getElementById('live-code-editor').value;
       try {
         const runScript = new Function('scene', 'THREE', code);
         runScript(scene, THREE);
-      } catch (err) {
-        console.error("Erro no script 3D:", err);
-      }
+      } catch (err) {}
     }
 
     function renderSVGCode() {
-      const container = document.getElementById('svg-canvas-container');
-      container.innerHTML = document.getElementById('live-code-editor').value;
+      document.getElementById('svg-canvas-container').innerHTML = document.getElementById('live-code-editor').value;
     }
 
     function handleLiveEdit() {
       if (currentEngine === 'threejs') renderThreeCode();
       else renderSVGCode();
-      
-      if (selectedFileId) {
-        const idx = library.findIndex(item => item.id === selectedFileId);
-        if (idx >= 0) {
-          library[idx].content = document.getElementById('live-code-editor').value;
-          saveToLocalStorage();
-        }
-      }
     }
 
     function loadFromLocalStorage() {
@@ -460,33 +504,22 @@
       if (data) {
         try { library = JSON.parse(data); } catch (e) { library = []; }
       } else {
-        library = [{
-          id: 'casas-3d-1',
-          name: 'maquete_3d_casas.js',
-          category: 'Three.js 3D',
-          updatedAt: new Date().toLocaleDateString('pt-BR'),
-          description: 'Cena 3D com 3 casas com rotação e zoom interativo.',
-          content: defaultThreeJSCode
-        }];
+        library = [{ id: 'casas-3d-1', name: 'maquete_3d_casas.js', content: defaultThreeJSCode }];
         saveToLocalStorage();
       }
       if (library.length > 0) selectFile(library[0].id);
     }
 
-    function saveToLocalStorage() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
-    }
+    function saveToLocalStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(library)); }
 
     function renderFileList() {
       const container = document.getElementById('file-list');
-      const query = document.getElementById('search-input').value.toLowerCase();
       container.innerHTML = '';
-
-      library.filter(i => i.name.toLowerCase().includes(query)).forEach(item => {
+      library.forEach(item => {
         const div = document.createElement('div');
         div.className = `file-item ${item.id === selectedFileId ? 'active' : ''}`;
         div.onclick = () => selectFile(item.id);
-        div.innerHTML = `<div class="title">${item.name}</div><div class="meta"><span>🏷️ ${item.category || '3D'}</span></div>`;
+        div.innerHTML = `<div class="title">${item.name}</div>`;
         container.appendChild(div);
       });
     }
@@ -495,94 +528,25 @@
       selectedFileId = id;
       const file = library.find(item => item.id === id);
       if (!file) return;
-
-      document.getElementById('file-id').value = file.id;
-      document.getElementById('file-name').value = file.name;
-      document.getElementById('file-category').value = file.category || '';
-      document.getElementById('file-desc').value = file.description || '';
-      document.getElementById('live-code-editor').value = file.content || '';
-
-      if (file.name.endsWith('.svg') || file.category.includes('SVG')) {
-        document.getElementById('engine-selector').value = 'svg';
-        changeEngine('svg');
-      } else {
-        document.getElementById('engine-selector').value = 'threejs';
-        changeEngine('threejs');
-      }
-
-      document.getElementById('delete-btn').classList.remove('hidden');
+      document.getElementById('live-code-editor').value = file.content;
+      changeEngine('threejs');
       renderFileList();
       if (window.innerWidth < 850) switchTab('tab-viewer');
     }
 
     function openNewFileDialog() {
       selectedFileId = null;
-      document.getElementById('fgg-form').reset();
       document.getElementById('live-code-editor').value = defaultThreeJSCode;
-      document.getElementById('delete-btn').classList.add('hidden');
-      changeEngine('threejs');
-      if (window.innerWidth < 850) switchTab('tab-form');
-    }
-
-    function saveFileRecord(e) {
-      e.preventDefault();
-      const id = document.getElementById('file-id').value || 'fgg-' + Date.now();
-      const record = {
-        id,
-        name: document.getElementById('file-name').value,
-        category: document.getElementById('file-category').value,
-        description: document.getElementById('file-desc').value,
-        content: document.getElementById('live-code-editor').value,
-        updatedAt: new Date().toLocaleDateString('pt-BR')
-      };
-
-      const idx = library.findIndex(item => item.id === id);
-      if (idx >= 0) library[idx] = record;
-      else library.push(record);
-
-      saveToLocalStorage();
-      selectFile(id);
+      switchTab('tab-viewer');
     }
 
     function saveScratchpadToLibrary() {
       const content = document.getElementById('scratchpad-editor').value;
       if (!content.trim()) return alert('Digite algum código!');
-      
-      openNewFileDialog();
-      document.getElementById('file-name').value = `projeto_${Date.now().toString().slice(-4)}.js`;
-      document.getElementById('live-code-editor').value = content;
-      handleLiveEdit();
-      switchTab('tab-form');
-    }
-
-    function clearWriter() {
-      document.getElementById('scratchpad-editor').value = '';
-    }
-
-    function deleteCurrentFile() {
-      if (!selectedFileId) return;
-      if (confirm('Excluir este projeto?')) {
-        library = library.filter(item => item.id !== selectedFileId);
-        saveToLocalStorage();
-        if (library.length > 0) selectFile(library[0].id);
-        else openNewFileDialog();
-      }
-    }
-
-    function toggleCanvasLock() {
-      isUnlocked = !isUnlocked;
-      const btn = document.getElementById('lock-btn');
-      btn.innerText = isUnlocked ? '🔓 Destravado' : '🔒 Travado';
-      btn.style.backgroundColor = isUnlocked ? 'var(--warning)' : 'var(--card-bg)';
-      btn.style.color = isUnlocked ? '#000' : 'var(--text-main)';
-    }
-
-    function exportLibrary() {
-      const blob = new Blob([JSON.stringify(library, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `fgg_studio_3d_${Date.now()}.json`;
-      a.click();
+      library.push({ id: 'fgg-' + Date.now(), name: `projeto_${Date.now().toString().slice(-4)}.js`, content });
+      saveToLocalStorage();
+      renderFileList();
+      switchTab('tab-list');
     }
   </script>
 </body>

@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McDonald's 3D Experience - Three.js</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #05050a;
+            color: white;
+            user-select: none;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* HUD - Painel de Controle */
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 25, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffbc0d; /* Amarelo Mc */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 svg {
+            width: 24px;
+            height: 24px;
+            fill: #ffbc0d;
+        }
+
+        h2 {
+            margin: 0 0 15px 0;
+            font-size: 12px;
+            color: #da291c; /* Vermelho Mc */
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffbc0d;
+        }
+
+        button.active {
+            background: #ffbc0d;
+            color: #222;
+            border-color: #ffbc0d;
+            box-shadow: 0 0 10px rgba(255, 188, 13, 0.4);
+        }
+
+        button.red-active {
+            background: #da291c;
+            color: white;
+            border-color: #da291c;
+            box-shadow: 0 0 10px rgba(218, 41, 28, 0.4);
+        }
+
+        /* Instruções de Navegação */
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* Carregando */
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 188, 13, 0.1);
+            border-top-color: #ffbc0d;
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loader p {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ffbc0d;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p>CONSTRUINDO MCDONALD'S 3D...</p>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <!-- HUD de Controle -->
+    <div id="hud">
+        <h1>
+            <svg viewBox="0 0 24 24">
+                <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M16.5,13c-0.83,0-1.5-0.67-1.5-1.5V9h-1v2.5c0,0.83-0.67,1.5-1.5,1.5s-1.5-0.67-1.5-1.5V9H10v2.5C10,12.33,9.33,13,8.5,13S7,12.33,7,11.5V8c0-0.55,0.45-1,1-1h1.5C10.05,7,10.5,7.45,10.5,8v0.5h3V8c0-0.55,0.45-1,1-1H16c0.55,0,1,0.45,1,1v3.5C17,12.33,16.33,13,16.5,13z"/>
+            </svg>
+            McDonald's
+        </h1>
+        <h2>Experiência Arquitetônica</h2>
+
+        <div class="section-title">Ambiente & Horário</div>
+        <div class="btn-group">
+            <button id="btn-day" class="active">☀ Dia</button>
+            <button id="btn-night">🌙 Noite</button>
+        </div>
+
+        <div class="section-title">Controle de Câmera</div>
+        <div class="btn-group">
+            <button id="btn-cam-ext" class="active">Fachada</button>
+            <button id="btn-cam-int">Interior</button>
+            <button id="btn-cam-drive">Drive-Thru</button>
+            <button id="btn-cam-totem">Totem</button>
+        </div>
+
+        <div class="section-title">Animação</div>
+        <button id="btn-orbit" style="width: 100%;">🔄 Rotacionar Câmera (On)</button>
+    </div>
+
+    <div id="instructions">
+        Use o <b>Botão Esquerdo</b> para girar • <b>Botão Direito</b> para arrastar • <b>Scroll</b> para Zoom
+    </div>
+
+    <!-- Importando Three.js, OrbitControls de fontes estáveis CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // --- CONFIGURAÇÃO GLOBAL ---
+        const container = document.getElementById('canvas-container');
+        let scene, camera, renderer, controls;
+        let buildingGroup, furnitureGroup, lightGroup, environmentGroup, vehicleGroup;
+        let clock = new THREE.Clock();
+
+        // Estados e Animações
+        let isNight = false;
+        let autoRotate = true;
+        let dayNightTransition = 0.0; // 0 = Dia, 1 = Noite
+        let carSpline, carMesh;
+        let carProgress = 0;
+        let steamParticles = [];
+
+        // Objetos Dinâmicos para Transição Dia/Noite
+        let hemiLight, dirLight;
+        let streetLights = [];
+        let interiorSpotlights = [];
+        let neonMaterials = [];
+        let skyMesh;
+
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            // Cena
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x1a1a24, 0.015);
+
+            // Câmera
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(28, 12, 35);
+
+            // Renderizador
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            container.appendChild(renderer.domElement);
+
+            // Controles de Órbita
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.05; // Evita atravessar o chão
+            controls.minDistance = 3;
+            controls.maxDistance = 80;
+            controls.target.set(0, 3, 0);
+
+            // Grupos Organizacionais
+            buildingGroup = new THREE.Group();
+            furnitureGroup = new THREE.Group();
+            lightGroup = new THREE.Group();
+            environmentGroup = new THREE.Group();
+            vehicleGroup = new THREE.Group();
+
+            scene.add(buildingGroup);
+            scene.add(furnitureGroup);
+            scene.add(lightGroup);
+            scene.add(environmentGroup);
+            scene.add(vehicleGroup);
+
+            // Criação do Mundo
+            createEnvironment();
+            createBuilding();
+            createInterior();
+            createLogosAndSigns();
+            createDriveThruCar();
+            setupLights();
+
+            // Eventos
+            window.addEventListener('resize', onWindowResize);
+            setupUI();
+
+            // Retirar tela de loading
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = 0;
+                setTimeout(() => document.getElementById('loader').remove(), 500);
+            }, 1000);
+
+            // Iniciar Loop
+            animate();
+        }
+
+        // --- PROCEDURAL TEXTURES & CANVASES ---
+        
+        // Gerador de textura para letreiro escrito "McDonald's" e "McCafé"
+        function createTextTexture(text, textColor, bgColor, fontSize = 48) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            
+            // Fundo
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Texto
+            ctx.font = `bold ${fontSize}px "Speedee", Arial, sans-serif`;
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Sombra para brilho
+            ctx.shadowColor = textColor;
+            ctx.shadowBlur = 10;
+            
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+        }
+
+        // --- CONSTRUÇÃO DO CENÁRIO & CHÃO ---
+        function createEnvironment() {
+            // Chão Principal (Asfalto/Concreto)
+            const floorGeo = new THREE.PlaneGeometry(100, 100);
+            const floorMat = new THREE.MeshStandardMaterial({ 
+                color: 0x222225, 
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            environmentGroup.add(floor);
+
+            // Demarcação da pista do Drive-thru (Faixas Amarelas)
+            const lineGeo = new THREE.RingGeometry(18, 18.5, 64, 1, 0, Math.PI * 1.5);
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffbc0d, side: THREE.DoubleSide });
+            const driveLaneLine = new THREE.Mesh(lineGeo, lineMat);
+            driveLaneLine.rotation.x = Math.PI / 2;
+            driveLaneLine.position.set(0, 0.02, 0);
+            environmentGroup.add(driveLaneLine);
+
+            // Calçada elevada para o restaurante
+            const curbGeo = new THREE.BoxGeometry(26, 0.3, 18);
+            const curbMat = new THREE.MeshStandardMaterial({ color: 0x888890, roughness: 0.6 });
+            const curb = new THREE.Mesh(curbGeo, curbMat);
+            curb.position.set(0, 0.15, 0);
+            curb.receiveShadow = true;
+            environmentGroup.add(curb);
+
+            // Canteiro Verde Lateral
+            const grassGeo = new THREE.BoxGeometry(8, 0.3, 18);
+            const grassMat = new THREE.MeshStandardMaterial({ color: 0x3b5e2b, roughness: 0.9 });
+            const grass = new THREE.Mesh(grassGeo, grassMat);
+            grass.position.set(17, 0.15, 0);
+            grass.receiveShadow = true;
+            environmentGroup.add(grass);
+
+            // Árvores Low Poly no canteiro
+            for (let i = 0; i < 3; i++) {
+                createTree(17, 0.3, -6 + i * 6);
+            }
+
+            // Postes de Luz Externa (Iluminação Pública e do Estacionamento)
+            createStreetLight(10, 0, 10);
+            createStreetLight(-10, 0, -10);
+
+            // Céu (Cúpula Gigante)
+            const skyGeo = new THREE.SphereGeometry(150, 32, 15);
+            const skyMat = new THREE.MeshBasicMaterial({
+                color: 0x5075a6,
+                side: THREE.BackSide
+            });
+            skyMesh = new THREE.Mesh(skyGeo, skyMat);
+            scene.add(skyMesh);
+        }
+
+        function createTree(x, y, z) {
+            const treeGroup = new THREE.Group();
+            treeGroup.position.set(x, y, z);
+
+            const trunkGeo = new THREE.CylinderGeometry(0.15, 0.25, 2, 8);
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5a3d28, roughness: 0.9 });
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            trunk.position.y = 1;
+            trunk.castShadow = true;
+            treeGroup.add(trunk);
+
+            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x2e5c1e, roughness: 0.8, flatShading: true });
+            const leaves1 = new THREE.Mesh(new THREE.ConeGeometry(1.2, 2, 6), leavesMat);
+            leaves1.position.y = 2.5;
+            leaves1.castShadow = true;
+            treeGroup.add(leaves1);
+
+            const leaves2 = new THREE.Mesh(new THREE.ConeGeometry(0.9, 1.5, 6), leavesMat);
+            leaves2.position.y = 3.5;
+            leaves2.castShadow = true;
+            treeGroup.add(leaves2);
+
+            environmentGroup.add(treeGroup);
+        }
+
+        function createStreetLight(x, y, z) {
+            const poleGroup = new THREE.Group();
+            poleGroup.position.set(x, y, z);
+
+            // Poste de metal
+            const poleGeo = new THREE.CylinderGeometry(0.1, 0.15, 8, 8);
+            const poleMat = new THREE.MeshStandardMaterial({ color: 0x444, metalness: 0.8, roughness: 0.2 });
+            const pole = new THREE.Mesh(poleGeo, poleMat);
+            pole.position.y = 4;
+            pole.castShadow = true;
+            poleGroup.add(pole);
+
+            // Luminária angular
+            const armGeo = new THREE.BoxGeometry(1.5, 0.15, 0.3);
+            const arm = new THREE.Mesh(armGeo, poleMat);
+            arm.position.set(0.5, 8, 0);
+            arm.rotation.z = -0.2;
+            poleGroup.add(arm);
+
+            // Foco de Luz Real
+            const lightGeo = new THREE.BoxGeometry(0.6, 0.1, 0.4);
+            const lightVal = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const lightFixture = new THREE.Mesh(lightGeo, lightVal);
+            lightFixture.position.set(1.1, 7.85, 0);
+            poleGroup.add(lightFixture);
+
+            // SpotLight projetada no chão
+            const spotLight = new THREE.SpotLight(0xfff3d1, 0, 20, Math.PI / 4, 0.5, 1);
+            spotLight.position.set(1.1, 7.8, 0);
+            spotLight.target.position.set(1.1, 0, 0);
+            spotLight.castShadow = true;
+            spotLight.shadow.mapSize.width = 512;
+            spotLight.shadow.mapSize.height = 512;
+            poleGroup.add(spotLight);
+            poleGroup.add(spotLight.target);
+
+            streetLights.push({ spotLight, lightFixture });
+            environmentGroup.add(poleGroup);
+        }
+
+        // --- CONSTRUÇÃO DO EDIFÍCIO (MCDONALD'S) ---
+        function createBuilding() {
+            // Materiais Arquitetônicos
+            const darkPanelMat = new THREE.MeshStandardMaterial({ color: 0x18181c, roughness: 0.65, metalness: 0.2 });
+            const woodPanelMat = new THREE.MeshStandardMaterial({ color: 0xc19a6b, roughness: 0.5 }); // Madeira clara moderna
+            const whiteTrimMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f2, roughness: 0.3 });
+            const redBladeMat = new THREE.MeshStandardMaterial({ color: 0xda291c, metalness: 0.1, roughness: 0.4 }); // Vermelho McDonalds
+
+            // Vidro Físico Translúcido
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.3,
+                transmission: 0.8,
+                roughness: 0.1,
+                metalness: 0.1,
+                ior: 1.5,
+                thickness: 0.5,
+                depthWrite: false
+            });
+
+            // 1. Estrutura Principal (Parede Traseira e Direita)
+            const backWall = new THREE.Mesh(new THREE.BoxGeometry(22, 6, 0.5), darkPanelMat);
+            backWall.position.set(0, 3 + 0.3, -7.5);
+            backWall.castShadow = true;
+            backWall.receiveShadow = true;
+            buildingGroup.add(backWall);
+
+            const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6, 15), darkPanelMat);
+            rightWall.position.set(11, 3 + 0.3, 0);
+            rightWall.castShadow = true;
+            rightWall.receiveShadow = true;
+            buildingGroup.add(rightWall);
+
+            // 2. Painéis de Madeira Arquitetônica (Visual Frontal de Destaque)
+            const leftWoodWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6, 4.5), woodPanelMat);
+            leftWoodWall.position.set(-11, 3 + 0.3, -5.25);
+            leftWoodWall.castShadow = true;
+            buildingGroup.add(leftWoodWall);
+
+            const frontWoodAccent = new THREE.Mesh(new THREE.BoxGeometry(5, 6, 0.5), woodPanelMat);
+            frontWoodAccent.position.set(-8.5, 3 + 0.3, 7.5);
+            frontWoodAccent.castShadow = true;
+            buildingGroup.add(frontWoodAccent);
+
+            // 3. Vidraças / Esquadrias (Painéis Transparentes Grandes)
+            const frontWindowFrame = new THREE.Mesh(new THREE.BoxGeometry(16, 5, 0.1), glassMat);
+            frontWindowFrame.position.set(2.5, 2.5 + 0.3, 7.5);
+            buildingGroup.add(frontWindowFrame);
+
+            const leftWindowFrame = new THREE.Mesh(new THREE.BoxGeometry(0.1, 5, 10), glassMat);
+            leftWindowFrame.position.set(-11, 2.5 + 0.3, 2);
+            buildingGroup.add(leftWindowFrame);
+
+            // Perfis metálicos pretos das esquadrias
+            for (let x = -5; x <= 10; x += 3.8) {
+                const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.1, 5, 0.2), darkPanelMat);
+                mullion.position.set(x, 2.5 + 0.3, 7.5);
+                buildingGroup.add(mullion);
+            }
+
+            // 4. Pilar Vermelho Vertical Icônico (The Red Blade)
+            // Se projeta acima do teto conforme imagens fornecidas.
+            const redBlade = new THREE.Mesh(new THREE.BoxGeometry(2.5, 9.5, 1.2), redBladeMat);
+            redBlade.position.set(-8.5, 4.75 + 0.3, 7.8);
+            redBlade.castShadow = true;
+            buildingGroup.add(redBlade);
+
+            // 5. Teto e Marquise Branca Moderna
+            const roof = new THREE.Mesh(new THREE.BoxGeometry(23, 0.6, 16), darkPanelMat);
+            roof.position.set(0, 6 + 0.3, 0);
+            roof.receiveShadow = true;
+            buildingGroup.add(roof);
+
+            // Marquise Branca Flutuante (Overhang)
+            const canopy = new THREE.Mesh(new THREE.BoxGeometry(23.6, 0.6, 16.6), whiteTrimMat);
+            canopy.position.set(0, 5.7 + 0.3, 0.3);
+            canopy.castShadow = true;
+            buildingGroup.add(canopy);
+
+            // Calha de teto (detalhe cinza escuro de acabamento superior da platibanda)
+            const fascia = new THREE.Mesh(new THREE.BoxGeometry(23, 1.2, 0.4), darkPanelMat);
+            fascia.position.set(0, 6.6 + 0.3, 7.7);
+            buildingGroup.add(fascia);
+        }
+
+        // --- INTERIOR MOBILIADO ---
+        function createInterior() {
+            // Piso Cerâmico Interno
+            const floorTileMat = new THREE.MeshStandardMaterial({ color: 0xdedede, roughness: 0.1 });
+            const intFloor = new THREE.Mesh(new THREE.BoxGeometry(21.5, 0.1, 14.5), floorTileMat);
+            intFloor.position.set(0, 0.31, 0);
+            intFloor.receiveShadow = true;
+            furnitureGroup.add(intFloor);
+
+            // Balcão de Pedidos
+            const counterMat = new THREE.MeshStandardMaterial({ color: 0x222, roughness: 0.4 });
+            const counterTopMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+            
+            const counterBase = new THREE.Mesh(new THREE.BoxGeometry(8, 1.1, 1.5), counterMat);
+            counterBase.position.set(5, 0.55 + 0.3, -2);
+            counterBase.castShadow = true;
+            furnitureGroup.add(counterBase);
+
+            const counterTop = new THREE.Mesh(new THREE.BoxGeometry(8.2, 0.1, 1.7), counterTopMat);
+            counterTop.position.set(5, 1.15 + 0.3, -2);
+            furnitureGroup.add(counterTop);
+
+            // Monitores de Menu Atrás do Balcão (Telas Luminosas)
+            const menuScreenMat = new THREE.MeshBasicMaterial({ 
+                map: createTextTexture("MENU MCDONALD'S", "#ffbc0d", "#da291c", 40)
+            });
+            const menuBoard = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 0.1), menuScreenMat);
+            menuBoard.position.set(5, 4 + 0.3, -3.9);
+            furnitureGroup.add(menuBoard);
+
+            // Mesas e Cadeiras modernas (Estilo Praça de Alimentação)
+            // Mesa de bar retangular (alta)
+            createHighTable(-2, 0.3, 2);
+            // Mesas circulares com assentos
+            createRoundTable(2, 0.3, 3);
+            createRoundTable(-5, 0.3, -3);
+
+            // Cabines de Sofá Amarelos e Vermelhos (Booth Seats)
+            createBooth(-5, 0.3, 2, 0);
+            createBooth(2, 0.3, -3, Math.PI);
+
+            // Cozinha de fundo (Representação Low-Poly)
+            const kitchenWall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 5, 6), new THREE.MeshStandardMaterial({ color: 0xaaaaaa }));
+            kitchenWall.position.set(0, 2.5 + 0.3, -4.5);
+            furnitureGroup.add(kitchenWall);
+
+            const kitchenEquip = new THREE.Mesh(new THREE.BoxGeometry(4, 1.5, 1.5), new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8 }));
+            kitchenEquip.position.set(4, 0.75 + 0.3, -5.5);
+            furnitureGroup.add(kitchenEquip);
+        }
+
+        // Criadores de Mobília Específicos
+        function createHighTable(x, y, z) {
+            const tableGroup = new THREE.Group();
+            tableGroup.position.set(x, y, z);
+
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.4 });
+            const metalMat = new THREE.MeshStandardMaterial({ color: 0x111, metalness: 0.8, roughness: 0.3 });
+
+            // Tampo
+            const top = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.08, 3), woodMat);
+            top.position.y = 1.6;
+            top.castShadow = true;
+            tableGroup.add(top);
+
+            // Pernas de ferro
+            const leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.6, 0.1), metalMat);
+            leg1.position.set(-0.6, 0.8, -1.3);
+            const leg2 = leg1.clone(); leg2.position.set(0.6, 0.8, -1.3);
+            const leg3 = leg1.clone(); leg3.position.set(-0.6, 0.8, 1.3);
+            const leg4 = leg1.clone(); leg4.position.set(0.6, 0.8, 1.3);
+            tableGroup.add(leg1, leg2, leg3, leg4);
+
+            // Bancos Altos (Stools)
+            for (let i = -1; i <= 1; i += 1) {
+                createStool(tableGroup, -1, 0, i, metalMat);
+                createStool(tableGroup, 1, 0, i, metalMat);
+            }
+
+            furnitureGroup.add(tableGroup);
+        }
+
+        function createStool(parent, x, y, z, mat) {
+            const stool = new THREE.Group();
+            stool.position.set(x, y, z);
+            
+            const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.05, 16), new THREE.MeshStandardMaterial({ color: 0xda291c, roughness: 0.5 }));
+            seat.position.y = 1;
+            seat.castShadow = true;
+            stool.add(seat);
+
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1, 8), mat);
+            base.position.y = 0.5;
+            stool.add(base);
+
+            parent.add(stool);
+        }
+
+        function createRoundTable(x, y, z) {
+            const group = new THREE.Group();
+            group.position.set(x, y, z);
+
+            const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1 });
+            const chromeMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.9 });
+
+            const top = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.05, 32), whiteMat);
+            top.position.y = 1.1;
+            top.castShadow = true;
+            group.add(top);
+
+            const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.1, 8), chromeMat);
+            post.position.y = 0.55;
+            group.add(post);
+
+            // Cadeiras ao redor
+            const chairColor = new THREE.MeshStandardMaterial({ color: 0xffbc0d, roughness: 0.4 }); // Cadeira Amarela
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI / 2) * i;
+                const chair = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), chairColor);
+                chair.position.set(Math.cos(angle) * 1.1, 0.5, Math.sin(angle) * 1.1);
+                chair.castShadow = true;
+                group.add(chair);
+            }
+
+            furnitureGroup.add(group);
+        }
+
+        function createBooth(x, y, z, rot) {
+            const group = new THREE.Group();
+            group.position.set(x, y, z);
+            group.rotation.y = rot;
+
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0x4a2e1b });
+            const cushionMat = new THREE.MeshStandardMaterial({ color: 0xda291c, roughness: 0.7 }); // Almofada vermelha
+
+            // Estrutura traseira de madeira
+            const back = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.4, 2.5), woodMat);
+            back.position.set(-0.8, 0.7, 0);
+            back.castShadow = true;
+            group.add(back);
+
+            // Assento vermelho
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 2.4), cushionMat);
+            seat.position.set(-0.4, 0.25, 0);
+            seat.castShadow = true;
+            group.add(seat);
+
+            // Encosto acolchoado
+            const cushionBack = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 2.4), cushionMat);
+            cushionBack.position.set(-0.7, 0.8, 0);
+            group.add(cushionBack);
+
+            // Mesa associada à cabine
+            const tableMat = new THREE.MeshStandardMaterial({ color: 0xdedede });
+            const table = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.05, 2), tableMat);
+            table.position.set(0.3, 1.0, 0);
+            table.castShadow = true;
+            group.add(table);
+
+            const tableLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1, 8), woodMat);
+            tableLeg.position.set(0.3, 0.5, 0);
+            group.add(tableLeg);
+
+            furnitureGroup.add(group);
+        }
+
+        // --- LOGOTIPOS, LETREIROS E SINALIZAÇÃO ---
+        function createLogosAndSigns() {
+            // 1. O Icônico Arco Dourado ("M") em 3D
+            // Desenho do vetor matemático exato do "M" do McDonalds usando THREE.Shape
+            const x = 0, y = 0;
+            const shape = new THREE.Shape();
+            
+            // Perfil esquerdo, arco duplo e base central
+            shape.moveTo(x - 1.2, y - 1.5);
+            shape.lineTo(x - 1.2, y + 0.2);
+            shape.quadraticCurveTo(x - 1.2, y + 1.5, x - 0.6, y + 1.5);
+            shape.quadraticCurveTo(x, y + 1.5, x, y + 0.1);
+            shape.quadraticCurveTo(x, y + 1.5, x + 0.6, y + 1.5);
+            shape.quadraticCurveTo(x + 1.2, y + 1.5, x + 1.2, y + 0.2);
+            shape.lineTo(x + 1.2, y - 1.5);
+            shape.lineTo(x + 0.8, y - 1.5);
+            shape.lineTo(x + 0.8, y + 0.2);
+            shape.quadraticCurveTo(x + 0.8, y + 1.0, x + 0.5, y + 1.0);
+            shape.quadraticCurveTo(x + 0.1, y + 1.0, x + 0.1, y + 0.0);
+            shape.lineTo(x + 0.1, y - 1.5);
+            shape.lineTo(x - 0.1, y - 1.5);
+            shape.lineTo(x - 0.1, y + 0.0);
+            shape.quadraticCurveTo(x - 0.1, y + 1.0, x - 0.5, y + 1.0);
+            shape.quadraticCurveTo(x - 0.8, y + 1.0, x - 0.8, y + 0.2);
+            shape.lineTo(x - 0.8, y - 1.5);
+            shape.closePath();
+
+            const extrudeSettings = {
+                steps: 1,
+                depth: 0.3,
+                bevelEnabled: true,
+                bevelThickness: 0.1,
+                bevelSize: 0.05,
+                bevelOffset: 0,
+                bevelSegments: 3
+            };
+
+            const neonM_Mat = new THREE.MeshStandardMaterial({ 
+                color: 0xffbc0d, 
+                roughness: 0.2,
+                metalness: 0.8,
+                emissive: 0xffa500,
+                emissiveIntensity: 0.0 // Desligado de dia por padrão
+            });
+            neonMaterials.push(neonM_Mat);
+
+            // Arch 1: No topo da lâmina vermelha
+            const logoM1 = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, extrudeSettings), neonM_Mat);
+            logoM1.scale.set(0.8, 0.8, 0.8);
+            logoM1.rotation.y = 0;
+            logoM1.position.set(-8.5, 8.8 + 0.3, 8.5);
+            logoM1.castShadow = true;
+            buildingGroup.add(logoM1);
+
+            // 2. Letreiro Luminoso "McDonald's" na Fachada Cinza
+            const mcTextTex = createTextTexture("McDonald's", "#ffffff", "rgba(0,0,0,0)", 54);
+            const textPanelMat = new THREE.MeshBasicMaterial({ 
+                map: mcTextTex, 
+                transparent: true,
+                side: THREE.DoubleSide
+            });
+            
+            const mainSign = new THREE.Mesh(new THREE.PlaneGeometry(8, 2), textPanelMat);
+            mainSign.position.set(1.5, 4.6 + 0.3, 7.8);
+            buildingGroup.add(mainSign);
+
+            // Letreiro "McCafé" na lateral
+            const mccafeTex = createTextTexture("McCafé", "#ffbc0d", "rgba(0,0,0,0)", 60);
+            const mccafeMat = new THREE.MeshBasicMaterial({ map: mccafeTex, transparent: true });
+            const sideSign = new THREE.Mesh(new THREE.PlaneGeometry(3, 1), mccafeMat);
+            sideSign.position.set(11.27, 3.8 + 0.3, 4);
+            sideSign.rotation.y = Math.PI / 2;
+            buildingGroup.add(sideSign);
+
+            // 3. Totem Gigante Externo do Drive-Thru (Sinal de Entrada)
+            const totemGroup = new THREE.Group();
+            totemGroup.position.set(12, 0, 10);
+
+            // Poste central
+            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 12, 16), new THREE.MeshStandardMaterial({ color: 0x55555d, metalness: 0.7 }));
+            pole.position.y = 6;
+            pole.castShadow = true;
+            totemGroup.add(pole);
+
+            // Placa retangular cinza escuro
+            const signBoard = new THREE.Mesh(new THREE.BoxGeometry(4, 1.5, 0.6), new THREE.MeshStandardMaterial({ color: 0x222225 }));
+            signBoard.position.set(0, 10.5, 0);
+            signBoard.castShadow = true;
+            totemGroup.add(signBoard);
+
+            // Detalhe luminoso "Drive-Thru" no totem
+            const driveThruText = createTextTexture("DRIVE THRU", "#ffffff", "rgba(0,0,0,0)", 50);
+            const driveThruTextMat = new THREE.MeshBasicMaterial({ map: driveThruText, transparent: true });
+            const totemDriveSignFront = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 1.2), driveThruTextMat);
+            totemDriveSignFront.position.set(0, 10.5, 0.31);
+            totemGroup.add(totemDriveSignFront);
+
+            // Arco Dourado no topo do totem
+            const logoM_Totem = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, extrudeSettings), neonM_Mat);
+            logoM_Totem.scale.set(1.2, 1.2, 1.2);
+            logoM_Totem.position.set(0, 12.8, 0);
+            logoM_Totem.castShadow = true;
+            totemGroup.add(logoM_Totem);
+
+            environmentGroup.add(totemGroup);
+
+            // 4. Batata Frita Inflável Gigante de Decoração (Da Foto 2!)
+            createGiantFriesOrnament(17, 0.3, 3);
+        }
+
+        // Criador da Decoração da Batata Frita
+        function createGiantFriesOrnament(x, y, z) {
+            const friesGroup = new THREE.Group();
+            friesGroup.position.set(x, y, z);
+            friesGroup.scale.set(1.4, 1.4, 1.4);
+
+            // Copo/Caixa Vermelha
+            const cupMat = new THREE.MeshStandardMaterial({ color: 0xda291c, roughness: 0.3 });
+            const cupGeo = new THREE.CylinderGeometry(0.8, 0.6, 1.8, 4, 1, false, Math.PI/4); // Base quadrada angularizada
+            const cup = new THREE.Mesh(cupGeo, cupMat);
+            cup.position.y = 0.9;
+            cup.castShadow = true;
+            friesGroup.add(cup);
+
+            // Símbolo do "M" amarelo simples colado no copo
+            const mGeo = new THREE.PlaneGeometry(0.6, 0.6);
+            const mTex = createTextTexture("M", "#ffbc0d", "rgba(0,0,0,0)", 100);
+            const mMat = new THREE.MeshBasicMaterial({ map: mTex, transparent: true });
+            const frontM = new THREE.Mesh(mGeo, mMat);
+            frontM.position.set(0, 0.9, 0.55);
+            friesGroup.add(frontM);
+
+            // Bastões de Batata (Batatas individuais de tamanhos variados saindo do copo)
+            const fryMat = new THREE.MeshStandardMaterial({ color: 0xffbc0d, roughness: 0.6 });
+            for (let i = 0; i < 20; i++) {
+                const height = 0.8 + Math.random() * 0.8;
+                const fryGeo = new THREE.BoxGeometry(0.12, height, 0.12);
+                const fry = new THREE.Mesh(fryGeo, fryMat);
+                
+                // Distribuição circular dentro do copo
+                const radius = 0.1 + Math.random() * 0.4;
+                const angle = Math.random() * Math.PI * 2;
+                fry.position.set(Math.cos(angle) * radius, 1.7 + (height / 4), Math.sin(angle) * radius);
+                
+                // Inclinação natural orgânica
+                fry.rotation.set(
+                    (Math.random() - 0.5) * 0.3,
+                    0,
+                    (Math.random() - 0.5) * 0.3
+                );
+                fry.castShadow = true;
+                friesGroup.add(fry);
+            }
+
+            environmentGroup.add(friesGroup);
+        }
+
+        // --- SISTEMA DE ILUMINAÇÃO INTELIGENTE ---
+        function setupLights() {
+            // Luz de Hemisfério (Céu/Terra)
+            hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+            hemiLight.position.set(0, 50, 0);
+            lightGroup.add(hemiLight);
+
+            // Luz Direcional Primária (Sol/Lua)
+            dirLight = new THREE.DirectionalLight(0xfff8e7, 1.2);
+            dirLight.position.set(30, 45, 25);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 150;
+            const d = 30;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
+            dirLight.shadow.bias = -0.0005;
+            lightGroup.add(dirLight);
+
+            // Iluminação Quente do Interior (Glow aconchegante visível de fora)
+            // Lâmpadas embutidas no gesso (Downlights)
+            const spotLightCount = 4;
+            const spotPositions = [
+                { x: -5, z: 2 }, { x: 5, z: 2 },
+                { x: -5, z: -3 }, { x: 5, z: -3 }
+            ];
+
+            spotPositions.forEach((pos, index) => {
+                const intSpot = new THREE.SpotLight(0xffaa44, 2.0, 12, Math.PI / 3, 0.5, 1);
+                intSpot.position.set(pos.x, 5.5 + 0.3, pos.z);
+                intSpot.target.position.set(pos.x, 0, pos.z);
+                intSpot.castShadow = true;
+                intSpot.shadow.mapSize.width = 256;
+                intSpot.shadow.mapSize.height = 256;
+                lightGroup.add(intSpot);
+                lightGroup.add(intSpot.target);
+
+                // Pequeno spot visível (Lâmpada física)
+                const bulbGeo = new THREE.SphereGeometry(0.15, 8, 8);
+                const bulbMat = new THREE.MeshBasicMaterial({ color: 0xffeedd });
+                const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+                bulb.position.set(pos.x, 5.8 + 0.3, pos.z);
+                lightGroup.add(bulb);
+
+                interiorSpotlights.push({ intSpot, bulb });
+            });
+        }
+
+        // --- ANIMAÇÃO DO CARRO NO DRIVE-THRU ---
+        function createDriveThruCar() {
+            // Criação de um carrinho baixo-polígono (Low-Poly modernizado)
+            const carGroup = new THREE.Group();
+            
+            // Chassi/Piso
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xda291c, roughness: 0.1 }); // Carro Vermelho
+            const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.4, 3.2), bodyMat);
+            chassis.position.y = 0.35;
+            chassis.castShadow = true;
+            carGroup.add(chassis);
+
+            // Cabine de Vidro/Teto
+            const cabinMat = new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.1 });
+            const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.7, 1.8), cabinMat);
+            cabin.position.set(0, 0.9, -0.2);
+            cabin.castShadow = true;
+            carGroup.add(cabin);
+
+            // Rodas
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.8 });
+            const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.3, 12);
+            wheelGeo.rotateZ(Math.PI / 2);
+
+            const w1 = new THREE.Mesh(wheelGeo, wheelMat); w1.position.set(-0.85, 0.3, 1);
+            const w2 = new THREE.Mesh(wheelGeo, wheelMat); w2.position.set(0.85, 0.3, 1);
+            const w3 = new THREE.Mesh(wheelGeo, wheelMat); w3.position.set(-0.85, 0.3, -1);
+            const w4 = new THREE.Mesh(wheelGeo, wheelMat); w4.position.set(0.85, 0.3, -1);
+            carGroup.add(w1, w2, w3, w4);
+
+            // Faróis (Luzes Físicas)
+            const headlightMat = new THREE.MeshBasicMaterial({ color: 0xffffcc });
+            const h1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 0.1), headlightMat); h1.position.set(-0.6, 0.4, 1.6);
+            const h2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 0.1), headlightMat); h2.position.set(0.6, 0.4, 1.6);
+            carGroup.add(h1, h2);
+
+            // Pontos da pista orbital do Drive-thru ao redor da lanchonete
+            carSpline = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(18, 0, 18),
+                new THREE.Vector3(18, 0, -18),
+                new THREE.Vector3(-18, 0, -18),
+                new THREE.Vector3(-18, 0, 18),
+                new THREE.Vector3(0, 0, 18)
+            ], true); // Circuito Fechado
+
+            carMesh = carGroup;
+            vehicleGroup.add(carMesh);
+        }
+
+        // --- SISTEMA DE CICLO DIA / NOITE ---
+        function updateDayNightCycle() {
+            // Suaviza a transição de volta ao dia ou noite usando interpolação linear (LERP)
+            const speed = 0.05;
+            if (isNight && dayNightTransition < 1.0) {
+                dayNightTransition += speed;
+            } else if (!isNight && dayNightTransition > 0.0) {
+                dayNightTransition -= speed;
+            }
+
+            // 1. Atualizar Cor do Céu e Neblina
+            const skyColor = new THREE.Color(0x5075a6).lerp(new THREE.Color(0x020208), dayNightTransition);
+            skyMesh.material.color.copy(skyColor);
+            scene.fog.color.copy(skyColor);
+            renderer.setClearColor(skyColor);
+
+            // 2. Atualizar Iluminação Direcional (Sol diminui, Lua aparece)
+            dirLight.intensity = THREE.MathUtils.lerp(1.5, 0.1, dayNightTransition);
+            dirLight.color.lerpColors(new THREE.Color(0xfff8e7), new THREE.Color(0x55aaee), dayNightTransition);
+            hemiLight.intensity = THREE.MathUtils.lerp(0.8, 0.2, dayNightTransition);
+
+            // 3. Ligar/Desligar Postes e Neons Luminosos
+            streetLights.forEach(light => {
+                light.spotLight.intensity = THREE.MathUtils.lerp(0, 6, dayNightTransition);
+                light.lightFixture.material.color.lerpColors(new THREE.Color(0x222222), new THREE.Color(0xffffff), dayNightTransition);
+            });
+
+            // 4. Ligar/Desligar Emissão dos Neons do Prédio
+            neonMaterials.forEach(mat => {
+                mat.emissiveIntensity = THREE.MathUtils.lerp(0.0, 1.8, dayNightTransition);
+            });
+
+            // 5. Ajustar focos internos (ficam mais evidentes à noite)
+            interiorSpotlights.forEach(spot => {
+                spot.intSpot.intensity = THREE.MathUtils.lerp(1.2, 3.5, dayNightTransition);
+            });
+        }
+
+        // --- LOOP DE ANIMAÇÃO ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            // Rotação orbital automática da câmera
+            if (autoRotate) {
+                controls.autoRotate = true;
+                controls.autoRotateSpeed = 0.8;
+            } else {
+                controls.autoRotate = false;
+            }
+
+            // Atualização do sistema orbital de controles
+            controls.update();
+
+            // Atualizar o Motor do Dia/Noite
+            updateDayNightCycle();
+
+            // Movimentação do Carro do Drive-Thru
+            if (carSpline && carMesh) {
+                carProgress += 0.015 * delta; // Velocidade do percurso
+                if (carProgress > 1.0) carProgress = 0;
+
+                const position = carSpline.getPointAt(carProgress);
+                carMesh.position.copy(position);
+
+                // Faz o carro olhar para a direção em que está andando
+                const tangent = carSpline.getTangentAt(carProgress).normalize();
+                const targetPos = position.clone().add(tangent);
+                carMesh.lookAt(targetPos);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- SISTEMA DE INTERATIVIDADE UI / HUD ---
+        function setupUI() {
+            const btnDay = document.getElementById('btn-day');
+            const btnNight = document.getElementById('btn-night');
+            const btnOrbit = document.getElementById('btn-orbit');
+
+            // Câmeras Predefinidas
+            const camExt = document.getElementById('btn-cam-ext');
+            const camInt = document.getElementById('btn-cam-int');
+            const camDrive = document.getElementById('btn-cam-drive');
+            const camTotem = document.getElementById('btn-cam-totem');
+
+            // Eventos de clique
+            btnDay.addEventListener('click', () => {
+                isNight = false;
+                btnDay.classList.add('active');
+                btnNight.classList.remove('active');
+            });
+
+            btnNight.addEventListener('click', () => {
+                isNight = true;
+                btnNight.classList.add('active');
+                btnDay.classList.remove('active');
+            });
+
+            btnOrbit.addEventListener('click', () => {
+                autoRotate = !autoRotate;
+                btnOrbit.innerHTML = autoRotate ? "🔄 Rotacionar Câmera (On)" : "🔄 Rotacionar Câmera (Off)";
+                btnOrbit.classList.toggle('red-active', !autoRotate);
+            });
+
+            // Ajustar Câmera
+            const resetCamButtons = () => {
+                [camExt, camInt, camDrive, camTotem].forEach(btn => btn.classList.remove('active'));
+            };
+
+            camExt.addEventListener('click', () => {
+                resetCamButtons();
+                camExt.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Rotacionar Câmera (Off)";
+                btnOrbit.classList.add('red-active');
+                animateCamera(new THREE.Vector3(26, 10, 26), new THREE.Vector3(0, 3, 0));
+            });
+
+            camInt.addEventListener('click', () => {
+                resetCamButtons();
+                camInt.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Rotacionar Câmera (Off)";
+                btnOrbit.classList.add('red-active');
+                animateCamera(new THREE.Vector3(-1, 2.5, 4.5), new THREE.Vector3(5, 2, -2));
+            });
+
+            camDrive.addEventListener('click', () => {
+                resetCamButtons();
+                camDrive.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Rotacionar Câmera (Off)";
+                btnOrbit.classList.add('red-active');
+                animateCamera(new THREE.Vector3(-22, 5, -12), new THREE.Vector3(-10, 2, -5));
+            });
+
+            camTotem.addEventListener('click', () => {
+                resetCamButtons();
+                camTotem.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Rotacionar Câmera (Off)";
+                btnOrbit.classList.add('red-active');
+                animateCamera(new THREE.Vector3(18, 12, 22), new THREE.Vector3(12, 10, 10));
+            });
+        }
+
+        // Suavizador de transição de câmera de forma nativa e rápida
+        function animateCamera(targetPosition, targetLookAt) {
+            let count = 0;
+            const steps = 40;
+            const startPos = camera.position.clone();
+            const startLook = controls.target.clone();
+
+            function step() {
+                count++;
+                const t = count / steps;
+                
+                // Interpolação Senoidal
+                const ease = Math.sin(t * Math.PI / 2);
+
+                camera.position.lerpVectors(startPos, targetPosition, ease);
+                controls.target.lerpVectors(startLook, targetLookAt, ease);
+
+                if (count < steps) {
+                    requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Inicializar a aplicação
+        window.onload = init;
+    </script>
+</body>
+</html>

@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>FGG Studio 3D - Arquitetura Linear</title>
+  <title>FGG Studio 3D - Arquitetura</title>
   
+  <!-- CDNs do Three.js e OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
@@ -63,3 +64,487 @@
       font-size: 0.8rem;
       font-weight: 600;
       text-align: center;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background-color: rgba(56, 189, 248, 0.05);
+    }
+
+    button, select {
+      background-color: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button.primary { background-color: var(--accent); color: #000; border: none; }
+    button.danger { background-color: transparent; color: var(--danger); border: 1px solid var(--danger); }
+
+    .main-content {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .tab-content {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      padding: 0.8rem;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .tab-content.active { display: flex; }
+
+    #tab-viewer {
+      padding: 0.5rem;
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      gap: 0.5rem;
+      overflow: hidden;
+    }
+
+    #tab-viewer.active { display: flex; }
+
+    .viewer-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--panel-bg);
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      gap: 0.4rem;
+    }
+
+    #rendered-view {
+      flex: 1;
+      width: 100%;
+      background-color: #020617;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      min-height: 150px;
+    }
+
+    #three-canvas-container, #svg-canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+    }
+
+    .editor-container {
+      height: 35%;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      flex-shrink: 0;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .editor-container.hidden { display: none !important; }
+
+    .code-textarea {
+      background-color: #050811;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 0.8rem;
+      width: 100%;
+      height: 100%;
+      outline: none;
+      resize: none;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .file-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .file-item {
+      padding: 0.9rem;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .file-item.active { border-color: var(--accent); background-color: var(--card-bg); }
+    .file-item .title { font-weight: 600; font-size: 0.95rem; }
+
+    .hidden { display: none !important; }
+
+    @media (min-width: 850px) {
+      .mobile-tabs { display: none; }
+      .main-content { display: grid; grid-template-columns: 280px 1fr 320px; }
+      .tab-content { position: relative; display: flex !important; border-right: 1px solid var(--border); }
+      #tab-writer { display: none !important; }
+      .editor-container { height: 180px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>⚡ FGG Studio 3D</h1>
+    <span id="save-status" style="font-size:0.75rem; color:var(--success)">Sincronizado</span>
+  </header>
+
+  <nav class="mobile-tabs">
+    <button class="tab-btn active" onclick="switchTab('tab-list')">📋 Lista</button>
+    <button class="tab-btn" onclick="switchTab('tab-writer')">✍️ Escrever</button>
+    <button class="tab-btn" onclick="switchTab('tab-viewer')">🎮 Studio 3D</button>
+    <button class="tab-btn" onclick="switchTab('tab-form')">⚙️ Dados</button>
+  </nav>
+
+  <div class="main-content">
+    
+    <!-- ABA 1: LISTA -->
+    <div class="tab-content active" id="tab-list">
+      <input type="text" id="search-input" class="search-box" placeholder="🔍 Buscar arquivo..." oninput="renderFileList()" />
+      <button class="primary" style="width: 100%; margin-top: 0.2rem;" onclick="openNewFileDialog()">+ Novo Projeto</button>
+      <div class="file-list" id="file-list"></div>
+    </div>
+
+    <!-- ABA 2: ESCREVER -->
+    <div class="tab-content" id="tab-writer">
+      <div class="viewer-toolbar">
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent);">✍️ Escrever Código Livre</span>
+      </div>
+      <textarea id="scratchpad-editor" class="code-textarea" placeholder="// Digite seu código aqui..."></textarea>
+      <button class="primary" style="padding: 0.8rem;" onclick="saveScratchpadToLibrary()">➕ Salvar na Biblioteca</button>
+    </div>
+
+    <!-- ABA 3: STUDIO 3D -->
+    <div class="tab-content" id="tab-viewer">
+      <div class="viewer-toolbar">
+        <select id="engine-selector" onchange="changeEngine(this.value)">
+          <option value="threejs">🎮 Engine 3D (Three.js)</option>
+          <option value="svg">🎨 Engine 2D (SVG)</option>
+        </select>
+        <button class="primary" onclick="saveCurrentProjectCode()">💾 Salvar</button>
+        <button id="toggle-editor-btn" onclick="toggleCodeEditor()">👁️ Ocultar</button>
+      </div>
+
+      <div id="rendered-view">
+        <div id="three-canvas-container"></div>
+        <div id="svg-canvas-container" class="hidden"></div>
+      </div>
+
+      <div class="editor-container" id="editor-container">
+        <textarea id="live-code-editor" class="code-textarea" oninput="handleLiveEdit()" spellcheck="false"></textarea>
+      </div>
+    </div>
+
+    <!-- ABA 4: DADOS -->
+    <div class="tab-content" id="tab-form">
+      <form id="fgg-form" onsubmit="saveFileRecord(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
+        <input type="hidden" id="file-id" />
+        <div class="form-group">
+          <label style="font-size:0.8rem; color:var(--text-muted)">Nome do Arquivo*</label>
+          <input type="text" id="file-name" class="search-box" placeholder="ex: sao_norberto.js" required />
+        </div>
+        <button type="submit" class="primary" style="padding: 0.8rem;">💾 Salvar Alterações</button>
+      </form>
+      <button id="delete-btn" class="danger" style="margin-top: 0.5rem; padding: 0.7rem;" onclick="deleteCurrentFile()">🗑️ Excluir Registro</button>
+    </div>
+
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'FGG_STUDIO_PERSISTENT_V3';
+    let library = [];
+    let selectedFileId = null;
+    let currentEngine = 'threejs';
+    let isEditorVisible = true;
+
+    let scene, camera, renderer, controls;
+
+    // CÓDIGO DO MUSEU SÃO NORBERTO (PADRÃO INICIAL)
+    const saoNorbertoDefaultCode = `// --- MUSEU SÃO NORBERTO (PIRAPORA DO BOM JESUS) ---
+(function buildSaoNorberto(scene) {
+  // Terreno e Pátio
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.05; scene.add(ground);
+
+  const patio = new THREE.Mesh(new THREE.PlaneGeometry(26, 26), new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.7 }));
+  patio.rotation.x = -Math.PI / 2; patio.position.set(0, 0.01, 2); scene.add(patio);
+
+  // Materiais
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.8 });
+  const facadeFrontMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.6 });
+
+  // Ala Frontal
+  const frontWing = new THREE.Mesh(new THREE.BoxGeometry(32, 5.0, 5.2), facadeFrontMat);
+  frontWing.position.set(0, 2.5, 14); scene.add(frontWing);
+  const frontRoof = new THREE.Mesh(new THREE.BoxGeometry(32.4, 1.1, 5.6), roofMat);
+  frontRoof.position.set(0, 5.55, 14); scene.add(frontRoof);
+
+  // Alas Laterais
+  const sideWingGeo = new THREE.BoxGeometry(5.2, 4.6, 28);
+  [-13.4, 13.4].forEach(x => {
+    const wing = new THREE.Mesh(sideWingGeo, wallMat);
+    wing.position.set(x, 2.3, 0); scene.add(wing);
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(5.6, 1.0, 28.4), roofMat);
+    roof.position.set(x, 5.1, 0); scene.add(roof);
+  });
+
+  // Igreja Central e Torre
+  const churchBody = new THREE.Mesh(new THREE.BoxGeometry(11, 6.5, 20), wallMat);
+  churchBody.position.set(0, 3.25, -4); scene.add(churchBody);
+  const churchRoof = new THREE.Mesh(new THREE.BoxGeometry(11.4, 1.3, 20.4), roofMat);
+  churchRoof.position.set(0, 7.15, -4); scene.add(churchRoof);
+
+  const towerBase = new THREE.Mesh(new THREE.BoxGeometry(3.4, 11.0, 3.4), wallMat);
+  towerBase.position.set(0, 5.5, 3.2); scene.add(towerBase);
+  const spire = new THREE.Mesh(new THREE.ConeGeometry(1.9, 6.0, 4), roofMat);
+  spire.position.set(0, 13.5, 3.2); spire.rotation.y = Math.PI / 4; scene.add(spire);
+
+  // Torretas Cilíndricas (Castelo)
+  [-13.4, 13.4].forEach(x => {
+    const tower = new THREE.Group();
+    const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.8, 6.2, 12), wallMat);
+    cylinder.position.y = 3.1; tower.add(cylinder);
+    const roofCone = new THREE.Mesh(new THREE.ConeGeometry(1.9, 2.0, 12), roofMat);
+    roofCone.position.y = 7.2; tower.add(roofCone);
+    tower.position.set(x, 0, 14); scene.add(tower);
+  });
+})(scene);`;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initThreeJS();
+      loadFromLocalStorage();
+      setupResizeObserver();
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      const idx = ['tab-list', 'tab-writer', 'tab-viewer', 'tab-form'].indexOf(tabId);
+      if (idx !== -1) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+
+      if (tabId === 'tab-viewer') setTimeout(resizeThreeCanvas, 50);
+    }
+
+    function toggleCodeEditor() {
+      const editor = document.getElementById('editor-container');
+      const btn = document.getElementById('toggle-editor-btn');
+      if (isEditorVisible) {
+        editor.classList.add('hidden'); btn.innerText = '💻 Mostrar'; isEditorVisible = false;
+      } else {
+        editor.classList.remove('hidden'); btn.innerText = '👁️ Ocultar'; isEditorVisible = true;
+      }
+      setTimeout(resizeThreeCanvas, 50);
+    }
+
+    function initThreeJS() {
+      const container = document.getElementById('three-canvas-container');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x020617);
+
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / (container.clientHeight || 200), 0.1, 1000);
+      camera.position.set(22, 14, 26);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight || 200);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.target.set(0, 5, 0);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      dirLight.position.set(15, 25, 15);
+      scene.add(dirLight);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+
+    function setupResizeObserver() {
+      const container = document.getElementById('rendered-view');
+      new ResizeObserver(() => resizeThreeCanvas()).observe(container);
+    }
+
+    function resizeThreeCanvas() {
+      if (!renderer || !camera) return;
+      const container = document.getElementById('rendered-view');
+      if (container.clientWidth === 0 || container.clientHeight === 0) return;
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function changeEngine(engine) {
+      currentEngine = engine;
+      const threeContainer = document.getElementById('three-canvas-container');
+      const svgContainer = document.getElementById('svg-canvas-container');
+      if (engine === 'threejs') {
+        threeContainer.classList.remove('hidden'); svgContainer.classList.add('hidden'); renderThreeCode();
+      } else {
+        threeContainer.classList.add('hidden'); svgContainer.classList.remove('hidden'); renderSVGCode();
+      }
+    }
+
+    function renderThreeCode() {
+      if (!scene) return;
+      for (let i = scene.children.length - 1; i >= 0; i--) {
+        const obj = scene.children[i];
+        if (obj.type === 'Mesh' || obj.type === 'Group') scene.remove(obj);
+      }
+      scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      dirLight.position.set(15, 25, 15);
+      scene.add(dirLight);
+
+      const code = document.getElementById('live-code-editor').value;
+      try {
+        const runScript = new Function('scene', 'THREE', code);
+        runScript(scene, THREE);
+      } catch (err) {}
+    }
+
+    function renderSVGCode() {
+      document.getElementById('svg-canvas-container').innerHTML = document.getElementById('live-code-editor').value;
+    }
+
+    function handleLiveEdit() {
+      if (currentEngine === 'threejs') renderThreeCode();
+      else renderSVGCode();
+      autoSaveCurrentFile();
+    }
+
+    function loadFromLocalStorage() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try { library = JSON.parse(data); } catch (e) { library = []; }
+      }
+      if (library.length === 0) {
+        library = [{ id: 'sao-norberto-1', name: 'sao_norberto.js', content: saoNorbertoDefaultCode }];
+        saveToLocalStorage();
+      }
+      selectFile(library[0].id);
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
+    }
+
+    function autoSaveCurrentFile() {
+      if (!selectedFileId) return;
+      const file = library.find(item => item.id === selectedFileId);
+      if (file) {
+        file.content = document.getElementById('live-code-editor').value;
+        saveToLocalStorage();
+        document.getElementById('save-status').innerText = 'Salvo';
+        setTimeout(() => document.getElementById('save-status').innerText = 'Sincronizado', 1000);
+      }
+    }
+
+    function saveCurrentProjectCode() {
+      autoSaveCurrentFile();
+      alert('Projeto salvo com sucesso!');
+    }
+
+    function renderFileList() {
+      const container = document.getElementById('file-list');
+      container.innerHTML = '';
+      library.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `file-item ${item.id === selectedFileId ? 'active' : ''}`;
+        div.onclick = () => selectFile(item.id);
+        div.innerHTML = `<div class="title">${item.name}</div>`;
+        container.appendChild(div);
+      });
+    }
+
+    function selectFile(id) {
+      selectedFileId = id;
+      const file = library.find(item => item.id === id);
+      if (!file) return;
+      document.getElementById('live-code-editor').value = file.content;
+      document.getElementById('file-id').value = file.id;
+      document.getElementById('file-name').value = file.name;
+      changeEngine('threejs');
+      renderFileList();
+      if (window.innerWidth < 850) switchTab('tab-viewer');
+    }
+
+    function openNewFileDialog() {
+      const newId = 'proj-' + Date.now();
+      const newFile = { id: newId, name: `projeto_${Date.now().toString().slice(-4)}.js`, content: saoNorbertoDefaultCode };
+      library.push(newFile);
+      saveToLocalStorage();
+      selectFile(newId);
+    }
+
+    function saveFileRecord(e) {
+      e.preventDefault();
+      const id = document.getElementById('file-id').value;
+      const name = document.getElementById('file-name').value;
+      const file = library.find(item => item.id === id);
+      if (file) {
+        file.name = name;
+        file.content = document.getElementById('live-code-editor').value;
+        saveToLocalStorage();
+        renderFileList();
+        alert('Registro atualizado!');
+        switchTab('tab-viewer');
+      }
+    }
+
+    function deleteCurrentFile() {
+      if (library.length <= 1) return alert('Você precisa manter ao menos um projeto.');
+      if (confirm('Deseja excluir este projeto?')) {
+        library = library.filter(item => item.id !== selectedFileId);
+        saveToLocalStorage();
+        selectFile(library[0].id);
+        renderFileList();
+        switchTab('tab-list');
+      }
+    }
+
+    function saveScratchpadToLibrary() {
+      const content = document.getElementById('scratchpad-editor').value;
+      if (!content.trim()) return alert('Digite algum código!');
+      const newId = 'fgg-' + Date.now();
+      library.push({ id: newId, name: `livre_${Date.now().toString().slice(-4)}.js`, content });
+      saveToLocalStorage();
+      renderFileList();
+      selectFile(newId);
+    }
+  </script>
+</body>
+</html>

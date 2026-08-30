@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>FGG Studio - WYSIWYG Editor</title>
+  <title>FGG Studio Full - Editor Vectorial & Studio</title>
   <style>
     :root {
       --bg-dark: #0f172a;
@@ -15,6 +15,7 @@
       --border: #475569;
       --success: #22c55e;
       --warning: #f59e0b;
+      --danger: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -40,6 +41,7 @@
     }
 
     header h1 { font-size: 1.1rem; color: var(--accent); font-weight: 700; }
+    .header-actions { display: flex; gap: 0.5rem; align-items: center; }
 
     .mobile-tabs {
       display: flex;
@@ -60,6 +62,7 @@
       text-align: center;
       border-bottom: 3px solid transparent;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -68,7 +71,7 @@
       background-color: rgba(56, 189, 248, 0.05);
     }
 
-    button {
+    button, .btn-label {
       background-color: var(--card-bg);
       color: var(--text-main);
       border: 1px solid var(--border);
@@ -77,9 +80,14 @@
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
     }
 
     button.primary { background-color: var(--accent); color: #000; border: none; }
+    button.danger { background-color: transparent; color: var(--danger); border: 1px solid var(--danger); }
 
     .main-content {
       flex: 1;
@@ -99,7 +107,30 @@
 
     .tab-content.active { display: flex; }
 
-    /* Estilos do Canvas/Preview Interativo */
+    /* Lista */
+    .search-box {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .file-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .file-item {
+      padding: 0.9rem;
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .file-item.active { border-color: var(--accent); background-color: var(--card-bg); }
+    .file-item .title { font-weight: 600; font-size: 0.95rem; word-break: break-all; }
+    .file-item .meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; display: flex; justify-content: space-between; }
+
+    /* Preview & Canvas Interativo */
     .viewer-toolbar {
       display: flex;
       justify-content: space-between;
@@ -118,7 +149,7 @@
       border: 1px solid var(--border);
       color: #38bdf8;
       font-family: monospace;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       flex: 1;
       outline: none;
       resize: none;
@@ -126,10 +157,10 @@
     }
 
     #rendered-view {
-      background-color: #ffffff;
+      background-color: #0f172a;
       color: #000;
       border-radius: 8px;
-      padding: 1rem;
+      padding: 0.5rem;
       flex: 1;
       overflow: hidden;
       border: 2px dashed var(--border);
@@ -137,16 +168,26 @@
       user-select: none;
     }
 
-    /* Classe ativada quando o Canvas está destravado */
     #rendered-view.unlocked {
       border-color: var(--warning);
-      background-color: #f8fafc;
+      background-color: #1e293b;
     }
 
     #rendered-view.unlocked * {
       cursor: move !important;
-      outline: 2px dashed #38bdf8;
-      outline-offset: 2px;
+      outline: 1px dashed #38bdf8;
+    }
+
+    /* Formulario */
+    .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .form-group label { font-size: 0.8rem; color: var(--text-muted); }
+    .form-group input, .form-group textarea {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      padding: 0.7rem;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.9rem;
     }
 
     .hidden { display: none !important; }
@@ -155,58 +196,162 @@
       .mobile-tabs { display: none; }
       .main-content { display: grid; grid-template-columns: 280px 1fr 320px; }
       .tab-content { position: relative; display: flex !important; border-right: 1px solid var(--border); }
+      #tab-writer { display: none !important; }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>⚡ FGG Canvas Editor</h1>
-    <span id="save-status" style="font-size:0.75rem; color:var(--success)">Sincronizado</span>
+    <h1>⚡ FGG Live Studio Full</h1>
+    <div class="header-actions">
+      <span id="save-status" style="font-size:0.75rem; color:var(--success)">Sincronizado</span>
+      <label class="btn-label">📥<input type="file" id="import-json" accept=".json" class="hidden" onchange="importLibrary(event)" /></label>
+      <button onclick="exportLibrary()">📤</button>
+    </div>
   </header>
 
   <nav class="mobile-tabs">
-    <button class="tab-btn active" onclick="switchTab('tab-viewer')">👁️ Editor / Preview</button>
-    <button class="tab-btn" onclick="switchTab('tab-code')">💻 Código Fonte</button>
+    <button class="tab-btn active" onclick="switchTab('tab-list')">📋 Lista</button>
+    <button class="tab-btn" onclick="switchTab('tab-writer')">✍️ Escrever</button>
+    <button class="tab-btn" onclick="switchTab('tab-viewer')">👁️ Editor / Preview</button>
+    <button class="tab-btn" onclick="switchTab('tab-form')">⚙️ Dados</button>
   </nav>
 
   <div class="main-content">
     
-    <!-- PREVIEW E EDITOR VISUAL (WYSIWYG) -->
-    <div class="tab-content active" id="tab-viewer">
-      <div class="viewer-toolbar">
-        <span id="viewer-filename" style="font-size: 0.85rem; font-weight: 600;">desenho_vetorial.svg</span>
-        <button id="lock-btn" onclick="toggleCanvasLock()" style="background-color: var(--card-bg);">
-          🔒 Travado (Ver)
-        </button>
-      </div>
-
-      <!-- Área do Preview / Canvas Interativo -->
-      <div id="rendered-view"></div>
+    <!-- ABA 1: LISTA -->
+    <div class="tab-content active" id="tab-list">
+      <input type="text" id="search-input" class="search-box" placeholder="🔍 Buscar arquivo..." oninput="renderFileList()" />
+      <button class="primary" style="width: 100%; margin-top: 0.2rem;" onclick="openNewFileDialog()">+ Cadastrar Novo FGG</button>
+      <div class="file-list" id="file-list"></div>
     </div>
 
-    <!-- PAINEL DE CÓDIGO (SINCRONIZADO) -->
-    <div class="tab-content" id="tab-code">
-      <textarea id="live-code-editor" class="code-textarea" oninput="handleCodeInput()" spellcheck="false"></textarea>
+    <!-- ABA 2: ESCREVER CÓDIGO DO ZERO -->
+    <div class="tab-content" id="tab-writer">
+      <div class="viewer-toolbar">
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent);">✍️ Escrever Código Livre</span>
+        <button onclick="clearWriter()" style="font-size: 0.75rem;">🧹 Limpar</button>
+      </div>
+      <textarea id="scratchpad-editor" class="code-textarea" placeholder="// Digite ou cole seu código SVG/HTML aqui..."></textarea>
+      <button class="primary" style="padding: 0.8rem;" onclick="saveScratchpadToLibrary()">➕ Salvar na Biblioteca</button>
+    </div>
+
+    <!-- ABA 3: PREVIEW WYSIWYG & EDITOR DE CÓDIGO -->
+    <div class="tab-content" id="tab-viewer">
+      <div class="viewer-toolbar">
+        <span id="viewer-filename" style="font-size: 0.85rem; font-weight: 600;">Nenhum Arquivo</span>
+        <button id="lock-btn" onclick="toggleCanvasLock()">🔒 Travado (Ver)</button>
+      </div>
+
+      <div id="rendered-view"></div>
+      
+      <div style="display:flex; flex-direction:column; gap:0.3rem;">
+        <label style="font-size:0.75rem; color:var(--text-muted)">Código Fonte Sincronizado:</label>
+        <textarea id="live-code-editor" class="code-textarea" style="height: 120px;" oninput="handleLiveEdit()" spellcheck="false"></textarea>
+      </div>
+    </div>
+
+    <!-- ABA 4: FORMULÁRIO DE REGISTRO E METADADOS -->
+    <div class="tab-content" id="tab-form">
+      <form id="fgg-form" onsubmit="saveFileRecord(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
+        <input type="hidden" id="file-id" />
+        
+        <div style="background-color: var(--panel-bg); padding: 0.8rem; border-radius: 8px; border: 1px dashed var(--border); text-align: center;">
+          <label style="color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+            📂 Carregar do celular/PC
+            <input type="file" id="mobile-file-upload" class="hidden" onchange="handleFileUpload(event)" />
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="file-name">Nome do Arquivo*</label>
+          <input type="text" id="file-name" placeholder="ex: casas.svg" required oninput="syncFormToLive()" />
+        </div>
+
+        <div class="form-group">
+          <label for="file-category">Categoria / Tag</label>
+          <input type="text" id="file-category" placeholder="ex: Arquitetura, SVG" />
+        </div>
+
+        <div class="form-group">
+          <label for="file-size">Tamanho</label>
+          <input type="text" id="file-size" placeholder="ex: 15 KB" />
+        </div>
+
+        <div class="form-group">
+          <label for="file-desc">Anotações</label>
+          <textarea id="file-desc" placeholder="Detalhes do projeto..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="file-raw">Conteúdo do Código</label>
+          <textarea id="file-raw" style="font-family: monospace; font-size: 0.8rem;" oninput="syncRawToLive()"></textarea>
+        </div>
+
+        <button type="submit" class="primary" style="padding: 0.8rem;">💾 Salvar Alterações</button>
+      </form>
+
+      <button id="delete-btn" class="danger hidden" style="margin-top: 0.5rem; padding: 0.7rem;" onclick="deleteCurrentFile()">🗑️ Excluir Registro</button>
     </div>
 
   </div>
 
   <script>
+    const STORAGE_KEY = 'FGG_STUDIO_UNIFIED_V1';
+    let library = [];
+    let selectedFileId = null;
     let isUnlocked = false;
     let activeElement = null;
-    let startX = 0, startY = 0, initialLeft = 0, initialTop = 0;
+    let startX = 0, startY = 0, initialX = 0, initialY = 0;
+    let autoSaveTimer = null;
 
-    // SVG Exemplo Padrão com Forma e Texto
-    const initialSVG = `<svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-  <rect id="box1" x="30" y="30" width="120" height="80" rx="10" fill="#38bdf8" style="position: absolute;" />
-  <circle id="circle1" cx="220" cy="80" r="40" fill="#f59e0b" />
-  <text id="text1" x="30" y="160" font-family="sans-serif" font-size="18" fill="#0f172a">Clique em 'Destravar' para me arrastar!</text>
+    // SVG Modelo Padrão com as 3 Casas Integradas
+    const defaultCasasSVG = `<svg viewBox="0 0 900 450" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="380" width="900" height="70" fill="#15803d" />
+  <rect x="0" y="410" width="900" height="40" fill="#3f2314" />
+  <g id="casa-terrea">
+    <rect id="t-parede" x="40" y="260" width="180" height="120" fill="#fde047" rx="3" />
+    <polygon id="t-telhado" points="25,260 130,190 235,260" fill="#dc2626" />
+    <rect id="t-porta" x="110" y="310" width="35" height="70" fill="#78350f" rx="2" />
+    <circle id="t-macaneta" cx="138" cy="348" r="3" fill="#fbbf24" />
+    <rect id="t-janela1" x="60" y="290" width="35" height="35" fill="#38bdf8" rx="2" stroke="#0f172a" stroke-width="2" />
+    <rect id="t-janela2" x="160" y="290" width="35" height="35" fill="#38bdf8" rx="2" stroke="#0f172a" stroke-width="2" />
+    <text x="80" y="405" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Casa Térrea</text>
+  </g>
+  <g id="casa-2-andares">
+    <rect id="c2-terreo" x="280" y="240" width="220" height="140" fill="#e2e8f0" />
+    <rect id="c2-andar2" x="280" y="130" width="220" height="110" fill="#cbd5e1" />
+    <line x1="270" y1="240" x2="510" y2="240" stroke="#475569" stroke-width="4" />
+    <polygon id="c2-telhado" points="270,130 510,90 510,130" fill="#1e293b" />
+    <rect id="c2-garagem" x="300" y="280" width="80" height="100" fill="#64748b" rx="2" />
+    <rect id="c2-porta" x="420" y="300" width="40" height="80" fill="#451a03" rx="2" />
+    <rect id="c2-varanda-vidro" x="300" y="160" width="70" height="70" fill="#bae6fd" stroke="#0284c7" stroke-width="2" />
+    <rect id="c2-janela2" x="410" y="160" width="60" height="50" fill="#bae6fd" stroke="#0284c7" stroke-width="2" />
+    <text x="340" y="405" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">2 Andares (Sobrado)</text>
+  </g>
+  <g id="casa-3-andares">
+    <rect id="c3-andar1" x="580" y="270" width="240" height="110" fill="#f87171" />
+    <rect id="c3-andar2" x="580" y="170" width="240" height="100" fill="#ef4444" />
+    <rect id="c3-andar3" x="600" y="80" width="200" height="90" fill="#dc2626" />
+    <line x1="570" y1="270" x2="830" y2="270" stroke="#7f1d1d" stroke-width="4" />
+    <line x1="570" y1="170" x2="830" y2="170" stroke="#7f1d1d" stroke-width="4" />
+    <polygon id="c3-telhado" points="590,80 700,20 810,80" fill="#450a0a" />
+    <rect id="c3-porta" x="675" y="300" width="50" height="80" fill="#1e1b4b" rx="4" />
+    <rect x="605" y="295" width="45" height="50" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <rect x="750" y="295" width="45" height="50" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <rect x="605" y="195" width="45" height="50" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <rect x="678" y="195" width="45" height="50" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <rect x="750" y="195" width="45" height="50" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <rect x="630" y="105" width="40" height="45" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <rect x="730" y="105" width="40" height="45" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" />
+    <text x="660" y="405" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff">3 Andares</text>
+  </g>
 </svg>`;
 
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('live-code-editor').value = initialSVG;
-      updateCanvas(initialSVG);
+      loadFromLocalStorage();
+      renderFileList();
       setupDragAndDrop();
     });
 
@@ -214,19 +359,135 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
+      const idx = ['tab-list', 'tab-writer', 'tab-viewer', 'tab-form'].indexOf(tabId);
+      if (idx !== -1) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
     }
 
-    function updateCanvas(code) {
-      const container = document.getElementById('rendered-view');
-      container.innerHTML = code;
+    function loadFromLocalStorage() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try { library = JSON.parse(data); } catch (e) { library = []; }
+      } else {
+        library = [{
+          id: 'casas-fgg-1',
+          name: 'projetos_casas.svg',
+          category: 'Arquitetura',
+          size: '18 KB',
+          updatedAt: new Date().toLocaleDateString('pt-BR'),
+          description: 'Projeto completo com Casa Térrea, 2 e 3 Andares em vetor editável.',
+          content: defaultCasasSVG
+        }];
+        saveToLocalStorage();
+      }
+      if (library.length > 0) selectFile(library[0].id);
     }
 
-    function handleCodeInput() {
-      const code = document.getElementById('live-code-editor').value;
-      updateCanvas(code);
+    function saveToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(library));
+      updateStatus('Sincronizado');
     }
 
-    // ALTERNA ENTRE MODO TRAVADO E DESTRAVADO (EDITÁVEL)
+    function updateStatus(text) {
+      const statusEl = document.getElementById('save-status');
+      statusEl.innerText = text;
+      statusEl.style.color = text === 'Editando...' ? 'var(--accent)' : 'var(--success)';
+    }
+
+    function renderFileList() {
+      const container = document.getElementById('file-list');
+      const query = document.getElementById('search-input').value.toLowerCase();
+      container.innerHTML = '';
+
+      const filtered = library.filter(item => 
+        item.name.toLowerCase().includes(query) || (item.category && item.category.toLowerCase().includes(query))
+      );
+
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `file-item ${item.id === selectedFileId ? 'active' : ''}`;
+        div.onclick = () => selectFile(item.id);
+        div.innerHTML = `
+          <div class="title">${item.name}</div>
+          <div class="meta"><span>🏷️ ${item.category || 'Geral'}</span><span>📦 ${item.size || '-'}</span></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function selectFile(id) {
+      selectedFileId = id;
+      const file = library.find(item => item.id === id);
+      if (!file) return;
+
+      document.getElementById('file-id').value = file.id;
+      document.getElementById('file-name').value = file.name;
+      document.getElementById('file-category').value = file.category || '';
+      document.getElementById('file-size').value = file.size || '';
+      document.getElementById('file-desc').value = file.description || '';
+      document.getElementById('file-raw').value = file.content || '';
+
+      document.getElementById('viewer-filename').innerText = file.name;
+      document.getElementById('live-code-editor').value = file.content || '';
+      
+      document.getElementById('rendered-view').innerHTML = file.content || '';
+      document.getElementById('delete-btn').classList.remove('hidden');
+      renderFileList();
+
+      if (window.innerWidth < 850) switchTab('tab-viewer');
+    }
+
+    /* ESCRITA LIVRE (SCRATCHPAD) */
+    function saveScratchpadToLibrary() {
+      const content = document.getElementById('scratchpad-editor').value;
+      if (!content.trim()) return alert('Escreva algum código antes de salvar!');
+
+      openNewFileDialog();
+      document.getElementById('file-name').value = `novo_projeto_${Date.now().toString().slice(-4)}.svg`;
+      document.getElementById('file-raw').value = content;
+      document.getElementById('live-code-editor').value = content;
+      document.getElementById('file-size').value = `${(content.length / 1024).toFixed(1)} KB`;
+      document.getElementById('rendered-view').innerHTML = content;
+      
+      switchTab('tab-form');
+    }
+
+    function clearWriter() {
+      document.getElementById('scratchpad-editor').value = '';
+    }
+
+    /* EDITAR CÓDIGO NO PREVIEW */
+    function handleLiveEdit() {
+      updateStatus('Editando...');
+      const content = document.getElementById('live-code-editor').value;
+      document.getElementById('file-raw').value = content;
+      document.getElementById('rendered-view').innerHTML = content;
+
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => {
+        if (selectedFileId) {
+          const idx = library.findIndex(item => item.id === selectedFileId);
+          if (idx >= 0) {
+            library[idx].content = content;
+            library[idx].updatedAt = new Date().toLocaleDateString('pt-BR');
+            saveToLocalStorage();
+          }
+        }
+      }, 1000);
+    }
+
+    function syncRawToLive() {
+      const content = document.getElementById('file-raw').value;
+      document.getElementById('live-code-editor').value = content;
+      document.getElementById('rendered-view').innerHTML = content;
+      handleLiveEdit();
+    }
+
+    function syncFormToLive() {
+      const name = document.getElementById('file-name').value;
+      document.getElementById('viewer-filename').innerText = name || 'Sem nome';
+    }
+
+    /* DESTRAVAR E ARRASTAR (WYSIWYG) */
     function toggleCanvasLock() {
       isUnlocked = !isUnlocked;
       const canvas = document.getElementById('rendered-view');
@@ -245,7 +506,6 @@
       }
     }
 
-    // LÓGICA DE ARRASTAR E SOLTAR (DRAG & DROP)
     function setupDragAndDrop() {
       const canvas = document.getElementById('rendered-view');
 
@@ -271,9 +531,8 @@
       startX = clientX;
       startY = clientY;
 
-      // Obtém coordenadas atuais (atributos x/y de SVG ou cx/cy)
-      initialLeft = parseFloat(activeElement.getAttribute('x') || activeElement.getAttribute('cx') || 0);
-      initialTop = parseFloat(activeElement.getAttribute('y') || activeElement.getAttribute('cy') || 0);
+      initialX = parseFloat(activeElement.getAttribute('x') || activeElement.getAttribute('cx') || 0);
+      initialY = parseFloat(activeElement.getAttribute('y') || activeElement.getAttribute('cy') || 0);
 
       e.preventDefault();
     }
@@ -287,14 +546,13 @@
       const deltaX = clientX - startX;
       const deltaY = clientY - startY;
 
-      const newX = Math.round(initialLeft + deltaX);
-      const newY = Math.round(initialTop + deltaY);
+      const newX = Math.round(initialX + deltaX);
+      const newY = Math.round(initialY + deltaY);
 
-      // Atualiza os atributos visuais do elemento SVG
       if (activeElement.hasAttribute('cx')) {
         activeElement.setAttribute('cx', newX);
         activeElement.setAttribute('cy', newY);
-      } else {
+      } else if (activeElement.hasAttribute('x')) {
         activeElement.setAttribute('x', newX);
         activeElement.setAttribute('y', newY);
       }
@@ -307,10 +565,100 @@
       activeElement = null;
     }
 
-    // SINCRONIZA O HTML/SVG GERADO COM O PAINEL DE CÓDIGO
     function syncCanvasToCode() {
       const canvas = document.getElementById('rendered-view');
       document.getElementById('live-code-editor').value = canvas.innerHTML;
+      document.getElementById('file-raw').value = canvas.innerHTML;
+      handleLiveEdit();
+    }
+
+    /* CRUD DA BIBLIOTECA E ARQUIVOS */
+    function openNewFileDialog() {
+      selectedFileId = null;
+      document.getElementById('fgg-form').reset();
+      document.getElementById('file-id').value = '';
+      document.getElementById('viewer-filename').innerText = 'Novo Arquivo';
+      document.getElementById('live-code-editor').value = '';
+      document.getElementById('rendered-view').innerHTML = '';
+      document.getElementById('delete-btn').classList.add('hidden');
+      renderFileList();
+      if (window.innerWidth < 850) switchTab('tab-form');
+    }
+
+    function saveFileRecord(e) {
+      e.preventDefault();
+      const id = document.getElementById('file-id').value || 'fgg-' + Date.now();
+      const record = {
+        id,
+        name: document.getElementById('file-name').value,
+        category: document.getElementById('file-category').value,
+        size: document.getElementById('file-size').value,
+        description: document.getElementById('file-desc').value,
+        content: document.getElementById('live-code-editor').value,
+        updatedAt: new Date().toLocaleDateString('pt-BR')
+      };
+
+      const idx = library.findIndex(item => item.id === id);
+      if (idx >= 0) library[idx] = record;
+      else library.push(record);
+
+      saveToLocalStorage();
+      selectFile(id);
+    }
+
+    function deleteCurrentFile() {
+      if (!selectedFileId) return;
+      if (confirm('Deseja excluir este registro?')) {
+        library = library.filter(item => item.id !== selectedFileId);
+        saveToLocalStorage();
+        if (library.length > 0) selectFile(library[0].id);
+        else openNewFileDialog();
+        switchTab('tab-list');
+      }
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('file-name').value = file.name;
+        document.getElementById('file-size').value = (file.size / 1024).toFixed(1) + ' KB';
+        document.getElementById('file-category').value = file.name.split('.').pop().toUpperCase();
+        document.getElementById('file-raw').value = evt.target.result;
+        document.getElementById('live-code-editor').value = evt.target.result;
+        document.getElementById('rendered-view').innerHTML = evt.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    function exportLibrary() {
+      if (library.length === 0) return alert('Biblioteca vazia!');
+      const blob = new Blob([JSON.stringify(library, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `fgg_studio_backup_${Date.now()}.json`;
+      a.click();
+    }
+
+    function importLibrary(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data)) {
+            library = data;
+            saveToLocalStorage();
+            renderFileList();
+            if (library.length > 0) selectFile(library[0].id);
+            alert('Biblioteca importada com sucesso!');
+          }
+        } catch (err) { alert('Erro ao ler arquivo JSON.'); }
+      };
+      reader.readAsText(file);
     }
   </script>
 </body>

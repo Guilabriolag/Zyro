@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Biblioteca & Editor FGG Live</title>
+  <title>FGG Live Studio & Code Writer</title>
   <style>
     :root {
       --bg-dark: #0f172a;
@@ -44,23 +44,27 @@
 
     .header-actions { display: flex; gap: 0.5rem; align-items: center; }
 
+    /* Barra de Navegação por Abas */
     .mobile-tabs {
       display: flex;
       background-color: var(--panel-bg);
       border-bottom: 1px solid var(--border);
+      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 0.75rem 0.25rem;
+      min-width: 80px;
+      padding: 0.75rem 0.2rem;
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       text-align: center;
       border-bottom: 3px solid transparent;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -130,7 +134,7 @@
     .file-item .title { font-weight: 600; font-size: 0.95rem; word-break: break-all; }
     .file-item .meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; display: flex; justify-content: space-between; }
 
-    /* Visualizador & Editor Live */
+    /* Visualizador e Editor Live */
     .viewer-toolbar {
       display: flex;
       justify-content: space-between;
@@ -141,13 +145,8 @@
       border: 1px solid var(--border);
     }
 
-    .status-tag {
-      font-size: 0.75rem;
-      color: var(--success);
-      font-weight: 600;
-    }
+    .status-tag { font-size: 0.75rem; color: var(--success); font-weight: 600; }
 
-    /* Área Editável do Preview */
     .live-editor-container {
       flex: 1;
       display: flex;
@@ -155,7 +154,8 @@
       position: relative;
     }
 
-    #live-code-editor {
+    /* Área de Texto / Editor Livre */
+    .code-textarea {
       background-color: #050811;
       padding: 1rem;
       border-radius: 8px;
@@ -163,16 +163,14 @@
       color: #38bdf8;
       font-family: monospace;
       font-size: 0.85rem;
-      white-space: pre-wrap;
-      word-break: break-all;
       flex: 1;
-      overflow-y: auto;
       outline: none;
+      resize: none;
+      width: 100%;
     }
 
-    #live-code-editor:focus {
+    .code-textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
     }
 
     #rendered-view {
@@ -199,10 +197,12 @@
 
     .hidden { display: none !important; }
 
-    @media (min-width: 768px) {
+    /* Modos Responsivos para Desktop */
+    @media (min-width: 850px) {
       .mobile-tabs { display: none; }
-      .main-content { display: grid; grid-template-columns: 300px 1fr 320px; }
+      .main-content { display: grid; grid-template-columns: 280px 1fr 320px; }
       .tab-content { position: relative; display: flex !important; border-right: 1px solid var(--border); }
+      #tab-writer { display: none !important; } /* No Desktop fica integrado */
     }
   </style>
 </head>
@@ -217,9 +217,11 @@
     </div>
   </header>
 
+  <!-- Navegação por Abas (com nova aba para Escrever Código) -->
   <nav class="mobile-tabs">
     <button class="tab-btn active" onclick="switchTab('tab-list')">📋 Lista</button>
-    <button class="tab-btn" onclick="switchTab('tab-viewer')">✏️ Editor Real</button>
+    <button class="tab-btn" onclick="switchTab('tab-writer')">✍️ Escrever</button>
+    <button class="tab-btn" onclick="switchTab('tab-viewer')">👁️ Editor Live</button>
     <button class="tab-btn" onclick="switchTab('tab-form')">⚙️ Dados</button>
   </nav>
 
@@ -232,7 +234,17 @@
       <div class="file-list" id="file-list"></div>
     </div>
 
-    <!-- ABA 2: VISUALIZADOR E EDITOR TEMPO REAL -->
+    <!-- NOVA ABA 2: ESCREVER CÓDIGO DO ZERO -->
+    <div class="tab-content" id="tab-writer">
+      <div class="viewer-toolbar">
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent);">✍️ Escrever Código Livre</span>
+        <button onclick="clearWriter()" style="font-size: 0.75rem;">🧹 Limpar</button>
+      </div>
+      <textarea id="scratchpad-editor" class="code-textarea" placeholder="// Digite ou cole qualquer código/conteúdo FGG aqui do zero..."></textarea>
+      <button class="primary" style="padding: 0.8rem; font-size: 0.9rem;" onclick="saveScratchpadToLibrary()">➕ Salvar na Biblioteca</button>
+    </div>
+
+    <!-- ABA 3: VISUALIZADOR E EDITOR TEMPO REAL DA LISTA -->
     <div class="tab-content" id="tab-viewer">
       <div class="viewer-toolbar">
         <span id="viewer-filename" style="font-size: 0.85rem; font-weight: 600;">Nenhum arquivo</span>
@@ -240,15 +252,12 @@
       </div>
 
       <div class="live-editor-container">
-        <!-- Editor de Código Editável Direto na Tela -->
-        <div id="live-code-editor" contenteditable="true" oninput="handleLiveEdit()" spellcheck="false">// Clique para editar o código em tempo real...</div>
-        
-        <!-- Renderizador Visual (HTML/SVG/UI) -->
+        <textarea id="live-code-editor" class="code-textarea" oninput="handleLiveEdit()" spellcheck="false" placeholder="// Selecione um arquivo para editar..."></textarea>
         <div id="rendered-view" class="hidden"></div>
       </div>
     </div>
 
-    <!-- ABA 3: FORMULÁRIO -->
+    <!-- ABA 4: FORMULÁRIO DE DADOS -->
     <div class="tab-content" id="tab-form">
       <form id="fgg-form" onsubmit="saveFileRecord(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
         <input type="hidden" id="file-id" />
@@ -281,11 +290,11 @@
         </div>
 
         <div class="form-group">
-          <label for="file-raw">Conteúdo em Código (Sincronizado)</label>
+          <label for="file-raw">Conteúdo em Código</label>
           <textarea id="file-raw" style="font-family: monospace; font-size: 0.8rem;" oninput="syncRawToLive()"></textarea>
         </div>
 
-        <button type="submit" class="primary" style="padding: 0.8rem;">💾 Salvar Alterações</button>
+        <button type="submit" class="primary" style="padding: 0.8rem;">💾 Salvar Registro</button>
       </form>
 
       <button id="delete-btn" class="danger hidden" style="margin-top: 0.5rem; padding: 0.7rem;" onclick="deleteCurrentFile()">🗑️ Excluir Registro</button>
@@ -294,7 +303,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'FGG_LIVE_STUDIO';
+    const STORAGE_KEY = 'FGG_LIVE_STUDIO_V3';
     let library = [];
     let selectedFileId = null;
     let isRenderVisual = false;
@@ -309,7 +318,7 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
-      const idx = ['tab-list', 'tab-viewer', 'tab-form'].indexOf(tabId);
+      const idx = ['tab-list', 'tab-writer', 'tab-viewer', 'tab-form'].indexOf(tabId);
       if (idx !== -1) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
     }
 
@@ -320,12 +329,12 @@
       } else {
         library = [{
           id: 'demo-live-1',
-          name: 'card_interativo.fgg',
+          name: 'exemplo.fgg',
           category: 'UI / SVG',
-          size: '12 KB',
+          size: '10 KB',
           updatedAt: new Date().toLocaleDateString('pt-BR'),
-          description: 'Elemento FGG renderizável em tempo real.',
-          content: '<div style="color: #0284c7; font-family: sans-serif; text-align: center; padding: 20px;">\n  <h2>Edição em Tempo Real!</h2>\n  <p>Altere este código direto na tela de preview e veja o resultado.</p>\n</div>'
+          description: 'Elemento FGG editável.',
+          content: '<div style="color: #38bdf8; text-align: center; font-family: sans-serif; padding: 20px;">\n  <h2>Código no FGG Studio</h2>\n  <p>Você pode editar este arquivo ou escrever um novo na aba "✍️ Escrever".</p>\n</div>'
         }];
         saveToLocalStorage();
       }
@@ -376,23 +385,39 @@
       document.getElementById('file-raw').value = file.content || '';
 
       document.getElementById('viewer-filename').innerText = file.name;
-      document.getElementById('live-code-editor').innerText = file.content || '';
+      document.getElementById('live-code-editor').value = file.content || '';
       
       updateVisualView(file.content || '');
       document.getElementById('delete-btn').classList.remove('hidden');
       renderFileList();
 
-      if (window.innerWidth < 768) switchTab('tab-viewer');
+      if (window.innerWidth < 850) switchTab('tab-viewer');
     }
 
-    // EDITA EM TEMPO REAL NO PREVIEW DIRETO
+    // SALVA O QUE FOI ESCRITO NO SCRATCHPAD DIRECTO NA BIBLIOTECA
+    function saveScratchpadToLibrary() {
+      const content = document.getElementById('scratchpad-editor').value;
+      if (!content.trim()) return alert('Escreva algum código antes de salvar!');
+
+      openNewFileDialog();
+      document.getElementById('file-name').value = `novo_codigo_${Date.now().toString().slice(-4)}.fgg`;
+      document.getElementById('file-raw').value = content;
+      document.getElementById('live-code-editor').value = content;
+      document.getElementById('file-size').value = `${(content.length / 1024).toFixed(1)} KB`;
+      
+      switchTab('tab-form');
+    }
+
+    function clearWriter() {
+      document.getElementById('scratchpad-editor').value = '';
+    }
+
     function handleLiveEdit() {
       updateStatus('Editando...');
-      const content = document.getElementById('live-code-editor').innerText;
+      const content = document.getElementById('live-code-editor').value;
       document.getElementById('file-raw').value = content;
       updateVisualView(content);
 
-      // Salva automaticamente após 1 segundo de pausa na digitação
       clearTimeout(autoSaveTimer);
       autoSaveTimer = setTimeout(() => {
         if (selectedFileId) {
@@ -408,7 +433,7 @@
 
     function syncRawToLive() {
       const content = document.getElementById('file-raw').value;
-      document.getElementById('live-code-editor').innerText = content;
+      document.getElementById('live-code-editor').value = content;
       updateVisualView(content);
       handleLiveEdit();
     }
@@ -436,8 +461,7 @@
     }
 
     function updateVisualView(content) {
-      const visual = document.getElementById('rendered-view');
-      visual.innerHTML = content;
+      document.getElementById('rendered-view').innerHTML = content;
     }
 
     function openNewFileDialog() {
@@ -445,11 +469,11 @@
       document.getElementById('fgg-form').reset();
       document.getElementById('file-id').value = '';
       document.getElementById('viewer-filename').innerText = 'Novo Arquivo';
-      document.getElementById('live-code-editor').innerText = '';
+      document.getElementById('live-code-editor').value = '';
       document.getElementById('rendered-view').innerHTML = '';
       document.getElementById('delete-btn').classList.add('hidden');
       renderFileList();
-      if (window.innerWidth < 768) switchTab('tab-form');
+      if (window.innerWidth < 850) switchTab('tab-form');
     }
 
     function saveFileRecord(e) {
@@ -461,7 +485,7 @@
         category: document.getElementById('file-category').value,
         size: document.getElementById('file-size').value,
         description: document.getElementById('file-desc').value,
-        content: document.getElementById('live-code-editor').innerText,
+        content: document.getElementById('live-code-editor').value,
         updatedAt: new Date().toLocaleDateString('pt-BR')
       };
 
@@ -493,7 +517,7 @@
         document.getElementById('file-size').value = (file.size / 1024).toFixed(1) + ' KB';
         document.getElementById('file-category').value = file.name.split('.').pop().toUpperCase();
         document.getElementById('file-raw').value = evt.target.result;
-        document.getElementById('live-code-editor').innerText = evt.target.result;
+        document.getElementById('live-code-editor').value = evt.target.result;
         updateVisualView(evt.target.result);
       };
       reader.readAsText(file);

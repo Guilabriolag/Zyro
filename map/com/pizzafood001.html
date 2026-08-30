@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pizza Hut Vintage 3D</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87c6e8);
+scene.fog = new THREE.Fog(0x9ad4ea, 55, 150);
+
+const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 0.1, 250);
+camera.position.set(24, 13, 32);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 3.5, 0);
+controls.maxPolarAngle = Math.PI / 2.08;
+controls.enableDamping = true;
+
+scene.add(new THREE.HemisphereLight(0xc8ddff, 0x4a6b3a, 0.75));
+const sun = new THREE.DirectionalLight(0xfff3d0, 1.4);
+sun.position.set(28, 42, 18);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+const sc = sun.shadow.camera;
+sc.left = sc.bottom = -45; sc.right = sc.top = 45;
+scene.add(sun);
+
+const RED = 0xc81e32, WALL = 0xc9ba9a, TRIM = 0x5a5348, BRICK = 0x8a4e3e;
+
+function add(mesh, x, y, z) {
+  mesh.position.set(x, y, z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+function box(w, h, d, color, x, y, z, extra = {}) {
+  const m = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    new THREE.MeshStandardMaterial({ color, roughness: extra.r ?? 0.8, metalness: extra.m ?? 0.04, emissive: extra.e ?? 0, emissiveIntensity: extra.ei ?? 0 })
+  );
+  return add(m, x, y, z);
+}
+
+add(new THREE.Mesh(
+  new THREE.PlaneGeometry(140, 140),
+  new THREE.MeshStandardMaterial({ color: 0x4c8038, roughness: 1 })
+), 0, 0, 0).rotation.x = -Math.PI / 2;
+
+box(55, 0.07, 32, 0x3b3b3b, 1, 0.035, 7);
+box(22, 0.05, 10, 0x2c2c2c, 3, 0.07, 9);
+for (let i = 0; i < 6; i++) box(0.07, 0.02, 5, 0xe6c94a, -4 + i * 2.3, 0.1, 9.2);
+box(40, 0.12, 2.4, 0xcfc8b8, 0, 0.08, 16);
+
+box(24, 3.5, 16, WALL, 0, 1.85, 0);
+box(24.4, 0.5, 16.4, TRIM, 0, 0.28, 0);
+box(7, 3.5, 16.1, BRICK, -8.6, 1.85, 0);
+
+const frontZ = 8.08;
+for (let i = 0; i < 7; i++) {
+  const x = -4.2 + i * 2.05;
+  box(0.5, 2.45, 0.18, RED, x, 2.2, frontZ);
+  const glass = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.4, 2.2),
+    new THREE.MeshPhysicalMaterial({
+      color: 0x8eb4c8, roughness: 0.08, transmission: 0.35, transparent: true, opacity: 0.7,
+      emissive: 0x3a2210, emissiveIntensity: 0.2
+    })
+  );
+  glass.position.set(x + 0.9, 2.2, frontZ + 0.03);
+  scene.add(glass);
+}
+for (let i = 0; i < 5; i++) {
+  box(0.65, 3.2, 0.16, 0xb7a888, 12.05, 1.85, 5.5 - i * 2.5);
+  box(0.5, 2.4, 0.14, RED, 12.05, 2.15, 4.3 - i * 2.5);
+}
+
+box(1.35, 2.55, 0.14, RED, -10.2, 1.45, 8.1);
+box(0.12, 2.55, 0.06, 0x222, -9.55, 1.45, 8.18);
+
+const roofMat = new THREE.MeshStandardMaterial({ color: RED, roughness: 0.88 });
+const darkRoof = new THREE.MeshStandardMaterial({ color: 0xa01828, roughness: 0.9 });
+[
+  [28, 0.28, 20, 3.6],
+  [24, 0.28, 16.5, 4.15],
+  [20, 0.28, 13.5, 4.7],
+  [16, 0.28, 10.5, 5.25],
+  [12.5, 0.26, 8, 5.8]
+].forEach(([w, h, d, y], idx) => {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), roofMat);
+  m.position.set(0, y, 0);
+  m.castShadow = true;
+  scene.add(m);
+  for (let i = 0; i < 10; i++) {
+    const ln = new THREE.Mesh(new THREE.BoxGeometry(w * 0.97, 0.03, 0.05), darkRoof);
+    ln.position.set(0, y + 0.12, -d / 2 + 0.5 + i * (d / 11));
+    scene.add(ln);
+  }
+});
+box(10, 2.5, 5.6, RED, 0, 7.35, 0);
+box(10.3, 0.22, 5.9, 0x9a1626, 0, 8.65, 0);
+
+function canvasText(text, w, h, x, y, z, fill = '#fff', font = 'bold 88px Georgia') {
+  const c = document.createElement('canvas');
+  c.width = 1024; c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = fill;
+  ctx.font = font;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 512, 128);
+  const p = new THREE.Mesh(
+    new THREE.PlaneGeometry(w, h),
+    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true })
+  );
+  p.position.set(x, y, z);
+  scene.add(p);
+}
+canvasText('Pizza-Hut', 8.8, 1.4, 0, 7.3, 2.85);
+
+const interior = new THREE.Group();
+scene.add(interior);
+function furn(w, h, d, c, x, y, z) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color: c, roughness: 0.7 }));
+  m.position.set(x, y, z);
+  interior.add(m);
+}
+furn(22, 0.08, 14, 0x6a3a26, 0, 0.22, 0);
+[[-3, 2], [1.5, 2.2], [5, 0.5], [-5, -1], [0, -2.5]].forEach(([x, z]) => {
+  furn(1.55, 0.08, 1.55, 0xd5c6aa, x, 0.88, z);
+  furn(0.12, 0.78, 0.12, 0x333, x, 0.48, z);
+  furn(0.5, 0.52, 0.5, RED, x - 0.95, 0.48, z);
+  furn(0.5, 0.52, 0.5, RED, x + 0.95, 0.48, z);
+});
+furn(8, 1.15, 1.5, 0x3a3028, 2.5, 0.78, -5);
+const pl = new THREE.PointLight(0xffcc88, 6, 18);
+pl.position.set(0, 3.1, 1);
+scene.add(pl);
+
+function person(x, z, shirt) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.5, 4, 8), new THREE.MeshStandardMaterial({ color: shirt }));
+  body.position.y = 0.85;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.16), new THREE.MeshStandardMaterial({ color: 0xe0b090 }));
+  head.position.y = 1.35;
+  g.add(body, head);
+  g.position.set(x, 0, z);
+  interior.add(g);
+}
+person(-2.6, 2.3, 0x2a5a8c);
+person(1.8, 2.0, 0x227744);
+
+box(0.16, 9.2, 0.16, 0x222, 17.5, 4.6, 11);
+box(2.7, 3.6, 0.22, 0x111111, 17.5, 8.5, 11);
+canvasText('Pizza', 2.3, 0.7, 17.5, 8.85, 11.14, '#fff', 'bold 90px Arial');
+canvasText('Hut', 2.3, 0.7, 17.5, 8.1, 11.14, '#fff', 'bold 90px Arial');
+box(1.9, 0.38, 0.18, RED, 17.5, 9.85, 11.05);
+
+function bush(x, z, s) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.65 * s, 8, 6), new THREE.MeshStandardMaterial({ color: 0x3c7a30, roughness: 1 }));
+  add(m, x, 0.45 * s, z);
+}
+bush(11.5, 10, 1.2); bush(13, 9.2, 0.85); bush(10.2, 9.5, 0.7); bush(-13, 10, 1);
+
+function tree(x, z, h) {
+  box(0.38, h, 0.38, 0x5a3a20, x, h / 2, z);
+  add(new THREE.Mesh(new THREE.SphereGeometry(2.3, 8, 6), new THREE.MeshStandardMaterial({ color: 0x2f7a34, roughness: 1 })), x, h + 1.1, z);
+}
+for (let i = 0; i < 14; i++) tree(-32 + i * 5.2, -20 - Math.random() * 10, 6 + Math.random() * 5);
+
+function car(x, z, col, ry) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(4.3, 1.05, 1.85), new THREE.MeshStandardMaterial({ color: col, metalness: 0.45, roughness: 0.4 }));
+  body.position.y = 0.68;
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.8, 1.7), new THREE.MeshStandardMaterial({ color: 0x1a2430 }));
+  cabin.position.set(-0.25, 1.4, 0);
+  g.add(body, cabin);
+  g.position.set(x, 0, z);
+  g.rotation.y = ry;
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  scene.add(g);
+}
+car(12.5, 8.2, 0x111, 0.35);
+car(-15, 9, 0x4a1515, 0.1);
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+(function loop() {
+  requestAnimationFrame(loop);
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!-- Importação da biblioteca Three.js e controles via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<style>
+  /* Contêiner adaptável para aceitar Canvas 3D e SVG */
+  #rendered-view {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    background-color: #0f172a;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  #three-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<!-- Seletor de Renderizador na Barra de Ferramentas -->
+<div class="viewer-toolbar">
+  <span id="viewer-filename" style="font-size: 0.85rem; font-weight: 600;">casa_3d.js</span>
+  
+  <select id="render-mode" onchange="switchRenderEngine(this.value)" style="background: var(--card-bg); color: #fff; padding: 0.3rem; border-radius: 6px;">
+    <option value="svg">Modo SVG (2D)</option>
+    <option value="threejs">Modo Three.js (3D)</option>
+  </select>
+
+  <button id="lock-btn" onclick="toggleCanvasLock()">🔒 Travado</button>
+</div>
+
+<!-- Área de Exibição Alternável -->
+<div id="rendered-view">
+  <!-- Onde o SVG ou o Canvas 3D do Three.js é montado -->
+</div>
+
+<script>
+  let currentEngine = 'svg';
+  let threeScene, threeCamera, threeRenderer, threeControls;
+
+  // Alterna o motor de renderização
+  function switchRenderEngine(mode) {
+    currentEngine = mode;
+    const container = document.getElementById('rendered-view');
+    container.innerHTML = ''; // Limpa o contêiner
+
+    if (mode === 'threejs') {
+      initThreeJS(container);
+      renderHouse3D(); // Renderiza o modelo 3D
+    } else {
+      // Volta para o renderizador SVG tradicional
+      const code = document.getElementById('live-code-editor').value;
+      container.innerHTML = code;
+    }
+  }
+
+  // Inicializa o ambiente 3D do Three.js
+  function initThreeJS(container) {
+    threeScene = new THREE.Scene();
+    threeScene.background = new THREE.Color(0x0f172a);
+
+    threeCamera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    threeCamera.position.set(5, 5, 8);
+
+    threeRenderer = new THREE.WebGLRenderer({ antialias: true });
+    threeRenderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(threeRenderer.domElement);
+
+    // Adiciona órbita de câmera (rotacionar com o mouse/toque)
+    threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
+    
+    // Luzes
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    threeScene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10, 20, 10);
+    threeScene.add(dirLight);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      threeControls.update();
+      threeRenderer.render(threeScene, threeCamera);
+    }
+    animate();
+  }
+
+  // Exemplo de construção de uma casa em 3D no Three.js
+  function renderHouse3D() {
+    // Base/Chão
+    const floorGeo = new THREE.PlaneGeometry(10, 10);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x15803d });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    threeScene.add(floor);
+
+    // Paredes da Casa (Bloco 3D)
+    const houseGeo = new THREE.BoxGeometry(3, 2, 3);
+    const houseMat = new THREE.MeshStandardMaterial({ color: 0xfde047 });
+    const house = new THREE.Mesh(houseGeo, houseMat);
+    house.position.y = 1;
+    threeScene.add(house);
+
+    // Telhado Piramidal
+    const roofGeo = new THREE.ConeGeometry(2.5, 1.5, 4);
+    const roofMat = new THREE.MeshStandardMaterial({ color: 0xdc2626 });
+    const roof = new THREE.Mesh(roofGeo, roofMat);
+    roof.position.y = 2.75;
+    roof.rotation.y = Math.PI / 4;
+    threeScene.add(roof);
+  }
+</script>

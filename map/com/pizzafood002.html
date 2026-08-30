@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Hut Vintage 3D Experience - Three.js</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0c0806;
+            color: #fff;
+            user-select: none;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* HUD Retrô */
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(25, 15, 10, 0.9);
+            border: 3px solid #da291c;
+            border-radius: 4px;
+            padding: 20px;
+            max-width: 320px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(218,41,28,0.3);
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffc72c; /* Amarelo Mostarda */
+            text-shadow: 2px 2px 0px #da291c;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            margin: 0 0 15px 0;
+            font-size: 11px;
+            color: #a68a80;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px dashed #da291c;
+            padding-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #ffc72c;
+            margin-bottom: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            background: #23110a;
+            border: 2px solid #502c1e;
+            color: #d1bca6;
+            padding: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #3d1f12;
+            border-color: #ffc72c;
+            color: #fff;
+        }
+
+        button.active {
+            background: #da291c;
+            color: white;
+            border-color: #ffc72c;
+            box-shadow: 0 0 8px rgba(218, 41, 28, 0.6);
+        }
+
+        button.yellow-active {
+            background: #ffc72c;
+            color: #111;
+            border-color: #da291c;
+            box-shadow: 0 0 8px rgba(255, 199, 44, 0.6);
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(12, 8, 6, 0.85);
+            padding: 8px 18px;
+            border: 1px solid #da291c;
+            font-size: 11px;
+            pointer-events: none;
+            z-index: 10;
+            text-align: center;
+            color: #ffc72c;
+        }
+
+        /* Loading */
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #120805;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(218, 41, 28, 0.1);
+            border-top-color: #da291c;
+            border-bottom-color: #ffc72c;
+            border-radius: 50%;
+            animation: spin 1.2s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loader p {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ffc72c;
+            letter-spacing: 2px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p>PREPARANDO A MASSA E AQUECENDO O FORNO...</p>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <!-- HUD Retrô -->
+    <div id="hud">
+        <h1>PIZZA HUT</h1>
+        <h2>Vintage Nostalgia 1985</h2>
+
+        <div class="section-title">Horário do Dia</div>
+        <div class="btn-group">
+            <button id="btn-day" class="active">☀ Almoço</button>
+            <button id="btn-night">🌙 Jantar</button>
+        </div>
+
+        <div class="section-title">Explorar Câmeras</div>
+        <div class="btn-group">
+            <button id="btn-cam-ext" class="active">Fachada</button>
+            <button id="btn-cam-int">Salad Bar</button>
+            <button id="btn-cam-booth">As Cabines</button>
+            <button id="btn-cam-sign">Placa Retro</button>
+        </div>
+
+        <div class="section-title">Controle</div>
+        <button id="btn-orbit" style="width: 100%;">🔄 Câmera Giratória (On)</button>
+    </div>
+
+    <div id="instructions">
+        Mova: <b>Botão Esquerdo</b> • Arraste: <b>Botão Direito</b> • Zoom: <b>Scroll</b>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // --- CONFIGURAÇÃO GLOBAL ---
+        const container = document.getElementById('canvas-container');
+        let scene, camera, renderer, controls;
+        let buildingGroup, furnitureGroup, lightGroup, environmentGroup, vehicleGroup;
+        let clock = new THREE.Clock();
+
+        // Estados
+        let isNight = false;
+        let autoRotate = true;
+        let dayNightTransition = 0.0;
+        let carSpline, carMesh;
+        let carProgress = 0;
+
+        // Materiais & Luzes para o ciclo Dia/Noite
+        let hemiLight, dirLight;
+        let streetLights = [];
+        let tiffanyLamps = [];
+        let neonMaterials = [];
+        let skyMesh;
+
+        // Texturas Procedurais Geradas dinamicamente
+        let brickTexture, woodSidingTexture, shingleTexture, checkeredTexture, tiffanyGlassTexture;
+
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x1a1512, 0.015); // Névoa quente nostálgica
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(32, 14, 32);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.05; // não atravessar o chão
+            controls.minDistance = 4;
+            controls.maxDistance = 75;
+            controls.target.set(0, 2.5, 0);
+
+            // Criar Texturas Procedurais
+            generateProceduralTextures();
+
+            // Grupos
+            buildingGroup = new THREE.Group();
+            furnitureGroup = new THREE.Group();
+            lightGroup = new THREE.Group();
+            environmentGroup = new THREE.Group();
+            vehicleGroup = new THREE.Group();
+
+            scene.add(buildingGroup);
+            scene.add(furnitureGroup);
+            scene.add(lightGroup);
+            scene.add(environmentGroup);
+            scene.add(vehicleGroup);
+
+            // Criação do Mundo
+            createEnvironment();
+            createBuilding();
+            createInterior();
+            createVintageSign();
+            createStationWagon();
+            setupLights();
+
+            // Configurar UI
+            setupUI();
+            window.addEventListener('resize', onWindowResize);
+
+            // Finalizar Loading
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = 0;
+                setTimeout(() => document.getElementById('loader').remove(), 500);
+            }, 1200);
+
+            animate();
+        }
+
+        // --- GERADOR DE TEXTURAS PROCEDURAIS ---
+        function generateProceduralTextures() {
+            // 1. Textura de Tijolos Clássica (Brick)
+            const brickCanvas = document.createElement('canvas');
+            brickCanvas.width = 256;
+            brickCanvas.height = 256;
+            const ctxBrick = brickCanvas.getContext('2d');
+            ctxBrick.fillStyle = '#7a3124'; // Vermelho terra
+            ctxBrick.fillRect(0, 0, 256, 256);
+            ctxBrick.strokeStyle = '#9c847d'; // Argamassa cinza-claro
+            ctxBrick.lineWidth = 1.5;
+            const rowHeight = 16;
+            const brickWidth = 32;
+            for (let y = 0; y <= 256; y += rowHeight) {
+                ctxBrick.beginPath();
+                ctxBrick.moveTo(0, y);
+                ctxBrick.lineTo(256, y);
+                ctxBrick.stroke();
+            }
+            for (let row = 0; row < 256/rowHeight; row++) {
+                const y = row * rowHeight;
+                const offset = (row % 2) * (brickWidth / 2);
+                for (let x = offset; x <= 256 + brickWidth; x += brickWidth) {
+                    ctxBrick.beginPath();
+                    ctxBrick.moveTo(x, y);
+                    ctxBrick.lineTo(x, y + rowHeight);
+                    ctxBrick.stroke();
+                }
+            }
+            brickTexture = new THREE.CanvasTexture(brickCanvas);
+            brickTexture.wrapS = THREE.RepeatWrapping;
+            brickTexture.wrapT = THREE.RepeatWrapping;
+            brickTexture.repeat.set(4, 2);
+
+            // 2. Textura de Painéis de Madeira Vertical (Siding)
+            const woodCanvas = document.createElement('canvas');
+            woodCanvas.width = 128;
+            woodCanvas.height = 128;
+            const ctxWood = woodCanvas.getContext('2d');
+            ctxWood.fillStyle = '#8f8173'; // Tom de madeira cinzenta/tan
+            ctxWood.fillRect(0, 0, 128, 128);
+            ctxWood.fillStyle = '#4f453c'; // Linhas verticais escuras
+            for (let x = 0; x < 128; x += 16) {
+                ctxWood.fillRect(x, 0, 3, 128);
+            }
+            woodSidingTexture = new THREE.CanvasTexture(woodCanvas);
+            woodSidingTexture.wrapS = THREE.RepeatWrapping;
+            woodSidingTexture.wrapT = THREE.RepeatWrapping;
+            woodSidingTexture.repeat.set(8, 1);
+
+            // 3. Textura de Telhas Vermelhas (Shingles do Telhado)
+            const shingleCanvas = document.createElement('canvas');
+            shingleCanvas.width = 256;
+            shingleCanvas.height = 256;
+            const ctxShin = shingleCanvas.getContext('2d');
+            ctxShin.fillStyle = '#b52218'; // Vermelho telha forte
+            ctxShin.fillRect(0, 0, 256, 256);
+            ctxShin.strokeStyle = '#5c100b'; // Sombreamento das telhas
+            ctxShin.lineWidth = 3;
+            for (let y = 0; y <= 256; y += 16) {
+                ctxShin.beginPath();
+                ctxShin.moveTo(0, y);
+                ctxShin.lineTo(256, y);
+                ctxShin.stroke();
+            }
+            for (let row = 0; row < 256/16; row++) {
+                const y = row * 16;
+                const offset = (row % 2) * 16;
+                for (let x = offset; x <= 256 + 32; x += 32) {
+                    ctxShin.beginPath();
+                    ctxShin.moveTo(x, y);
+                    ctxShin.lineTo(x, y + 16);
+                    ctxShin.stroke();
+                }
+            }
+            shingleTexture = new THREE.CanvasTexture(shingleCanvas);
+            shingleTexture.wrapS = THREE.RepeatWrapping;
+            shingleTexture.wrapT = THREE.RepeatWrapping;
+            shingleTexture.repeat.set(4, 4);
+
+            // 4. Toalha de Mesa Quadriculada (Red and White Checkered)
+            const checkCanvas = document.createElement('canvas');
+            checkCanvas.width = 64;
+            checkCanvas.height = 64;
+            const ctxCheck = checkCanvas.getContext('2d');
+            ctxCheck.fillStyle = '#ffffff';
+            ctxCheck.fillRect(0, 0, 64, 64);
+            ctxCheck.fillStyle = '#da291c';
+            ctxCheck.fillRect(0, 0, 32, 32);
+            ctxCheck.fillRect(32, 32, 32, 32);
+            checkeredTexture = new THREE.CanvasTexture(checkCanvas);
+            checkeredTexture.wrapS = THREE.RepeatWrapping;
+            checkeredTexture.wrapT = THREE.RepeatWrapping;
+            checkeredTexture.repeat.set(4, 4);
+
+            // 5. Vidro Colorido Tiffany (Stained Glass)
+            const tiffanyCanvas = document.createElement('canvas');
+            tiffanyCanvas.width = 128;
+            tiffanyCanvas.height = 128;
+            const ctxTiff = tiffanyCanvas.getContext('2d');
+            ctxTiff.fillStyle = '#da291c'; // Vermelho predominante
+            ctxTiff.fillRect(0, 0, 128, 128);
+            ctxTiff.fillStyle = '#ffc72c'; // Padrões geométricos amarelos
+            for (let i = 0; i < 4; i++) {
+                ctxTiff.fillRect(i * 32 + 8, 0, 16, 128);
+                ctxTiff.fillRect(0, i * 32 + 8, 128, 16);
+            }
+            ctxTiff.strokeStyle = '#111'; // Linhas de chumbo pretas
+            ctxTiff.lineWidth = 3;
+            for (let x = 0; x <= 128; x += 32) {
+                ctxTiff.beginPath();
+                ctxTiff.moveTo(x, 0); ctxTiff.lineTo(x, 128);
+                ctxTiff.moveTo(0, x); ctxTiff.lineTo(128, x);
+                ctxTiff.stroke();
+            }
+            tiffanyGlassTexture = new THREE.CanvasTexture(tiffanyCanvas);
+        }
+
+        // --- AMBIENTE EXTERNO ---
+        function createEnvironment() {
+            // Chão Principal (Asfalto do Estacionamento)
+            const floorGeo = new THREE.PlaneGeometry(120, 120);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x1d1a18, roughness: 0.85 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            environmentGroup.add(floor);
+
+            // Calçada elevada de Concreto rústico
+            const curbGeo = new THREE.BoxGeometry(32, 0.25, 22);
+            const curbMat = new THREE.MeshStandardMaterial({ color: 0x736960, roughness: 0.7 });
+            const curb = new THREE.Mesh(curbGeo, curbMat);
+            curb.position.set(0, 0.125, 0);
+            curb.receiveShadow = true;
+            environmentGroup.add(curb);
+
+            // Canteiro Verde Traseiro com arbustos (Gramado)
+            const grassGeo = new THREE.BoxGeometry(40, 0.25, 20);
+            const grassMat = new THREE.MeshStandardMaterial({ color: 0x2e4215, roughness: 0.9 });
+            const grass = new THREE.Mesh(grassGeo, grassMat);
+            grass.position.set(0, 0.125, -20);
+            grass.receiveShadow = true;
+            environmentGroup.add(grass);
+
+            // Pinheiros e Árvores rústicas ao fundo
+            for (let i = 0; i < 7; i++) {
+                createPineTree(-30 + (i * 10), 0.25, -22);
+            }
+
+            // Postes de Luz Clássicos de Estacionamento
+            createRetroStreetLight(-14, 0, 14);
+            createRetroStreetLight(14, 0, 14);
+
+            // Céu (Domo Celeste)
+            const skyGeo = new THREE.SphereGeometry(150, 32, 15);
+            const skyMat = new THREE.MeshBasicMaterial({ color: 0x415b76, side: THREE.BackSide });
+            skyMesh = new THREE.Mesh(skyGeo, skyMat);
+            scene.add(skyMesh);
+        }
+
+        function createPineTree(x, y, z) {
+            const tree = new THREE.Group();
+            tree.position.set(x, y, z);
+
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 3, 8), new THREE.MeshStandardMaterial({ color: 0x3a2512 }));
+            trunk.position.y = 1.5;
+            trunk.castShadow = true;
+            tree.add(trunk);
+
+            const leavesMat = new THREE.MeshStandardMaterial({ color: 0x1b3011, roughness: 0.8, flatShading: true });
+            for (let i = 0; i < 3; i++) {
+                const layer = new THREE.Mesh(new THREE.ConeGeometry(1.8 - (i * 0.4), 2.5, 6), leavesMat);
+                layer.position.y = 3 + (i * 1.5);
+                layer.castShadow = true;
+                tree.add(layer);
+            }
+            environmentGroup.add(tree);
+        }
+
+        function createRetroStreetLight(x, y, z) {
+            const poleGroup = new THREE.Group();
+            poleGroup.position.set(x, y, z);
+
+            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 9, 8), new THREE.MeshStandardMaterial({ color: 0x242424, metalness: 0.7 }));
+            pole.position.y = 4.5;
+            pole.castShadow = true;
+            poleGroup.add(pole);
+
+            // Caixa de lâmpada retangular clássica de estacionamento
+            const fixture = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.4, 0.6), new THREE.MeshStandardMaterial({ color: 0x1c1c1c }));
+            fixture.position.set(0.4, 9, 0);
+            fixture.rotation.z = -0.15;
+            poleGroup.add(fixture);
+
+            const emissionMesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.1, 0.4), new THREE.MeshBasicMaterial({ color: 0xffe6a3 }));
+            emissionMesh.position.set(0.4, 8.8, 0);
+            emissionMesh.rotation.z = -0.15;
+            poleGroup.add(emissionMesh);
+
+            // Luz Real Projetada
+            const spotLight = new THREE.SpotLight(0xffeaad, 0, 30, Math.PI / 4, 0.6, 1);
+            spotLight.position.set(0.4, 8.7, 0);
+            spotLight.target.position.set(0.4, 0, 0);
+            spotLight.castShadow = true;
+            spotLight.shadow.mapSize.width = 512;
+            spotLight.shadow.mapSize.height = 512;
+            poleGroup.add(spotLight);
+            poleGroup.add(spotLight.target);
+
+            streetLights.push({ spotLight, emissionMesh });
+            environmentGroup.add(poleGroup);
+        }
+
+        // --- ARQUITETURA DO PRÉDIO (PIZZA HUT VINTAGE) ---
+        function createBuilding() {
+            // 1. Paredes de Alvenaria
+            const brickMat = new THREE.MeshStandardMaterial({ map: brickTexture, roughness: 0.8 });
+            const woodSidingMat = new THREE.MeshStandardMaterial({ map: woodSidingTexture, roughness: 0.7 });
+
+            // Fachada Traseira e Direita (Em Tijolo)
+            const backWall = new THREE.Mesh(new THREE.BoxGeometry(26, 4.5, 0.4), brickMat);
+            backWall.position.set(0, 2.375, -8);
+            backWall.castShadow = true;
+            backWall.receiveShadow = true;
+            buildingGroup.add(backWall);
+
+            const sideWallRight = new THREE.Mesh(new THREE.BoxGeometry(0.4, 4.5, 16), brickMat);
+            sideWallRight.position.set(13, 2.375, 0);
+            sideWallRight.castShadow = true;
+            sideWallRight.receiveShadow = true;
+            buildingGroup.add(sideWallRight);
+
+            // Fachada Frontal e Esquerda (Com painéis de madeira vertical e janelas profundas)
+            const frontWall = new THREE.Mesh(new THREE.BoxGeometry(26, 4.5, 0.4), woodSidingMat);
+            frontWall.position.set(0, 2.375, 8);
+            frontWall.castShadow = true;
+            frontWall.receiveShadow = true;
+            buildingGroup.add(frontWall);
+
+            const sideWallLeft = new THREE.Mesh(new THREE.BoxGeometry(0.4, 4.5, 16), woodSidingMat);
+            sideWallLeft.position.set(-13, 2.375, 0);
+            sideWallLeft.castShadow = true;
+            sideWallLeft.receiveShadow = true;
+            buildingGroup.add(sideWallLeft);
+
+            // Vidro das Janelas
+            const windowGlassMat = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff, transparent: true, opacity: 0.25, transmission: 0.7, roughness: 0.1
+            });
+
+            // Criar Janelas em formato Clássico com colunas trapezoidais em relevo (conforme as fotos!)
+            // Janelas da frente (série de janelas verticais)
+            for (let x = -8; x <= 8; x += 4) {
+                if (x === 0) continue; // espaço da porta central de vidro
+                createClassicWindow(x, 2, 8.05, 1.8, 2.5, 0, buildingGroup, windowGlassMat);
+            }
+
+            // Porta Frontal de Vidro Dupla
+            const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(2.4, 3, 0.3), new THREE.MeshStandardMaterial({ color: 0x4f1208 }));
+            doorFrame.position.set(0, 1.625, 8.05);
+            const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.8, 0.1), windowGlassMat);
+            doorGlass.position.set(0, 1.625, 8.05);
+            buildingGroup.add(doorFrame, doorGlass);
+
+            // --- O ICONICAMENTE RECONHECÍVEL TELHADO VERMELHO DUPLO ---
+            const shingleMat = new THREE.MeshStandardMaterial({ map: shingleTexture, roughness: 0.5 });
+
+            // Camada Inferior: Pirâmide Truncada (Telhado Largo e Raso)
+            // Usamos CylinderGeometry com 4 segmentos para fazer a pirâmide truncada
+            const lowerRoofGeo = new THREE.CylinderGeometry(11.5, 15.5, 2.5, 4);
+            const lowerRoof = new THREE.Mesh(lowerRoofGeo, shingleMat);
+            lowerRoof.position.y = 5.25;
+            lowerRoof.rotation.y = Math.PI / 4; // alinhar faces com as paredes
+            lowerRoof.castShadow = true;
+            lowerRoof.receiveShadow = true;
+            buildingGroup.add(lowerRoof);
+
+            // Camada Superior: O Escudo Trapezoidal (A famosa crista do telhado)
+            const roofRidgeShape = new THREE.Shape();
+            roofRidgeShape.moveTo(-6.5, 0);
+            roofRidgeShape.lineTo(-3.8, 3.8);
+            roofRidgeShape.lineTo(3.8, 3.8);
+            roofRidgeShape.lineTo(6.5, 0);
+            roofRidgeShape.closePath();
+
+            const extrudeSettings = { steps: 1, depth: 15, bevelEnabled: false };
+            const upperRoofGeo = new THREE.ExtrudeGeometry(roofRidgeShape, extrudeSettings);
+            const upperRoof = new THREE.Mesh(upperRoofGeo, shingleMat);
+            upperRoof.position.set(0, 6.4, -7.5); // posicionar perfeitamente no topo do telhado raso
+            upperRoof.castShadow = true;
+            upperRoof.receiveShadow = true;
+            buildingGroup.add(upperRoof);
+
+            // Escrita Luminosa "Pizza Hut" de acrílico branco nas duas faces laterais do telhado superior
+            createRoofLogoText(0, 8.3, 7.55, 0); // Frente
+            createRoofLogoText(0, 8.3, -7.55, Math.PI); // Verso
+        }
+
+        function createClassicWindow(x, y, z, w, h, rot, parent, glassMat) {
+            const frameColor = new THREE.MeshStandardMaterial({ color: 0x3d271f }); // Cor de madeira escura
+            
+            // Colunas de madeira trapezoidais clássicas flanking as janelas (vistas na Foto 2!)
+            const leftC = new THREE.Mesh(new THREE.BoxGeometry(0.3, h, 0.4), frameColor);
+            leftC.position.set(x - w/2 - 0.15, y, z);
+            const rightC = new THREE.Mesh(new THREE.BoxGeometry(0.3, h, 0.4), frameColor);
+            rightC.position.set(x + w/2 + 0.15, y, z);
+
+            const topC = new THREE.Mesh(new THREE.BoxGeometry(w + 0.6, 0.25, 0.4), frameColor);
+            topC.position.set(x, y + h/2 + 0.125, z);
+
+            const glass = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.1), glassMat);
+            glass.position.set(x, y, z);
+
+            parent.add(leftC, rightC, topC, glass);
+        }
+
+        // --- LOGO PIZZA HUT VINTAGE NO TELHADO ---
+        function createRoofLogoText(x, y, z, rotationY) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            
+            // Desenho do clássico logotipo estilizado Pizza Hut
+            ctx.fillStyle = 'rgba(0,0,0,0)'; // Transparente
+            ctx.fillRect(0, 0, 512, 128);
+
+            ctx.font = 'bold 74px "Brush Script MT", "Impact", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Sombra vermelha nostálgica
+            ctx.fillStyle = '#b52218';
+            ctx.fillText("Pizza Hut", 260, 68);
+
+            // Texto Branco
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText("Pizza Hut", 256, 64);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const logoMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+
+            const textPlane = new THREE.Mesh(new THREE.PlaneGeometry(8, 2), logoMat);
+            textPlane.position.set(x, y, z);
+            textPlane.rotation.y = rotationY;
+            buildingGroup.add(textPlane);
+
+            // Guardar material para brilhar neon à noite
+            neonMaterials.push(logoMat);
+        }
+
+        // --- INTERIOR SUPER DETALHADO (ANOS 80/90) ---
+        function createInterior() {
+            // Chão interno quadriculado em terracota e creme
+            const tileMat = new THREE.MeshStandardMaterial({ color: 0x9c5d3f, roughness: 0.3 });
+            const intFloor = new THREE.Mesh(new THREE.BoxGeometry(25.4, 0.1, 15.4), tileMat);
+            intFloor.position.set(0, 0.13, 0);
+            intFloor.receiveShadow = true;
+            furnitureGroup.add(intFloor);
+
+            // 1. O ICÔNICO SALAD BAR CENTRAL (Muito clássico da Pizza Hut Vintage!)
+            const saladBar = new THREE.Group();
+            saladBar.position.set(0, 0.13, -1);
+
+            // Balcão de Madeira Estilo Colonial
+            const barBase = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 2.5), new THREE.MeshStandardMaterial({ color: 0x4f2d18, roughness: 0.6 }));
+            barBase.position.y = 0.6;
+            barBase.castShadow = true;
+            saladBar.add(barBase);
+
+            // Sneeze Guard (Proteção de Vidro Inclinada)
+            const guardFrame = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.05, 1.8), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 }));
+            guardFrame.position.set(0, 1.6, 0);
+            guardFrame.rotation.x = 0.2;
+            saladBar.add(guardFrame);
+
+            const supportPole1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.6), new THREE.MeshStandardMaterial({ color: 0xcca43b, metalness: 0.9 }));
+            supportPole1.position.set(-2.8, 1.4, 0);
+            const supportPole2 = supportPole1.clone();
+            supportPole2.position.set(2.8, 1.4, 0);
+            saladBar.add(supportPole1, supportPole2);
+
+            // Alimentos no Salad bar (Procedural Low-Poly: Alface, Tomates, Molhos)
+            const foodLettuce = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.2, 1.8), new THREE.MeshStandardMaterial({ color: 0x51852c }));
+            foodLettuce.position.set(-1.5, 1.25, 0);
+            const foodTomatoes = new THREE.Mesh(new THREE.BoxGeometry(1, 0.2, 1), new THREE.MeshStandardMaterial({ color: 0xc42b1c }));
+            foodTomatoes.position.set(0.5, 1.25, 0.3);
+            const foodPeaches = new THREE.Mesh(new THREE.BoxGeometry(1, 0.2, 1), new THREE.MeshStandardMaterial({ color: 0xe6a122 }));
+            foodPeaches.position.set(0.5, 1.25, -0.4);
+
+            saladBar.add(foodLettuce, foodTomatoes, foodPeaches);
+            furnitureGroup.add(saladBar);
+
+            // 2. CABINES DE VINIL VERMELHO (BOOTHS) & TOALHAS QUADRICULADAS
+            // Cabine 1 (Esquerda)
+            createVintageBooth(-8, 0.13, -3, 0);
+            createVintageBooth(-8, 0.13, 3, 0);
+
+            // Cabine 2 (Direita)
+            createVintageBooth(8, 0.13, -3, Math.PI);
+            createVintageBooth(8, 0.13, 3, Math.PI);
+
+            // 3. AS FAMOSAS LUMINÁRIAS TIFFANY SUSPENSAS (Stained Glass)
+            createTiffanyLamp(-8, 4, -3);
+            createTiffanyLamp(-8, 4, 3);
+            createTiffanyLamp(8, 4, -3);
+            createTiffanyLamp(8, 4, 3);
+            createTiffanyLamp(0, 4.3, -1); // Sobre o Salad Bar
+        }
+
+        function createVintageBooth(x, y, z, rotY) {
+            const booth = new THREE.Group();
+            booth.position.set(x, y, z);
+            booth.rotation.y = rotY;
+
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0x4f2d18, roughness: 0.6 });
+            const redVinylMat = new THREE.MeshStandardMaterial({ color: 0xa81414, roughness: 0.3 }); // Vermelho Couro
+            const tableCoverMat = new THREE.MeshStandardMaterial({ map: checkeredTexture, roughness: 0.5 });
+
+            // Dois Bancos de Madeira com Almofadas de Vinil Vermelho frente a frente
+            for (let side = -1; side <= 1; side += 2) {
+                const seatBack = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.4, 2.2), woodMat);
+                seatBack.position.set(side * 1.0, 0.7, 0);
+                seatBack.castShadow = true;
+                booth.add(seatBack);
+
+                const seatCushion = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.45, 2.1), redVinylMat);
+                seatCushion.position.set(side * 0.7, 0.225, 0);
+                seatCushion.castShadow = true;
+                booth.add(seatCushion);
+            }
+
+            // Mesa Retangular no Centro com Toalha Quadriculada
+            const tableTop = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.08, 2.0), tableCoverMat);
+            tableTop.position.set(0, 0.85, 0);
+            tableTop.castShadow = true;
+            booth.add(tableTop);
+
+            const tableBase = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.85), woodMat);
+            tableBase.position.set(0, 0.425, 0);
+            booth.add(tableBase);
+
+            furnitureGroup.add(booth);
+        }
+
+        function createTiffanyLamp(x, y, z) {
+            const lampGroup = new THREE.Group();
+            lampGroup.position.set(x, y, z);
+
+            // Fio de suspensão preto
+            const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.5), new THREE.MeshStandardMaterial({ color: 0x111 }));
+            cord.position.y = 0.75;
+            lampGroup.add(cord);
+
+            // Cúpula Abajur de vidro colorido Tiffany
+            const shadeGeo = new THREE.CylinderGeometry(0.2, 0.8, 0.6, 16, 1, true);
+            const shadeMat = new THREE.MeshStandardMaterial({
+                map: tiffanyGlassTexture,
+                roughness: 0.1,
+                emissive: 0xff8c00,
+                emissiveIntensity: 0.3,
+                side: THREE.DoubleSide
+            });
+            const shade = new THREE.Mesh(shadeGeo, shadeMat);
+            shade.castShadow = true;
+            lampGroup.add(shade);
+
+            // Lâmpada física
+            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffda8f }));
+            bulb.position.y = -0.1;
+            lampGroup.add(bulb);
+
+            // Ponto de Luz Real (PointLight Quente)
+            const pointLight = new THREE.PointLight(0xffaa44, 1.8, 10);
+            pointLight.position.y = -0.15;
+            pointLight.castShadow = true;
+            pointLight.shadow.bias = -0.002;
+            lampGroup.add(pointLight);
+
+            tiffanyLamps.push({ pointLight, shadeMat });
+            furnitureGroup.add(lampGroup);
+        }
+
+        // --- ICONICA PLACA RETRO EXTERNA (TOTEM PIZZA HUT VINTAGE) ---
+        function createVintageSign() {
+            const totem = new THREE.Group();
+            totem.position.set(16, 0, 16);
+
+            // Poste Preto de Sustentação
+            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 12, 16), new THREE.MeshStandardMaterial({ color: 0x1c1c1c, metalness: 0.8 }));
+            pole.position.y = 6;
+            pole.castShadow = true;
+            totem.add(pole);
+
+            // Moldura da Placa
+            const board = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.8, 0.5), new THREE.MeshStandardMaterial({ color: 0x111 }));
+            board.position.set(0, 10.5, 0);
+            board.castShadow = true;
+            totem.add(board);
+
+            // Painel Interno Branco Luminoso com o Logotipo
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff'; // Placa branca translúcida
+            ctx.fillRect(0, 0, 256, 256);
+
+            // Estilizar o logotipo antigo
+            ctx.font = 'bold 54px "Impact", sans-serif';
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            ctx.fillText("Pizza", 128, 140);
+            ctx.fillText("Hut", 128, 195);
+
+            // Desenhar a silhueta clássica do telhado vermelho acima do texto na placa
+            ctx.fillStyle = '#da291c';
+            ctx.beginPath();
+            ctx.moveTo(30, 80);
+            ctx.lineTo(20, 80);
+            ctx.lineTo(60, 50);
+            ctx.lineTo(50, 50);
+            ctx.lineTo(90, 20);
+            ctx.lineTo(166, 20);
+            ctx.lineTo(206, 50);
+            ctx.lineTo(196, 50);
+            ctx.lineTo(236, 80);
+            ctx.closePath();
+            ctx.fill();
+
+            const signTex = new THREE.CanvasTexture(canvas);
+            const signBackMat = new THREE.MeshBasicMaterial({ map: signTex, side: THREE.DoubleSide });
+
+            const signPlateFront = new THREE.Mesh(new THREE.PlaneGeometry(3.8, 2.4), signBackMat);
+            signPlateFront.position.set(0, 10.5, 0.26);
+            totem.add(signPlateFront);
+
+            const signPlateBack = signPlateFront.clone();
+            signPlateBack.position.set(0, 10.5, -0.26);
+            signPlateBack.rotation.y = Math.PI;
+            totem.add(signPlateBack);
+
+            // Adicionar elemento para brilhar no ciclo noturno
+            neonMaterials.push(signBackMat);
+
+            environmentGroup.add(totem);
+        }
+
+        // --- CARRO RETRÔ DE ÉPOCA (WOODY STATION WAGON) ---
+        function createStationWagon() {
+            const car = new THREE.Group();
+
+            const bodyColor = new THREE.MeshStandardMaterial({ color: 0x5a2118, roughness: 0.2 }); // Vermelho escuro
+            const woodPanel = new THREE.MeshStandardMaterial({ color: 0xc39761, roughness: 0.6 }); // Painéis de madeira lateral
+
+            // Corpo Inferior
+            const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.4, 4), bodyColor);
+            chassis.position.y = 0.45;
+            chassis.castShadow = true;
+            car.add(chassis);
+
+            // Painel Lateral de Madeira Clássico (Woody Wagon!)
+            const woodSidesLeft = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.35, 3), woodPanel);
+            woodSidesLeft.position.set(-0.81, 0.5, 0);
+            const woodSidesRight = woodSidesLeft.clone();
+            woodSidesRight.position.set(0.81, 0.5, 0);
+            car.add(woodSidesLeft, woodSidesRight);
+
+            // Cabine / Janelas Retangulares
+            const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.7, 2.5), new THREE.MeshStandardMaterial({ color: 0x1a1a1a }));
+            cabin.position.set(0, 1, -0.3);
+            cabin.castShadow = true;
+            car.add(cabin);
+
+            // Rodas
+            const wheelGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.3, 16);
+            wheelGeo.rotateZ(Math.PI / 2);
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.9 });
+            const hubCap = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.32, 8), new THREE.MeshStandardMaterial({ color: 0xddd, metalness: 0.9 }));
+            hubCap.rotateZ(Math.PI/2);
+
+            const wheels = [];
+            for (let x = -1; x <= 1; x += 2) {
+                for (let z = -1; z <= 1; z += 2) {
+                    const w = new THREE.Mesh(wheelGeo, wheelMat);
+                    w.position.set(x * 0.85, 0.35, z * 1.25);
+                    const hc = hubCap.clone();
+                    hc.position.copy(w.position);
+                    car.add(w, hc);
+                }
+            }
+
+            // Faróis acesos
+            const beamMat = new THREE.MeshBasicMaterial({ color: 0xfffad1 });
+            const headlightL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.15, 0.1), beamMat);
+            headlightL.position.set(-0.6, 0.5, 2.01);
+            const headlightR = headlightL.clone();
+            headlightR.position.set(0.6, 0.5, 2.01);
+            car.add(headlightL, headlightR);
+
+            // Caminho de percurso do estacionamento (Loop)
+            carSpline = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-24, 0.1, 24),
+                new THREE.Vector3(24, 0.1, 24),
+                new THREE.Vector3(24, 0.1, -12),
+                new THREE.Vector3(-24, 0.1, -12),
+            ], true);
+
+            carMesh = car;
+            vehicleGroup.add(carMesh);
+        }
+
+        // --- CONFIGURAÇÃO DE ILUMINAÇÃO GERAL ---
+        function setupLights() {
+            // Clarabóia / Iluminação ambiente suave
+            hemiLight = new THREE.HemisphereLight(0xfff3e3, 0x443322, 1.2);
+            hemiLight.position.set(0, 50, 0);
+            lightGroup.add(hemiLight);
+
+            // Sol / Direcional
+            dirLight = new THREE.DirectionalLight(0xfff5e6, 1.4);
+            dirLight.position.set(40, 50, 20);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 150;
+            const d = 40;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
+            dirLight.shadow.bias = -0.0005;
+            lightGroup.add(dirLight);
+        }
+
+        // --- SISTEMA DIA / NOITE ---
+        function updateDayNightCycle() {
+            const speed = 0.04;
+            if (isNight && dayNightTransition < 1.0) {
+                dayNightTransition += speed;
+            } else if (!isNight && dayNightTransition > 0.0) {
+                dayNightTransition -= speed;
+            }
+
+            // Transição de cores do céu e da atmosfera
+            const skyColor = new THREE.Color(0x415b76).lerp(new THREE.Color(0x040307), dayNightTransition);
+            skyMesh.material.color.copy(skyColor);
+            scene.fog.color.copy(skyColor);
+            renderer.setClearColor(skyColor);
+
+            // Intensidade do Sol diminui à noite
+            dirLight.intensity = THREE.MathUtils.lerp(1.4, 0.05, dayNightTransition);
+            dirLight.color.lerpColors(new THREE.Color(0xfff5e6), new THREE.Color(0x4466aa), dayNightTransition);
+            hemiLight.intensity = THREE.MathUtils.lerp(1.2, 0.15, dayNightTransition);
+
+            // Luminárias de poste acendem
+            streetLights.forEach(light => {
+                light.spotLight.intensity = THREE.MathUtils.lerp(0, 6, dayNightTransition);
+                light.emissionMesh.material.color.lerpColors(new THREE.Color(0x222222), new THREE.Color(0xffeaad), dayNightTransition);
+            });
+
+            // Neons e Placa retro brilham forte à noite
+            neonMaterials.forEach(mat => {
+                // Brilho emissivo simulado alterando cor direta do mesh basic
+                mat.color.lerpColors(new THREE.Color(0xd1bca6), new THREE.Color(0xffffff), dayNightTransition);
+            });
+
+            // Luzes acolhedoras internas das cúpulas Tiffany ganham destaque
+            tiffanyLamps.forEach(lamp => {
+                lamp.pointLight.intensity = THREE.MathUtils.lerp(1.0, 3.2, dayNightTransition);
+                lamp.shadeMat.emissiveIntensity = THREE.MathUtils.lerp(0.3, 2.2, dayNightTransition);
+            });
+        }
+
+        // --- LOOP DE ANIMAÇÃO ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+
+            // Giro automático da Câmera
+            if (autoRotate) {
+                controls.autoRotate = true;
+                controls.autoRotateSpeed = 0.8;
+            } else {
+                controls.autoRotate = false;
+            }
+            controls.update();
+
+            // Atualização do ciclo dia/noite
+            updateDayNightCycle();
+
+            // Movimento da Station Wagon
+            if (carSpline && carMesh) {
+                carProgress += 0.015 * delta;
+                if (carProgress > 1.0) carProgress = 0;
+
+                const position = carSpline.getPointAt(carProgress);
+                carMesh.position.copy(position);
+
+                const tangent = carSpline.getTangentAt(carProgress).normalize();
+                const targetPos = position.clone().add(tangent);
+                carMesh.lookAt(targetPos);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- CONFIGURAÇÃO DA INTERFACE DO USUÁRIO (HUD) ---
+        function setupUI() {
+            const btnDay = document.getElementById('btn-day');
+            const btnNight = document.getElementById('btn-night');
+            const btnOrbit = document.getElementById('btn-orbit');
+
+            const camExt = document.getElementById('btn-cam-ext');
+            const camInt = document.getElementById('btn-cam-int');
+            const camBooth = document.getElementById('btn-cam-booth');
+            const camSign = document.getElementById('btn-cam-sign');
+
+            // Troca de horário
+            btnDay.addEventListener('click', () => {
+                isNight = false;
+                btnDay.classList.add('active');
+                btnNight.classList.remove('active');
+            });
+
+            btnNight.addEventListener('click', () => {
+                isNight = true;
+                btnNight.classList.add('active');
+                btnDay.classList.remove('active');
+            });
+
+            // Giro da câmera
+            btnOrbit.addEventListener('click', () => {
+                autoRotate = !autoRotate;
+                btnOrbit.innerHTML = autoRotate ? "🔄 Câmera Giratória (On)" : "🔄 Câmera Giratória (Off)";
+                btnOrbit.classList.toggle('yellow-active', !autoRotate);
+            });
+
+            // Resetar seleção de botões de câmera
+            const clearCamSelected = () => {
+                [camExt, camInt, camBooth, camSign].forEach(b => b.classList.remove('active'));
+            };
+
+            // Navegação de Câmera suave
+            camExt.addEventListener('click', () => {
+                clearCamSelected();
+                camExt.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Câmera Giratória (Off)";
+                btnOrbit.classList.add('yellow-active');
+                animateCamera(new THREE.Vector3(26, 12, 26), new THREE.Vector3(0, 2, 0));
+            });
+
+            camInt.addEventListener('click', () => {
+                clearCamSelected();
+                camInt.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Câmera Giratória (Off)";
+                btnOrbit.classList.add('yellow-active');
+                animateCamera(new THREE.Vector3(0.1, 2.2, 5.0), new THREE.Vector3(0, 1.2, -1));
+            });
+
+            camBooth.addEventListener('click', () => {
+                clearCamSelected();
+                camBooth.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Câmera Giratória (Off)";
+                btnOrbit.classList.add('yellow-active');
+                animateCamera(new THREE.Vector3(-4.8, 1.8, 4.8), new THREE.Vector3(-8, 1.1, 3));
+            });
+
+            camSign.addEventListener('click', () => {
+                clearCamSelected();
+                camSign.classList.add('active');
+                autoRotate = false;
+                btnOrbit.innerHTML = "🔄 Câmera Giratória (Off)";
+                btnOrbit.classList.add('yellow-active');
+                animateCamera(new THREE.Vector3(22, 12, 22), new THREE.Vector3(16, 10, 16));
+            });
+        }
+
+        // Função de transição suave de câmera
+        function animateCamera(targetPosition, targetLookAt) {
+            let count = 0;
+            const steps = 30;
+            const startPos = camera.position.clone();
+            const startLook = controls.target.clone();
+
+            function step() {
+                count++;
+                const t = count / steps;
+                const ease = Math.sin(t * Math.PI / 2); // Transição senoidal suave
+
+                camera.position.lerpVectors(startPos, targetPosition, ease);
+                controls.target.lerpVectors(startLook, targetLookAt, ease);
+
+                if (count < steps) {
+                    requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

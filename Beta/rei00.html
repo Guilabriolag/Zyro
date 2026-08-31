@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
+    <title>Rei Burguers - Immersive Simulator 3D</title>
+    <style>
+        :root {
+            --primary: #ffc72c;
+            --secondary: #da291c;
+            --dark: #0c0c0e;
+            --gray: #222226;
+            --glass: rgba(15, 15, 20, 0.85);
+            --border: rgba(255, 199, 44, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--dark);
+            color: #fff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            z-index: 1;
+        }
+
+        /* BARRA DE STATUS SUPERIOR (ESTILO CELULAR) */
+        #status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 44px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 0 16px;
+            z-index: 100;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .status-center {
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-center::after {
+            content: "▼";
+            font-size: 8px;
+            color: var(--primary);
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .wallet-hud {
+            background: rgba(255, 199, 44, 0.15);
+            border: 1px solid var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* GAVETA DE NOTIFICAÇÕES (RETRACTABLE DRAWER) */
+        #notification-drawer {
+            position: absolute;
+            top: -300px;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 15, 20, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 3px solid var(--primary);
+            z-index: 99;
+            box-sizing: border-box;
+            padding: 60px 20px 20px 20px;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #notification-drawer.open {
+            top: 0;
+        }
+
+        .drawer-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--primary);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .notification-item {
+            background: rgba(255,255,255,0.04);
+            border-left: 3px solid var(--secondary);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        /* PAINEL DE CONTROLE DE AMBIENTES (INFERIOR) */
+        #control-dock {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+            transition: bottom 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dock-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dock-btn.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+
+        .immersive-btn {
+            background: var(--secondary) !important;
+            color: #fff !important;
+            border-color: var(--secondary) !important;
+            box-shadow: 0 0 10px rgba(218,41,28,0.5);
+        }
+
+        /* CONTROLES DO GAMEPAD VIRTUAL (MODO IMERSÃO ATIVO) */
+        #gamepad-hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 8;
+            pointer-events: none;
+            display: none;
+        }
+
+        .interactive-zone {
+            pointer-events: auto;
+        }
+
+        /* Joystick Virtual */
+        #joystick-container {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+        }
+
+        #joystick-knob {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        /* Botões de Ação Direita */
+        #action-pad {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 150px;
+            height: 150px;
+            display: grid;
+            grid-template-areas: 
+                ".    btnB .   "
+                "btnC .    btnA"
+                ".    btnD .   ";
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(15, 15, 20, 0.85);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        #btn-A { grid-area: btnA; border-color: #4cd964; color: #4cd964; }
+        #btn-B { grid-area: btnB; border-color: var(--secondary); color: var(--secondary); }
+        #btn-C { grid-area: btnC; border-color: var(--primary); color: var(--primary); }
+        #btn-D { grid-area: btnD; border-color: #5ac8fa; color: #5ac8fa; }
+
+        /* PROMPTS DE INTERAÇÃO FLUTUANTES */
+        #interaction-prompt {
+            position: absolute;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(218, 41, 28, 0.95);
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #fff;
+            display: none;
+            z-index: 10;
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(255,199,44,0.4);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, 0) scale(1); }
+            100% { transform: translate(-50%, -4px) scale(1.03); }
+        }
+
+        /* LOADING */
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-logo {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); /* Coroa */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+
+        /* TEXTO DA MARCA RETRO */
+        .loader-brand {
+            font-family: 'Impact', Impact, sans-serif;
+            font-size: 32px;
+            color: var(--primary);
+            text-shadow: 2px 2px 0 var(--secondary);
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tela de Carregamento -->
+    <div id="loader">
+        <div class="loader-logo">👑</div>
+        <div class="loader-brand">REI BURGUERS</div>
+        <p style="color: #a68a80; font-size: 11px; margin-top: 10px; font-weight: bold; letter-spacing: 2px;">SOPRANDO AS BRASAS DA CHAPA...</p>
+    </div>
+
+    <!-- Barra de Status Estilo Smartphone -->
+    <div id="status-bar">
+        <div class="status-left">
+            <span>LTE 5G</span>
+            <span>🔋 98%</span>
+        </div>
+        <div class="status-center" id="toggle-drawer">
+            <span>Pirapora do Bom Jesus</span>
+        </div>
+        <div class="status-right">
+            <span id="game-time">20:30</span>
+            <div class="wallet-hud" id="wallet-display">R$ 150,00</div>
+        </div>
+    </div>
+
+    <!-- Gaveta de Notificações -->
+    <div id="notification-drawer" id="drawer">
+        <div class="drawer-title">Alertas do Trailer</div>
+        <div class="notification-item">
+            📢 <b>Promoção Ativa:</b> Desconto de 15% no Combo Real atraiu mais clientes hoje!
+        </div>
+        <div class="notification-item">
+            🥓 <b>Fornecedor:</b> Entrega de bacon e carne angus fresca prevista para daqui a pouco.
+        </div>
+    </div>
+
+    <!-- Elemento Principal de Renderização 3D -->
+    <div id="canvas-container"></div>
+
+    <!-- Prompt Flutuante de Ação -->
+    <div id="interaction-prompt">PROMPT DE INTERAÇÃO</div>
+
+    <!-- HUD do Controlador Portátil (Modo Imersão) -->
+    <div id="gamepad-hud">
+        <div id="joystick-container" class="interactive-zone">
+            <div id="joystick-knob"></div>
+        </div>
+        <div id="action-pad" class="interactive-zone">
+            <div class="action-btn" id="btn-A">A</div>
+            <div class="action-btn" id="btn-B">B</div>
+            <div class="action-btn" id="btn-C">C</div>
+            <div class="action-btn" id="btn-D">D</div>
+        </div>
+    </div>
+
+    <!-- Barra de Controle Inferior (Ambiente e Estações) -->
+    <div id="control-dock">
+        <div class="control-group">
+            <button class="dock-btn active" id="btn-day">☀ Dia</button>
+            <button class="dock-btn" id="btn-night">🌙 Noite</button>
+        </div>
+        <div class="control-group">
+            <button class="dock-btn active" id="btn-summer">☀️ Verão</button>
+            <button class="dock-btn" id="btn-winter">❄️ Inverno</button>
+        </div>
+        <button class="dock-btn immersive-btn" id="btn-immersion">[ Imersão ]</button>
+    </div>
+
+    <!-- Scripts CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // --- CONSTANTES E SELETORES ---
+        const CLIMA_VERAO = 0, CLIMA_INVERNO = 1;
+        let configClima = CLIMA_VERAO;
+        let walletBalance = 150.00;
+
+        // Três Frentes de Câmera
+        const CAM_LIVRE = 0, CAM_FPP = 1, CAM_TPP = 2;
+        let cameraMode = CAM_LIVRE;
+
+        // Configuração Geral da Cena
+        let scene, camera, renderer, controls;
+        let trailerGroup, furnitureGroup, lightGroup, envGroup, npcGroup, particleGroup;
+        let clock = new THREE.Clock();
+
+        // Estados e Transições
+        let isNight = false;
+        let immersionMode = false;
+        let dayNightFactor = 0.0;
+        let rainParticles = [];
+        let smokeParticles = [];
+
+        // Elementos Dinâmicos de Iluminação e Neons
+        let hemiLight, dirLight, ambientLight;
+        let stringLights = [];
+        let insideLights = [];
+        let textLogos = [];
+
+        // Estado do Negócio / Interação
+        let activeInteractiveObject = null;
+        let rawPatties = 5;
+        let cookedBurgers = 0;
+        let burgerOnGrill = false;
+        let grillTimer = 0.0;
+        let pattyMeshOnGrill = null;
+        let activeAd = 0; // 0 = Promoção, 1 = institucional
+
+        // Configurações do Avatar do Jogador (Low-Poly)
+        let player = {
+            mesh: null,
+            position: new THREE.Vector3(0, 0, 5),
+            rotation: 0,
+            speed: 0.1,
+            velocity: new THREE.Vector3(),
+            bbox: new THREE.Box3()
+        };
+
+        // Colisores Estáticos do Cenário
+        let colliders = [];
+
+        // Controle do Joystick Virtual
+        let joystickActive = false;
+        let joystickStart = { x: 0, y: 0 };
+        let joystickCur = { x: 0, y: 0 };
+        let inputDirection = new THREE.Vector2();
+
+        // NPCs Clientes
+        let clients = [];
+
+        // --- INICIALIZAÇÃO DO MOTOR ---
+        function init() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x111115, 0.015);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 15, 22);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Controles da Câmera Livre
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.05;
+            controls.minDistance = 5;
+            controls.maxDistance = 50;
+
+            // Criando Grupos de Organização
+            trailerGroup = new THREE.Group();
+            furnitureGroup = new THREE.Group();
+            lightGroup = new THREE.Group();
+            envGroup = new THREE.Group();
+            npcGroup = new THREE.Group();
+            particleGroup = new THREE.Group();
+
+            scene.add(trailerGroup, furnitureGroup, lightGroup, envGroup, npcGroup, particleGroup);
+
+            // Inicializar Construção
+            createEnvironment();
+            createTrailer();
+            createInterior();
+            createInteractiveElements();
+            createPlayerAvatar();
+            setupLights();
+
+            // Configurar Listeners de Eventos
+            window.addEventListener('resize', onWindowResize);
+            setupInput();
+            setupHUD();
+
+            // Inicializar Spawn de NPCs
+            setInterval(spawnClient, 6000);
+
+            // Retirar Loader
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = 0;
+                setTimeout(() => loader.remove(), 500);
+            }, 1000);
+
+            animate();
+        }
+
+        // --- GERAÇÃO DE LOGOS E CANVAS PROCEDURAIS ---
+        function generateBrandTexture(text, scaleText = 1.0) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
+
+            // Fundo transparente
+            ctx.fillStyle = 'rgba(0,0,0,0)';
+            ctx.fillRect(0,0,512,256);
+
+            // Coroa do Rei Burguers (Vetorizado em Canvas)
+            ctx.fillStyle = '#ffc72c';
+            ctx.strokeStyle = '#da291c';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(156, 120);
+            ctx.lineTo(176, 50);
+            ctx.lineTo(216, 80);
+            ctx.lineTo(256, 30); // Ponta central
+            ctx.lineTo(296, 80);
+            ctx.lineTo(336, 50);
+            ctx.lineTo(356, 120);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Desenhar Círculo / Hambúrguer
+            ctx.fillStyle = '#ffc72c';
+            ctx.font = 'bold 52px "Impact", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+
+            // Nome da Lanchonete
+            ctx.fillText("REI", 256, 175);
+            ctx.font = 'bold 36px "Impact", sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText("BURGUERS", 256, 215);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+        }
+
+        // --- CONSTRUÇÃO DO CENÁRIO GERAL ---
+        function createEnvironment() {
+            // Chão Principal (Asfalto/Rua)
+            const ground = new THREE.Mesh(
+                new THREE.PlaneGeometry(120, 120),
+                new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.8 })
+            );
+            ground.rotation.x = -Math.PI/2;
+            ground.receiveShadow = true;
+            envGroup.add(ground);
+
+            // Calçadas de Concreto
+            const sidewalk = new THREE.Mesh(
+                new THREE.BoxGeometry(20, 0.2, 16),
+                new THREE.MeshStandardMaterial({ color: 0x5c5750, roughness: 0.9 })
+            );
+            sidewalk.position.set(0, 0.1, 0);
+            sidewalk.receiveShadow = true;
+            envGroup.add(sidewalk);
+            colliders.push(new THREE.Box3().setFromObject(sidewalk));
+
+            // Telhas/Cobertura superior do local (Estilo Galpão que abriga o trailer)
+            const ceiling = new THREE.Mesh(
+                new THREE.BoxGeometry(22, 0.4, 18),
+                new THREE.MeshStandardMaterial({ color: 0x2e2d2a, roughness: 0.9 })
+            );
+            ceiling.position.set(0, 7, 0);
+            envGroup.add(ceiling);
+
+            // Estrutura de Treliças Metálicas do teto
+            const beamGeo = new THREE.BoxGeometry(0.15, 0.15, 18);
+            const beamMat = new THREE.MeshStandardMaterial({ color: 0x4a4a4a, metalness: 0.8 });
+            for (let i = -10; i <= 10; i += 5) {
+                const b = new THREE.Mesh(beamGeo, beamMat);
+                b.position.set(i, 6.8, 0);
+                envGroup.add(b);
+            }
+
+            // Mesas e Cadeiras Externas
+            createTableGroup(-6, 0.2, 5);
+            createTableGroup(6, 0.2, 5);
+        }
+
+        function createTableGroup(x, y, z) {
+            const tableGroup = new THREE.Group();
+            tableGroup.position.set(x, y, z);
+
+            const tableMat = new THREE.MeshStandardMaterial({ color: 0xffc72c, roughness: 0.3 }); // Amarela estilosa
+            const metalMat = new THREE.MeshStandardMaterial({ color: 0x111, metalness: 0.8 });
+
+            // Tampo
+            const top = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.08, 16), tableMat);
+            top.position.y = 1.0;
+            top.castShadow = true;
+            tableGroup.add(top);
+
+            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.0, 8), metalMat);
+            leg.position.y = 0.5;
+            tableGroup.add(leg);
+
+            // Cadeiras Plásticas Pretas ao Redor
+            const chairGeo = new THREE.BoxGeometry(0.5, 0.4, 0.5);
+            const chairMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI / 2) * i;
+                const chair = new THREE.Mesh(chairGeo, chairMat);
+                chair.position.set(Math.cos(angle) * 1.3, 0.3, Math.sin(angle) * 1.3);
+                chair.castShadow = true;
+                tableGroup.add(chair);
+            }
+
+            envGroup.add(tableGroup);
+            colliders.push(new THREE.Box3().setFromObject(tableGroup));
+        }
+
+        // --- CRIAÇÃO DO TRAILER "REI BURGUERS" ---
+        function createTrailer() {
+            // Corpo Principal Preto
+            const trailerBodyMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.3 });
+            const yellowBeltMat = new THREE.MeshStandardMaterial({ color: 0xffc72c, roughness: 0.2 });
+
+            const baseBox = new THREE.Mesh(new THREE.BoxGeometry(8, 3.2, 4.2), trailerBodyMat);
+            baseBox.position.set(0, 1.8, -2);
+            baseBox.castShadow = true;
+            baseBox.receiveShadow = true;
+            trailerGroup.add(baseBox);
+
+            // Faixa amarela horizontal clássica do Rei Burguers
+            const yellowStrip = new THREE.Mesh(new THREE.BoxGeometry(8.1, 0.4, 4.3), yellowBeltMat);
+            yellowStrip.position.set(0, 1.8, -2);
+            trailerGroup.add(yellowStrip);
+
+            // Abertura da Janela Frontal (Janela de Atendimento)
+            // Detalhe de corte simulado por uma moldura de madeira preta profunda
+            const windowFrameMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c });
+            const windowBar = new THREE.Mesh(new THREE.BoxGeometry(5, 1.4, 0.2), windowFrameMat);
+            windowBar.position.set(0, 2.0, 0.1);
+            trailerGroup.add(windowBar);
+
+            // Recorte vazado na frente do trailer
+            const blackGlass = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.2, 0.05), new THREE.MeshStandardMaterial({ color: 0x000, roughness: 0.1, transparent: true, opacity: 0.6 }));
+            blackGlass.position.set(0, 2.0, 0.15);
+            trailerGroup.add(blackGlass);
+
+            // Teto do trailer
+            const roof = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.2, 4.6), trailerBodyMat);
+            roof.position.set(0, 3.5, -2);
+            trailerGroup.add(roof);
+
+            // --- DECORAÇÃO: VARAL DE LÂMPADAS INCANDESCENTES ---
+            const stringFrameGeo = new THREE.BoxGeometry(8.6, 0.06, 0.06);
+            const framePole = new THREE.Mesh(stringFrameGeo, new THREE.MeshStandardMaterial({ color: 0x111 }));
+            framePole.position.set(0, 3.8, 1.5);
+            trailerGroup.add(framePole);
+
+            // Suportes do Varal
+            const poleGeo = new THREE.CylinderGeometry(0.04, 0.04, 3.8);
+            const supportL = new THREE.Mesh(poleGeo, new THREE.MeshStandardMaterial({ color: 0x1c1c1c }));
+            supportL.position.set(-4.2, 1.9, 1.5);
+            const supportR = supportL.clone();
+            supportR.position.set(4.2, 1.9, 1.5);
+            trailerGroup.add(supportL, supportR);
+
+            // Lâmpadas no varal flutuante
+            const bulbGeo = new THREE.SphereGeometry(0.08, 8, 8);
+            for (let i = -3.8; i <= 3.8; i += 0.9) {
+                const bulb = new THREE.Mesh(bulbGeo, new THREE.MeshBasicMaterial({ color: 0xffc72c }));
+                bulb.position.set(i, 3.65, 1.5);
+                trailerGroup.add(bulb);
+
+                // Luz Real apontada para o chão
+                const pointLight = new THREE.PointLight(0xffb84d, 0, 6, 1.2);
+                pointLight.position.set(i, 3.5, 1.5);
+                lightGroup.add(pointLight);
+                stringLights.push({ bulb, pointLight });
+            }
+
+            // Grande Logotipo Tridimensional no Painel de Baixo
+            const brandTex = generateBrandTexture("REI BURGUERS");
+            const logoBoard = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 1.85), new THREE.MeshBasicMaterial({ map: brandTex, transparent: true, side: THREE.DoubleSide }));
+            logoBoard.position.set(-2, 0.85, 0.22);
+            trailerGroup.add(logoBoard);
+            textLogos.push(logoBoard);
+
+            // Caixa de Som flutuante (JBL ou similar na bancada da foto)
+            const speaker = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.4, 8), new THREE.MeshStandardMaterial({ color: 0x1c5ea8 }));
+            speaker.rotation.z = Math.PI / 2;
+            speaker.position.set(1.5, 1.4, 0.22);
+            trailerGroup.add(speaker);
+
+            envGroup.add(trailerGroup);
+            colliders.push(new THREE.Box3().setFromObject(baseBox));
+        }
+
+        // --- DESIGN INTERIOR DA COZINHA DO TRAILER ---
+        function createInterior() {
+            // Piso interno de alumínio antiderrapante
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x737475, roughness: 0.2, metalness: 0.9 });
+            const intFloor = new THREE.Mesh(new THREE.BoxGeometry(7.6, 0.05, 3.8), floorMat);
+            intFloor.position.set(0, 0.25, -2);
+            furnitureGroup.add(intFloor);
+
+            // Bancadas de aço inoxidável
+            const counterMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.9, roughness: 0.1 });
+            
+            // Balcão Frontal
+            const frontCounter = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.9, 0.8), counterMat);
+            frontCounter.position.set(0, 0.7, -0.6);
+            frontCounter.castShadow = true;
+            furnitureGroup.add(frontCounter);
+
+            // Balcão Traseiro
+            const backCounter = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.9, 0.8), counterMat);
+            backCounter.position.set(0, 0.7, -3.4);
+            backCounter.castShadow = true;
+            furnitureGroup.add(backCounter);
+
+            // Coifa e Exaustor industrial acima da chapa
+            const hood = new THREE.Mesh(new THREE.BoxGeometry(3, 0.5, 1), counterMat);
+            hood.position.set(-1.5, 3.1, -3.3);
+            furnitureGroup.add(hood);
+
+            // Prateleiras de Ingredientes suspensas
+            const shelf = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.05, 0.4), counterMat);
+            shelf.position.set(1.5, 2.5, -3.5);
+            furnitureGroup.add(shelf);
+
+            // Iluminação Fluorescente de Teto (Cozinha fria/clara)
+            const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.5), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            tube.rotation.z = Math.PI / 2;
+            tube.position.set(0, 3.2, -2);
+            furnitureGroup.add(tube);
+
+            const roomLight = new THREE.PointLight(0xe6f2ff, 1.2, 10);
+            roomLight.position.set(0, 3.1, -2);
+            lightGroup.add(roomLight);
+            insideLights.push(roomLight);
+        }
+
+        // --- SISTEMAS DE ITENS INTERATIVOS ---
+        let interactiveObjects = [];
+
+        function createInteractiveElements() {
+            // 1. Chapa de Hambúrgueres (Grill)
+            const grillGroup = new THREE.Group();
+            grillGroup.position.set(-1.5, 0.95, -3.2);
+
+            const grillBody = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.15, 0.8), new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.9 }));
+            grillBody.castShadow = true;
+            grillGroup.add(grillBody);
+
+            const grillPlate = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.03, 0.7), new THREE.MeshStandardMaterial({ color: 0x333, roughness: 0.4, metalness: 0.8 }));
+            grillPlate.position.y = 0.08;
+            grillGroup.add(grillPlate);
+
+            furnitureGroup.add(grillGroup);
+
+            interactiveObjects.push({
+                type: 'chapa',
+                box: new THREE.Box3().setFromObject(grillBody),
+                prompt: "Pressione [A] para cozinhar hambúrguer",
+                action: cookAction
+            });
+
+            // 2. Geladeira / Freezer de Insumos
+            const fridge = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.8, 1.2), new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.6 }));
+            fridge.position.set(3, 1.15, -3.2);
+            fridge.castShadow = true;
+            furnitureGroup.add(fridge);
+
+            interactiveObjects.push({
+                type: 'geladeira',
+                box: new THREE.Box3().setFromObject(fridge),
+                prompt: "Pressione [A] para pegar Carne Fresca",
+                action: () => {
+                    rawPatties += 3;
+                    showBannerNotification("🥩 Carne Angus fresca obtida no estoque!");
+                }
+            });
+
+            // 3. Monitor de Anúncios e Promoções (Ad Board)
+            const monitorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.15), new THREE.MeshStandardMaterial({ color: 0x111 }));
+            monitorFrame.position.set(0, 2.6, -3.75);
+            furnitureGroup.add(monitorFrame);
+
+            // Tela do monitor com anúncio inicial
+            const adTex = generateAdTexture("PROMO DE HOJE", "BACON KING: R$22,00");
+            const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.8), new THREE.MeshBasicMaterial({ map: adTex }));
+            screen.position.set(0, 2.6, -3.66);
+            furnitureGroup.add(screen);
+
+            interactiveObjects.push({
+                type: 'monitor',
+                box: new THREE.Box3().setFromObject(monitorFrame),
+                prompt: "Pressione [A] para alterar Anúncio do dia",
+                action: () => {
+                    activeAd = (activeAd + 1) % 2;
+                    let text1 = activeAd === 0 ? "PROMO DE HOJE" : "MEGA COMBO REAL";
+                    let text2 = activeAd === 0 ? "BACON KING: R$22,00" : "SABOR SEM IGUAL: R$35";
+                    screen.material.map = generateAdTexture(text1, text2);
+                    showBannerNotification("📺 Anúncio alterado! Clientes reagirão à nova promoção.");
+                }
+            });
+
+            // 4. Caixa Registradora (Balcão de Pagamento)
+            const register = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.5), new THREE.MeshStandardMaterial({ color: 0x111 }));
+            register.position.set(-0.8, 1.2, -0.6);
+            furnitureGroup.add(register);
+
+            interactiveObjects.push({
+                type: 'caixa',
+                box: new THREE.Box3().setFromObject(register),
+                prompt: "Pressione [A] para faturar pedidos",
+                action: () => {
+                    if (cookedBurgers > 0) {
+                        const payout = cookedBurgers * 25.00;
+                        walletBalance += payout;
+                        cookedBurgers = 0;
+                        document.getElementById('wallet-display').innerText = `R$ ${walletBalance.toFixed(2)}`;
+                        showBannerNotification(`💰 Faturamento realizado! +R$ ${payout.toFixed(2)}`);
+                    } else {
+                        showBannerNotification("🍔 Sem hambúrgueres prontos para vender no momento.");
+                    }
+                }
+            });
+        }
+
+        function generateAdTexture(title, subtitle) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0,0,256,128);
+
+            ctx.font = 'bold 20px "Courier New"';
+            ctx.fillStyle = '#ffc72c';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, 128, 45);
+
+            ctx.font = 'bold 13px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(subtitle, 128, 85);
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // --- CRIAÇÃO DO AVATAR DO JOGADOR ---
+        function createPlayerAvatar() {
+            const pGroup = new THREE.Group();
+            pGroup.position.copy(player.position);
+
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xda291c, roughness: 0.5 }); // Camisa vermelha
+            const apronMat = new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.6 }); // Avental preto
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdbb5, roughness: 0.8 });
+
+            // Corpo/Tronco (Capsule)
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1.2, 8), bodyMat);
+            body.position.y = 0.9;
+            body.castShadow = true;
+            pGroup.add(body);
+
+            // Avental
+            const apron = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.8, 0.1), apronMat);
+            apron.position.set(0, 0.7, 0.26);
+            pGroup.add(apron);
+
+            // Cabeça
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), skinMat);
+            head.position.y = 1.65;
+            pGroup.add(head);
+
+            // Chapéu de Cozinheiro (Chef Hat)
+            const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.22, 0.35, 8), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+            hat.position.y = 1.95;
+            pGroup.add(hat);
+
+            player.mesh = pGroup;
+            scene.add(player.mesh);
+            player.bbox.setFromObject(body);
+        }
+
+        // --- SISTEMA DE ILUMINAÇÃO INTELIGENTE ---
+        function setupLights() {
+            hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.9);
+            lightGroup.add(hemiLight);
+
+            dirLight = new THREE.DirectionalLight(0xfff3d1, 1.4);
+            dirLight.position.set(20, 40, 15);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.camera.near = 0.5;
+            dirLight.shadow.camera.far = 100;
+            const d = 25;
+            dirLight.shadow.camera.left = -d;
+            dirLight.shadow.camera.right = d;
+            dirLight.shadow.camera.top = d;
+            dirLight.shadow.camera.bottom = -d;
+            dirLight.shadow.bias = -0.0005;
+            lightGroup.add(dirLight);
+
+            // Luz ambiente sutil
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+            lightGroup.add(ambientLight);
+        }
+
+        // --- MECÂNICA DE COZIMENTO DA CHAPA ---
+        function cookAction() {
+            if (burgerOnGrill) {
+                if (grillTimer >= 5.0) {
+                    // Retirar Hambúrguer pronto
+                    burgerOnGrill = false;
+                    grillTimer = 0;
+                    cookedBurgers++;
+                    scene.remove(pattyMeshOnGrill);
+                    pattyMeshOnGrill = null;
+                    showBannerNotification(`🍔 Hambúrguer cozido perfeito! Guardado para faturamento (Prontos: ${cookedBurgers})`);
+                } else {
+                    showBannerNotification("⏳ O hambúrguer ainda está cru. Aguarde a cor mudar!");
+                }
+            } else {
+                if (rawPatties > 0) {
+                    rawPatties--;
+                    burgerOnGrill = true;
+                    grillTimer = 0.0;
+                    
+                    // Colocar carne crua (cor avermelhada/rosa)
+                    const pattyGeo = new THREE.CylinderGeometry(0.24, 0.24, 0.06, 12);
+                    const pattyMat = new THREE.MeshStandardMaterial({ color: 0xbc3525, roughness: 0.8 });
+                    pattyMeshOnGrill = new THREE.Mesh(pattyGeo, pattyMat);
+                    pattyMeshOnGrill.position.set(-1.5, 1.06, -3.2);
+                    scene.add(pattyMeshOnGrill);
+                    
+                    showBannerNotification("🥩 Carne Angus na chapa! Fritando...");
+                } else {
+                    showBannerNotification("❌ Sem estoque de carne! Busque suprimentos na Geladeira.");
+                }
+            }
+        }
+
+        // --- SISTEMA DE EMISSÃO DE PARTÍCULAS (FUMAÇA/CHUVA) ---
+        function handleParticles(delta) {
+            // 1. Fumaça da Chapa Fritando
+            if (burgerOnGrill) {
+                if (Math.random() < 0.2) {
+                    const particle = new THREE.Mesh(
+                        new THREE.SphereGeometry(0.04 + Math.random()*0.06, 4, 4),
+                        new THREE.MeshBasicMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.6 })
+                    );
+                    particle.position.set(-1.5 + (Math.random()-0.5)*1.2, 1.1, -3.2 + (Math.random()-0.5)*0.5);
+                    particleGroup.add(particle);
+                    smokeParticles.push({
+                        mesh: particle,
+                        life: 1.0,
+                        vel: new THREE.Vector3((Math.random()-0.5)*0.2, 0.8 + Math.random(), (Math.random()-0.5)*0.2)
+                    });
+                }
+            }
+
+            // Atualizar fumaça
+            for (let i = smokeParticles.length - 1; i >= 0; i--) {
+                const p = smokeParticles[i];
+                p.life -= delta * 1.5;
+                p.mesh.position.addScaledVector(p.vel, delta);
+                p.mesh.scale.multiplyScalar(1.02);
+                p.mesh.material.opacity = p.life * 0.6;
+                if (p.life <= 0) {
+                    particleGroup.remove(p.mesh);
+                    smokeParticles.splice(i, 1);
+                }
+            }
+
+            // 2. Clima de Inverno / Chuva (Partículas de chuva se clima for inverno)
+            if (configClima === CLIMA_INVERNO) {
+                if (rainParticles.length < 150) {
+                    const r = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.02, 0.3, 0.02),
+                        new THREE.MeshBasicMaterial({ color: 0x99bbff, transparent: true, opacity: 0.3 })
+                    );
+                    r.position.set((Math.random()-0.5)*40, 20, (Math.random()-0.5)*40);
+                    particleGroup.add(r);
+                    rainParticles.push(r);
+                }
+            }
+
+            // Atualizar chuva
+            for (let i = rainParticles.length - 1; i >= 0; i--) {
+                const r = rainParticles[i];
+                r.position.y -= delta * 15;
+                if (r.position.y < 0) {
+                    r.position.y = 20;
+                    r.position.x = (Math.random()-0.5)*40;
+                    r.position.z = (Math.random()-0.5)*40;
+                }
+                if (configClima !== CLIMA_INVERNO) {
+                    particleGroup.remove(r);
+                    rainParticles.splice(i, 1);
+                }
+            }
+        }
+
+        // --- SISTEMA DE INTEGRAÇÃO DE CLIENTES (NPCs) ---
+        function spawnClient() {
+            if (clients.length >= 6) return;
+
+            const nGroup = new THREE.Group();
+            
+            // Gerar cor aleatória de camisa de cliente
+            const randomColor = Math.random() * 0xffffff;
+            const bodyMat = new THREE.MeshStandardMaterial({ color: randomColor });
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 1.0, 8), bodyMat);
+            body.position.y = 0.8;
+            body.castShadow = true;
+            nGroup.add(body);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 8), new THREE.MeshStandardMaterial({ color: 0xffdbb5 }));
+            head.position.y = 1.45;
+            nGroup.add(head);
+
+            // Spawnar longe do trailer
+            nGroup.position.set((Math.random()-0.5)*15, 0.1, 15);
+            npcGroup.add(nGroup);
+
+            // Balão de Emoji flutuante de satisfação ou fome (Billboard)
+            const emojiTex = generateEmojiTexture("😋"); // Faminto
+            const emojiPlate = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.5), new THREE.MeshBasicMaterial({ map: emojiTex, transparent: true }));
+            emojiPlate.position.set(0, 2.0, 0);
+            nGroup.add(emojiPlate);
+
+            clients.push({
+                mesh: nGroup,
+                state: 'move_to_queue', // 'eating', 'leaving'
+                target: new THREE.Vector3((Math.random()-0.5)*2, 0.1, 1.8), // Fila em frente ao balcão
+                emojiMesh: emojiPlate
+            });
+        }
+
+        function generateEmojiTexture(emojiChar) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '36px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emojiChar, 32, 32);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function handleNPCs(delta) {
+            clients.forEach((c, index) => {
+                // Rotacionar Balão de Emoji para olhar para a câmera ativa
+                c.emojiMesh.lookAt(camera.position);
+
+                if (c.state === 'move_to_queue') {
+                    const dist = c.mesh.position.distanceTo(c.target);
+                    if (dist > 0.5) {
+                        const dir = new THREE.Vector3().subVectors(c.target, c.mesh.position).normalize();
+                        c.mesh.position.addScaledVector(dir, delta * 2);
+                        c.mesh.lookAt(c.target);
+                    } else {
+                        // Chegou no balcão e aguarda comida
+                        c.state = 'waiting';
+                        setTimeout(() => {
+                            c.emojiMesh.material.map = generateEmojiTexture("🍔"); // Quer hambúrguer
+                        }, 2000);
+                        
+                        // Tempo limite até ir embora se não interagir
+                        setTimeout(() => {
+                            if (c.state === 'waiting') {
+                                c.state = 'leaving';
+                                c.emojiMesh.material.map = generateEmojiTexture("😠"); // Impaciente
+                                c.target.set((Math.random()-0.5)*15, 0.1, 20);
+                            }
+                        }, 25000);
+                    }
+                } else if (c.state === 'leaving') {
+                    const dist = c.mesh.position.distanceTo(c.target);
+                    if (dist > 0.5) {
+                        const dir = new THREE.Vector3().subVectors(c.target, c.mesh.position).normalize();
+                        c.mesh.position.addScaledVector(dir, delta * 3);
+                    } else {
+                        // Deleta do cenário
+                        npcGroup.remove(c.mesh);
+                        clients.splice(index, 1);
+                    }
+                }
+            });
+        }
+
+        // --- SISTEMAS DE CONTROLE E ENTIDADE DE JOGADOR ---
+        let keys = {};
+        function setupInput() {
+            window.addEventListener('keydown', e => {
+                keys[e.key.toLowerCase()] = true;
+                
+                // Teclas atalho que simulam botoes do console
+                if (e.key.toLowerCase() === 'j') handleActionA();
+                if (e.key.toLowerCase() === 'k') handleActionB();
+                if (e.key.toLowerCase() === 'l') handleActionC();
+                if (e.key.toLowerCase() === 'i') handleActionD();
+            });
+            window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+            // JOYSTICK VIRTUAL MOBILE (Controles de toque)
+            const knob = document.getElementById('joystick-knob');
+            const container = document.getElementById('joystick-container');
+
+            knob.addEventListener('touchstart', e => {
+                joystickActive = true;
+                const touch = e.touches[0];
+                joystickStart = { x: touch.clientX, y: touch.clientY };
+            });
+
+            window.addEventListener('touchmove', e => {
+                if (!joystickActive) return;
+                const touch = e.touches[0];
+                joystickCur = { x: touch.clientX, y: touch.clientY };
+
+                const dx = joystickCur.x - joystickStart.x;
+                const dy = joystickCur.y - joystickStart.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                const maxDist = 40;
+
+                const angle = Math.atan2(dy, dx);
+                const rx = Math.cos(angle) * Math.min(dist, maxDist);
+                const ry = Math.sin(angle) * Math.min(dist, maxDist);
+
+                knob.style.transform = `translate(${rx}px, ${ry}px)`;
+
+                // Definir vetores de entrada de força
+                inputDirection.set(rx / maxDist, -ry / maxDist);
+            });
+
+            window.addEventListener('touchend', () => {
+                if (!joystickActive) return;
+                joystickActive = false;
+                knob.style.transform = `translate(0px, 0px)`;
+                inputDirection.set(0, 0);
+            });
+
+            // Conectar cliques dos botões virtuais
+            document.getElementById('btn-A').addEventListener('click', handleActionA);
+            document.getElementById('btn-B').addEventListener('click', handleActionB);
+            document.getElementById('btn-C').addEventListener('click', handleActionC);
+            document.getElementById('btn-D').addEventListener('click', handleActionD);
+        }
+
+        // Ações de Botões Físicos ou Virtuais
+        function handleActionA() {
+            if (activeInteractiveObject) {
+                activeInteractiveObject.action();
+            } else {
+                showBannerNotification("💡 Aproxime-se da Geladeira, Chapa, Caixa ou Monitor de anúncio.");
+            }
+        }
+
+        function handleActionB() {
+            // Acelerar Avatar (Sprint)
+            player.speed = player.speed === 0.1 ? 0.2 : 0.1;
+            showBannerNotification(player.speed === 0.2 ? "🏃 Corrida ativada!" : "🚶 Caminhada normal.");
+        }
+
+        function handleActionC() {
+            // Notificações / Status do Trailer rápido
+            showBannerNotification(`🥩 Carnes Cruas: ${rawPatties} | 🍔 Prontos na Cozinha: ${cookedBurgers}`);
+        }
+
+        function handleActionD() {
+            // Trocar Câmeras rotativamente
+            cameraMode = (cameraMode + 1) % 3;
+            const names = ["Top-Down Panorâmica", "Primeira Pessoa (FPP)", "Terceira Pessoa (TPP)"];
+            showBannerNotification(`🎥 Câmera alterada: ${names[cameraMode]}`);
+
+            if (cameraMode === CAM_LIVRE) {
+                controls.enabled = true;
+            } else {
+                controls.enabled = false;
+            }
+        }
+
+        function updatePlayerMovement(delta) {
+            if (!immersionMode) return;
+
+            let moveX = 0;
+            let moveZ = 0;
+
+            // Entrada via Teclado
+            if (keys['w'] || keys['arrowup']) moveZ = -1;
+            if (keys['s'] || keys['arrowdown']) moveZ = 1;
+            if (keys['a'] || keys['arrowleft']) moveX = -1;
+            if (keys['d'] || keys['arrowright']) moveX = 1;
+
+            // Sobreposição via Joystick Virtual se houver força
+            if (inputDirection.lengthSq() > 0.01) {
+                moveX = inputDirection.x;
+                moveZ = -inputDirection.y;
+            }
+
+            // Aplicar força física ao vetor do jogador
+            if (moveX !== 0 || moveZ !== 0) {
+                const moveVec = new THREE.Vector3(moveX, 0, moveZ).normalize().multiplyScalar(player.speed);
+                
+                // Backup da posição caso haja colisão
+                const oldPos = player.mesh.position.clone();
+                player.mesh.position.add(moveVec);
+
+                // Rotacionar em direção ao movimento
+                const targetAngle = Math.atan2(moveX, moveZ);
+                player.mesh.rotation.y = targetAngle;
+
+                // Verificação rápida de colisão estática
+                player.bbox.setFromObject(player.mesh.children[0]); // obter caixa do tronco
+                let collided = false;
+                for (let i = 0; i < colliders.length; i++) {
+                    if (player.bbox.intersectsBox(colliders[i])) {
+                        collided = true;
+                        break;
+                    }
+                }
+
+                // Bloqueador de saída do mapa
+                if (player.mesh.position.x < -18 || player.mesh.position.x > 18 || player.mesh.position.z < -10 || player.mesh.position.z > 12) {
+                    collided = true;
+                }
+
+                if (collided) {
+                    player.mesh.position.copy(oldPos); // Retorna
+                }
+            }
+
+            // Procurar itens interativos ao redor
+            let closeToAnything = false;
+            player.bbox.setFromObject(player.mesh.children[0]);
+
+            for (let i = 0; i < interactiveObjects.length; i++) {
+                const obj = interactiveObjects[i];
+                // Expandir ligeiramente a bounding box do item para detecção de proximidade
+                const interactZone = obj.box.clone().expandByScalar(0.8);
+                
+                if (player.bbox.intersectsBox(interactZone)) {
+                    activeInteractiveObject = obj;
+                    closeToAnything = true;
+                    document.getElementById('interaction-prompt').innerText = obj.prompt;
+                    document.getElementById('interaction-prompt').style.display = 'block';
+                    break;
+                }
+            }
+
+            if (!closeToAnything) {
+                activeInteractiveObject = null;
+                document.getElementById('interaction-prompt').style.display = 'none';
+            }
+        }
+
+        // --- SISTEMAS DE CÂMERA DINÂMICOS ---
+        function updateCameras() {
+            if (cameraMode === CAM_FPP) {
+                // Primeira Pessoa - travado nos olhos do avatar
+                const headPos = player.mesh.position.clone().add(new THREE.Vector3(0, 1.6, 0));
+                camera.position.copy(headPos);
+                
+                // Olhar para a frente baseando-se na rotação do corpo
+                const lookDir = new THREE.Vector3(Math.sin(player.mesh.rotation.y), 0, Math.cos(player.mesh.rotation.y));
+                camera.lookAt(headPos.add(lookDir));
+            } else if (cameraMode === CAM_TPP) {
+                // Terceira Pessoa - segue atrás do avatar
+                const offset = new THREE.Vector3(Math.sin(player.mesh.rotation.y) * -5, 4, Math.cos(player.mesh.rotation.y) * -5);
+                const targetCamPos = player.mesh.position.clone().add(offset);
+                camera.position.lerp(targetCamPos, 0.1);
+                camera.lookAt(player.mesh.position.clone().add(new THREE.Vector3(0, 1, 0)));
+            }
+        }
+
+        // --- TRANSITIONS & CLIMATE ---
+        function updateEnvironmentCycles(delta) {
+            // Ciclo Dia / Noite suave
+            const transitionSpeed = 0.5;
+            if (isNight && dayNightFactor < 1.0) {
+                dayNightFactor += delta * transitionSpeed;
+            } else if (!isNight && dayNightFactor > 0.0) {
+                dayNightFactor -= delta * transitionSpeed;
+            }
+
+            // Cores de Céu e Neblina (Tarde -> Noite Quente de Foodtruck)
+            const skyColor = new THREE.Color(0x415b76).lerp(new THREE.Color(0x06060b), dayNightFactor);
+            skyMesh.material.color.copy(skyColor);
+            scene.fog.color.copy(skyColor);
+            renderer.setClearColor(skyColor);
+
+            dirLight.intensity = THREE.MathUtils.lerp(1.4, 0.1, dayNightFactor);
+            hemiLight.intensity = THREE.MathUtils.lerp(0.9, 0.2, dayNightFactor);
+            ambientLight.intensity = THREE.MathUtils.lerp(0.1, 1.2, dayNightFactor);
+
+            // Acender varal de lâmpadas decorativas
+            stringLights.forEach(light => {
+                light.pointLight.intensity = THREE.MathUtils.lerp(0.0, 3.0, dayNightFactor);
+            });
+
+            // Ajuste da Chapa Grilling
+            if (burgerOnGrill) {
+                grillTimer += delta;
+                // Escurecimento progressivo do hambúrguer (carne passando do ponto)
+                if (pattyMeshOnGrill) {
+                    const progress = Math.min(grillTimer / 6.0, 1.0);
+                    pattyMeshOnGrill.material.color.lerpColors(new THREE.Color(0xbc3525), new THREE.Color(0x351d19), progress);
+                }
+            }
+        }
+
+        // --- LOOP PRINCIPAL DO SIMULADOR ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            // Rotação orbital se estiver livre
+            if (cameraMode === CAM_LIVRE) {
+                controls.update();
+            }
+
+            // Atualização de Mecânicas Ativas
+            updatePlayerMovement(delta);
+            updateEnvironmentCycles(delta);
+            handleParticles(delta);
+            handleNPCs(delta);
+            updateCameras();
+
+            // Movimento sutil do cozinheiro de apoio dentro do trailer (atrás do balcão)
+            // Simular respiração/preparação
+            trailerGroup.children.forEach(c => {
+                if (c.type === "Group" && c !== player.mesh) {
+                    c.position.y += Math.sin(time * 3) * 0.002;
+                }
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // --- CONFIGURAÇÃO DA GAVETA DE NOTIFICAÇÕES E DOCK ---
+        function setupHUD() {
+            // Relógio em Tempo Real na Barra
+            setInterval(() => {
+                const now = new Date();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                document.getElementById('game-time').innerText = `${hours}:${minutes}`;
+            }, 1000);
+
+            // Gaveta de Notificações
+            const toggleBtn = document.getElementById('toggle-drawer');
+            const drawer = document.getElementById('notification-drawer');
+            toggleBtn.addEventListener('click', () => {
+                drawer.classList.toggle('open');
+            });
+
+            // Dia / Noite
+            document.getElementById('btn-day').addEventListener('click', e => {
+                isNight = false;
+                setActiveButton('control-group', e.target);
+            });
+            document.getElementById('btn-night').addEventListener('click', e => {
+                isNight = true;
+                setActiveButton('control-group', e.target);
+            });
+
+            // Estações do Ano
+            document.getElementById('btn-summer').addEventListener('click', e => {
+                configClima = CLIMA_VERAO;
+                setActiveButton('control-group', e.target);
+                showBannerNotification("☀️ Clima definido como Verão: as pessoas preferem ficar na rua!");
+            });
+            document.getElementById('btn-winter').addEventListener('click', e => {
+                configClima = CLIMA_INVERNO;
+                setActiveButton('control-group', e.target);
+                showBannerNotification("❄️ Clima definido como Inverno: os clientes preferem bebidas quentes e fumaça!");
+            });
+
+            // Ativação do Modo Imersão (Joystick/Gamepad visível)
+            const immersionBtn = document.getElementById('btn-immersion');
+            immersionBtn.addEventListener('click', () => {
+                immersionMode = !immersionMode;
+                immersionBtn.classList.toggle('active', immersionMode);
+                document.getElementById('gamepad-hud').style.display = immersionMode ? 'block' : 'none';
+
+                if (immersionMode) {
+                    cameraMode = CAM_TPP; // Forçar Terceira pessoa inicial para movimento
+                    controls.enabled = false;
+                    showBannerNotification("🎮 Modo Imersão Ativo! Mova seu cozinheiro até a chapa.");
+                } else {
+                    cameraMode = CAM_LIVRE;
+                    controls.enabled = true;
+                    showBannerNotification("🌐 Modo Estratégico Ativo! Navegue livremente pela área.");
+                }
+            });
+        }
+
+        function setActiveButton(groupClass, targetBtn) {
+            const btns = targetBtn.parentNode.querySelectorAll('button');
+            btns.forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+        }
+
+        // Notificação Dinâmica na Tela (Toast)
+        function showBannerNotification(text) {
+            const toast = document.createElement('div');
+            toast.style.position = 'absolute';
+            toast.style.bottom = '110px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = 'rgba(12, 12, 14, 0.9)';
+            toast.style.border = '2px solid var(--primary)';
+            toast.style.padding = '8px 16px';
+            toast.style.borderRadius = '20px';
+            toast.style.fontSize = '12px';
+            toast.style.fontWeight = 'bold';
+            toast.style.color = '#fff';
+            toast.style.zIndex = '1000';
+            toast.style.boxShadow = '0 6px 20px rgba(0,0,0,0.5)';
+            toast.innerText = text;
+
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = 0;
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

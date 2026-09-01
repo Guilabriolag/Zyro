@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mundo Digital Procedural — CHUNK_0_0</title>
+
+<style>
+    :root {
+        --bg: #060912;
+        --panel: rgba(10, 14, 24, 0.82);
+        --line: rgba(255,255,255,0.14);
+        --cyan: #00e5ff;
+        --green: #56d364;
+        --yellow: #ffd166;
+        --orange: #ff9f1c;
+        --red: #ef476f;
+        --text: #eef6ff;
+        --muted: #91a4b7;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        user-select: none;
+    }
+
+    #canvas-container {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+    }
+
+    #map-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 4;
+        font-family: monospace;
+    }
+
+    #hud {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        z-index: 10;
+        width: 350px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+    }
+
+    #hud h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--cyan);
+    }
+
+    #hud h2 {
+        margin: 4px 0 16px;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .hud-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .info-card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+        background: rgba(255,255,255,0.045);
+    }
+
+    .info-card span {
+        display: block;
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+    }
+
+    .info-card strong {
+        font-size: 13px;
+        color: #fff;
+    }
+
+    .section-title {
+        margin: 14px 0 8px;
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    button {
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.065);
+        color: #fff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        transition: 0.18s ease;
+    }
+
+    button:hover {
+        border-color: var(--cyan);
+        background: rgba(0,229,255,0.12);
+    }
+
+    button.active {
+        color: #001318;
+        background: var(--cyan);
+        border-color: var(--cyan);
+        box-shadow: 0 0 18px rgba(0,229,255,0.28);
+    }
+
+    .btn-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .btn-row.three {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    #inspector {
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        z-index: 10;
+        width: 330px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+    }
+
+    #inspector h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        color: var(--yellow);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    #selected-info {
+        font-size: 12px;
+        line-height: 1.55;
+        color: #dcecff;
+        white-space: pre-line;
+    }
+
+    #instructions {
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: rgba(0,0,0,0.58);
+        border: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+        color: #e9f6ff;
+        border-radius: 999px;
+        padding: 9px 18px;
+        font-size: 12px;
+    }
+
+    #loader {
+        position: absolute;
+        inset: 0;
+        z-index: 99;
+        background: radial-gradient(circle at center, #122035 0%, #05070d 70%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        transition: opacity .45s ease;
+    }
+
+    .spinner {
+        width: 54px;
+        height: 54px;
+        border: 4px solid rgba(0,229,255,0.12);
+        border-top-color: var(--cyan);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    #loader p {
+        margin-top: 18px;
+        color: var(--cyan);
+        letter-spacing: 2px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+</head>
+
+<body>
+<div id="loader">
+    <div class="spinner"></div>
+    <p>GERANDO PRIMEIRO NÚCLEO URBANO...</p>
+</div>
+
+<div id="canvas-container"></div>
+<svg id="map-overlay"></svg>
+
+<div id="hud">
+    <h1>World Constructor</h1>
+    <h2>Masterplan procedural / CHUNK inicial</h2>
+
+    <div class="hud-grid">
+        <div class="info-card">
+            <span>Chunk atual</span>
+            <strong id="hud-chunk">CHUNK_0_0</strong>
+        </div>
+        <div class="info-card">
+            <span>Escala</span>
+            <strong>1u = 1m</strong>
+        </div>
+        <div class="info-card">
+            <span>World X</span>
+            <strong id="hud-x">0</strong>
+        </div>
+        <div class="info-card">
+            <span>World Z</span>
+            <strong id="hud-z">0</strong>
+        </div>
+        <div class="info-card">
+            <span>Altitude</span>
+            <strong id="hud-y">0</strong>
+        </div>
+        <div class="info-card">
+            <span>Zona</span>
+            <strong id="hud-zone">—</strong>
+        </div>
+    </div>
+
+    <div class="section-title">Câmera</div>
+    <div class="btn-row three">
+        <button id="cam-aerial" class="active">Aérea</button>
+        <button id="cam-gate">Entrada</button>
+        <button id="cam-complex">Complexo</button>
+    </div>
+
+    <div class="section-title">Camadas</div>
+    <div class="btn-row">
+        <button id="toggle-svg" class="active">SVG Urbano</button>
+        <button id="toggle-rotate">Auto-orbit</button>
+    </div>
+
+    <div class="section-title">Expansão preparada</div>
+    <div class="btn-row">
+        <button id="expand-east">Criar CHUNK_1_0</button>
+        <button id="expand-south">Criar CHUNK_0_1</button>
+    </div>
+</div>
+
+<div id="inspector">
+    <h3>Inspector</h3>
+    <div id="selected-info">Clique em uma estrada, prédio, zona, conector ou complexo.</div>
+</div>
+
+<div id="instructions">
+    Botão esquerdo: girar • Botão direito: pan • Scroll: zoom • Clique: inspecionar
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+/* ============================================================
+   WORLD / CONFIG
+   Escala: 1 unidade = 1 metro.
+   Plano horizontal: WORLD_X / WORLD_Z.
+   Y = altitude.
+============================================================ */
+
+const WORLD = {
+    BLOCK_SIZE: 2000,
+    HALF: 1000,
+    SCALE_LABEL: "1 unidade = 1 metro",
+    loadedChunks: new Map(),
+    objectsById: new Map()
+};
+
+const ZONES = {
+    RESIDENTIAL: "ZONE_RESIDENTIAL",
+    COMMERCIAL: "ZONE_COMMERCIAL",
+    INDUSTRIAL: "ZONE_INDUSTRIAL",
+    BUSINESS: "ZONE_BUSINESS",
+    LEISURE: "ZONE_LEISURE",
+    GREEN: "ZONE_GREEN",
+    INFRASTRUCTURE: "ZONE_INFRASTRUCTURE",
+    SPECIAL: "ZONE_SPECIAL"
+};
+
+/* ============================================================
+   DATA / WORLD DATA
+   Separação entre dados do mundo e motor de renderização.
+============================================================ */
+
+const WORLD_DATA = {
+    chunks: {
+        "0,0": {
+            id: "CHUNK_0_0",
+            coord: { x: 0, z: 0 },
+
+            connectors: {
+                north: [
+                    {
+                        id: "ROAD_CONNECTOR_N",
+                        road: "ROAD_MAIN_001",
+                        type: "avenue",
+                        position: { x: 0, z: -1000 },
+                        direction: "north"
+                    }
+                ],
+                south: [
+                    {
+                        id: "ROAD_CONNECTOR_S",
+                        road: "ROAD_MAIN_001",
+                        type: "avenue",
+                        position: { x: 0, z: 1000 },
+                        direction: "south"
+                    }
+                ],
+                east: [
+                    {
+                        id: "ROAD_CONNECTOR_E",
+                        road: "ROAD_HW_001",
+                        type: "highway",
+                        position: { x: 1000, z: -780 },
+                        direction: "east"
+                    },
+                    {
+                        id: "ROAD_CONNECTOR_E_SECONDARY",
+                        road: "ROAD_SECONDARY_001",
+                        type: "avenue",
+                        position: { x: 1000, z: 140 },
+                        direction: "east"
+                    }
+                ],
+                west: [
+                    {
+                        id: "ROAD_CONNECTOR_W",
+                        road: "ROAD_HW_001",
+                        type: "highway",
+                        position: { x: -1000, z: -780 },
+                        direction: "west"
+                    },
+                    {
+                        id: "ROAD_CONNECTOR_W_SECONDARY",
+                        road: "ROAD_SECONDARY_001",
+                        type: "avenue",
+                        position: { x: -1000, z: 140 },
+                        direction: "west"
+                    }
+                ]
+            },
+
+            zones: [
+                {
+                    id: "ZONE_0_INFRA_HIGHWAY",
+                    type: ZONES.INFRASTRUCTURE,
+                    rect: { x: 0, z: -780, w: 2200, d: 300 },
+                    metadata: { purpose: "corredor rodoviário e trevo" }
+                },
+                {
+                    id: "ZONE_0_INFRA_MAIN_AXIS",
+                    type: ZONES.INFRASTRUCTURE,
+                    rect: { x: 0, z: 200, w: 260, d: 1700 },
+                    metadata: { purpose: "eixo estrutural da avenida principal" }
+                },
+                {
+                    id: "ZONE_0_GREEN_WEST_PARK",
+                    type: ZONES.GREEN,
+                    rect: { x: -540, z: 410, w: 620, d: 560 },
+                    metadata: { purpose: "parque linear estruturado" }
+                },
+                {
+                    id: "ZONE_0_SPECIAL_GATE",
+                    type: ZONES.SPECIAL,
+                    rect: { x: 0, z: -455, w: 360, d: 360 },
+                    metadata: { purpose: "porta monumental e rotatória de acesso" }
+                },
+                {
+                    id: "ZONE_0_BUSINESS_COMPLEX_001",
+                    type: ZONES.BUSINESS,
+                    rect: { x: 520, z: 410, w: 620, d: 540 },
+                    metadata: { complex: "COMPLEX_001" }
+                },
+                {
+                    id: "ZONE_0_FUTURE_WEST",
+                    type: ZONES.COMMERCIAL,
+                    rect: { x: -760, z: -120, w: 340, d: 300 },
+                    metadata: { status: "reservado para expansão comercial futura" }
+                }
+            ],
+
+            roads: [
+                {
+                    id: "ROAD_HW_001",
+                    name: "Rodovia Horizonte",
+                    type: "highway",
+                    points: [{ x: -1300, z: -780 }, { x: 1300, z: -780 }],
+                    width: 42,
+                    lanes: 6,
+                    speed: 100,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: {
+                        connectors: ["ROAD_CONNECTOR_W", "ROAD_CONNECTOR_E"],
+                        shoulder: true,
+                        visualContinuation: true
+                    }
+                },
+                {
+                    id: "ROAD_MAIN_001",
+                    name: "Avenida Principal",
+                    type: "avenue",
+                    points: [{ x: 0, z: -1200 }, { x: 0, z: 1200 }],
+                    width: 36,
+                    lanes: 4,
+                    speed: 60,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: {
+                        connectors: ["ROAD_CONNECTOR_N", "ROAD_CONNECTOR_S"],
+                        hasSidewalk: true,
+                        hasBikeLane: true,
+                        axis: "primary"
+                    }
+                },
+                {
+                    id: "ROAD_SECONDARY_001",
+                    name: "Avenida Secundária",
+                    type: "avenue",
+                    points: [{ x: -1150, z: 140 }, { x: 1150, z: 140 }],
+                    width: 30,
+                    lanes: 4,
+                    speed: 50,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: {
+                        connectors: ["ROAD_CONNECTOR_W_SECONDARY", "ROAD_CONNECTOR_E_SECONDARY"],
+                        hasSidewalk: true,
+                        hasBikeLane: true,
+                        axis: "secondary"
+                    }
+                },
+                {
+                    id: "ROAD_RAMP_IN_001",
+                    name: "Rampa de Desaceleração",
+                    type: "ramp",
+                    points: [
+                        { x: -420, z: -780 },
+                        { x: -280, z: -720 },
+                        { x: -155, z: -620 },
+                        { x: -95, z: -510 }
+                    ],
+                    width: 12,
+                    lanes: 1,
+                    speed: 40,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: { role: "highway_to_roundabout" }
+                },
+                {
+                    id: "ROAD_RAMP_OUT_001",
+                    name: "Rampa de Aceleração",
+                    type: "ramp",
+                    points: [
+                        { x: 95, z: -510 },
+                        { x: 155, z: -620 },
+                        { x: 300, z: -720 },
+                        { x: 500, z: -780 }
+                    ],
+                    width: 12,
+                    lanes: 1,
+                    speed: 40,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: { role: "roundabout_to_highway" }
+                },
+                {
+                    id: "ROAD_DECEL_AUX_001",
+                    name: "Faixa Auxiliar Rodovia",
+                    type: "collector",
+                    points: [{ x: -560, z: -750 }, { x: -130, z: -750 }],
+                    width: 7,
+                    lanes: 1,
+                    speed: 50,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: { role: "deceleration_lane" }
+                },
+                {
+                    id: "ROAD_ACCEL_AUX_001",
+                    name: "Faixa Auxiliar Rodovia",
+                    type: "collector",
+                    points: [{ x: 130, z: -750 }, { x: 610, z: -750 }],
+                    width: 7,
+                    lanes: 1,
+                    speed: 50,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: { role: "acceleration_lane" }
+                },
+                {
+                    id: "ROAD_COMPLEX_ACCESS_001",
+                    name: "Acesso Interno COMPLEX_001",
+                    type: "street",
+                    points: [
+                        { x: 300, z: 140 },
+                        { x: 300, z: 230 },
+                        { x: 420, z: 250 },
+                        { x: 590, z: 250 }
+                    ],
+                    width: 10,
+                    lanes: 2,
+                    speed: 25,
+                    zone: ZONES.BUSINESS,
+                    metadata: { complex: "COMPLEX_001" }
+                }
+            ],
+
+            roundabouts: [
+                {
+                    id: "ROUNDABOUT_GATE_001",
+                    center: { x: 0, z: -455 },
+                    radius: 88,
+                    roadWidth: 24,
+                    zone: ZONES.SPECIAL,
+                    metadata: { role: "trevo / porta de entrada" }
+                }
+            ],
+
+            intersections: [
+                {
+                    id: "INTERSECTION_MAIN_SECONDARY_001",
+                    center: { x: 0, z: 140 },
+                    size: { w: 92, d: 92 },
+                    roads: ["ROAD_MAIN_001", "ROAD_SECONDARY_001"],
+                    zone: ZONES.INFRASTRUCTURE
+                }
+            ],
+
+            parking: [
+                {
+                    id: "PARKING_COMPLEX_001_A",
+                    position: { x: 275, z: 405 },
+                    size: { w: 190, d: 150 },
+                    rows: 2,
+                    slotsPerRow: 14,
+                    zone: ZONES.BUSINESS,
+                    metadata: { complex: "COMPLEX_001" }
+                }
+            ],
+
+            complexes: ["COMPLEX_001"],
+
+            signs: [
+                {
+                    id: "SIGN_HIGHWAY_001",
+                    text: "SAÍDA 01  |  PORTA DO MUNDO",
+                    position: { x: -260, y: 7, z: -835 },
+                    rotationY: 0,
+                    size: { w: 130, h: 22 },
+                    type: "highway_sign"
+                },
+                {
+                    id: "SIGN_AV_MAIN_001",
+                    text: "AV. PRINCIPAL  ↑",
+                    position: { x: -42, y: 4.5, z: -250 },
+                    rotationY: Math.PI / 2,
+                    size: { w: 62, h: 14 },
+                    type: "street_sign"
+                },
+                {
+                    id: "SIGN_SECONDARY_001",
+                    text: "AV. SECUNDÁRIA",
+                    position: { x: 120, y: 4.5, z: 98 },
+                    rotationY: 0,
+                    size: { w: 68, h: 14 },
+                    type: "street_sign"
+                }
+            ]
+        }
+    },
+
+    complexes: {
+        "COMPLEX_001": {
+            id: "COMPLEX_001",
+            name: "Nexus Gate Campus",
+            type: "iconic_complex",
+            zone: ZONES.BUSINESS,
+            position: { x: 505, z: 405 },
+            metadata: {
+                status: "núcleo arquitetônico inicial",
+                expandable: true,
+                phase: 1
+            },
+            buildings: [
+                {
+                    id: "BLDG_001_MAIN",
+                    type: "main_building",
+                    position: { x: 455, z: 350 },
+                    dimensions: { w: 165, h: 58, d: 96 },
+                    rotationY: 0,
+                    zone: ZONES.BUSINESS,
+                    metadata: { floors: 12, use: "operações / inovação" }
+                },
+                {
+                    id: "BLDG_001_ADMIN",
+                    type: "administrative_building",
+                    position: { x: 650, z: 352 },
+                    dimensions: { w: 105, h: 30, d: 76 },
+                    rotationY: 0,
+                    zone: ZONES.BUSINESS,
+                    metadata: { floors: 6, use: "administração" }
+                },
+                {
+                    id: "BLDG_001_SERVICE",
+                    type: "service_block",
+                    position: { x: 610, z: 535 },
+                    dimensions: { w: 125, h: 18, d: 55 },
+                    rotationY: 0,
+                    zone: ZONES.INFRASTRUCTURE,
+                    metadata: { use: "área técnica / carga e descarga" }
+                },
+                {
+                    id: "BLDG_001_ATTENDANCE",
+                    type: "customer_center",
+                    position: { x: 405, z: 555 },
+                    dimensions: { w: 105, h: 24, d: 62 },
+                    rotationY: 0,
+                    zone: ZONES.BUSINESS,
+                    metadata: { use: "centro de atendimento" }
+                }
+            ]
+        }
+    }
+};
+
+/* ============================================================
+   RENDER / GLOBALS
+============================================================ */
+
+let scene, camera, renderer, controls;
+let raycaster, pointer;
+let groundPlane;
+let selectionHelper = null;
+let selectedMeta = null;
+let hoverWorld = new THREE.Vector3();
+
+const container = document.getElementById("canvas-container");
+const svgOverlay = document.getElementById("map-overlay");
+
+let pickables = [];
+let overlayEnabled = true;
+let autoOrbit = false;
+
+const Materials = {};
+
+/* ============================================================
+   MAIN
+============================================================ */
+
+window.addEventListener("load", init);
+
+function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x08111f);
+    scene.fog = new THREE.FogExp2(0x08111f, 0.00042);
+
+    camera = new THREE.PerspectiveCamera(
+        48,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        8000
+    );
+    camera.position.set(1250, 920, 1350);
+
+    renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        powerPreference: "high-performance"
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    container.appendChild(renderer.domElement);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(120, 0, -120);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.maxPolarAngle = Math.PI / 2 - 0.035;
+    controls.minDistance = 80;
+    controls.maxDistance = 3600;
+
+    raycaster = new THREE.Raycaster();
+    pointer = new THREE.Vector2();
+    groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+    buildMaterials();
+    setupLighting();
+    setupUI();
+
+    loadChunk(0, 0);
+
+    renderer.domElement.addEventListener("pointermove", onPointerMove);
+    renderer.domElement.addEventListener("click", onClick);
+    window.addEventListener("resize", onResize);
+
+    setTimeout(() => {
+        const loader = document.getElementById("loader");
+        loader.style.opacity = "0";
+        setTimeout(() => loader.remove(), 500);
+    }, 600);
+
+    animate();
+}
+
+/* ============================================================
+   RENDER / MATERIALS
+============================================================ */
+
+function buildMaterials() {
+    Materials.terrain = new THREE.MeshStandardMaterial({
+        color: 0x1e2a27,
+        roughness: 0.95
+    });
+
+    Materials.zoneInfrastructure = new THREE.MeshBasicMaterial({
+        color: 0x00aaff,
+        transparent: true,
+        opacity: 0.10,
+        depthWrite: false
+    });
+
+    Materials.zoneGreen = new THREE.MeshBasicMaterial({
+        color: 0x56d364,
+        transparent: true,
+        opacity: 0.16,
+        depthWrite: false
+    });
+
+    Materials.zoneBusiness = new THREE.MeshBasicMaterial({
+        color: 0xffd166,
+        transparent: true,
+        opacity: 0.12,
+        depthWrite: false
+    });
+
+    Materials.zoneCommercial = new THREE.MeshBasicMaterial({
+        color: 0xff9f1c,
+        transparent: true,
+        opacity: 0.10,
+        depthWrite: false
+    });
+
+    Materials.zoneSpecial = new THREE.MeshBasicMaterial({
+        color: 0xef476f,
+        transparent: true,
+        opacity: 0.13,
+        depthWrite: false
+    });
+
+    Materials.asphalt = new THREE.MeshStandardMaterial({
+        color: 0x20242b,
+        roughness: 0.82,
+        metalness: 0.02
+    });
+
+    Materials.asphaltDark = new THREE.MeshStandardMaterial({
+        color: 0x15191f,
+        roughness: 0.9
+    });
+
+    Materials.shoulder = new THREE.MeshStandardMaterial({
+        color: 0x30343a,
+        roughness: 0.85
+    });
+
+    Materials.concrete = new THREE.MeshStandardMaterial({
+        color: 0xaeb4b8,
+        roughness: 0.62
+    });
+
+    Materials.sidewalk = new THREE.MeshStandardMaterial({
+        color: 0xc2c7c9,
+        roughness: 0.76
+    });
+
+    Materials.bike = new THREE.MeshStandardMaterial({
+        color: 0x078b8f,
+        roughness: 0.7
+    });
+
+    Materials.green = new THREE.MeshStandardMaterial({
+        color: 0x26713a,
+        roughness: 0.95
+    });
+
+    Materials.grassBright = new THREE.MeshStandardMaterial({
+        color: 0x3d9a50,
+        roughness: 0.9
+    });
+
+    Materials.lineWhite = new THREE.MeshBasicMaterial({ color: 0xf5f7fa });
+    Materials.lineYellow = new THREE.MeshBasicMaterial({ color: 0xffd166 });
+    Materials.cyan = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+    Materials.metal = new THREE.MeshStandardMaterial({
+        color: 0x8f9ba3,
+        metalness: 0.7,
+        roughness: 0.25
+    });
+
+    Materials.glass = new THREE.MeshPhysicalMaterial({
+        color: 0xa9e7ff,
+        roughness: 0.08,
+        metalness: 0.05,
+        transparent: true,
+        opacity: 0.42,
+        transmission: 0.55,
+        thickness: 0.4,
+        depthWrite: false
+    });
+
+    Materials.buildingBody = new THREE.MeshStandardMaterial({
+        color: 0x1c2530,
+        roughness: 0.48,
+        metalness: 0.18
+    });
+
+    Materials.buildingLight = new THREE.MeshStandardMaterial({
+        color: 0xd9e4ea,
+        roughness: 0.38
+    });
+
+    Materials.accent = new THREE.MeshStandardMaterial({
+        color: 0x00e5ff,
+        roughness: 0.22,
+        metalness: 0.4,
+        emissive: 0x006d80,
+        emissiveIntensity: 0.55
+    });
+}
+
+/* ============================================================
+   RENDER / LIGHTING
+============================================================ */
+
+function setupLighting() {
+    const hemi = new THREE.HemisphereLight(0xdcefff, 0x29332e, 1.2);
+    hemi.position.set(0, 1200, 0);
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(0xfff3df, 1.35);
+    sun.position.set(-650, 1100, 850);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 10;
+    sun.shadow.camera.far = 3500;
+    sun.shadow.camera.left = -1600;
+    sun.shadow.camera.right = 1600;
+    sun.shadow.camera.top = 1600;
+    sun.shadow.camera.bottom = -1600;
+    scene.add(sun);
+
+    const fill = new THREE.DirectionalLight(0x90c7ff, 0.22);
+    fill.position.set(900, 500, -900);
+    scene.add(fill);
+}
+
+/* ============================================================
+   WORLD / CHUNKS
+============================================================ */
+
+function chunkKey(cx, cz) {
+    return `${cx},${cz}`;
+}
+
+function chunkId(cx, cz) {
+    return `CHUNK_${cx}_${cz}`;
+}
+
+function chunkBounds(cx, cz) {
+    const cxWorld = cx * WORLD.BLOCK_SIZE;
+    const czWorld = cz * WORLD.BLOCK_SIZE;
+    return {
+        minX: cxWorld - WORLD.HALF,
+        maxX: cxWorld + WORLD.HALF,
+        minZ: czWorld - WORLD.HALF,
+        maxZ: czWorld + WORLD.HALF,
+        centerX: cxWorld,
+        centerZ: czWorld
+    };
+}
+
+function loadChunk(cx, cz) {
+    const key = chunkKey(cx, cz);
+    if (WORLD.loadedChunks.has(key)) return;
+
+    const data = WORLD_DATA.chunks[key] || generateExpansionChunk(cx, cz);
+    const root = new THREE.Group();
+    root.name = data.id;
+    root.userData.chunk = data;
+
+    scene.add(root);
+
+    root.add(createTerrainChunk(cx, cz));
+
+    data.zones.forEach(zone => root.add(createZonePlane(zone)));
+
+    data.roads.forEach(road => {
+        root.add(createRoad(road));
+    });
+
+    data.roundabouts?.forEach(r => root.add(createRoundabout(r)));
+    data.intersections?.forEach(i => root.add(createIntersection(i)));
+    data.parking?.forEach(p => root.add(createParkingLot(p)));
+
+    data.complexes?.forEach(id => {
+        const complex = WORLD_DATA.complexes[id];
+        if (complex) root.add(createComplex(complex));
+    });
+
+    root.add(createVegetationForChunk(data));
+    root.add(createConnectorMarkers(data.connectors));
+
+    data.signs?.forEach(sign => root.add(createSign(sign)));
+
+    if (cx === 0 && cz === 0) {
+        root.add(createPortalGate());
+    }
+
+    WORLD.loadedChunks.set(key, {
+        root,
+        data
+    });
+}
+
+function generateExpansionChunk(cx, cz) {
+    const b = chunkBounds(cx, cz);
+    const roads = [];
+    const connectors = { north: [], south: [], east: [], west: [] };
+
+    if (cz === 0) {
+        roads.push({
+            id: `ROAD_HW_CONT_${cx}_${cz}`,
+            name: "Rodovia Horizonte — Continuação",
+            type: "highway",
+            points: [{ x: b.minX - 200, z: -780 }, { x: b.maxX + 200, z: -780 }],
+            width: 42,
+            lanes: 6,
+            speed: 100,
+            zone: ZONES.INFRASTRUCTURE,
+            metadata: { generated: true, source: "connector" }
+        });
+
+        roads.push({
+            id: `ROAD_SECONDARY_CONT_${cx}_${cz}`,
+            name: "Avenida Secundária — Continuação",
+            type: "avenue",
+            points: [{ x: b.minX - 160, z: 140 }, { x: b.maxX + 160, z: 140 }],
+            width: 30,
+            lanes: 4,
+            speed: 50,
+            zone: ZONES.INFRASTRUCTURE,
+            metadata: { generated: true, source: "connector" }
+        });
+
+        connectors.west.push({
+            id: `ROAD_CONNECTOR_W_${cx}_${cz}`,
+            road: `ROAD_HW_CONT_${cx}_${cz}`,
+            type: "highway",
+            position: { x: b.minX, z: -780 },
+            direction: "west"
+        });
+
+        connectors.east.push({
+            id: `ROAD_CONNECTOR_E_${cx}_${cz}`,
+            road: `ROAD_HW_CONT_${cx}_${cz}`,
+            type: "highway",
+            position: { x: b.maxX, z: -780 },
+            direction: "east"
+        });
+    }
+
+    if (cx === 0) {
+        roads.push({
+            id: `ROAD_MAIN_CONT_${cx}_${cz}`,
+            name: "Avenida Principal — Continuação",
+            type: "avenue",
+            points: [{ x: 0, z: b.minZ - 180 }, { x: 0, z: b.maxZ + 180 }],
+            width: 36,
+            lanes: 4,
+            speed: 60,
+            zone: ZONES.INFRASTRUCTURE,
+            metadata: { generated: true, source: "connector" }
+        });
+
+        connectors.north.push({
+            id: `ROAD_CONNECTOR_N_${cx}_${cz}`,
+            road: `ROAD_MAIN_CONT_${cx}_${cz}`,
+            type: "avenue",
+            position: { x: 0, z: b.minZ },
+            direction: "north"
+        });
+
+        connectors.south.push({
+            id: `ROAD_CONNECTOR_S_${cx}_${cz}`,
+            road: `ROAD_MAIN_CONT_${cx}_${cz}`,
+            type: "avenue",
+            position: { x: 0, z: b.maxZ },
+            direction: "south"
+        });
+    }
+
+    return {
+        id: chunkId(cx, cz),
+        coord: { x: cx, z: cz },
+        generated: true,
+        connectors,
+        zones: [
+            {
+                id: `ZONE_FUTURE_${cx}_${cz}`,
+                type: ZONES.COMMERCIAL,
+                rect: { x: b.centerX, z: b.centerZ, w: 1300, d: 1300 },
+                metadata: { status: "chunk gerado para expansão futura" }
+            },
+            {
+                id: `ZONE_GREEN_CORRIDOR_${cx}_${cz}`,
+                type: ZONES.GREEN,
+                rect: { x: b.centerX - 420, z: b.centerZ + 420, w: 480, d: 460 },
+                metadata: { status: "reserva verde modular" }
+            }
+        ],
+        roads,
+        roundabouts: [],
+        intersections: [],
+        parking: [],
+        complexes: [],
+        signs: [
+            {
+                id: `SIGN_FUTURE_${cx}_${cz}`,
+                text: `${chunkId(cx, cz)}  |  EXPANSÃO`,
+                position: { x: b.centerX, y: 10, z: b.centerZ },
+                rotationY: 0,
+                size: { w: 120, h: 24 },
+                type: "future_sign"
+            }
+        ]
+    };
+}
+
+/* ============================================================
+   WORLD / TERRAIN + ZONES
+============================================================ */
+
+function createTerrainChunk(cx, cz) {
+    const b = chunkBounds(cx, cz);
+    const group = new THREE.Group();
+    group.name = `TERRAIN_${cx}_${cz}`;
+
+    const geo = new THREE.PlaneGeometry(WORLD.BLOCK_SIZE, WORLD.BLOCK_SIZE, 1, 1);
+    const mesh = new THREE.Mesh(geo, Materials.terrain);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.position.set(b.centerX, -0.03, b.centerZ);
+    mesh.receiveShadow = true;
+    group.add(mesh);
+
+    const grid = new THREE.GridHelper(WORLD.BLOCK_SIZE, 20, 0x1f9fb2, 0x203040);
+    grid.position.set(b.centerX, 0.02, b.centerZ);
+    grid.material.transparent = true;
+    grid.material.opacity = 0.32;
+    group.add(grid);
+
+    return group;
+}
+
+function createZonePlane(zone) {
+    const mat = getZoneMaterial(zone.type);
+    const geo = new THREE.PlaneGeometry(zone.rect.w, zone.rect.d);
+    const mesh = new THREE.Mesh(geo, mat.clone());
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.position.set(zone.rect.x, 0.018, zone.rect.z);
+    mesh.name = zone.id;
+
+    setSelectable(mesh, {
+        id: zone.id,
+        type: zone.type,
+        position: zone.rect,
+        dimensions: { w: zone.rect.w, d: zone.rect.d },
+        zone: zone.type,
+        metadata: zone.metadata || {}
+    });
+
+    return mesh;
+}
+
+function getZoneMaterial(type) {
+    if (type === ZONES.GREEN) return Materials.zoneGreen;
+    if (type === ZONES.BUSINESS) return Materials.zoneBusiness;
+    if (type === ZONES.SPECIAL) return Materials.zoneSpecial;
+    if (type === ZONES.COMMERCIAL) return Materials.zoneCommercial;
+    return Materials.zoneInfrastructure;
+}
+
+/* ============================================================
+   ROADS / PROCEDURAL ROAD SYSTEM
+============================================================ */
+
+function createRoad(road) {
+    const group = new THREE.Group();
+    group.name = road.id;
+
+    if (road.type === "highway") createHighway(group, road);
+    else if (road.type === "avenue") createAvenue(group, road);
+    else if (road.type === "ramp") createRamp(group, road);
+    else if (road.type === "collector") createCollector(group, road);
+    else createStreet(group, road);
+
+    return group;
+}
+
+function createHighway(group, road) {
+    const meta = roadMeta(road);
+
+    group.add(createRoadStripMesh(road.id, road.points, road.width, Materials.asphaltDark, 0.13, meta));
+
+    group.add(createOffsetStrip(`${road.id}_SHOULDER_N`, road.points, road.width / 2 + 3.1, 5.6, Materials.shoulder, 0.105));
+    group.add(createOffsetStrip(`${road.id}_SHOULDER_S`, road.points, -road.width / 2 - 3.1, 5.6, Materials.shoulder, 0.105));
+
+    group.add(createOffsetStrip(`${road.id}_MEDIAN`, road.points, 0, 2.2, Materials.concrete, 0.16));
+
+    [-13.2, -8.8, 8.8, 13.2].forEach(offset => {
+        group.add(createDashMarkers(`${road.id}_DASH_${offset}`, road.points, offset, Materials.lineWhite, 8, 12, 0.25, 0.18));
+    });
+
+    [-2.0, 2.0].forEach(offset => {
+        group.add(createDashMarkers(`${road.id}_YELLOW_${offset}`, road.points, offset, Materials.lineYellow, 18, 3, 0.22, 0.185));
+    });
+
+    group.add(createPathBoxes(`${road.id}_GUARD_N`, road.points, road.width / 2 + 7, Materials.metal, 0.38, 0.72, 12, 0.46, 20));
+    group.add(createPathBoxes(`${road.id}_GUARD_S`, road.points, -road.width / 2 - 7, Materials.metal, 0.38, 0.72, 12, 0.46, 20));
+
+    group.add(createRoadLights(road.points, [road.width / 2 + 15, -road.width / 2 - 15], 170, `LIGHTS_${road.id}`));
+}
+
+function createAvenue(group, road) {
+    const meta = roadMeta(road);
+
+    group.add(createRoadStripMesh(road.id, road.points, road.width, Materials.asphalt, 0.11, meta));
+
+    createSidewalk(group, road, road.width / 2 + 5.5);
+    createSidewalk(group, road, -road.width / 2 - 5.5);
+
+    createBikeLane(group, road, road.width / 2 + 1.9);
+    createBikeLane(group, road, -road.width / 2 - 1.9);
+
+    group.add(createOffsetStrip(`${road.id}_GREEN_MEDIAN`, road.points, 0, 4.2, Materials.green, 0.145));
+
+    [-7.2, 7.2].forEach(offset => {
+        group.add(createDashMarkers(`${road.id}_LANE_${offset}`, road.points, offset, Materials.lineWhite, 7, 11, 0.22, 0.15));
+    });
+
+    [-2.7, 2.7].forEach(offset => {
+        group.add(createDashMarkers(`${road.id}_CENTER_${offset}`, road.points, offset, Materials.lineYellow, 15, 4, 0.18, 0.152));
+    });
+
+    group.add(createRoadLights(road.points, [road.width / 2 + 11, -road.width / 2 - 11], 135, `LIGHTS_${road.id}`));
+}
+
+function createRamp(group, road) {
+    group.add(createRoadStripMesh(road.id, road.points, road.width, Materials.asphalt, 0.125, roadMeta(road)));
+    group.add(createDashMarkers(`${road.id}_EDGE_A`, road.points, road.width / 2 - 0.7, Materials.lineWhite, 10, 8, 0.18, 0.155));
+    group.add(createDashMarkers(`${road.id}_EDGE_B`, road.points, -road.width / 2 + 0.7, Materials.lineWhite, 10, 8, 0.18, 0.155));
+    group.add(createRoadLights(road.points, [road.width / 2 + 7], 110, `LIGHTS_${road.id}`));
+}
+
+function createCollector(group, road) {
+    group.add(createRoadStripMesh(road.id, road.points, road.width, Materials.asphalt, 0.14, roadMeta(road)));
+    group.add(createDashMarkers(`${road.id}_LINE`, road.points, 0, Materials.lineWhite, 7, 8, 0.18, 0.165));
+}
+
+function createStreet(group, road) {
+    group.add(createRoadStripMesh(road.id, road.points, road.width, Materials.asphalt, 0.12, roadMeta(road)));
+    group.add(createDashMarkers(`${road.id}_CENTER`, road.points, 0, Materials.lineYellow, 6, 8, 0.17, 0.15));
+}
+
+function createSidewalk(group, road, offset) {
+    group.add(
+        createOffsetStrip(
+            `${road.id}_SIDEWALK_${offset > 0 ? "A" : "B"}`,
+            road.points,
+            offset,
+            5.0,
+            Materials.sidewalk,
+            0.095
+        )
+    );
+}
+
+function createBikeLane(group, road, offset) {
+    group.add(
+        createOffsetStrip(
+            `${road.id}_BIKE_${offset > 0 ? "A" : "B"}`,
+            road.points,
+            offset,
+            2.2,
+            Materials.bike,
+            0.125
+        )
+    );
+}
+
+function roadMeta(road) {
+    return {
+        id: road.id,
+        type: road.type,
+        name: road.name,
+        position: midpointOfPoints(road.points),
+        dimensions: {
+            width: road.width,
+            length: Math.round(pathLength(road.points))
+        },
+        zone: road.zone,
+        metadata: {
+            lanes: road.lanes,
+            speed: `${road.speed} km/h`,
+            ...(road.metadata || {})
+        }
+    };
+}
+
+function createRoadStripMesh(id, points, width, material, y, meta = null) {
+    const geo = createStripGeometry(points, width, y);
+    const mesh = new THREE.Mesh(geo, material);
+    mesh.name = id;
+    mesh.receiveShadow = true;
+
+    if (meta) setSelectable(mesh, meta);
+
+    return mesh;
+}
+
+function createOffsetStrip(id, points, offset, width, material, y = 0.12, meta = null) {
+    const offsetPoints = sampleOffsetPoints(points, offset, 48);
+    return createRoadStripMesh(id, offsetPoints, width, material, y, meta);
+}
+
+function createStripGeometry(points, width, y = 0.1) {
+    const curve = makeCurve(points, y);
+    const len = Math.max(curve.getLength(), 1);
+    const steps = Math.max(4, Math.ceil(len / 28));
+
+    const vertices = [];
+    const indices = [];
+
+    for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const p = curve.getPoint(t);
+        const tangent = curve.getTangent(t).normalize();
+        const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+
+        const left = p.clone().addScaledVector(normal, width / 2);
+        const right = p.clone().addScaledVector(normal, -width / 2);
+
+        vertices.push(left.x, y, left.z);
+        vertices.push(right.x, y, right.z);
+    }
+
+    for (let i = 0; i < steps; i++) {
+        const a = i * 2;
+        const b = a + 1;
+        const c = a + 2;
+        const d = a + 3;
+        indices.push(a, c, b);
+        indices.push(b, c, d);
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    geo.computeBoundingSphere();
+    return geo;
+}
+
+function createDashMarkers(id, points, offset, material, dashLength = 8, gap = 10, lineWidth = 0.2, y = 0.15) {
+    const group = new THREE.Group();
+    group.name = id;
+
+    const curve = makeCurve(points, y);
+    const total = curve.getLength();
+    const geo = new THREE.BoxGeometry(lineWidth, 0.026, dashLength);
+
+    for (let d = dashLength / 2; d < total; d += dashLength + gap) {
+        const t = d / total;
+        const p = curve.getPointAt(t);
+        const tangent = curve.getTangentAt(t).normalize();
+        const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+        const pos = p.clone().addScaledVector(normal, offset);
+
+        const mesh = new THREE.Mesh(geo, material);
+        mesh.position.set(pos.x, y, pos.z);
+        mesh.rotation.y = Math.atan2(tangent.x, tangent.z);
+        group.add(mesh);
+    }
+
+    return group;
+}
+
+function createPathBoxes(id, points, offset, material, boxW, boxH, boxL, y, spacing) {
+    const group = new THREE.Group();
+    group.name = id;
+
+    const curve = makeCurve(points, y);
+    const total = curve.getLength();
+    const geo = new THREE.BoxGeometry(boxW, boxH, boxL);
+
+    for (let d = 0; d < total; d += spacing) {
+        const t = d / total;
+        const p = curve.getPointAt(t);
+        const tangent = curve.getTangentAt(t).normalize();
+        const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+        const pos = p.clone().addScaledVector(normal, offset);
+
+        const mesh = new THREE.Mesh(geo, material);
+        mesh.position.set(pos.x, y, pos.z);
+        mesh.rotation.y = Math.atan2(tangent.x, tangent.z);
+        mesh.castShadow = true;
+        group.add(mesh);
+    }
+
+    return group;
+}
+
+function createRoadLights(points, offsets, spacing, id) {
+    const group = new THREE.Group();
+    group.name = id;
+
+    const curve = makeCurve(points, 0);
+    const total = curve.getLength();
+
+    const entries = [];
+
+    offsets.forEach(offset => {
+        for (let d = 45; d < total; d += spacing) {
+            const t = d / total;
+            const p = curve.getPointAt(t);
+            const tangent = curve.getTangentAt(t).normalize();
+            const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+            const pos = p.clone().addScaledVector(normal, offset);
+            entries.push({ pos, normal });
+        }
+    });
+
+    const poleGeo = new THREE.CylinderGeometry(0.28, 0.36, 8, 8);
+    const lampGeo = new THREE.BoxGeometry(3.2, 0.28, 0.55);
+
+    const poleMesh = new THREE.InstancedMesh(poleGeo, Materials.metal, entries.length);
+    const lampMesh = new THREE.InstancedMesh(lampGeo, Materials.cyan, entries.length);
+
+    const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const s = new THREE.Vector3(1, 1, 1);
+
+    entries.forEach((e, i) => {
+        m.compose(new THREE.Vector3(e.pos.x, 4, e.pos.z), new THREE.Quaternion(), s);
+        poleMesh.setMatrixAt(i, m);
+
+        const angle = Math.atan2(e.normal.x, e.normal.z);
+        q.setFromEuler(new THREE.Euler(0, angle, 0));
+        const lampPos = new THREE.Vector3(
+            e.pos.x + e.normal.x * 1.5,
+            8.2,
+            e.pos.z + e.normal.z * 1.5
+        );
+        m.compose(lampPos, q, s);
+        lampMesh.setMatrixAt(i, m);
+
+        if (i % 4 === 0) {
+            const light = new THREE.PointLight(0xaeefff, 0.18, 85, 1.8);
+            light.position.set(lampPos.x, 7.7, lampPos.z);
+            group.add(light);
+        }
+    });
+
+    poleMesh.castShadow = true;
+    lampMesh.castShadow = true;
+
+    group.add(poleMesh, lampMesh);
+    return group;
+}
+
+/* ============================================================
+   ROADS / ROUNDABOUT + INTERSECTION
+============================================================ */
+
+function createRoundabout(data) {
+    const group = new THREE.Group();
+    group.name = data.id;
+
+    const outer = data.radius + data.roadWidth / 2;
+    const inner = data.radius - data.roadWidth / 2;
+
+    const ring = new THREE.Mesh(
+        new THREE.RingGeometry(inner, outer, 128),
+        Materials.asphalt
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.set(data.center.x, 0.16, data.center.z);
+    ring.receiveShadow = true;
+
+    setSelectable(ring, {
+        id: data.id,
+        type: "roundabout",
+        position: data.center,
+        dimensions: { radius: data.radius, roadWidth: data.roadWidth },
+        zone: data.zone,
+        metadata: data.metadata || {}
+    });
+
+    group.add(ring);
+
+    const island = new THREE.Mesh(
+        new THREE.CylinderGeometry(inner - 5, inner - 5, 0.18, 96),
+        Materials.grassBright
+    );
+    island.position.set(data.center.x, 0.09, data.center.z);
+    island.receiveShadow = true;
+    group.add(island);
+
+    const monumentBase = new THREE.Mesh(
+        new THREE.CylinderGeometry(15, 18, 2, 32),
+        Materials.concrete
+    );
+    monumentBase.position.set(data.center.x, 1.0, data.center.z);
+    monumentBase.castShadow = true;
+    group.add(monumentBase);
+
+    const tower = new THREE.Mesh(
+        new THREE.BoxGeometry(8, 38, 8),
+        Materials.accent
+    );
+    tower.position.set(data.center.x, 20, data.center.z);
+    tower.castShadow = true;
+    group.add(tower);
+
+    const ringLine = new THREE.Mesh(
+        new THREE.RingGeometry(data.radius - 1, data.radius + 1, 128),
+        Materials.lineYellow
+    );
+    ringLine.rotation.x = -Math.PI / 2;
+    ringLine.position.set(data.center.x, 0.205, data.center.z);
+    group.add(ringLine);
+
+    return group;
+}
+
+function createIntersection(data) {
+    const group = new THREE.Group();
+    group.name = data.id;
+
+    const plate = new THREE.Mesh(
+        new THREE.BoxGeometry(data.size.w, 0.05, data.size.d),
+        Materials.asphalt
+    );
+    plate.position.set(data.center.x, 0.155, data.center.z);
+    plate.receiveShadow = true;
+
+    setSelectable(plate, {
+        id: data.id,
+        type: "intersection",
+        position: data.center,
+        dimensions: data.size,
+        zone: data.zone,
+        metadata: { roads: data.roads }
+    });
+
+    group.add(plate);
+
+    createCrosswalk(group, data.center.x - 58, data.center.z, Math.PI / 2);
+    createCrosswalk(group, data.center.x + 58, data.center.z, Math.PI / 2);
+    createCrosswalk(group, data.center.x, data.center.z - 58, 0);
+    createCrosswalk(group, data.center.x, data.center.z + 58, 0);
+
+    return group;
+}
+
+function createCrosswalk(group, x, z, rot) {
+    const stripeGeo = new THREE.BoxGeometry(2.3, 0.03, 13);
+    for (let i = -3; i <= 3; i++) {
+        const mesh = new THREE.Mesh(stripeGeo, Materials.lineWhite);
+        mesh.position.set(x + Math.cos(rot) * i * 4, 0.19, z + Math.sin(rot) * i * 4);
+        mesh.rotation.y = rot;
+        group.add(mesh);
+    }
+}
+
+/* ============================================================
+   BUILDINGS / COMPLEX SYSTEM
+============================================================ */
+
+function createComplex(data) {
+    const group = new THREE.Group();
+    group.name = data.id;
+
+    const site = new THREE.Mesh(
+        new THREE.BoxGeometry(660, 0.08, 560),
+        new THREE.MeshStandardMaterial({ color: 0x28313b, roughness: 0.78 })
+    );
+    site.position.set(data.position.x, 0.055, data.position.z);
+    site.receiveShadow = true;
+
+    setSelectable(site, {
+        id: data.id,
+        type: data.type,
+        position: data.position,
+        dimensions: { w: 660, d: 560 },
+        zone: data.zone,
+        metadata: data.metadata
+    });
+
+    group.add(site);
+
+    const plaza = new THREE.Mesh(
+        new THREE.BoxGeometry(215, 0.07, 115),
+        new THREE.MeshStandardMaterial({ color: 0xb9c2c8, roughness: 0.55 })
+    );
+    plaza.position.set(455, 0.115, 235);
+    plaza.receiveShadow = true;
+    group.add(plaza);
+
+    const plazaRing = new THREE.Mesh(
+        new THREE.RingGeometry(22, 31, 64),
+        Materials.accent
+    );
+    plazaRing.rotation.x = -Math.PI / 2;
+    plazaRing.position.set(455, 0.18, 235);
+    group.add(plazaRing);
+
+    const serviceYard = new THREE.Mesh(
+        new THREE.BoxGeometry(190, 0.06, 95),
+        Materials.shoulder
+    );
+    serviceYard.position.set(610, 0.13, 610);
+    group.add(serviceYard);
+
+    data.buildings.forEach(b => group.add(createBuilding(b)));
+
+    const sign = createSign({
+        id: "SIGN_COMPLEX_001",
+        text: "COMPLEX_001  |  NEXUS GATE CAMPUS",
+        position: { x: 455, y: 12, z: 170 },
+        rotationY: 0,
+        size: { w: 150, h: 24 },
+        type: "complex_sign"
+    });
+    group.add(sign);
+
+    return group;
+}
+
+function createBuilding(b) {
+    const group = new THREE.Group();
+    group.name = b.id;
+    group.position.set(b.position.x, 0, b.position.z);
+    group.rotation.y = b.rotationY || 0;
+
+    const { w, h, d } = b.dimensions;
+
+    const bodyMat = b.type === "service_block"
+        ? new THREE.MeshStandardMaterial({ color: 0x59636c, metalness: 0.35, roughness: 0.35 })
+        : Materials.buildingBody;
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), bodyMat);
+    body.position.y = h / 2 + 0.16;
+    body.castShadow = true;
+    body.receiveShadow = true;
+
+    const meta = {
+        id: b.id,
+        type: b.type,
+        position: b.position,
+        dimensions: b.dimensions,
+        zone: b.zone,
+        metadata: b.metadata || {}
+    };
+
+    setSelectable(body, meta);
+    group.add(body);
+
+    if (b.type !== "service_block") {
+        const glassFront = new THREE.Mesh(
+            new THREE.BoxGeometry(w * 0.72, h * 0.72, 0.7),
+            Materials.glass
+        );
+        glassFront.position.set(0, h * 0.54, d / 2 + 0.42);
+        setSelectable(glassFront, meta);
+        group.add(glassFront);
+
+        const glassSide = new THREE.Mesh(
+            new THREE.BoxGeometry(0.7, h * 0.62, d * 0.62),
+            Materials.glass
+        );
+        glassSide.position.set(-w / 2 - 0.42, h * 0.50, 0);
+        setSelectable(glassSide, meta);
+        group.add(glassSide);
+    }
+
+    const roof = new THREE.Mesh(
+        new THREE.BoxGeometry(w + 8, 2.3, d + 8),
+        b.type === "main_building" ? Materials.accent : Materials.buildingLight
+    );
+    roof.position.y = h + 2.0;
+    roof.castShadow = true;
+    group.add(roof);
+
+    if (b.type === "main_building") {
+        const crown = new THREE.Mesh(
+            new THREE.CylinderGeometry(14, 14, 7, 6),
+            Materials.accent
+        );
+        crown.position.set(0, h + 7.3, 0);
+        crown.castShadow = true;
+        group.add(crown);
+    }
+
+    return group;
+}
+
+/* ============================================================
+   PARKING
+============================================================ */
+
+function createParkingLot(data) {
+    const group = new THREE.Group();
+    group.name = data.id;
+
+    const base = new THREE.Mesh(
+        new THREE.BoxGeometry(data.size.w, 0.055, data.size.d),
+        Materials.asphalt
+    );
+    base.position.set(data.position.x, 0.135, data.position.z);
+    base.receiveShadow = true;
+
+    setSelectable(base, {
+        id: data.id,
+        type: "parking_lot",
+        position: data.position,
+        dimensions: data.size,
+        zone: data.zone,
+        metadata: data.metadata || {}
+    });
+
+    group.add(base);
+
+    const slotW = data.size.w / data.slotsPerRow;
+    const slotD = 32;
+    const lineGeo = new THREE.BoxGeometry(0.28, 0.03, slotD);
+
+    for (let row = 0; row < data.rows; row++) {
+        const rowZ = data.position.z - data.size.d / 4 + row * data.size.d / 2;
+
+        for (let i = 0; i <= data.slotsPerRow; i++) {
+            const x = data.position.x - data.size.w / 2 + i * slotW;
+            const line = new THREE.Mesh(lineGeo, Materials.lineWhite);
+            line.position.set(x, 0.175, rowZ);
+            group.add(line);
+        }
+
+        for (let i = 1; i < data.slotsPerRow; i += 4) {
+            const x = data.position.x - data.size.w / 2 + i * slotW + slotW / 2;
+            group.add(createCar(`CAR_PARK_${data.id}_${row}_${i}`, { x, z: rowZ }, Math.PI / 2, i % 2 ? 0xef476f : 0x00e5ff));
+        }
+    }
+
+    return group;
+}
+
+function createCar(id, pos, rotY, color) {
+    const group = new THREE.Group();
+    group.name = id;
+    group.position.set(pos.x, 0, pos.z);
+    group.rotation.y = rotY;
+
+    const bodyMat = new THREE.MeshStandardMaterial({ color, roughness: 0.35 });
+    const glassMat = new THREE.MeshStandardMaterial({ color: 0x101820, roughness: 0.2 });
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.2, 8.2), bodyMat);
+    body.position.y = 0.75;
+    body.castShadow = true;
+    group.add(body);
+
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(3.5, 1.1, 4.2), glassMat);
+    cab.position.y = 1.75;
+    cab.castShadow = true;
+    group.add(cab);
+
+    return group;
+}
+
+/* ============================================================
+   VEGETATION / GREEN INFRASTRUCTURE
+============================================================ */
+
+function createVegetationForChunk(chunkData) {
+    const group = new THREE.Group();
+    group.name = `VEGETATION_${chunkData.id}`;
+
+    const treePositions = [];
+
+    chunkData.zones
+        .filter(z => z.type === ZONES.GREEN)
+        .forEach(zone => {
+            const r = zone.rect;
+            for (let x = r.x - r.w / 2 + 35; x < r.x + r.w / 2 - 35; x += 55) {
+                for (let z = r.z - r.d / 2 + 35; z < r.z + r.d / 2 - 35; z += 55) {
+                    const jitterX = (hash2(x, z) - 0.5) * 16;
+                    const jitterZ = (hash2(z, x) - 0.5) * 16;
+                    treePositions.push({ x: x + jitterX, z: z + jitterZ, s: 0.8 + hash2(x + 7, z + 13) * 0.55 });
+                }
+            }
+
+            const lake = new THREE.Mesh(
+                new THREE.CylinderGeometry(54, 54, 0.08, 64),
+                new THREE.MeshPhysicalMaterial({
+                    color: 0x1e90ff,
+                    roughness: 0.15,
+                    metalness: 0,
+                    transparent: true,
+                    opacity: 0.62,
+                    transmission: 0.2
+                })
+            );
+            lake.scale.set(1.65, 1, 0.72);
+            lake.position.set(r.x - 70, 0.08, r.z + 35);
+            group.add(lake);
+
+            const pathA = createRoadStripMesh(
+                `${zone.id}_PARK_PATH_A`,
+                [{ x: r.x - r.w / 2 + 40, z: r.z }, { x: r.x + r.w / 2 - 40, z: r.z }],
+                5.5,
+                new THREE.MeshStandardMaterial({ color: 0xd8c7a1, roughness: 0.9 }),
+                0.13
+            );
+            group.add(pathA);
+        });
+
+    addBoulevardTrees(treePositions, 0, -320, 920, 44, 70);
+    addBoulevardTrees(treePositions, -880, 880, 140, 40, 80, true);
+
+    group.add(createTreeInstances(treePositions));
+
+    return group;
+}
+
+function addBoulevardTrees(arr, xOrStart, zStart, zEnd, offset, spacing, horizontal = false) {
+    if (!horizontal) {
+        for (let z = zStart; z <= zEnd; z += spacing) {
+            arr.push({ x: xOrStart - offset, z, s: 0.9 });
+            arr.push({ x: xOrStart + offset, z, s: 0.9 });
+        }
+    } else {
+        for (let x = xOrStart; x <= zStart; x += spacing) {
+            arr.push({ x, z: zEnd - offset, s: 0.9 });
+            arr.push({ x, z: zEnd + offset, s: 0.9 });
+        }
+    }
+}
+
+function createTreeInstances(positions) {
+    const group = new THREE.Group();
+    group.name = "INSTANCED_TREES";
+
+    const trunkGeo = new THREE.CylinderGeometry(1.1, 1.6, 8, 6);
+    const crownGeo = new THREE.ConeGeometry(6.5, 15, 7);
+
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 });
+    const crownMat = new THREE.MeshStandardMaterial({ color: 0x1f7a3a, roughness: 0.95, flatShading: true });
+
+    const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, positions.length);
+    const crowns = new THREE.InstancedMesh(crownGeo, crownMat, positions.length);
+
+    const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const s = new THREE.Vector3();
+
+    positions.forEach((p, i) => {
+        s.set(p.s, p.s, p.s);
+        m.compose(new THREE.Vector3(p.x, 4 * p.s, p.z), q, s);
+        trunks.setMatrixAt(i, m);
+
+        m.compose(new THREE.Vector3(p.x, 14 * p.s, p.z), q, s);
+        crowns.setMatrixAt(i, m);
+    });
+
+    trunks.castShadow = true;
+    crowns.castShadow = true;
+
+    group.add(trunks, crowns);
+    return group;
+}
+
+/* ============================================================
+   LANDMARKS / SIGNS / CONNECTORS
+============================================================ */
+
+function createPortalGate() {
+    const group = new THREE.Group();
+    group.name = "LANDMARK_PORTA_DE_ENTRADA";
+
+    const mat = Materials.accent;
+    const pylonGeo = new THREE.BoxGeometry(16, 70, 16);
+
+    [-70, 70].forEach(x => {
+        const p = new THREE.Mesh(pylonGeo, mat);
+        p.position.set(x, 35, -610);
+        p.castShadow = true;
+        group.add(p);
+    });
+
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(170, 14, 18), mat);
+    beam.position.set(0, 72, -610);
+    beam.castShadow = true;
+    group.add(beam);
+
+    const panelTexture = createTextTexture("PORTA DE ENTRADA DO MUNDO", "#001318", "#00e5ff", 44);
+    const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(150, 20),
+        new THREE.MeshBasicMaterial({ map: panelTexture, transparent: true })
+    );
+    panel.position.set(0, 72, -599.5);
+    group.add(panel);
+
+    return group;
+}
+
+function createConnectorMarkers(connectors) {
+    const group = new THREE.Group();
+    group.name = "CONNECTOR_MARKERS";
+
+    Object.values(connectors).flat().forEach(c => {
+        const marker = new THREE.Mesh(
+            new THREE.CylinderGeometry(5, 5, 1.2, 16),
+            Materials.cyan
+        );
+        marker.position.set(c.position.x, 0.9, c.position.z);
+        marker.name = c.id;
+
+        setSelectable(marker, {
+            id: c.id,
+            type: "road_connector",
+            position: c.position,
+            dimensions: { radius: 5 },
+            zone: ZONES.INFRASTRUCTURE,
+            metadata: {
+                road: c.road,
+                roadType: c.type,
+                direction: c.direction
+            }
+        });
+
+        group.add(marker);
+
+        const cone = new THREE.Mesh(
+            new THREE.ConeGeometry(8, 20, 4),
+            Materials.cyan
+        );
+        cone.position.set(c.position.x, 18, c.position.z);
+        cone.rotation.y = directionToAngle(c.direction);
+        cone.castShadow = true;
+        group.add(cone);
+    });
+
+    return group;
+}
+
+function createSign(data) {
+    const group = new THREE.Group();
+    group.name = data.id;
+
+    const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.2, 1.5, data.position.y, 8),
+        Materials.metal
+    );
+    pole.position.set(data.position.x, data.position.y / 2, data.position.z);
+    pole.castShadow = true;
+    group.add(pole);
+
+    const texture = createTextTexture(data.text, "#eafaff", "#102033", 38);
+    const board = new THREE.Mesh(
+        new THREE.PlaneGeometry(data.size.w, data.size.h),
+        new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide })
+    );
+    board.position.set(data.position.x, data.position.y, data.position.z);
+    board.rotation.y = data.rotationY || 0;
+
+    setSelectable(board, {
+        id: data.id,
+        type: data.type || "sign",
+        position: data.position,
+        dimensions: data.size,
+        zone: ZONES.INFRASTRUCTURE,
+        metadata: { text: data.text }
+    });
+
+    group.add(board);
+
+    return group;
+}
+
+/* ============================================================
+   SVG / CARTOGRAPHIC OVERLAY
+============================================================ */
+
+function updateSvgOverlay() {
+    if (!overlayEnabled) {
+        svgOverlay.innerHTML = "";
+        return;
+    }
+
+    let html = "";
+
+    WORLD.loadedChunks.forEach(({ data }) => {
+        const b = chunkBounds(data.coord.x, data.coord.z);
+        const corners = [
+            screenPoint(b.minX, 8, b.minZ),
+            screenPoint(b.maxX, 8, b.minZ),
+            screenPoint(b.maxX, 8, b.maxZ),
+            screenPoint(b.minX, 8, b.maxZ)
+        ];
+
+        if (corners.every(Boolean)) {
+            html += `
+                <polygon
+                    points="${corners.map(p => `${p.x},${p.y}`).join(" ")}"
+                    fill="none"
+                    stroke="rgba(0,229,255,0.58)"
+                    stroke-width="1.4"
+                    stroke-dasharray="7 7"
+                />
+            `;
+        }
+
+        const center = screenPoint(b.centerX, 40, b.centerZ);
+        if (center) {
+            html += `
+                <text x="${center.x}" y="${center.y}" fill="#00e5ff"
+                    font-size="12" text-anchor="middle">${data.id}</text>
+            `;
+        }
+
+        Object.values(data.connectors).flat().forEach(c => {
+            const p = screenPoint(c.position.x, 18, c.position.z);
+            if (!p) return;
+
+            html += `
+                <circle cx="${p.x}" cy="${p.y}" r="5" fill="#00e5ff" opacity="0.85"/>
+                <text x="${p.x + 8}" y="${p.y - 8}" fill="#c8f8ff" font-size="10">${c.id}</text>
+            `;
+        });
+
+        data.roads.forEach(r => {
+            const mid = midpointOfPoints(r.points);
+            const p = screenPoint(mid.x, 12, mid.z);
+            if (!p) return;
+
+            html += `
+                <text x="${p.x}" y="${p.y}" fill="rgba(255,255,255,0.78)"
+                    font-size="10" text-anchor="middle">${r.name || r.id}</text>
+            `;
+        });
+    });
+
+    svgOverlay.innerHTML = html;
+}
+
+function screenPoint(x, y, z) {
+    const v = new THREE.Vector3(x, y, z);
+    v.project(camera);
+
+    if (v.z < -1 || v.z > 1) return null;
+
+    return {
+        x: (v.x * 0.5 + 0.5) * window.innerWidth,
+        y: (-v.y * 0.5 + 0.5) * window.innerHeight
+    };
+}
+
+/* ============================================================
+   UI / HUD / INSPECTOR
+============================================================ */
+
+function setupUI() {
+    document.getElementById("cam-aerial").addEventListener("click", () => {
+        setActiveCameraButton("cam-aerial");
+        flyTo(new THREE.Vector3(1250, 920, 1350), new THREE.Vector3(120, 0, -120));
+    });
+
+    document.getElementById("cam-gate").addEventListener("click", () => {
+        setActiveCameraButton("cam-gate");
+        flyTo(new THREE.Vector3(320, 170, -890), new THREE.Vector3(0, 25, -455));
+    });
+
+    document.getElementById("cam-complex").addEventListener("click", () => {
+        setActiveCameraButton("cam-complex");
+        flyTo(new THREE.Vector3(820, 240, 760), new THREE.Vector3(485, 35, 390));
+    });
+
+    document.getElementById("toggle-svg").addEventListener("click", e => {
+        overlayEnabled = !overlayEnabled;
+        e.target.classList.toggle("active", overlayEnabled);
+    });
+
+    document.getElementById("toggle-rotate").addEventListener("click", e => {
+        autoOrbit = !autoOrbit;
+        e.target.classList.toggle("active", autoOrbit);
+    });
+
+    document.getElementById("expand-east").addEventListener("click", () => {
+        loadChunk(1, 0);
+    });
+
+    document.getElementById("expand-south").addEventListener("click", () => {
+        loadChunk(0, 1);
+    });
+}
+
+function setActiveCameraButton(id) {
+    ["cam-aerial", "cam-gate", "cam-complex"].forEach(btn => {
+        document.getElementById(btn).classList.toggle("active", btn === id);
+    });
+}
+
+function flyTo(targetPosition, targetLookAt) {
+    autoOrbit = false;
+    document.getElementById("toggle-rotate").classList.remove("active");
+
+    const startPos = camera.position.clone();
+    const startTarget = controls.target.clone();
+    const duration = 900;
+    const start = performance.now();
+
+    function step(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+
+        camera.position.lerpVectors(startPos, targetPosition, ease);
+        controls.target.lerpVectors(startTarget, targetLookAt, ease);
+
+        if (t < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+}
+
+function updateHUD() {
+    const t = controls.target;
+    const cx = Math.floor((t.x + WORLD.HALF) / WORLD.BLOCK_SIZE);
+    const cz = Math.floor((t.z + WORLD.HALF) / WORLD.BLOCK_SIZE);
+
+    document.getElementById("hud-chunk").textContent = chunkId(cx, cz);
+    document.getElementById("hud-x").textContent = hoverWorld.x.toFixed(1);
+    document.getElementById("hud-z").textContent = hoverWorld.z.toFixed(1);
+    document.getElementById("hud-y").textContent = camera.position.y.toFixed(1);
+    document.getElementById("hud-zone").textContent = getZoneAt(hoverWorld.x, hoverWorld.z) || "—";
+}
+
+function updateInspector(meta) {
+    const el = document.getElementById("selected-info");
+
+    if (!meta) {
+        el.textContent = "Nenhum objeto selecionado.";
+        return;
+    }
+
+    el.textContent =
+`ID: ${meta.id}
+TIPO: ${meta.type}
+ZONA: ${meta.zone || "—"}
+POSIÇÃO: ${formatObj(meta.position)}
+DIMENSÕES: ${formatObj(meta.dimensions)}
+METADATA: ${formatObj(meta.metadata)}`;
+}
+
+/* ============================================================
+   INTERACTION / RAYCAST
+============================================================ */
+
+function onPointerMove(event) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(pointer, camera);
+    raycaster.ray.intersectPlane(groundPlane, hoverWorld);
+}
+
+function onClick(event) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(pointer, camera);
+
+    const hits = raycaster.intersectObjects(pickables, true);
+
+    if (!hits.length) {
+        selectedMeta = null;
+        if (selectionHelper) {
+            scene.remove(selectionHelper);
+            selectionHelper = null;
+        }
+        updateInspector(null);
+        return;
+    }
+
+    const obj = findSelectableObject(hits[0].object);
+    selectedMeta = obj.userData.meta;
+
+    if (selectionHelper) scene.remove(selectionHelper);
+    selectionHelper = new THREE.BoxHelper(obj, 0x00e5ff);
+    scene.add(selectionHelper);
+
+    updateInspector(selectedMeta);
+}
+
+function setSelectable(object, meta) {
+    object.userData.meta = meta;
+    pickables.push(object);
+    WORLD.objectsById.set(meta.id, object);
+}
+
+function findSelectableObject(obj) {
+    let current = obj;
+    while (current && !current.userData.meta) current = current.parent;
+    return current || obj;
+}
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function makeCurve(points, y = 0) {
+    return new THREE.CatmullRomCurve3(
+        points.map(p => new THREE.Vector3(p.x, y, p.z)),
+        false,
+        "catmullrom",
+        0.5
+    );
+}
+
+function sampleOffsetPoints(points, offset, samples = 32) {
+    const curve = makeCurve(points, 0);
+    const result = [];
+
+    for (let i = 0; i <= samples; i++) {
+        const t = i / samples;
+        const p = curve.getPoint(t);
+        const tangent = curve.getTangent(t).normalize();
+        const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+        const out = p.clone().addScaledVector(normal, offset);
+        result.push({ x: out.x, z: out.z });
+    }
+
+    return result;
+}
+
+function pathLength(points) {
+    return makeCurve(points, 0).getLength();
+}
+
+function midpointOfPoints(points) {
+    const curve = makeCurve(points, 0);
+    const p = curve.getPoint(0.5);
+    return { x: Math.round(p.x), z: Math.round(p.z) };
+}
+
+function createTextTexture(text, fg = "#ffffff", bg = "#102033", fontSize = 42) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 256;
+
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "rgba(0,229,255,0.45)";
+    ctx.lineWidth = 8;
+    ctx.strokeRect(8, 8, canvas.width - 16, canvas.height - 16);
+
+    ctx.font = `800 ${fontSize}px Arial, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = fg;
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.anisotropy = 8;
+    return tex;
+}
+
+function directionToAngle(direction) {
+    if (direction === "north") return Math.PI;
+    if (direction === "south") return 0;
+    if (direction === "east") return Math.PI / 2;
+    if (direction === "west") return -Math.PI / 2;
+    return 0;
+}
+
+function hash2(x, z) {
+    const s = Math.sin(x * 12.9898 + z * 78.233) * 43758.5453;
+    return s - Math.floor(s);
+}
+
+function getZoneAt(x, z) {
+    let found = null;
+
+    WORLD.loadedChunks.forEach(({ data }) => {
+        data.zones.forEach(zone => {
+            const r = zone.rect;
+            if (
+                x >= r.x - r.w / 2 &&
+                x <= r.x + r.w / 2 &&
+                z >= r.z - r.d / 2 &&
+                z <= r.z + r.d / 2
+            ) {
+                found = zone.type;
+            }
+        });
+    });
+
+    return found;
+}
+
+function formatObj(obj) {
+    if (!obj) return "—";
+    return JSON.stringify(obj, null, 0);
+}
+
+/* ============================================================
+   LOOP
+============================================================ */
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    controls.autoRotate = autoOrbit;
+    controls.autoRotateSpeed = 0.35;
+    controls.update();
+
+    if (selectionHelper) selectionHelper.update();
+
+    updateHUD();
+    updateSvgOverlay();
+
+    renderer.render(scene, camera);
+}
+
+function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+</script>
+</body>
+</html>

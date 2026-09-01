@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>ZYRO /map/002 — Território Pirapora → Alphaville</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0e13;font-family:'Segoe UI',monospace;color:#cfd8e3}
+  #app{position:fixed;inset:0}
+  .panel{position:fixed;background:rgba(10,14,20,.88);border:1px solid #2a3a4d;border-radius:8px;
+         padding:10px 12px;font-size:11px;backdrop-filter:blur(4px);z-index:10}
+  #layers{top:12px;left:12px;width:190px}
+  #layers label{display:block;cursor:pointer;padding:1px 0}
+  #cams{top:12px;right:12px;width:150px}
+  #cams button,#modes button{display:block;width:100%;margin:3px 0;background:#16222f;border:1px solid #2f4459;
+        color:#9fd0ff;padding:5px;border-radius:4px;cursor:pointer;font-size:11px}
+  #cams button:hover,#modes button:hover{background:#204060}
+  #modes{top:12px;left:214px}
+  #inspector{bottom:60px;right:12px;width:250px;display:none;max-height:50vh;overflow:auto}
+  #inspector h3{margin:0 0 6px;color:#ffd479;font-size:12px}
+  #inspector td{padding:1px 6px 1px 0;vertical-align:top}
+  #inspector td:first-child{color:#6f8aa5}
+  #hud{bottom:12px;left:12px;font-family:monospace;letter-spacing:.5px}
+  #hud b{color:#7fd8a4}
+  .tag{color:#5a7a9a;font-size:9px;letter-spacing:1px}
+  h2{font-size:11px;letter-spacing:2px;color:#7fb2e5;margin:0 0 8px}
+  #svgpanel{top:70px;left:214px;display:none;background:#0d1620;padding:8px}
+  #svgpanel svg{display:block;background:#0a1420;border:1px solid #24384c}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+"three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="panel" id="layers">
+  <h2>ZYRO · CAMADAS</h2>
+  <div class="tag">TERRITÓRIO PIRAPORA → ALPHAVILLE</div><br>
+</div>
+
+<div class="panel" id="cams"><h2>CÂMERAS</h2></div>
+
+<div class="panel" id="modes">
+  <h2>MODO</h2>
+  <button data-mode="3d">3D</button>
+  <button data-mode="masterplan">MASTERPLAN</button>
+  <button data-mode="svg">SVG</button>
+  <button id="autorbit">AUTO-ORBIT: OFF</button>
+  <button id="dbg">DEBUG: OFF</button>
+</div>
+
+<div class="panel" id="svgpanel"></div>
+<div class="panel" id="inspector"></div>
+<div class="panel" id="hud">carregando território…</div>
+
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+/* ============================================================
+   WORLD DATA  (conteúdo — futuramente world.json externo)
+   1 unidade = 1 metro · WORLD X / Y(alt) / Z
+============================================================ */
+const WORLD_DATA = {
+  world:{ unit:"meter", chunkSize:2000, name:"CORREDOR PIRAPORA-ALPHAVILLE (MACRO)" },
+
+  hydrology:[{ id:"rio-tiete", type:"HYDROGRAPHY", width:90, depth:5, flow:"E→W",
+    elevation:6, banks:200, crossings:["ponte-av-principal"],
+    points:[[-1600,620],[-700,440],[100,520],[900,380],[1700,540],[2600,410],[3400,540]] }],
+
+  roads:[
+    { id:"sp312-romeiros", type:"highway",  level:0, width:14, lanes:2, speed:80,
+      points:[[-1600,140],[-600,70],[300,170],[1100,110],[2100,230],[3400,150]], bridge:false },
+    { id:"av-principal",   type:"arterial", level:1, width:20, lanes:4, speed:60,
+      points:[[620,150],[610,340],[640,560],[610,820],[630,1050]], bridge:true },
+    { id:"arterial-leste", type:"arterial", level:1, width:16, lanes:4, speed:60,
+      points:[[300,760],[900,790],[1500,760],[2100,820]], bridge:false },
+    { id:"col-residencial",type:"collector",level:2, width:10, lanes:2, speed:40,
+      points:[[350,640],[350,900]], bridge:false },
+    { id:"col-comercial",  type:"collector",level:2, width:10, lanes:2, speed:40,
+      points:[[700,250],[1000,270],[1150,320]], bridge:false },
+    { id:"col-industrial", type:"collector",level:2, width:10, lanes:2, speed:40,
+      points:[[1700,780],[1750,950]], bridge:false },
+    { id:"rua-r1", type:"local", level:3, width:7, lanes:2, speed:30, points:[[280,700],[520,700]] },
+    { id:"rua-r2", type:"local", level:3, width:7, lanes:2, speed:30, points:[[280,800],[520,800]] },
+    { id:"rua-r3", type:"local", level:3, width:7, lanes:2, speed:30, points:[[430,650],[430,860]] }
+  ],
+
+  highwayEntries:[{ id:"acesso-sp312-01", type:"HIGHWAY_ENTRY", position:[620,150],
+    connects:["sp312-romeiros","av-principal"] }],
+
+  zones:[
+    { id:"zona-res-01", type:"ZONE_RESIDENTIAL", color:0xf2c14e, rect:[230,600,340,320] },
+    { id:"zona-com-01", type:"ZONE_COMMERCIAL",  color:0xe25b5b, rect:[680,210,480,220] },
+    { id:"zona-ind-01", type:"ZONE_INDUSTRIAL",  color:0x9b6dd6, rect:[1500,650,650,420] },
+    { id:"zona-verde-01",type:"ZONE_GREEN",      color:0x4caf6e, rect:[900,430,500,180] },
+    { id:"zona-prot-rio",type:"ZONE_PROTECTED",  color:0x2e8b8b, rect:[-200,340,900,180] }
+  ],
+
+  complexes:[
+    { id:"complex-com-001", type:"commercial",  position:[900,0,320],  rotation:0 },
+    { id:"complex-res-001", type:"residential", position:[400,0,760],  rotation:0 },
+    { id:"complex-ind-001", type:"industrial",  position:[1780,0,850], rotation:0 }
+  ]
+};
+
+/* ============================================================
+   MOTOR — TOPOGRAFIA PROCEDURAL
+============================================================ */
+const hash=(x,z)=>{const n=Math.sin(x*127.1+z*311.7)*43758.5453;return n-Math.floor(n);};
+function vnoise(x,z){const xi=Math.floor(x),zi=Math.floor(z),xf=x-xi,zf=z-zi;
+  const u=xf*xf*(3-2*xf),v=zf*zf*(3-2*zf);
+  return hash(xi,zi)*(1-u)*(1-v)+hash(xi+1,zi)*u*(1-v)+hash(xi,zi+1)*(1-u)*v+hash(xi+1,zi+1)*u*v;}
+function fbm(x,z){let a=0,amp=1,f=1,t=0;for(let i=0;i<4;i++){a+=vnoise(x*f,z*f)*amp;t+=amp;amp*=.5;f*=2;}return a/t;}
+const sstep=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
+
+const HILLS=[[-600,1100,75,420],[2650,1050,60,420],[1300,-450,55,340],[-900,-300,45,380]];
+const WATER_Y=6, RIVER_BED=2;
+
+// hidrografia amostrada (para carving + distância)
+const riverCurve=new THREE.CatmullRomCurve3(
+  WORLD_DATA.hydrology[0].points.map(p=>new THREE.Vector3(p[0],0,p[1])));
+const riverPts=riverCurve.getPoints(300);
+function riverDist(x,z){let d=1e9;for(const p of riverPts){const dx=x-p.x,dz=z-p.z;
+  const dd=dx*dx+dz*dz;if(dd<d)d=dd;}return Math.sqrt(d);}
+
+function heightAt(x,z){
+  let h=12+fbm(x*.0009,z*.0009)*55+fbm(x*.004,z*.004)*9;
+  for(const[hx,hz,hh,hr]of HILLS){const d2=(x-hx)**2+(z-hz)**2;h+=hh*Math.exp(-d2/(hr*hr));}
+  const d=riverDist(x,z);
+  if(d<220){const t=sstep(55,220,d);h=RIVER_BED*(1-t)+h*t;} // vale do Tietê
+  return h;
+}
+
+/* ============================================================
+   MOTOR — CENA / CAMADAS / CHUNKS
+============================================================ */
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x0e1520);
+scene.fog=new THREE.Fog(0x0e1520,2500,7000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+document.getElementById('app').appendChild(renderer.domElement);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,1,20000);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+
+scene.add(new THREE.AmbientLight(0x8899bb,.55));
+const sun=new THREE.DirectionalLight(0xffe8c0,1.1);sun.position.set(-1500,2200,900);scene.add(sun);
+
+const LAYERS={};
+["TERRAIN","HYDROGRAPHY","ROADS","ZONES","COMPLEXES","BUILDINGS","ENTITIES",
+ "CHUNK_BORDERS","GRID","DEBUG"].forEach(n=>{
+  const g=new THREE.Group();g.name=n;LAYERS[n]=g;scene.add(g);});
+LAYERS.CHUNK_BORDERS.visible=false;LAYERS.GRID.visible=false;LAYERS.DEBUG.visible=false;
+
+const CS=WORLD_DATA.world.chunkSize;
+const chunkOf=(x,z)=>`CHUNK_${Math.floor(x/CS)}_${Math.floor(z/CS)}`;
+function zoneOf(x,z){for(const zn of WORLD_DATA.zones){const[rx,rz,rw,rh]=zn.rect;
+  if(x>=rx&&x<=rx+rw&&z>=rz&&z<=rz+rh)return zn.type;}return"—";}
+
+/* --- 1/2. TERRITÓRIO + TOPOGRAFIA (chunks de terreno) --- */
+const terrainMeshes=[];
+function createTerrainChunk(ci,cj){
+  const seg=64,g=new THREE.PlaneGeometry(CS,CS,seg,seg);
+  g.rotateX(-Math.PI/2);
+  const pos=g.attributes.position,col=[];
+  const c=new THREE.Color();
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i)+ci*CS+CS/2,z=pos.getZ(i)+cj*CS+CS/2;
+    const h=heightAt(x,z);pos.setY(i,h);
+    if(h<9)c.setHex(0x4a6e4d);else if(h<35)c.setHex(0x5d7a4a);
+    else if(h<65)c.setHex(0x74804d);else c.setHex(0x8a7a5c);
+    c.offsetHSL(0,0,(hash(x,z)-.5)*.05);col.push(c.r,c.g,c.b);
+  }
+  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  g.computeVertexNormals();
+  const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({vertexColors:true}));
+  m.position.set(ci*CS+CS/2,0,cj*CS+CS/2);
+  m.userData.zyro={id:`CHUNK_${ci}_${cj}`,type:"TERRAIN_CHUNK",chunk:`CHUNK_${ci}_${cj}`};
+  terrainMeshes.push(m);LAYERS.TERRAIN.add(m);
+}
+for(let ci=-1;ci<=1;ci++)for(let cj=-1;cj<=0;cj++)createTerrainChunk(ci,cj);
+
+/* bordas de chunk + grid */
+{const mat=new THREE.LineBasicMaterial({color:0x3fa0ff});
+ for(let ci=-1;ci<=2;ci++)for(let cj=-1;cj<=1;cj++){
+   const pts=[];for(let t=0;t<=20;t++){const x=ci*CS,z=cj*CS-CS+t*(2*CS/20);
+     pts.push(new THREE.Vector3(x,heightAt(x,z)+2,z));}
+   LAYERS.CHUNK_BORDERS.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),mat));
+   const pts2=[];for(let t=0;t<=30;t++){const z=cj*CS,x=-CS+t*(4*CS/30);
+     pts2.push(new THREE.Vector3(x,heightAt(x,z)+2,z));}
+   LAYERS.CHUNK_BORDERS.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts2),mat));}
+ LAYERS.GRID.add(new THREE.GridHelper(6000,60,0x224466,0x15283d));}
+
+/* --- 3. HIDROGRAFIA (entidade territorial, não textura) --- */
+function buildRibbon(samples,width,yFn,color,extra={}){
+  const half=width/2,pos=[],idx=[];
+  for(let i=0;i<samples.length;i++){
+    const p=samples[i],a=samples[Math.max(0,i-1)],b=samples[Math.min(samples.length-1,i+1)];
+    let dx=b.x-a.x,dz=b.z-a.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;
+    const nx=-dz,nz=dx,y=yFn(p.x,p.z,i);
+    pos.push(p.x+nx*half,y,p.z+nz*half,p.x-nx*half,y,p.z-nz*half);}
+  for(let i=0;i<samples.length-1;i++){const a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx);g.computeVertexNormals();
+  return new THREE.Mesh(g,new THREE.MeshLambertMaterial({color,side:THREE.DoubleSide,...extra}));
+}
+{const h=WORLD_DATA.hydrology[0];
+ const water=buildRibbon(riverCurve.getPoints(200),h.width,()=>WATER_Y,0x2a6fb0,{transparent:true,opacity:.92});
+ water.userData.zyro={id:h.id,type:h.type,width:h.width,depth:h.depth,flow:h.flow,
+   altitude:h.elevation,banks:h.banks,crossings:h.crossings.join(", ")};
+ LAYERS.HYDROGRAPHY.add(water);}
+
+/* --- 4-7. HIERARQUIA VIÁRIA (LEVEL 0→3) + PONTE --- */
+const ROAD_STYLE={highway:0x2b2f36,arterial:0x3a3f47,collector:0x474d56,local:0x555b64};
+const roadCurves={};
+function createRoad(rd){
+  const curve=new THREE.CatmullRomCurve3(rd.points.map(p=>new THREE.Vector3(p[0],0,p[1])));
+  roadCurves[rd.id]=curve;
+  const n=Math.max(24,Math.floor(curve.getLength()/25));
+  const samples=curve.getPoints(n);
+  const yFn=(x,z)=>{let y=heightAt(x,z)+.4;
+    if(rd.bridge&&riverDist(x,z)<180)y=Math.max(y,WATER_Y+8);return y;};
+  const mesh=buildRibbon(samples,rd.width,yFn,ROAD_STYLE[rd.type]);
+  mesh.userData.zyro={id:rd.id,type:`ROAD_${rd.type.toUpperCase()}`,level:rd.level,
+    width:rd.width+" m",lanes:rd.lanes,speed:rd.speed+" km/h",
+    connected:"nós: "+rd.points.length};
+  LAYERS.ROADS.add(mesh);
+  if(rd.level<=1){ // faixa central
+    LAYERS.ROADS.add(buildRibbon(samples,.5,(x,z,i)=>yFn(x,z,i)+.08,0xd9c25a));}
+  if(rd.bridge){ // pilares da ponte
+    for(const t of[.42,.5,.58]){const p=curve.getPoint(t);
+      if(riverDist(p.x,p.z)<120){const pil=new THREE.Mesh(
+        new THREE.BoxGeometry(3,WATER_Y+9,3),new THREE.MeshLambertMaterial({color:0x8a8f96}));
+        pil.position.set(p.x,(WATER_Y+9)/2,p.z);LAYERS.ROADS.add(pil);}}}
+}
+WORLD_DATA.roads.forEach(createRoad);
+
+/* acesso rodoviário — HIGHWAY_ENTRY (espinha dorsal) */
+WORLD_DATA.highwayEntries.forEach(e=>{
+  const[x,z]=e.position,y=heightAt(x,z);
+  const m=new THREE.Mesh(new THREE.TorusGeometry(14,1.2,8,32),
+    new THREE.MeshLambertMaterial({color:0xffd479,emissive:0x664republic4>0?0:0x664a10}));
+  m.rotation.x=Math.PI/2;m.position.set(x,y+1.5,z);
+  m.userData.zyro={id:e.id,type:e.type,connected:e.connects.join(" ↔ "),
+    position:`${x}, ${z}`,altitude:y.toFixed(1)+" m"};
+  LAYERS.ROADS.add(m);
+});
+
+/* --- 8. ZONEAMENTO (independe dos prédios) --- */
+WORLD_DATA.zones.forEach(zn=>{
+  const[rx,rz,rw,rh]=zn.rect;
+  const g=new THREE.PlaneGeometry(rw,rh,16,16);g.rotateX(-Math.PI/2);
+  const pos=g.attributes.position;
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i)+rx+rw/2,z=pos.getZ(i)+rz+rh/2;
+    pos.setY(i,heightAt(x,z)+1.2);}
+  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:zn.color,transparent:true,
+    opacity:.16,depthWrite:false,side:THREE.DoubleSide}));
+  m.position.set(rx+rw/2,0,rz+rh/2);
+  m.userData.zyro={id:zn.id,type:zn.type,area:(rw*rh/10000).toFixed(1)+" ha",
+    chunk:chunkOf(rx,rz)};
+  LAYERS.ZONES.add(m);
+});
+
+/* ============================================================
+   9-11. COMPLEXOS + EDIFICAÇÕES (lógica do protótipo McDonald's:
+   volumes simples, fachada de vidro, marquise, letreiro, parking)
+============================================================ */
+const MAT={
+  wall:new THREE.MeshLambertMaterial({color:0xd9d4c8}),
+  glass:new THREE.MeshLambertMaterial({color:0x7fc4de,transparent:true,opacity:.65}),
+  dark:new THREE.MeshLambertMaterial({color:0x30343a}),
+  sign:new THREE.MeshLambertMaterial({color:0xff5533,emissive:0x881100}),
+  green:new THREE.MeshLambertMaterial({color:0x3f7a4a}),
+  ind:new THREE.MeshLambertMaterial({color:0xb0b7bf}),
+  res:new THREE.MeshLambertMaterial({color:0xcabfa8})
+};
+function pad(w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,1,d),MAT.dark);m.position.y=.5;return m;}
+function glassBuilding(w,h,d){
+  const g=new THREE.Group();
+  const core=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),MAT.wall);core.position.y=h/2;g.add(core);
+  const fac=new THREE.Mesh(new THREE.BoxGeometry(w*.96,h*.6,1),MAT.glass);
+  fac.position.set(0,h*.34,d/2+.6);g.add(fac);
+  const marq=new THREE.Mesh(new THREE.BoxGeometry(w*1.1,1,6),MAT.dark);
+  marq.position.set(0,h*.62,d/2+3);g.add(marq);
+  const sign=new THREE.Mesh(new THREE.BoxGeometry(w*.4,3,1),MAT.sign);
+  sign.position.set(0,h+2,d/2);g.add(sign);
+  return g;}
+function tower(w,h,d){const g=new THREE.Group();
+  const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),MAT.res);b.position.y=h/2;g.add(b);
+  for(let f=1;f<h/4;f++){const s=new THREE.Mesh(new THREE.BoxGeometry(w+.3,.6,d+.3),MAT.dark);
+    s.position.y=f*4;g.add(s);}return g;}
+
+const COMPLEX_BUILDERS={
+  commercial(c){const g=new THREE.Group();
+    g.add(pad(160,110));
+    const b=glassBuilding(70,16,45);b.position.set(-25,1,0);g.add(b);
+    const b2=glassBuilding(30,10,25);b2.position.set(45,1,-20);g.add(b2);
+    const park=new THREE.Mesh(new THREE.BoxGeometry(70,.4,50),
+      new THREE.MeshLambertMaterial({color:0x3a3f45}));park.position.set(35,1.3,25);g.add(park);
+    for(let i=0;i<4;i++){const v=new THREE.Mesh(new THREE.BoxGeometry(4,1.6,2),
+      new THREE.MeshLambertMaterial({color:[0xcc4444,0x4466cc,0xcccccc,0x44aa66][i]}));
+      v.position.set(15+i*12,2.3,25);g.add(v);}
+    g.userData.info={buildings:2,access:"col-comercial",area:"1.76 ha"};return g;},
+  residential(c){const g=new THREE.Group();
+    g.add(pad(150,140));
+    [[-45,-35],[-45,35],[45,-35],[45,35]].forEach(([x,z],i)=>{
+      const t=tower(22,28+i*4,22);t.position.set(x,1,z);g.add(t);});
+    const green=new THREE.Mesh(new THREE.CylinderGeometry(20,20,.6,24),MAT.green);
+    green.position.y=1.4;g.add(green);
+    g.userData.info={buildings:4,access:"col-residencial",area:"2.1 ha"};return g;},
+  industrial(c){const g=new THREE.Group();
+    g.add(pad(200,150));
+    const shed=new THREE.Mesh(new THREE.BoxGeometry(110,18,70),MAT.ind);
+    shed.position.set(-25,10,0);g.add(shed);
+    const roof=new THREE.Mesh(new THREE.CylinderGeometry(35,35,110,3,1),MAT.dark);
+    roof.rotation.z=Math.PI/2;roof.rotation.y=Math.PI/2;roof.scale.y=.25;
+    roof.position.set(-25,19,0);g.add(roof);
+    for(let i=0;i<3;i++){const tk=new THREE.Mesh(new THREE.CylinderGeometry(7,7,20,16),MAT.ind);
+      tk.position.set(60,11,-40+i*40);g.add(tk);}
+    g.userData.info={buildings:4,access:"col-industrial",area:"3.0 ha"};return g;}
+};
+WORLD_DATA.complexes.forEach(c=>{
+  const g=COMPLEX_BUILDERS[c.type](c);
+  const y=heightAt(c.position[0],c.position[2]);
+  g.position.set(c.position[0],y,c.position[2]);g.rotation.y=c.rotation;
+  g.traverse(o=>{o.userData.zyroRoot=g;});
+  g.userData.zyro={id:c.id,type:`COMPLEX_${c.type.toUpperCase()}`,
+    position:c.position.join(", "),altitude:y.toFixed(1)+" m",
+    zone:zoneOf(c.position[0],c.position[2]),chunk:chunkOf(c.position[0],c.position[2]),
+    ...g.userData.info};
+  LAYERS.COMPLEXES.add(g);
+});
+
+/* quarteirões residenciais (edificações nascem DENTRO do território) */
+for(let bx=0;bx<3;bx++)for(let bz=0;bz<2;bz++){
+  const x0=300+bx*80,z0=660+bz*90;
+  for(let i=0;i<3;i++){const x=x0+i*22,z=z0+(hash(x0,z0+i)*20),y=heightAt(x,z);
+    const h=5+hash(x,z)*6;
+    const b=new THREE.Mesh(new THREE.BoxGeometry(12,h,10),MAT.res);
+    b.position.set(x,y+h/2,z);
+    b.userData.zyro={id:`edif-r-${bx}${bz}${i}`,type:"BUILDING_RESIDENTIAL",
+      altitude:y.toFixed(1)+" m",zone:zoneOf(x,z),chunk:chunkOf(x,z),parent:"quarteirão "+bx+bz};
+    LAYERS.BUILDINGS.add(b);}}
+
+/* --- 13. ENTIDADES: árvores, postes, veículos --- */
+function createTree(x,z){const y=heightAt(x,z),g=new THREE.Group();
+  const tr=new THREE.Mesh(new THREE.CylinderGeometry(.4,.6,4),new THREE.MeshLambertMaterial({color:0x5a4632}));
+  tr.position.y=2;g.add(tr);
+  const cp=new THREE.Mesh(new THREE.ConeGeometry(3+hash(x,z)*2,7,7),MAT.green);
+  cp.position.y=7;g.add(cp);g.position.set(x,y,z);return g;}
+for(let i=0;i<160;i++){
+  const x=-400+hash(i,7)*2000,z=380+hash(i,13)*260;
+  if(riverDist(x,z)>70&&riverDist(x,z)<260)LAYERS.ENTITIES.add(createTree(x,z));}
+for(let i=0;i<40;i++){const x=920+hash(i,3)*460,z=450+hash(i,5)*140;
+  LAYERS.ENTITIES.add(createTree(x,z));}
+/* postes na av. principal */
+{const c=roadCurves["av-principal"];
+ for(let t=0;t<=1;t+=.08){const p=c.getPoint(t),y=heightAt(p.x,p.z);
+   const g=new THREE.Group();
+   const post=new THREE.Mesh(new THREE.CylinderGeometry(.25,.25,9),MAT.dark);post.position.y=4.5;
+   const lamp=new THREE.Mesh(new THREE.SphereGeometry(.7),
+     new THREE.MeshLambertMaterial({color:0xfff2b0,emissive:0x998833}));lamp.position.y=9;
+   g.add(post,lamp);g.position.set(p.x+12,Math.max(y,riverDist(p.x,p.z)<180?WATER_Y+8:y),p.z);
+   LAYERS.ENTITIES.add(g);}}
+/* veículos na rodovia */
+const vehicles=[];
+{const c=roadCurves["sp312-romeiros"];
+ for(let i=0;i<6;i++){const v=new THREE.Mesh(new THREE.BoxGeometry(4.5,1.8,2.2),
+   new THREE.MeshLambertMaterial({color:[0xd04040,0x4060d0,0xe0e0e0,0x40a060,0xd0a040,0x808090][i]}));
+   v.userData.t=i/6;v.userData.zyro={id:"veh-"+i,type:"ENTITY_VEHICLE",parent:"sp312-romeiros"};
+   vehicles.push(v);LAYERS.ENTITIES.add(v);}}
+
+/* ============================================================
+   UI — CAMADAS / CÂMERAS / MODOS / SVG
+============================================================ */
+const layersPanel=document.getElementById('layers');
+Object.keys(LAYERS).forEach(n=>{
+  const l=document.createElement('label');
+  l.innerHTML=`<input type="checkbox" ${LAYERS[n].visible?"checked":""}> ${n}`;
+  l.querySelector('input').onchange=e=>LAYERS[n].visible=e.target.checked;
+  layersPanel.appendChild(l);});
+
+const CAM_PRESETS={
+  "TERRITÓRIO":{p:[900,2600,3400],t:[900,0,400]},
+  "AÉREA":{p:[600,850,1500],t:[750,0,500]},
+  "ENTRADA":{p:[620,heightAt(620,90)+4,90],t:[615,heightAt(615,300)+6,300]},
+  "COMPLEXO":{p:[1010,heightAt(1010,430)+35,440],t:[900,heightAt(900,320)+8,320]},
+  "ROAD":"road","FREE":null};
+let roadCam=false;
+const camsPanel=document.getElementById('cams');
+Object.keys(CAM_PRESETS).forEach(n=>{
+  const b=document.createElement('button');b.textContent=n;
+  b.onclick=()=>{roadCam=false;
+    if(n==="ROAD"){roadCam=true;return;}
+    if(n==="FREE")return;
+    const c=CAM_PRESETS[n];camera.position.set(...c.p);controls.target.set(...c.t);};
+  camsPanel.appendChild(b);});
+camera.position.set(900,2600,3400);controls.target.set(900,0,400);
+
+/* modos */
+document.querySelectorAll('#modes [data-mode]').forEach(b=>b.onclick=()=>{
+  const m=b.dataset.mode;
+  document.getElementById('svgpanel').style.display=m==="svg"?"block":"none";
+  if(m==="masterplan"){
+    ["ENTITIES","BUILDINGS"].forEach(n=>LAYERS[n].visible=false);
+    LAYERS.CHUNK_BORDERS.visible=true;LAYERS.ZONES.visible=true;
+    camera.position.set(900,3200,1200);controls.target.set(900,0,400);}
+  if(m==="3d"){["ENTITIES","BUILDINGS"].forEach(n=>LAYERS[n].visible=true);}
+  layersPanel.querySelectorAll('input').forEach((i,idx)=>
+    i.checked=LAYERS[Object.keys(LAYERS)[idx]].visible);
+});
+document.getElementById('autorbit').onclick=e=>{
+  controls.autoRotate=!controls.autoRotate;
+  e.target.textContent="AUTO-ORBIT: "+(controls.autoRotate?"ON":"OFF");};
+document.getElementById('dbg').onclick=e=>{
+  const on=!LAYERS.DEBUG.visible;
+  LAYERS.DEBUG.visible=LAYERS.CHUNK_BORDERS.visible=LAYERS.GRID.visible=on;
+  e.target.textContent="DEBUG: "+(on?"ON":"OFF");
+  layersPanel.querySelectorAll('input').forEach((i,idx)=>
+    i.checked=LAYERS[Object.keys(LAYERS)[idx]].visible);};
+LAYERS.DEBUG.add(new THREE.AxesHelper(300));
+
+/* SVG — camada informacional (masterplan abstrato) */
+{const W=560,H=260,mx=x=>(x+1600)/5000*W,mz=z=>(z+400)/1800*H;
+ const path=pts=>pts.map((p,i)=>(i?"L":"M")+mx(p[0]).toFixed(1)+","+mz(p[1]).toFixed(1)).join(" ");
+ let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+ WORLD_DATA.zones.forEach(z=>{const[x,zz,w,h]=z.rect;
+   s+=`<rect x="${mx(x)}" y="${mz(zz)}" width="${w/5000*W}" height="${h/1800*H}"
+     fill="#${z.color.toString(16)}" opacity=".25"/>`;});
+ s+=`<path d="${path(WORLD_DATA.hydrology[0].points)}" stroke="#2a6fb0" stroke-width="6" fill="none"/>`;
+ const sw={highway:4,arterial:2.5,collector:1.5,local:.8};
+ WORLD_DATA.roads.forEach(r=>s+=`<path d="${path(r.points)}" stroke="#aab4c0"
+   stroke-width="${sw[r.type]}" fill="none"/>`);
+ WORLD_DATA.complexes.forEach(c=>s+=`<rect x="${mx(c.position[0])-8}" y="${mz(c.position[2])-6}"
+   width="16" height="12" fill="none" stroke="#ffd479"/>`);
+ s+=`</svg><div class="tag">SVG URBANO · footprints · masterplan exportável</div>`;
+ document.getElementById('svgpanel').innerHTML=s;}
+
+/* ============================================================
+   INTERAÇÃO — INSPECTOR + HUD
+============================================================ */
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+const insp=document.getElementById('inspector'),hud=document.getElementById('hud');
+let downPos=null;
+addEventListener('pointerdown',e=>downPos=[e.clientX,e.clientY]);
+addEventListener('pointerup',e=>{
+  if(!downPos||Math.hypot(e.clientX-downPos[0],e.clientY-downPos[1])>5)return;
+  mouse.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);
+  ray.setFromCamera(mouse,camera);
+  const hits=ray.intersectObjects(scene.children,true);
+  for(const h of hits){
+    let o=h.object;while(o&&!o.userData.zyro&&!(o.userData.zyroRoot))o=o.parent;
+    if(o&&o.userData.zyroRoot)o=o.userData.zyroRoot;
+    if(o&&o.userData.zyro){
+      const d=o.userData.zyro,p=h.point;
+      let rows=`<tr><td>WORLD X/Z</td><td>${p.x.toFixed(1)}, ${p.z.toFixed(1)}</td></tr>
+        <tr><td>ALTITUDE</td><td>${p.y.toFixed(1)} m</td></tr>
+        <tr><td>CHUNK</td><td>${chunkOf(p.x,p.z)}</td></tr>
+        <tr><td>ZONE</td><td>${zoneOf(p.x,p.z)}</td></tr>`;
+      for(const k in d)if(k!=="id"&&k!=="type")rows+=`<tr><td>${k.toUpperCase()}</td><td>${d[k]}</td></tr>`;
+      insp.innerHTML=`<h3>${d.id}</h3><div class="tag">${d.type}</div>
+        <table>${rows}</table>`;
+      insp.style.display="block";return;}}
+  insp.style.display="none";});
+addEventListener('mousemove',e=>{
+  mouse.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);
+  ray.setFromCamera(mouse,camera);
+  const h=ray.intersectObjects(terrainMeshes)[0];
+  if(h)hud.innerHTML=`WORLD X <b>${h.point.x.toFixed(1)}</b> · Z <b>${h.point.z.toFixed(1)}</b>
+   · ALT <b>${h.point.y.toFixed(1)} m</b> · <b>${chunkOf(h.point.x,h.point.z)}</b>
+   · ZONA <b>${zoneOf(h.point.x,h.point.z)}</b> · 1u = 1m`;});
+
+/* ============================================================
+   LOOP
+============================================================ */
+const clock=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=clock.getDelta();
+  const hw=roadCurves["sp312-romeiros"];
+  vehicles.forEach((v,i)=>{
+    v.userData.t=(v.userData.t+dt*.012*(i%2?1:.8))%1;
+    const p=hw.getPoint(v.userData.t),n=hw.getPoint((v.userData.t+.002)%1);
+    v.position.set(p.x,heightAt(p.x,p.z)+1.5,p.z);v.lookAt(n.x,v.position.y,n.z);});
+  if(roadCam&&vehicles[0]){const v=vehicles[0];
+    camera.position.lerp(new THREE.Vector3(v.position.x,v.position.y+15,v.position.z+35),.05);
+    controls.target.copy(v.position);}
+  controls.update();renderer.render(scene,camera);}
+animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+</script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<h1>Título do Projeto</h1>
+<p>Toque no botão <b>Tela cheia</b> para usar a barra de ferramentas e editar este texto diretamente!</p><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labriolag v001 — Editor World Builder Minimal</title>
+    <style>
+        :root {
+            --bg: #05050a;
+            --glass: rgba(20, 20, 25, 0.85);
+            --line: rgba(255, 255, 255, 0.1);
+            --accent: #ffbc0d;
+            --text: #ffffff;
+            --dim: #888;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            user-select: none;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* HUD Principal */
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0 0 5px 0;
+            font-size: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+        }
+
+        h1 .logo-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 8px;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--line);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent);
+        }
+
+        button.active {
+            background: var(--accent);
+            color: #1a1a1a;
+            border-color: var(--accent);
+        }
+
+        /* Painel de Propriedades do Objeto Selecionado */
+        #inspector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 20px;
+            width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10;
+            display: none;
+        }
+
+        #inspector.active {
+            display: block;
+        }
+
+        .prop-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .prop-row input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--line);
+            color: var(--accent);
+            padding: 4px 8px;
+            border-radius: 6px;
+            width: 100px;
+            text-align: right;
+            font-family: monospace;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 11px;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--line);
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* Modal JSON */
+        #jsonbox {
+            position: absolute;
+            z-index: 50;
+            inset: 15%;
+            display: none;
+            flex-direction: column;
+            background: #0b1018f5;
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        #jsonbox.open { display: flex; }
+        #jsonbox textarea {
+            flex: 1;
+            resize: none;
+            background: #05080c;
+            color: #9ceac9;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px;
+            font: 11px monospace;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="hud">
+        <h1><span class="logo-dot"></span>Labriolag v001</h1>
+        <div class="section-title">Modo de Operação</div>
+        <div class="btn-group">
+            <button id="btn-mode-nav" class="active">Navegar</button>
+            <button id="btn-mode-edit">Editar / Mover</button>
+        </div>
+        <div class="section-title">Ações do Mundo</div>
+        <button id="btn-export" style="width: 100%; margin-bottom: 6px; background: rgba(255,188,13,0.15); border-color: var(--accent);">💾 Exportar JSON</button>
+        <button id="btn-snap" style="width: 100%;">🧲 Snap Grid: Ligado (0.5m)</button>
+    </div>
+
+    <div id="inspector">
+        <h2 id="sel-title" style="margin:0 0 10px 0; font-size:14px; color:var(--accent);">Objeto Selecionado</h2>
+        <div class="prop-row"><span>Pos X:</span><input type="number" id="pos-x" step="0.5"></div>
+        <div class="prop-row"><span>Pos Y:</span><input type="number" id="pos-y" step="0.5"></div>
+        <div class="prop-row"><span>Pos Z:</span><input type="number" id="pos-z" step="0.5"></div>
+        <div class="prop-row"><span>Rotação Y:</span><input type="number" id="rot-y" step="15"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px;">
+            <button id="btn-duplicate">Duplicar</button>
+            <button id="btn-delete" style="border-color:#e74c3c; color:#e74c3c;">Remover</button>
+        </div>
+    </div>
+
+    <div id="jsonbox">
+        <h3 style="margin:0 0 10px 0; color:var(--accent);">Dados do Mundo (JSON)</h3>
+        <textarea id="json-output" readonly></textarea>
+        <button id="close-json" style="align-self: flex-end; padding: 8px 20px;">Fechar</button>
+    </div>
+
+    <div id="instructions">
+        Modo Navegar: Gire e dê zoom livremente • Modo Editar: Clique em um objeto para mover/ajustar
+    </div>
+
+    <!-- Bibliotecas Three.js e OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+
+    <script>
+        let scene, camera, renderer, controls, transformControls;
+        let editableObjects = [], selectedObject = null;
+        let isEditMode = false;
+        let snapEnabled = true;
+        let snapStep = 0.5;
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x05050a, 0.015);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(22, 18, 32);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.02;
+            controls.target.set(0, 1.5, 0);
+
+            // Controles de Transformação (Gizmo 3D)
+            transformControls = new THREE.TransformControls(camera, renderer.domElement);
+            transformControls.size = 0.75;
+            scene.add(transformControls);
+
+            transformControls.addEventListener('dragging-changed', (event) => {
+                controls.enabled = !event.value; // Desativa orbit ao arrastar o gizmo
+            });
+
+            transformControls.addEventListener('change', () => {
+                if (selectedObject) updateInspectorUI();
+            });
+
+            setupLights();
+            createEnvironment();
+            createRoadNetwork();
+            createComplexStructures();
+            setupUIEvents();
+            setupRaycasting();
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function createTextTexture(text, textColor, bgColor, fontSize = 42) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function setupLights() {
+            scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.9));
+            const dirLight = new THREE.DirectionalLight(0xfff8e7, 1.1);
+            dirLight.position.set(20, 30, 20);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+        }
+
+        function createEnvironment() {
+            const ground = new THREE.Mesh(
+                new THREE.PlaneGeometry(120, 120),
+                new THREE.MeshStandardMaterial({ color: 0x121216, roughness: 0.9 })
+            );
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            // Praça em "L"
+            const parkMat = new THREE.MeshStandardMaterial({ color: 0x1e5631, roughness: 0.9 });
+            const parkMain = new THREE.Mesh(new THREE.BoxGeometry(90, 0.1, 20), parkMat);
+            parkMain.position.set(0, 0.02, -14);
+            parkMain.receiveShadow = true;
+            scene.add(parkMain);
+
+            const parkL = new THREE.Mesh(new THREE.BoxGeometry(18, 0.1, 14), parkMat);
+            parkL.position.set(-16, 0.02, -1);
+            parkL.receiveShadow = true;
+            scene.add(parkL);
+
+            // Rio
+            const river = new THREE.Mesh(
+                new THREE.PlaneGeometry(90, 8),
+                new THREE.MeshStandardMaterial({ color: 0x2563eb, roughness: 0.2 })
+            );
+            river.rotation.x = -Math.PI / 2;
+            river.position.set(0, 0.04, -26);
+            scene.add(river);
+        }
+
+        function createRoadNetwork() {
+            const roadMat = new THREE.MeshStandardMaterial({ color: 0x1c1c22, roughness: 0.8 });
+            const islandMat = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.6 });
+
+            // Rua José Bonifácio
+            const rua = new THREE.Mesh(new THREE.PlaneGeometry(90, 8), roadMat);
+            rua.rotation.x = -Math.PI / 2;
+            rua.position.set(0, 0.03, 11);
+            scene.add(rua);
+
+            // Calçada com corte para o ônibus
+            const calcadaEsq = new THREE.Mesh(new THREE.BoxGeometry(26, 0.25, 2.2), islandMat);
+            calcadaEsq.position.set(-14.5, 0.12, 6.7);
+            calcadaEsq.castShadow = true;
+            calcadaEsq.receiveShadow = true;
+            scene.add(calcadaEsq);
+
+            const calcadaDir = new THREE.Mesh(new THREE.BoxGeometry(44, 0.25, 2.2), islandMat);
+            calcadaDir.position.set(15, 0.12, 6.7);
+            calcadaDir.castShadow = true;
+            calcadaDir.receiveShadow = true;
+            scene.add(calcadaDir);
+
+            // Bolsão / Saída
+            const bolsao = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 6), roadMat);
+            bolsao.rotation.x = -Math.PI / 2;
+            bolsao.position.set(2.1, 0.03, 3.7);
+            scene.add(bolsao);
+        }
+
+        function registerEditable(mesh, id, label) {
+            mesh.userData = { id, label };
+            editableObjects.push(mesh);
+            scene.add(mesh);
+            return mesh;
+        }
+
+        function createComplexStructures() {
+            // 1. Rei Burger
+            const reiGroup = new THREE.Group();
+            reiGroup.position.set(-8, 0, 0);
+
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry(4.8, 2.8, 2.6),
+                new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.5 })
+            );
+            body.position.y = 1.4;
+            body.castShadow = true;
+            reiGroup.add(body);
+
+            const stripe = new THREE.Mesh(
+                new THREE.BoxGeometry(4.85, 0.4, 2.65),
+                new THREE.MeshStandardMaterial({ color: 0xffbc0d, roughness: 0.3 })
+            );
+            stripe.position.y = 1.9;
+            reiGroup.add(stripe);
+
+            const reiSign = new THREE.Mesh(
+                new THREE.PlaneGeometry(3.2, 0.9),
+                new THREE.MeshBasicMaterial({ map: createTextTexture("REI BURGER", "#ffbc0d", "rgba(0,0,0,0)", 50), transparent: true })
+            );
+            reiSign.position.set(0, 1.9, 1.34);
+            reiGroup.add(reiSign);
+
+            registerEditable(reiGroup, "rei_burger", "Rei Burger");
+
+            // 2. Rodoviária
+            const busGroup = new THREE.Group();
+            busGroup.position.set(5.5, 0, 0);
+
+            const busBuilding = new THREE.Mesh(
+                new THREE.BoxGeometry(9.5, 3.0, 3.0),
+                new THREE.MeshStandardMaterial({ color: 0xa3e635, roughness: 0.4 })
+            );
+            busBuilding.position.y = 1.5;
+            busBuilding.castShadow = true;
+            busGroup.add(busBuilding);
+
+            const busSign = new THREE.Mesh(
+                new THREE.PlaneGeometry(4.5, 1.1),
+                new THREE.MeshBasicMaterial({ map: createTextTexture("RODOVIÁRIA", "#0f172a", "rgba(0,0,0,0)", 55), transparent: true })
+            );
+            busSign.position.set(0, 2.1, 1.51);
+            busGroup.add(busSign);
+
+            registerEditable(busGroup, "rodoviaria", "Rodoviária");
+
+            // 3. Banheiro & Praça Base
+            const bathGroup = new THREE.Group();
+            bathGroup.position.set(-15, 0, 2.5);
+
+            const bathPlazaBase = new THREE.Mesh(
+                new THREE.BoxGeometry(4.2, 0.05, 3.6),
+                new THREE.MeshStandardMaterial({ color: 0xd1d5db, roughness: 0.7 })
+            );
+            bathPlazaBase.position.y = 0.03;
+            bathPlazaBase.receiveShadow = true;
+            bathGroup.add(bathPlazaBase);
+
+            const bathBuilding = new THREE.Mesh(
+                new THREE.BoxGeometry(3.0, 2.6, 2.2),
+                new THREE.MeshStandardMaterial({ color: 0xa3e635, roughness: 0.5 })
+            );
+            bathBuilding.position.y = 1.3;
+            bathBuilding.castShadow = true;
+            bathGroup.add(bathBuilding);
+
+            const bathSign = new THREE.Mesh(
+                new THREE.PlaneGeometry(2.3, 0.7),
+                new THREE.MeshBasicMaterial({ map: createTextTexture("🚻 BANHEIRO", "#0f172a", "rgba(0,0,0,0)", 45), transparent: true })
+            );
+            bathSign.position.set(0, 1.7, 1.11);
+            bathGroup.add(bathSign);
+
+            registerEditable(bathGroup, "banheiro", "Banheiro Público");
+        }
+
+        function setupRaycasting() {
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+
+            window.addEventListener('pointerdown', (event) => {
+                if (!isEditMode || event.target.closest('#hud') || event.target.closest('#inspector')) return;
+
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(editableObjects, true);
+
+                if (intersects.length > 0) {
+                    let obj = intersects[0].object;
+                    while (obj.parent && !editableObjects.includes(obj)) {
+                        obj = obj.parent;
+                    }
+                    selectObject(obj);
+                }
+            });
+        }
+
+        function selectObject(obj) {
+            selectedObject = obj;
+            transformControls.attach(obj);
+            document.getElementById('inspector').classList.add('active');
+            document.getElementById('sel-title').textContent = obj.userData.label || "Objeto";
+            updateInspectorUI();
+        }
+
+        function updateInspectorUI() {
+            if (!selectedObject) return;
+            document.getElementById('pos-x').value = selectedObject.position.x.toFixed(2);
+            document.getElementById('pos-y').value = selectedObject.position.y.toFixed(2);
+            document.getElementById('pos-z').value = selectedObject.position.z.toFixed(2);
+            document.getElementById('rot-y').value = THREE.MathUtils.radToDeg(selectedObject.rotation.y).toFixed(0);
+        }
+
+        function setupUIEvents() {
+            const btnNav = document.getElementById('btn-mode-nav');
+            const btnEdit = document.getElementById('btn-mode-edit');
+
+            btnNav.addEventListener('click', () => {
+                isEditMode = false;
+                btnNav.classList.add('active');
+                btnEdit.classList.remove('active');
+                transformControls.detach();
+                document.getElementById('inspector').classList.remove('active');
+            });
+
+            btnEdit.addEventListener('click', () => {
+                isEditMode = true;
+                btnEdit.classList.add('active');
+                btnNav.classList.remove('active');
+            });
+
+            document.getElementById('btn-snap').addEventListener('click', () => {
+                snapEnabled = !snapEnabled;
+                transformControls.setTranslationSnap(snapEnabled ? snapStep : null);
+                document.getElementById('btn-snap').textContent = `🧲 Snap Grid: ${snapEnabled ? 'Ligado (0.5m)' : 'Desligado'}`;
+            });
+
+            document.getElementById('btn-export').addEventListener('click', () => {
+                const data = {
+                    schema: "labriolag.world.v1",
+                    timestamp: new Date().toISOString(),
+                    objects: editableObjects.map(o => ({
+                        id: o.userData.id,
+                        label: o.userData.label,
+                        position: { x: +o.position.x.toFixed(2), y: +o.position.y.toFixed(2), z: +o.position.z.toFixed(2) },
+                        rotation: { y: +o.rotation.y.toFixed(2) }
+                    }))
+                };
+                document.getElementById('json-output').value = JSON.stringify(data, null, 2);
+                document.getElementById('jsonbox').classList.add('open');
+            });
+
+            document.getElementById('close-json').addEventListener('click', () => {
+                document.getElementById('jsonbox').classList.remove('open');
+            });
+
+            document.getElementById('btn-delete').addEventListener('click', () => {
+                if (!selectedObject) return;
+                transformControls.detach();
+                scene.remove(selectedObject);
+                editableObjects = editableObjects.filter(o => o !== selectedObject);
+                selectedObject = null;
+                document.getElementById('inspector').classList.remove('active');
+            });
+
+            // Inputs manuais
+            ['pos-x', 'pos-y', 'pos-z', 'rot-y'].forEach(id => {
+                document.getElementById(id).addEventListener('change', (e) => {
+                    if (!selectedObject) return;
+                    const val = parseFloat(e.target.value) || 0;
+                    if (id === 'pos-x') selectedObject.position.x = val;
+                    if (id === 'pos-y') selectedObject.position.y = val;
+                    if (id === 'pos-z') selectedObject.position.z = val;
+                    if (id === 'rot-y') selectedObject.rotation.y = THREE.MathUtils.degToRad(val);
+                });
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

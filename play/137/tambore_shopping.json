@@ -1,0 +1,1037 @@
+{
+  "version": 3,
+  "world": {
+    "id": "world_bf201a96",
+    "name": "Tamboré Shopping",
+    "slug": "tambore-shopping"
+  },
+  "locations": [
+    {
+      "id": "region_1bd65bbb",
+      "type": "regiao",
+      "name": "Tamboré Shopping",
+      "parentId": null
+    },
+    {
+      "id": "zone_4839142c",
+      "type": "zona",
+      "name": "Zona Entretenimento",
+      "parentId": "region_1bd65bbb"
+    },
+    {
+      "id": "zone_357dbf9d",
+      "type": "zona",
+      "name": "Zona Serviços",
+      "parentId": "region_1bd65bbb"
+    },
+    {
+      "id": "zone_008a9f5d",
+      "type": "zona",
+      "name": "Zona Hipermercado",
+      "parentId": "region_1bd65bbb"
+    },
+    {
+      "id": "zone_6adf5666",
+      "type": "zona",
+      "name": "Zona Varejo",
+      "parentId": "region_1bd65bbb"
+    },
+    {
+      "id": "zone_8ee57690",
+      "type": "zona",
+      "name": "Zona Estacionamento",
+      "parentId": "region_1bd65bbb"
+    },
+    {
+      "id": "zone_9410ef2c",
+      "type": "zona",
+      "name": "Eixo Viário",
+      "parentId": "region_1bd65bbb"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity_1fc44f13",
+      "type": "predio",
+      "name": "Renner",
+      "slug": "renner",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 45,
+        "y": 12,
+        "width": 135,
+        "depth": 85
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#4472c4",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_4839142c"
+      }
+    },
+    {
+      "id": "entity_562265f4",
+      "type": "predio",
+      "name": "Cinemark",
+      "slug": "cinemark",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 185,
+        "y": 12,
+        "width": 170,
+        "depth": 85
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#4472c4",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_4839142c"
+      }
+    },
+    {
+      "id": "entity_0cc7de59",
+      "type": "predio",
+      "name": "C&A",
+      "slug": "c-a",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 360,
+        "y": 12,
+        "width": 105,
+        "depth": 85
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#4472c4",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_4839142c"
+      }
+    },
+    {
+      "id": "entity_07f42573",
+      "type": "predio",
+      "name": "Si Señor",
+      "slug": "si-senor",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 10,
+        "y": 130,
+        "width": 50,
+        "depth": 45
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#5a8fd6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_357dbf9d"
+      }
+    },
+    {
+      "id": "entity_9e125601",
+      "type": "predio",
+      "name": "Camicado",
+      "slug": "camicado",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 60,
+        "y": 130,
+        "width": 100,
+        "depth": 90
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#5a8fd6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_357dbf9d"
+      }
+    },
+    {
+      "id": "entity_75e83eb0",
+      "type": "predio",
+      "name": "Outback",
+      "slug": "outback",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 10,
+        "y": 178,
+        "width": 50,
+        "depth": 82
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#5a8fd6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_357dbf9d"
+      }
+    },
+    {
+      "id": "entity_6ba2cd4d",
+      "type": "predio",
+      "name": "Bradesco",
+      "slug": "bradesco",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 195,
+        "y": 115,
+        "width": 35,
+        "depth": 145
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#5a8fd6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_357dbf9d"
+      }
+    },
+    {
+      "id": "entity_8fb76499",
+      "type": "predio",
+      "name": "Centauro",
+      "slug": "centauro",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 390,
+        "y": 115,
+        "width": 40,
+        "depth": 95
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#5a8fd6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_357dbf9d"
+      }
+    },
+    {
+      "id": "entity_a215ddcb",
+      "type": "predio",
+      "name": "Preço Landia",
+      "slug": "preco-landia",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 432,
+        "y": 115,
+        "width": 40,
+        "depth": 95
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#5a8fd6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_357dbf9d"
+      }
+    },
+    {
+      "id": "entity_a792efc8",
+      "type": "praca",
+      "name": "Rotatória Central",
+      "slug": "rotatoria-central",
+      "layer": "pracas",
+      "state": "ativo",
+      "geometry": {
+        "type": "polygon",
+        "points": [
+          {
+            "x": 333.0,
+            "y": 210.0
+          },
+          {
+            "x": 330.86862691031604,
+            "y": 220.7151361062225
+          },
+          {
+            "x": 324.7989898732233,
+            "y": 229.79898987322332
+          },
+          {
+            "x": 315.71513610622253,
+            "y": 235.86862691031604
+          },
+          {
+            "x": 305.0,
+            "y": 238.0
+          },
+          {
+            "x": 294.28486389377747,
+            "y": 235.86862691031604
+          },
+          {
+            "x": 285.2010101267767,
+            "y": 229.79898987322332
+          },
+          {
+            "x": 279.13137308968396,
+            "y": 220.71513610622253
+          },
+          {
+            "x": 277.0,
+            "y": 210.0
+          },
+          {
+            "x": 279.13137308968396,
+            "y": 199.2848638937775
+          },
+          {
+            "x": 285.2010101267767,
+            "y": 190.20101012677668
+          },
+          {
+            "x": 294.28486389377747,
+            "y": 184.13137308968396
+          },
+          {
+            "x": 305.0,
+            "y": 182.0
+          },
+          {
+            "x": 315.71513610622253,
+            "y": 184.13137308968396
+          },
+          {
+            "x": 324.7989898732233,
+            "y": 190.20101012677668
+          },
+          {
+            "x": 330.86862691031604,
+            "y": 199.28486389377747
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_9410ef2c"
+      }
+    },
+    {
+      "id": "entity_34e01413",
+      "type": "predio",
+      "name": "Carrefour",
+      "slug": "carrefour",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 300,
+        "y": 320,
+        "width": 165,
+        "depth": 230
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_008a9f5d"
+      }
+    },
+    {
+      "id": "entity_40740463",
+      "type": "predio",
+      "name": "Riachuelo",
+      "slug": "riachuelo",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 10,
+        "y": 398,
+        "width": 48,
+        "depth": 40
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_191d8b33",
+      "type": "predio",
+      "name": "PB Kids",
+      "slug": "pb-kids",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 140,
+        "y": 388,
+        "width": 120,
+        "depth": 115
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_643c496a",
+      "type": "predio",
+      "name": "Casas Bahia",
+      "slug": "casas-bahia",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 98,
+        "y": 535,
+        "width": 95,
+        "depth": 88
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_d6b44bea",
+      "type": "predio",
+      "name": "Fast Shop",
+      "slug": "fast-shop",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 98,
+        "y": 623,
+        "width": 95,
+        "depth": 38
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_ea1a8f92",
+      "type": "predio",
+      "name": "Lojas Americanas",
+      "slug": "lojas-americanas",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 98,
+        "y": 661,
+        "width": 95,
+        "depth": 85
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_9ccb7c06",
+      "type": "predio",
+      "name": "Decathlon",
+      "slug": "decathlon",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 10,
+        "y": 760,
+        "width": 155,
+        "depth": 50
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_22cabe64",
+      "type": "predio",
+      "name": "Taste Lab",
+      "slug": "taste-lab",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 270,
+        "y": 758,
+        "width": 145,
+        "depth": 52
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_6adf5666"
+      }
+    },
+    {
+      "id": "entity_453fa9e4",
+      "type": "lote",
+      "name": "Estacionamento",
+      "slug": "estacionamento",
+      "layer": "lotes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 390,
+        "y": 550,
+        "width": 78,
+        "depth": 200
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#d0d0d2",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_8ee57690"
+      }
+    },
+    {
+      "id": "entity_b18edd9d",
+      "type": "lote",
+      "name": "Estacionamento Sul",
+      "slug": "estacionamento-sul",
+      "layer": "lotes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 375,
+        "y": 750,
+        "width": 90,
+        "depth": 60
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#d0d0d2",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_8ee57690"
+      }
+    },
+    {
+      "id": "entity_930087ef",
+      "type": "avenida",
+      "name": "Via de Acesso Principal",
+      "slug": "via-de-acesso-principal",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 150,
+            "y": 10
+          },
+          {
+            "x": 150,
+            "y": 110
+          },
+          {
+            "x": 160,
+            "y": 150
+          },
+          {
+            "x": 175,
+            "y": 190
+          },
+          {
+            "x": 300,
+            "y": 182
+          },
+          {
+            "x": 250,
+            "y": 250
+          },
+          {
+            "x": 220,
+            "y": 320
+          },
+          {
+            "x": 150,
+            "y": 360
+          },
+          {
+            "x": 120,
+            "y": 398
+          },
+          {
+            "x": 95,
+            "y": 450
+          },
+          {
+            "x": 70,
+            "y": 530
+          },
+          {
+            "x": 60,
+            "y": 600
+          },
+          {
+            "x": 55,
+            "y": 700
+          },
+          {
+            "x": 70,
+            "y": 760
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_9410ef2c"
+      }
+    },
+    {
+      "id": "entity_0eb37132",
+      "type": "avenida",
+      "name": "Via de Serviço Estacionamento",
+      "slug": "via-de-servico-estacionamento",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 380,
+            "y": 550
+          },
+          {
+            "x": 465,
+            "y": 550
+          },
+          {
+            "x": 465,
+            "y": 810
+          },
+          {
+            "x": 280,
+            "y": 810
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_9410ef2c"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "relation_55c44b68",
+      "fromId": "entity_1fc44f13",
+      "type": "belongs_to",
+      "toId": "zone_4839142c"
+    },
+    {
+      "id": "relation_f683a517",
+      "fromId": "entity_562265f4",
+      "type": "belongs_to",
+      "toId": "zone_4839142c"
+    },
+    {
+      "id": "relation_d1729c7a",
+      "fromId": "entity_0cc7de59",
+      "type": "belongs_to",
+      "toId": "zone_4839142c"
+    },
+    {
+      "id": "relation_02c80d9d",
+      "fromId": "entity_07f42573",
+      "type": "belongs_to",
+      "toId": "zone_357dbf9d"
+    },
+    {
+      "id": "relation_50fa43f1",
+      "fromId": "entity_9e125601",
+      "type": "belongs_to",
+      "toId": "zone_357dbf9d"
+    },
+    {
+      "id": "relation_2ef2871b",
+      "fromId": "entity_75e83eb0",
+      "type": "belongs_to",
+      "toId": "zone_357dbf9d"
+    },
+    {
+      "id": "relation_46b4b313",
+      "fromId": "entity_6ba2cd4d",
+      "type": "belongs_to",
+      "toId": "zone_357dbf9d"
+    },
+    {
+      "id": "relation_8fd09bce",
+      "fromId": "entity_8fb76499",
+      "type": "belongs_to",
+      "toId": "zone_357dbf9d"
+    },
+    {
+      "id": "relation_5a79894c",
+      "fromId": "entity_a215ddcb",
+      "type": "belongs_to",
+      "toId": "zone_357dbf9d"
+    },
+    {
+      "id": "relation_3e17878c",
+      "fromId": "entity_a792efc8",
+      "type": "belongs_to",
+      "toId": "zone_9410ef2c"
+    },
+    {
+      "id": "relation_faf674cc",
+      "fromId": "entity_34e01413",
+      "type": "belongs_to",
+      "toId": "zone_008a9f5d"
+    },
+    {
+      "id": "relation_cb141b36",
+      "fromId": "entity_40740463",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_d0a09292",
+      "fromId": "entity_191d8b33",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_c9348226",
+      "fromId": "entity_643c496a",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_9a2462cf",
+      "fromId": "entity_d6b44bea",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_2f8814a3",
+      "fromId": "entity_ea1a8f92",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_575f008f",
+      "fromId": "entity_9ccb7c06",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_8069e29b",
+      "fromId": "entity_22cabe64",
+      "type": "belongs_to",
+      "toId": "zone_6adf5666"
+    },
+    {
+      "id": "relation_b3cd0057",
+      "fromId": "entity_453fa9e4",
+      "type": "belongs_to",
+      "toId": "zone_8ee57690"
+    },
+    {
+      "id": "relation_3efeee20",
+      "fromId": "entity_b18edd9d",
+      "type": "belongs_to",
+      "toId": "zone_8ee57690"
+    },
+    {
+      "id": "relation_94f7bf60",
+      "fromId": "entity_930087ef",
+      "type": "belongs_to",
+      "toId": "zone_9410ef2c"
+    },
+    {
+      "id": "relation_f91321f5",
+      "fromId": "entity_0eb37132",
+      "type": "belongs_to",
+      "toId": "zone_9410ef2c"
+    },
+    {
+      "id": "relation_4e2540b5",
+      "fromId": "entity_a792efc8",
+      "type": "connected_to",
+      "toId": "entity_6ba2cd4d"
+    },
+    {
+      "id": "relation_53115f3f",
+      "fromId": "entity_a792efc8",
+      "type": "connected_to",
+      "toId": "entity_34e01413"
+    },
+    {
+      "id": "relation_e98601ed",
+      "fromId": "entity_34e01413",
+      "type": "connected_to",
+      "toId": "entity_453fa9e4"
+    },
+    {
+      "id": "relation_d4e90291",
+      "fromId": "entity_453fa9e4",
+      "type": "connected_to",
+      "toId": "entity_b18edd9d"
+    },
+    {
+      "id": "relation_d3506a64",
+      "fromId": "entity_643c496a",
+      "type": "connected_to",
+      "toId": "entity_d6b44bea"
+    },
+    {
+      "id": "relation_b9c1739c",
+      "fromId": "entity_d6b44bea",
+      "type": "connected_to",
+      "toId": "entity_ea1a8f92"
+    },
+    {
+      "id": "relation_8a200209",
+      "fromId": "entity_191d8b33",
+      "type": "connected_to",
+      "toId": "entity_40740463"
+    }
+  ],
+  "layers": {
+    "terreno": {
+      "visible": true,
+      "locked": false
+    },
+    "infraestrutura": {
+      "visible": true,
+      "locked": false
+    },
+    "vias": {
+      "visible": true,
+      "locked": false
+    },
+    "calcadas": {
+      "visible": true,
+      "locked": false
+    },
+    "pracas": {
+      "visible": true,
+      "locked": false
+    },
+    "zonas": {
+      "visible": true,
+      "locked": false
+    },
+    "lotes": {
+      "visible": true,
+      "locked": false
+    },
+    "construcoes": {
+      "visible": true,
+      "locked": false
+    },
+    "interiores": {
+      "visible": true,
+      "locked": false
+    },
+    "urbanos": {
+      "visible": true,
+      "locked": false
+    },
+    "entidades": {
+      "visible": true,
+      "locked": false
+    },
+    "debug": {
+      "visible": true,
+      "locked": false
+    }
+  },
+  "events": [
+    {
+      "id": "event_map_created",
+      "type": "world.created",
+      "timestamp": "2026-08-25T00:00:00Z",
+      "payload": {
+        "source": "Mapa Tamboré (v2, medido na imagem)",
+        "entities": 22
+      }
+    }
+  ]
+}

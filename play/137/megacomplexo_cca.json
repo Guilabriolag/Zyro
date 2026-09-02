@@ -1,0 +1,3499 @@
+{
+  "version": 3,
+  "world": {
+    "id": "world_db66be66",
+    "name": "Megacomplexo CCA",
+    "slug": "megacomplexo-cca"
+  },
+  "locations": [
+    {
+      "id": "region_67a8d892",
+      "type": "regiao",
+      "name": "CCA",
+      "parentId": null
+    },
+    {
+      "id": "zone_233ae1ae",
+      "type": "zona",
+      "name": "Setor Norte",
+      "parentId": "region_67a8d892"
+    },
+    {
+      "id": "zone_f28857bc",
+      "type": "zona",
+      "name": "Setor Sul",
+      "parentId": "region_67a8d892"
+    },
+    {
+      "id": "zone_b80b7220",
+      "type": "zona",
+      "name": "Zona Verde",
+      "parentId": "zone_233ae1ae"
+    },
+    {
+      "id": "zone_72ec22de",
+      "type": "zona",
+      "name": "Zona Amarela",
+      "parentId": "zone_233ae1ae"
+    },
+    {
+      "id": "zone_cf75f6f5",
+      "type": "zona",
+      "name": "Zona Azul",
+      "parentId": "zone_f28857bc"
+    },
+    {
+      "id": "zone_0f918dcf",
+      "type": "zona",
+      "name": "Zona Vermelha",
+      "parentId": "zone_f28857bc"
+    },
+    {
+      "id": "zone_6d94b3e3",
+      "type": "zona",
+      "name": "Eixo Central",
+      "parentId": "region_67a8d892"
+    },
+    {
+      "id": "zone_bb7c1a7c",
+      "type": "zona",
+      "name": "Acesso Sul",
+      "parentId": "region_67a8d892"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity_b13c07ed",
+      "type": "praca",
+      "name": "Praça Sk8",
+      "slug": "praca-sk8",
+      "layer": "pracas",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 90,
+        "y": 240,
+        "width": 220,
+        "depth": 170
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#3fae5c",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_a73009d8",
+      "type": "lote",
+      "name": "Skate Track",
+      "slug": "skate-track",
+      "layer": "lotes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 110,
+        "y": 260,
+        "width": 150,
+        "depth": 90
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#2f8f4a",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_5c73751e",
+      "type": "predio",
+      "name": "Vestiário",
+      "slug": "vestiario",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 330,
+        "y": 250,
+        "width": 60,
+        "depth": 45
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#cc755e",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_2701a476",
+      "type": "lote",
+      "name": "Área de Practice",
+      "slug": "area-de-practice",
+      "layer": "lotes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 270,
+        "y": 360,
+        "width": 140,
+        "depth": 100
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#4bbf6b",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_c41a0d37",
+      "type": "porta",
+      "name": "Challenge",
+      "slug": "challenge",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 420,
+        "y": 290
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_e2f125de",
+      "type": "praca",
+      "name": "Championship",
+      "slug": "championship",
+      "layer": "pracas",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 90,
+        "y": 430,
+        "width": 180,
+        "depth": 110
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#2f8f4a",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_e6e3e72d",
+      "type": "porta",
+      "name": "Ranking",
+      "slug": "ranking",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 300,
+        "y": 470
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_d883a41d",
+      "type": "praca",
+      "name": "Eventos Area",
+      "slug": "eventos-area",
+      "layer": "pracas",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 300,
+        "y": 560,
+        "width": 180,
+        "depth": 110
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#3fae5c",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_b80b7220"
+      }
+    },
+    {
+      "id": "entity_e1f8cada",
+      "type": "predio",
+      "name": "Centro Comercial",
+      "slug": "centro-comercial",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 600,
+        "y": 240,
+        "width": 300,
+        "depth": 180
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_72ec22de"
+      }
+    },
+    {
+      "id": "entity_36ab2719",
+      "type": "predio",
+      "name": "Padaria",
+      "slug": "padaria",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 620,
+        "y": 440,
+        "width": 90,
+        "depth": 60
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_72ec22de"
+      }
+    },
+    {
+      "id": "entity_89def09b",
+      "type": "predio",
+      "name": "Mercado",
+      "slug": "mercado",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 730,
+        "y": 440,
+        "width": 120,
+        "depth": 70
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_72ec22de"
+      }
+    },
+    {
+      "id": "entity_d9e9ee5f",
+      "type": "predio",
+      "name": "Oficina",
+      "slug": "oficina",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 870,
+        "y": 440,
+        "width": 100,
+        "depth": 65
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_72ec22de"
+      }
+    },
+    {
+      "id": "entity_fecf66eb",
+      "type": "predio",
+      "name": "Residencial A",
+      "slug": "residencial-a",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 95,
+        "y": 770,
+        "width": 155,
+        "depth": 80
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_7b354dab",
+      "type": "predio",
+      "name": "Residencial B",
+      "slug": "residencial-b",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 270,
+        "y": 770,
+        "width": 125,
+        "depth": 85
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_e067bac1",
+      "type": "predio",
+      "name": "Residencial C",
+      "slug": "residencial-c",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 410,
+        "y": 770,
+        "width": 105,
+        "depth": 90
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_14b2f800",
+      "type": "predio",
+      "name": "Residencial D",
+      "slug": "residencial-d",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 95,
+        "y": 875,
+        "width": 125,
+        "depth": 72
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_67f956a2",
+      "type": "predio",
+      "name": "Residencial E",
+      "slug": "residencial-e",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 240,
+        "y": 875,
+        "width": 150,
+        "depth": 80
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_1cd5925c",
+      "type": "predio",
+      "name": "Residencial F",
+      "slug": "residencial-f",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 410,
+        "y": 885,
+        "width": 105,
+        "depth": 78
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_95e7f101",
+      "type": "predio",
+      "name": "Residencial G",
+      "slug": "residencial-g",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 95,
+        "y": 970,
+        "width": 155,
+        "depth": 78
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_a2dad68d",
+      "type": "predio",
+      "name": "Residencial H",
+      "slug": "residencial-h",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 270,
+        "y": 980,
+        "width": 125,
+        "depth": 82
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_9cfe5761",
+      "type": "predio",
+      "name": "Residencial I",
+      "slug": "residencial-i",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 415,
+        "y": 990,
+        "width": 100,
+        "depth": 78
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_f078a481",
+      "type": "predio",
+      "name": "Residencial J",
+      "slug": "residencial-j",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 95,
+        "y": 1080,
+        "width": 125,
+        "depth": 72
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_6e2faaff",
+      "type": "predio",
+      "name": "Residencial K",
+      "slug": "residencial-k",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 240,
+        "y": 1080,
+        "width": 150,
+        "depth": 82
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_f44f9f17",
+      "type": "predio",
+      "name": "Residencial L",
+      "slug": "residencial-l",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 410,
+        "y": 1090,
+        "width": 105,
+        "depth": 75
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_7997da86",
+      "type": "predio",
+      "name": "Residencial M",
+      "slug": "residencial-m",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 95,
+        "y": 1180,
+        "width": 150,
+        "depth": 72
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_2d5c3470",
+      "type": "predio",
+      "name": "Residencial N",
+      "slug": "residencial-n",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 270,
+        "y": 1180,
+        "width": 120,
+        "depth": 72
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_d6d3cfdc",
+      "type": "predio",
+      "name": "Residencial O",
+      "slug": "residencial-o",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 405,
+        "y": 1180,
+        "width": 110,
+        "depth": 72
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_e4effc67",
+      "type": "predio",
+      "name": "Residencial P",
+      "slug": "residencial-p",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 180,
+        "y": 1260,
+        "width": 145,
+        "depth": 35
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_ca4ca12c",
+      "type": "predio",
+      "name": "Residencial Q",
+      "slug": "residencial-q",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 360,
+        "y": 1260,
+        "width": 145,
+        "depth": 35
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 2,
+        "parentId": "zone_cf75f6f5"
+      }
+    },
+    {
+      "id": "entity_1e17338d",
+      "type": "predio",
+      "name": "Sede ADM",
+      "slug": "sede-adm",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 620,
+        "y": 770,
+        "width": 145,
+        "depth": 70
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_a1745e86",
+      "type": "predio",
+      "name": "Recepção",
+      "slug": "recepcao",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 785,
+        "y": 770,
+        "width": 95,
+        "depth": 70
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_f1433511",
+      "type": "predio",
+      "name": "SAC",
+      "slug": "sac",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 620,
+        "y": 855,
+        "width": 125,
+        "depth": 70
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_2f1fb221",
+      "type": "predio",
+      "name": "Centro de Operações",
+      "slug": "centro-de-operacoes",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 765,
+        "y": 855,
+        "width": 115,
+        "depth": 90
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_9dcab83a",
+      "type": "predio",
+      "name": "Eventos Especiais",
+      "slug": "eventos-especiais",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 620,
+        "y": 955,
+        "width": 125,
+        "depth": 25
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_32c3e703",
+      "type": "predio",
+      "name": "Depósito",
+      "slug": "deposito",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 765,
+        "y": 955,
+        "width": 115,
+        "depth": 25
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_305507be",
+      "type": "predio",
+      "name": "Estacionamento ADM",
+      "slug": "estacionamento-adm",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 610,
+        "y": 1010,
+        "width": 250,
+        "depth": 90
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f20d18",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_0f918dcf"
+      }
+    },
+    {
+      "id": "entity_71981679",
+      "type": "predio",
+      "name": "Terminal de Ônibus",
+      "slug": "terminal-de-onibus",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 380,
+        "y": 1320,
+        "width": 210,
+        "depth": 48
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#1166d6",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_bb7c1a7c"
+      }
+    },
+    {
+      "id": "entity_f01fa252",
+      "type": "predio",
+      "name": "Garagem / Oficina de Motos",
+      "slug": "garagem-oficina-de-motos",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 610,
+        "y": 1140,
+        "width": 190,
+        "depth": 75
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#f2b000",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 1,
+        "parentId": "zone_bb7c1a7c"
+      }
+    },
+    {
+      "id": "entity_d3028c4a",
+      "type": "predio",
+      "name": "Estacionamento Geral",
+      "slug": "estacionamento-geral",
+      "layer": "construcoes",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 805,
+        "y": 1080,
+        "width": 145,
+        "depth": 95
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#d0d0d2",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "zone_bb7c1a7c"
+      }
+    },
+    {
+      "id": "entity_b10d25bc",
+      "type": "avenida",
+      "name": "Rua Interna 85",
+      "slug": "rua-interna-85",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 85,
+            "y": 220
+          },
+          {
+            "x": 85,
+            "y": 1280
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_81a76b78",
+      "type": "avenida",
+      "name": "Rua Interna 235",
+      "slug": "rua-interna-235",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 235,
+            "y": 220
+          },
+          {
+            "x": 235,
+            "y": 1280
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_24f32556",
+      "type": "avenida",
+      "name": "Rua Interna 395",
+      "slug": "rua-interna-395",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 395,
+            "y": 220
+          },
+          {
+            "x": 395,
+            "y": 1280
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_9e4cb293",
+      "type": "avenida",
+      "name": "Rua Interna 525",
+      "slug": "rua-interna-525",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 525,
+            "y": 220
+          },
+          {
+            "x": 525,
+            "y": 1280
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_0c627749",
+      "type": "avenida",
+      "name": "Rua Interna 620",
+      "slug": "rua-interna-620",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 620,
+            "y": 220
+          },
+          {
+            "x": 620,
+            "y": 700
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_6352da8e",
+      "type": "avenida",
+      "name": "Rua Interna 750",
+      "slug": "rua-interna-750",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 750,
+            "y": 220
+          },
+          {
+            "x": 750,
+            "y": 700
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_f5d6a828",
+      "type": "avenida",
+      "name": "Rua Interna 915",
+      "slug": "rua-interna-915",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 915,
+            "y": 220
+          },
+          {
+            "x": 915,
+            "y": 700
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_f26b39c6",
+      "type": "avenida",
+      "name": "Rua Interna 1060",
+      "slug": "rua-interna-1060",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 1060,
+            "y": 220
+          },
+          {
+            "x": 1060,
+            "y": 700
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_37c0f02f",
+      "type": "avenida",
+      "name": "Rua Transversal 375",
+      "slug": "rua-transversal-375",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 375
+          },
+          {
+            "x": 550,
+            "y": 375
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_b3d3b0d1",
+      "type": "avenida",
+      "name": "Rua Transversal 515",
+      "slug": "rua-transversal-515",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 515
+          },
+          {
+            "x": 550,
+            "y": 515
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_265eddef",
+      "type": "avenida",
+      "name": "Rua Transversal 610",
+      "slug": "rua-transversal-610",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 610
+          },
+          {
+            "x": 550,
+            "y": 610
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_8ef9de21",
+      "type": "avenida",
+      "name": "Rua Transversal 705",
+      "slug": "rua-transversal-705",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 705
+          },
+          {
+            "x": 550,
+            "y": 705
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_901a4443",
+      "type": "avenida",
+      "name": "Rua Transversal 850",
+      "slug": "rua-transversal-850",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 850
+          },
+          {
+            "x": 520,
+            "y": 850
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_cdc08f03",
+      "type": "avenida",
+      "name": "Rua Transversal 970",
+      "slug": "rua-transversal-970",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 970
+          },
+          {
+            "x": 520,
+            "y": 970
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_a0064af2",
+      "type": "avenida",
+      "name": "Rua Transversal 1080",
+      "slug": "rua-transversal-1080",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 1080
+          },
+          {
+            "x": 520,
+            "y": 1080
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_bcb1d7ee",
+      "type": "avenida",
+      "name": "Rua Transversal 1180",
+      "slug": "rua-transversal-1180",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 70,
+            "y": 1180
+          },
+          {
+            "x": 520,
+            "y": 1180
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_b3867f5e",
+      "type": "avenida",
+      "name": "Rua Comercial 370",
+      "slug": "rua-comercial-370",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 590,
+            "y": 370
+          },
+          {
+            "x": 1080,
+            "y": 370
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_79b8ae48",
+      "type": "avenida",
+      "name": "Rua Comercial 500",
+      "slug": "rua-comercial-500",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 590,
+            "y": 500
+          },
+          {
+            "x": 1080,
+            "y": 500
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_4ac68f21",
+      "type": "avenida",
+      "name": "Rua Comercial 625",
+      "slug": "rua-comercial-625",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 590,
+            "y": 625
+          },
+          {
+            "x": 1080,
+            "y": 625
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_c8d016ae",
+      "type": "avenida",
+      "name": "Rua Comercial 705",
+      "slug": "rua-comercial-705",
+      "layer": "vias",
+      "state": "ativo",
+      "geometry": {
+        "type": "line",
+        "points": [
+          {
+            "x": 590,
+            "y": 705
+          },
+          {
+            "x": 1080,
+            "y": 705
+          }
+        ]
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#c4c8c5",
+        "material": "asfalto"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": null
+      }
+    },
+    {
+      "id": "entity_dd762da7",
+      "type": "porta",
+      "name": "Entrada Oeste Norte",
+      "slug": "entrada-oeste-norte",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 55,
+        "y": 300
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_9ffce5de",
+      "type": "porta",
+      "name": "Entrada Oeste Central",
+      "slug": "entrada-oeste-central",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 55,
+        "y": 730
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_6a9a510e",
+      "type": "porta",
+      "name": "Entrada Oeste Sul",
+      "slug": "entrada-oeste-sul",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 55,
+        "y": 970
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_8e13aeb4",
+      "type": "porta",
+      "name": "Portal Central Norte",
+      "slug": "portal-central-norte",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 570,
+        "y": 205
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_724cb2b8",
+      "type": "porta",
+      "name": "Portal Central",
+      "slug": "portal-central",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 570,
+        "y": 720
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_a7999a84",
+      "type": "porta",
+      "name": "Entrada Leste Norte",
+      "slug": "entrada-leste-norte",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 1085,
+        "y": 310
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_a50a64af",
+      "type": "porta",
+      "name": "Entrada Leste Comercial",
+      "slug": "entrada-leste-comercial",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 1085,
+        "y": 560
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_e8d04602",
+      "type": "porta",
+      "name": "Entrada Leste Sul",
+      "slug": "entrada-leste-sul",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 1085,
+        "y": 820
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_fea804c3",
+      "type": "porta",
+      "name": "Entrada Terminal",
+      "slug": "entrada-terminal",
+      "layer": "interiores",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 400,
+        "y": 1310
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#8c6d54",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_454ec7a3",
+      "type": "arvore",
+      "name": "Árvore 1",
+      "slug": "arvore-1",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 90,
+        "y": 250
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_4b761004",
+      "type": "arvore",
+      "name": "Árvore 2",
+      "slug": "arvore-2",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 90,
+        "y": 365
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_3333019f",
+      "type": "arvore",
+      "name": "Árvore 3",
+      "slug": "arvore-3",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 90,
+        "y": 500
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_a7098b4b",
+      "type": "arvore",
+      "name": "Árvore 4",
+      "slug": "arvore-4",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 90,
+        "y": 640
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_acc390e8",
+      "type": "arvore",
+      "name": "Árvore 5",
+      "slug": "arvore-5",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 210,
+        "y": 240
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_0955a8af",
+      "type": "arvore",
+      "name": "Árvore 6",
+      "slug": "arvore-6",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 380,
+        "y": 240
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_bdae8c16",
+      "type": "arvore",
+      "name": "Árvore 7",
+      "slug": "arvore-7",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 520,
+        "y": 250
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_b7e11eab",
+      "type": "arvore",
+      "name": "Árvore 8",
+      "slug": "arvore-8",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 520,
+        "y": 360
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_8587ae3f",
+      "type": "arvore",
+      "name": "Árvore 9",
+      "slug": "arvore-9",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 210,
+        "y": 700
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_093162d4",
+      "type": "arvore",
+      "name": "Árvore 10",
+      "slug": "arvore-10",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 390,
+        "y": 700
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_d354f765",
+      "type": "arvore",
+      "name": "Árvore 11",
+      "slug": "arvore-11",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 520,
+        "y": 680
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_9f90eba0",
+      "type": "arvore",
+      "name": "Árvore 12",
+      "slug": "arvore-12",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 80,
+        "y": 790
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_69832a62",
+      "type": "arvore",
+      "name": "Árvore 13",
+      "slug": "arvore-13",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 80,
+        "y": 900
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_cc3b0386",
+      "type": "arvore",
+      "name": "Árvore 14",
+      "slug": "arvore-14",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 80,
+        "y": 1040
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_bf6fb5f4",
+      "type": "arvore",
+      "name": "Árvore 15",
+      "slug": "arvore-15",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 80,
+        "y": 1160
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_286b803f",
+      "type": "arvore",
+      "name": "Árvore 16",
+      "slug": "arvore-16",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 530,
+        "y": 790
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_2668ccff",
+      "type": "arvore",
+      "name": "Árvore 17",
+      "slug": "arvore-17",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 530,
+        "y": 930
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_6544f0db",
+      "type": "arvore",
+      "name": "Árvore 18",
+      "slug": "arvore-18",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 530,
+        "y": 1100
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_165a6825",
+      "type": "arvore",
+      "name": "Árvore 19",
+      "slug": "arvore-19",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 530,
+        "y": 1230
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_7003cd0c",
+      "type": "arvore",
+      "name": "Árvore 20",
+      "slug": "arvore-20",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 900,
+        "y": 740
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_365217c7",
+      "type": "arvore",
+      "name": "Árvore 21",
+      "slug": "arvore-21",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 900,
+        "y": 970
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_ccb37934",
+      "type": "arvore",
+      "name": "Árvore 22",
+      "slug": "arvore-22",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 1040,
+        "y": 740
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_e32548cc",
+      "type": "arvore",
+      "name": "Árvore 23",
+      "slug": "arvore-23",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "point",
+        "x": 1040,
+        "y": 970
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#238a4d",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_37d58b1a",
+      "type": "predio",
+      "name": "Banco 1",
+      "slug": "banco-1",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 210,
+        "y": 350,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_4e5fd646",
+      "type": "predio",
+      "name": "Banco 2",
+      "slug": "banco-2",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 395,
+        "y": 365,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_8b3e7f79",
+      "type": "predio",
+      "name": "Banco 3",
+      "slug": "banco-3",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 210,
+        "y": 610,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_ba0e97a6",
+      "type": "predio",
+      "name": "Banco 4",
+      "slug": "banco-4",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 395,
+        "y": 610,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_fe876ae2",
+      "type": "predio",
+      "name": "Banco 5",
+      "slug": "banco-5",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 690,
+        "y": 365,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_bbb66899",
+      "type": "predio",
+      "name": "Banco 6",
+      "slug": "banco-6",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 900,
+        "y": 365,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_cbc0d717",
+      "type": "predio",
+      "name": "Banco 7",
+      "slug": "banco-7",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 690,
+        "y": 620,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    },
+    {
+      "id": "entity_6dca1891",
+      "type": "predio",
+      "name": "Banco 8",
+      "slug": "banco-8",
+      "layer": "urbanos",
+      "state": "ativo",
+      "geometry": {
+        "type": "rect",
+        "x": 900,
+        "y": 620,
+        "width": 28,
+        "depth": 10
+      },
+      "transform": {
+        "z": 0,
+        "rotation": 0
+      },
+      "style": {
+        "color": "#7f6b51",
+        "material": "padrão"
+      },
+      "metadata": {
+        "access": "público",
+        "floors": 0,
+        "parentId": "region_67a8d892"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "relation_f5996f92",
+      "fromId": "entity_b13c07ed",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_a19f52ff",
+      "fromId": "entity_a73009d8",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_eeb05a9a",
+      "fromId": "entity_5c73751e",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_0de61863",
+      "fromId": "entity_2701a476",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_c570a6e8",
+      "fromId": "entity_c41a0d37",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_de8aad03",
+      "fromId": "entity_e2f125de",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_14b6e632",
+      "fromId": "entity_e6e3e72d",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_335a2bee",
+      "fromId": "entity_d883a41d",
+      "type": "belongs_to",
+      "toId": "zone_b80b7220"
+    },
+    {
+      "id": "relation_2d9e9bba",
+      "fromId": "entity_e1f8cada",
+      "type": "belongs_to",
+      "toId": "zone_72ec22de"
+    },
+    {
+      "id": "relation_5bf84b27",
+      "fromId": "entity_36ab2719",
+      "type": "belongs_to",
+      "toId": "zone_72ec22de"
+    },
+    {
+      "id": "relation_afd487f0",
+      "fromId": "entity_89def09b",
+      "type": "belongs_to",
+      "toId": "zone_72ec22de"
+    },
+    {
+      "id": "relation_026b9b71",
+      "fromId": "entity_d9e9ee5f",
+      "type": "belongs_to",
+      "toId": "zone_72ec22de"
+    },
+    {
+      "id": "relation_7f00090a",
+      "fromId": "entity_fecf66eb",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_4dced8bc",
+      "fromId": "entity_7b354dab",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_8803cdbb",
+      "fromId": "entity_e067bac1",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_3af03c29",
+      "fromId": "entity_14b2f800",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_6ae687a1",
+      "fromId": "entity_67f956a2",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_7205361f",
+      "fromId": "entity_1cd5925c",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_48aeef4d",
+      "fromId": "entity_95e7f101",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_d877775f",
+      "fromId": "entity_a2dad68d",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_409117f3",
+      "fromId": "entity_9cfe5761",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_0e83e6a1",
+      "fromId": "entity_f078a481",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_1b5c5765",
+      "fromId": "entity_6e2faaff",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_89e04b5d",
+      "fromId": "entity_f44f9f17",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_f7bebe2e",
+      "fromId": "entity_7997da86",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_eaec906e",
+      "fromId": "entity_2d5c3470",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_86c01ee4",
+      "fromId": "entity_d6d3cfdc",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_0226ef3c",
+      "fromId": "entity_e4effc67",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_55c21dac",
+      "fromId": "entity_ca4ca12c",
+      "type": "belongs_to",
+      "toId": "zone_cf75f6f5"
+    },
+    {
+      "id": "relation_4d713fb4",
+      "fromId": "entity_1e17338d",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_0eb53958",
+      "fromId": "entity_a1745e86",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_cc0e087a",
+      "fromId": "entity_f1433511",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_66253133",
+      "fromId": "entity_2f1fb221",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_855980d3",
+      "fromId": "entity_9dcab83a",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_29e7941c",
+      "fromId": "entity_32c3e703",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_0e898450",
+      "fromId": "entity_305507be",
+      "type": "belongs_to",
+      "toId": "zone_0f918dcf"
+    },
+    {
+      "id": "relation_e550e5be",
+      "fromId": "entity_71981679",
+      "type": "belongs_to",
+      "toId": "zone_bb7c1a7c"
+    },
+    {
+      "id": "relation_92081ff6",
+      "fromId": "entity_f01fa252",
+      "type": "belongs_to",
+      "toId": "zone_bb7c1a7c"
+    },
+    {
+      "id": "relation_d2026985",
+      "fromId": "entity_d3028c4a",
+      "type": "belongs_to",
+      "toId": "zone_bb7c1a7c"
+    },
+    {
+      "id": "relation_222f2f08",
+      "fromId": "entity_dd762da7",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_075128e0",
+      "fromId": "entity_9ffce5de",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_a7efe8d5",
+      "fromId": "entity_6a9a510e",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_6bcd92fa",
+      "fromId": "entity_8e13aeb4",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_ee80471b",
+      "fromId": "entity_724cb2b8",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_abca9734",
+      "fromId": "entity_a7999a84",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_547aed0a",
+      "fromId": "entity_a50a64af",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_ce296dfb",
+      "fromId": "entity_e8d04602",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_299ca234",
+      "fromId": "entity_fea804c3",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_8c11db06",
+      "fromId": "entity_454ec7a3",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_4d91a937",
+      "fromId": "entity_4b761004",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_0511b0c7",
+      "fromId": "entity_3333019f",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_c4f87083",
+      "fromId": "entity_a7098b4b",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_9169c0d6",
+      "fromId": "entity_acc390e8",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_61d5ddf7",
+      "fromId": "entity_0955a8af",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_fb28fb21",
+      "fromId": "entity_bdae8c16",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_71fed701",
+      "fromId": "entity_b7e11eab",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_2599d681",
+      "fromId": "entity_8587ae3f",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_2a2137e1",
+      "fromId": "entity_093162d4",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_ed7cc60f",
+      "fromId": "entity_d354f765",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_6484524c",
+      "fromId": "entity_9f90eba0",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_243f188e",
+      "fromId": "entity_69832a62",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_2bb7d56d",
+      "fromId": "entity_cc3b0386",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_c09b44e8",
+      "fromId": "entity_bf6fb5f4",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_84e9d24f",
+      "fromId": "entity_286b803f",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_23fd19fa",
+      "fromId": "entity_2668ccff",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_e22aa5bf",
+      "fromId": "entity_6544f0db",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_580b1a32",
+      "fromId": "entity_165a6825",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_f435573c",
+      "fromId": "entity_7003cd0c",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_9d654201",
+      "fromId": "entity_365217c7",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_8b3de496",
+      "fromId": "entity_ccb37934",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_89722895",
+      "fromId": "entity_e32548cc",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_01501d53",
+      "fromId": "entity_37d58b1a",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_d8b358f2",
+      "fromId": "entity_4e5fd646",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_32e005f9",
+      "fromId": "entity_8b3e7f79",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_9e7e9562",
+      "fromId": "entity_ba0e97a6",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_0a5e1424",
+      "fromId": "entity_fe876ae2",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_5ca7e83b",
+      "fromId": "entity_bbb66899",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_5b4f452a",
+      "fromId": "entity_cbc0d717",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_d4630f01",
+      "fromId": "entity_6dca1891",
+      "type": "belongs_to",
+      "toId": "region_67a8d892"
+    },
+    {
+      "id": "relation_93eb75a4",
+      "fromId": "entity_b13c07ed",
+      "type": "connected_to",
+      "toId": "entity_5c73751e"
+    },
+    {
+      "id": "relation_d221a5bd",
+      "fromId": "entity_b13c07ed",
+      "type": "connected_to",
+      "toId": "entity_a73009d8"
+    },
+    {
+      "id": "relation_f7b26589",
+      "fromId": "entity_a73009d8",
+      "type": "connected_to",
+      "toId": "entity_2701a476"
+    },
+    {
+      "id": "relation_777be6b2",
+      "fromId": "entity_c41a0d37",
+      "type": "feeds_ranking",
+      "toId": "entity_e6e3e72d"
+    },
+    {
+      "id": "relation_f8ea7a39",
+      "fromId": "entity_e2f125de",
+      "type": "feeds_ranking",
+      "toId": "entity_e6e3e72d"
+    },
+    {
+      "id": "relation_71eaaf80",
+      "fromId": "entity_d883a41d",
+      "type": "hosts",
+      "toId": "entity_e2f125de"
+    },
+    {
+      "id": "relation_3c62df5e",
+      "fromId": "entity_1e17338d",
+      "type": "contains",
+      "toId": "entity_a1745e86"
+    },
+    {
+      "id": "relation_6672dc78",
+      "fromId": "entity_1e17338d",
+      "type": "contains",
+      "toId": "entity_f1433511"
+    },
+    {
+      "id": "relation_a77688fe",
+      "fromId": "entity_e1f8cada",
+      "type": "contains",
+      "toId": "entity_36ab2719"
+    },
+    {
+      "id": "relation_e8c1fafd",
+      "fromId": "entity_e1f8cada",
+      "type": "contains",
+      "toId": "entity_89def09b"
+    },
+    {
+      "id": "relation_6b3d10f0",
+      "fromId": "entity_e1f8cada",
+      "type": "contains",
+      "toId": "entity_d9e9ee5f"
+    },
+    {
+      "id": "relation_7ffed449",
+      "fromId": "entity_71981679",
+      "type": "connected_to",
+      "toId": "entity_1e17338d"
+    }
+  ],
+  "layers": {
+    "terreno": {
+      "visible": true,
+      "locked": false
+    },
+    "infraestrutura": {
+      "visible": true,
+      "locked": false
+    },
+    "vias": {
+      "visible": true,
+      "locked": false
+    },
+    "calcadas": {
+      "visible": true,
+      "locked": false
+    },
+    "pracas": {
+      "visible": true,
+      "locked": false
+    },
+    "zonas": {
+      "visible": true,
+      "locked": false
+    },
+    "lotes": {
+      "visible": true,
+      "locked": false
+    },
+    "construcoes": {
+      "visible": true,
+      "locked": false
+    },
+    "interiores": {
+      "visible": true,
+      "locked": false
+    },
+    "urbanos": {
+      "visible": true,
+      "locked": false
+    },
+    "entidades": {
+      "visible": true,
+      "locked": false
+    },
+    "debug": {
+      "visible": true,
+      "locked": false
+    }
+  },
+  "events": [
+    {
+      "id": "event_map_created",
+      "type": "world.created",
+      "timestamp": "2026-08-25T00:00:00Z",
+      "payload": {
+        "source": "Mapa CCA",
+        "entities": 99
+      }
+    }
+  ]
+}

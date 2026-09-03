@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LABRIOLAG — Laboratório Sandbox 3D</title>
+    <style>
+        :root {
+            --amber: #f1c66a;
+            --amber-glow: rgba(241, 198, 106, 0.4);
+            --bg-panel: rgba(15, 15, 18, 0.75);
+            --border: rgba(255, 255, 255, 0.12);
+            --cyan: #4cc9f0;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #030305; font-family: 'JetBrains Mono', monospace, sans-serif; color: #fff; }
+
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+
+        /* HUD MINIMALISTA & DECLUTTERED */
+        #reticle {
+            position: absolute; top: 50%; left: 50%;
+            width: 6px; height: 6px; background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%; transform: translate(-50%, -50%);
+            pointer-events: none; z-index: 20; transition: all 0.2s ease;
+        }
+
+        #interact-prompt {
+            position: absolute; top: 58%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bg-panel); border: 1px solid var(--amber);
+            padding: 8px 16px; border-radius: 20px; color: var(--amber);
+            font-size: 11px; font-weight: bold; letter-spacing: 1px;
+            backdrop-filter: blur(8px); display: none; z-index: 20; pointer-events: none;
+            box-shadow: 0 0 15px var(--amber-glow);
+        }
+
+        /* PAINEL TÉCNICO RETRÁTIL (SÓ ABRE QUANDO INTERAGE COM O GIROSPIN) */
+        #rjs-panel {
+            position: absolute; top: 20px; right: 20px; width: 260px;
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px; backdrop-filter: blur(10px);
+            z-index: 20; opacity: 0; pointer-events: none; transform: translateX(30px);
+            transition: all 0.3s ease; font-size: 10px;
+        }
+        #rjs-panel.active { opacity: 1; pointer-events: auto; transform: translateX(0); }
+        .panel-title { color: var(--amber); font-weight: bold; letter-spacing: 2px; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .val { color: #fff; font-weight: bold; }
+        .event-log { color: var(--cyan); margin-top: 8px; font-style: italic; font-size: 9px; }
+
+        /* MODO DE CONTROLE DO DRONE FPV */
+        #fpv-overlay {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(255, 0, 50, 0.2); border: 1px solid #ff0033;
+            padding: 6px 12px; border-radius: 8px; color: #ff0033;
+            font-size: 10px; font-weight: bold; letter-spacing: 2px; display: none; z-index: 20;
+        }
+
+        /* CONTROLES MOBILE / TOUCH (JOYSTICK VIRTUAL + BOTÃO) */
+        #mobile-controls {
+            position: absolute; bottom: 20px; left: 0; right: 0; height: 120px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px; pointer-events: none; z-index: 30;
+        }
+        .touch-zone { pointer-events: auto; }
+        #joystick-base {
+            width: 80px; height: 80px; background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border); border-radius: 50%; position: relative;
+        }
+        #joystick-stick {
+            width: 36px; height: 36px; background: var(--amber);
+            border-radius: 50%; position: absolute; top: 22px; left: 22px;
+            box-shadow: 0 0 10px var(--amber-glow);
+        }
+        #btn-interact-mobile {
+            width: 65px; height: 65px; background: rgba(241, 198, 106, 0.2);
+            border: 2px solid var(--amber); border-radius: 50%; color: var(--amber);
+            font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--amber-glow);
+        }
+
+        #loader {
+            position: absolute; inset: 0; background: #050508;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; transition: opacity 0.5s ease;
+        }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--amber); border-radius: 50%; animation: spin 1s infinite linear; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-size: 11px; letter-spacing: 3px; color: var(--amber);">INICIALIZANDO CHÃO DE FÁBRICA 3D...</p>
+    </div>
+
+    <div id="reticle"></div>
+    <div id="interact-prompt">[E] INTERAGIR</div>
+    <div id="fpv-overlay">● FPV DRONE CAM — [E] SAIR</div>
+
+    <!-- HUD TÉCNICO (SÓ EXIBIDO NA BANCADA DO GIROSPIN) -->
+    <div id="rjs-panel">
+        <div class="panel-title">GIROSPIN :: RJS LAB</div>
+        <div class="row"><span>RESOLUÇÃO:</span><span class="val" id="rjs-reso">N=16</span></div>
+        <div class="row"><span>ORIENTAÇÃO:</span><span class="val" id="rjs-deg">000.0°</span></div>
+        <div class="row"><span>DISTÂNCIA OBS:</span><span class="val" id="rjs-dist">0.0m</span></div>
+        <div class="row"><span>SINAL/CAMPO:</span><span class="val" id="rjs-signal">100%</span></div>
+        <div class="event-log" id="rjs-log">> CAMPO ESTÁVEL</div>
+    </div>
+
+    <div id="mobile-controls">
+        <div id="joystick-base" class="touch-zone">
+            <div id="joystick-stick"></div>
+        </div>
+        <div id="btn-interact-mobile" class="touch-zone">USA</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // =====================================================================
+        // ESTADO GLOBAL & CONFIGURAÇÕES DO LABORATÓRIO
+        // =====================================================================
+        const state = {
+            mode: 'WALK', // 'WALK', 'GIROSPIN', 'DRONE'
+            targetInteract: null,
+            move: { forward: 0, right: 0 },
+            rotation: { yaw: 0, pitch: 0 },
+            rjs: { N: 16, deg: 0, dist: 0, signal: 100 }
+        };
+
+        let scene, camera, renderer, clock;
+        let playerGroup, droneGroup, girospinGroup, girospinMesh, girospinWire, flashLight;
+        let interactables = [];
+
+        // --- INICIALIZAÇÃO DA CENA ---
+        function init() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0a0f, 0.02);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+            clock = new THREE.Clock();
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Jogador (Câmera em 1ª Pessoa)
+            playerGroup = new THREE.Group();
+            playerGroup.position.set(0, 1.6, 8);
+            playerGroup.add(camera);
+            scene.add(playerGroup);
+
+            setupLights();
+            buildFactoryEnvironment();
+            buildGirospinStation();
+            buildDroneStation();
+
+            setupInputs();
+            window.addEventListener('resize', onWindowResize);
+
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').remove(), 500);
+            }, 800);
+
+            animate();
+        }
+
+        // --- ILUMINAÇÃO INDUSTRIAL ---
+        function setupLights() {
+            const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambient);
+
+            const mainLight = new THREE.DirectionalLight(0xfff5e6, 0.8);
+            mainLight.position.set(10, 20, 10);
+            mainLight.castShadow = true;
+            scene.add(mainLight);
+
+            // Luzes focais de bancada
+            const benchLight = new THREE.PointLight(0xf1c66a, 1.2, 10);
+            benchLight.position.set(0, 3.2, 0);
+            scene.add(benchLight);
+        }
+
+        // --- AMBIENTE: GALPÃO / CHÃO DE FÁBRICA ---
+        function buildFactoryEnvironment() {
+            // Piso Epóxi Industrial
+            const floorGeo = new THREE.PlaneGeometry(30, 30);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x121215, roughness: 0.3, metalness: 0.2 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // Paredes Estilo Galpão
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0x1a1a20, roughness: 0.8 });
+            
+            const backWall = new THREE.Mesh(new THREE.BoxGeometry(30, 8, 0.5), wallMat);
+            backWall.position.set(0, 4, -15);
+            scene.add(backWall);
+
+            const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 8, 30), wallMat);
+            leftWall.position.set(-15, 4, 0);
+            scene.add(leftWall);
+
+            const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 8, 30), wallMat);
+            rightWall.position.set(15, 4, 0);
+            scene.add(rightWall);
+        }
+
+        // --- BANCADA CENTRAL & GIROSPIN ---
+        function buildGirospinStation() {
+            // Mesa de Trabalho Industrial
+            const benchMat = new THREE.MeshStandardMaterial({ color: 0x222228, roughness: 0.5 });
+            const benchTopMat = new THREE.MeshStandardMaterial({ color: 0x0d0d10, roughness: 0.2, metalness: 0.8 });
+
+            const bench = new THREE.Mesh(new THREE.BoxGeometry(4, 0.9, 2), benchTopMat);
+            bench.position.set(0, 0.45, 0);
+            bench.castShadow = bench.receiveShadow = true;
+            scene.add(bench);
+
+            // Pedestal do Girospin
+            const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 0.3, 16), benchMat);
+            pedestal.position.set(0, 1.05, 0);
+            scene.add(pedestal);
+
+            // Grupo do Girospin
+            girospinGroup = new THREE.Group();
+            girospinGroup.position.set(0, 1.6, 0);
+
+            const vSegs = Math.max(4, Math.floor(state.rjs.N / 2));
+            const geometry = new THREE.SphereGeometry(0.35, state.rjs.N, vSegs);
+            const material = new THREE.MeshStandardMaterial({ color: 0x141412, metalness: 0.9, roughness: 0.1, flatShading: true });
+            girospinMesh = new THREE.Mesh(geometry, material);
+
+            const wireMat = new THREE.MeshBasicMaterial({ color: 0xf1c66a, wireframe: true, transparent: true, opacity: 0.3 });
+            girospinWire = new THREE.Mesh(geometry, wireMat);
+
+            girospinGroup.add(girospinMesh, girospinWire);
+            scene.add(girospinGroup);
+
+            // Flash de pulso no encontro de faceta
+            flashLight = new THREE.PointLight(0xf1c66a, 0, 4);
+            flashLight.position.set(0, 1.6, 0);
+            scene.add(flashLight);
+
+            // Ponto de Interação
+            girospinGroup.userData = { id: 'GIROSPIN', label: '[E] OPERAR GIROSPIN' };
+            interactables.push(girospinGroup);
+        }
+
+        // --- ESTAÇÃO DO DRONE FPV ---
+        function buildDroneStation() {
+            // Segunda Bancada
+            const bench = new THREE.Mesh(
+                new THREE.BoxGeometry(2, 0.9, 1.5),
+                new THREE.MeshStandardMaterial({ color: 0x1a1a20, roughness: 0.4 })
+            );
+            bench.position.set(-6, 0.45, -4);
+            scene.add(bench);
+
+            // Estrutura do Drone
+            droneGroup = new THREE.Group();
+            droneGroup.position.set(-6, 0.95, -4);
+
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry(0.4, 0.1, 0.4),
+                new THREE.MeshStandardMaterial({ color: 0xff0033, metalness: 0.5 })
+            );
+            droneGroup.add(body);
+
+            // Câmera FPV no Drone
+            const droneCam = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+            droneCam.position.set(0, 0.1, -0.2);
+            droneCam.rotation.y = Math.PI; // Olhando para frente
+            droneGroup.add(droneCam);
+            droneGroup.userData.cam = droneCam;
+
+            scene.add(droneGroup);
+
+            // Ponto de Interação
+            droneGroup.userData.id = 'DRONE';
+            droneGroup.userData.label = '[E] PILOTAR DRONE FPV';
+            interactables.push(droneGroup);
+        }
+
+        // --- ENTRADAS / CONTROLES ---
+        function setupInputs() {
+            // Teclado
+            const keys = {};
+            window.addEventListener('keydown', e => {
+                keys[e.code] = true;
+                if (e.code === 'KeyE') triggerInteraction();
+            });
+            window.addEventListener('keyup', e => keys[e.code] = false);
+
+            state.keys = keys;
+
+            // Mouse Look (Pointer Lock)
+            document.addEventListener('click', () => {
+                if (state.mode === 'WALK' && !document.pointerLockElement) {
+                    document.body.requestPointerLock();
+                }
+            });
+
+            document.addEventListener('mousemove', e => {
+                if (document.pointerLockElement) {
+                    const sensitivity = 0.002;
+                    state.rotation.yaw -= e.movementX * sensitivity;
+                    state.rotation.pitch -= e.movementY * sensitivity;
+                    state.rotation.pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, state.rotation.pitch));
+                }
+            });
+
+            // Touch / Mobile
+            document.getElementById('btn-interact-mobile').addEventListener('click', triggerInteraction);
+        }
+
+        // --- SISTEMA DE INTERAÇÃO CONTEXTUAL ---
+        function triggerInteraction() {
+            if (state.mode === 'WALK' && state.targetInteract) {
+                const id = state.targetInteract.userData.id;
+                if (id === 'GIROSPIN') {
+                    state.mode = 'GIROSPIN';
+                    document.getElementById('rjs-panel').classList.add('active');
+                    document.getElementById('interact-prompt').innerText = '[E] SOLTAR GIROSPIN';
+                } else if (id === 'DRONE') {
+                    state.mode = 'DRONE';
+                    document.getElementById('fpv-overlay').style.display = 'block';
+                    document.getElementById('interact-prompt').innerText = '[E] POUSAR DRONE';
+                }
+            } else if (state.mode === 'GIROSPIN') {
+                state.mode = 'WALK';
+                document.getElementById('rjs-panel').classList.remove('active');
+            } else if (state.mode === 'DRONE') {
+                state.mode = 'WALK';
+                document.getElementById('fpv-overlay').style.display = 'none';
+            }
+        }
+
+        // --- LOOP DE ATUALIZAÇÃO DA LÓGICA E FÍSICA ---
+        function update(delta) {
+            // 1. Checagem de Proximidade e Raycast
+            if (state.mode === 'WALK') {
+                let closest = null;
+                let minDist = 2.5;
+
+                interactables.forEach(obj => {
+                    const dist = playerGroup.position.distanceTo(obj.position);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = obj;
+                    }
+                });
+
+                state.targetInteract = closest;
+                const prompt = document.getElementById('interact-prompt');
+                if (closest) {
+                    prompt.innerText = closest.userData.label;
+                    prompt.style.display = 'block';
+                } else {
+                    prompt.style.display = 'none';
+                }
+            }
+
+            // 2. Movimento em Primeira Pessoa (WALK)
+            if (state.mode === 'WALK') {
+                const speed = 4.0 * delta;
+                let moveFwd = 0, moveSide = 0;
+
+                if (state.keys['KeyW']) moveFwd += 1;
+                if (state.keys['KeyS']) moveFwd -= 1;
+                if (state.keys['KeyA']) moveSide -= 1;
+                if (state.keys['KeyD']) moveSide += 1;
+
+                const dir = new THREE.Vector3(moveSide, 0, -moveFwd).applyAxisAngle(new THREE.Vector3(0, 1, 0), state.rotation.yaw);
+                playerGroup.position.addScaledVector(dir, speed);
+
+                // Limites das Paredes
+                playerGroup.position.x = Math.max(-14, Math.min(14, playerGroup.position.x));
+                playerGroup.position.z = Math.max(-14, Math.min(14, playerGroup.position.z));
+
+                camera.rotation.set(0, 0, 0);
+                camera.rotation.y = state.rotation.yaw;
+                camera.rotation.x = state.rotation.pitch;
+            }
+
+            // 3. Operação do GIROSPIN na Bancada
+            if (girospinGroup) {
+                girospinGroup.rotation.y += 0.01;
+
+                // Cálculo da distância real do observador (Câmera até o Girospin)
+                const obsDist = camera.getWorldPosition(new THREE.Vector3()).distanceTo(girospinGroup.position);
+                state.rjs.dist = obsDist;
+                
+                // Cálculo do Sinal/Campo (Inverso da distância)
+                const signal = Math.min(100, Math.max(5, Math.round((1 / Math.pow(obsDist / 3, 2)) * 100)));
+                state.rjs.signal = signal;
+
+                // Atualiza UI Técnica
+                const currentDeg = (THREE.MathUtils.radToDeg(girospinGroup.rotation.y) % 360 + 360) % 360;
+                document.getElementById('rjs-deg').innerText = currentDeg.toFixed(1).padStart(5, '0') + '°';
+                document.getElementById('rjs-dist').innerText = obsDist.toFixed(1) + 'm';
+                document.getElementById('rjs-signal').innerText = signal + '%';
+            }
+
+            // 4. Pilotagem do DRONE FPV
+            if (state.mode === 'DRONE') {
+                const droneSpeed = 3.0 * delta;
+                if (state.keys['KeyW']) droneGroup.translateZ(-droneSpeed);
+                if (state.keys['KeyS']) droneGroup.translateZ(droneSpeed);
+                if (state.keys['KeyA']) droneGroup.rotation.y += 0.03;
+                if (state.keys['KeyD']) droneGroup.rotation.y -= 0.03;
+
+                // Mantém o drone voando na altura do peito/teto
+                droneGroup.position.y = 2.2;
+            }
+        }
+
+        // --- RENDERIZAÇÃO DA CENA ---
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+
+            update(delta);
+
+            // Seleção de Câmera Ativa
+            const activeCam = (state.mode === 'DRONE') ? droneGroup.userData.cam : camera;
+            renderer.render(scene, activeCam);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

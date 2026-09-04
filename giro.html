@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>LABRIOLAG — RJS :: PICAPE + GIROSPIN V0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030303;
+    --panel-bg: rgba(12, 12, 10, 0.88);
+    --border: rgba(255, 255, 255, 0.08);
+    --amber: #d99a32;
+    --amber-bright: #f1c66a;
+    --amber-glow: rgba(241, 198, 106, 0.3);
+    --cyan: #4cc9f0;
+    --white: #fffef2;
+    --muted: #6e6e66;
+  }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+  html,body{ margin:0; height:100%; background:var(--bg); overscroll-behavior:none; }
+  body{ color:var(--white); font-family:'JetBrains Mono',monospace; height:100vh; height:100dvh; position:relative; overflow:hidden; }
+
+  #app{ position:relative; width:100%; height:100%; overflow:hidden; background: radial-gradient(circle at 50% 45%, #181814 0%, #080807 60%, #020202 100%); }
+
+  /* PICAPE: PALCO / CAMPO 3D */
+  #stage{ position:absolute; inset:0; overflow:hidden; }
+  #grid{ 
+    position:absolute; inset:-40%; opacity:.15; 
+    background-image: linear-gradient(rgba(241,198,106,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(241,198,106,.15) 1px, transparent 1px); 
+    background-size:40px 40px; transform: perspective(800px) rotateX(65deg) translateY(20%); transform-origin:center bottom;
+    transition: opacity 0.8s ease;
+  }
+  #horizon{ position:absolute; left:0; right:0; top:45%; height:1px; background:linear-gradient(90deg, transparent, var(--amber-bright), transparent); box-shadow:0 0 25px var(--amber); opacity:.5; }
+  
+  #webgl-container { position:absolute; inset:0; z-index:10; cursor:grab; }
+
+  /* TOPBAR / HUD & BRANDING */
+  #topbar{ position:absolute; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:flex-start; z-index:20; pointer-events:none; }
+  .brand{ display:flex; flex-direction:column; gap:2px; }
+  .lab{ font-size:9px; letter-spacing:4px; color:var(--muted); }
+  .logo{ display:flex; align-items:center; gap:4px; }
+  .pi{ font-family:'Times New Roman', serif; font-size:32px; font-style:italic; line-height:.8; color:var(--amber-bright); text-shadow:0 0 14px var(--amber); animation: piPulse 4s ease-in-out infinite; }
+  .kp{ font-size:20px; font-weight:800; letter-spacing:2px; color:var(--white); }
+  .subtitle{ font-size:8px; letter-spacing:3px; color:var(--muted); margin-top:2px; }
+
+  .readout{ pointer-events:auto; text-align:right; background:var(--panel-bg); padding:10px 14px; border-radius:10px; border:1px solid var(--border); backdrop-filter:blur(10px); }
+  .readout-label{ font-size:8px; letter-spacing:2px; color:var(--muted); }
+  #facetText{ margin-top:2px; font-size:10px; color:var(--amber-bright); font-weight:700; letter-spacing:1px; }
+  #degreeReadout{ font-size:20px; font-weight:800; color:var(--white); text-shadow:0 0 12px var(--amber-glow); }
+
+  @keyframes piPulse {
+    0%, 100% { text-shadow: 0 0 8px rgba(217,154,50,0.4); transform: scale(1); }
+    50% { text-shadow: 0 0 20px rgba(241,198,106,0.9); transform: scale(1.03); }
+  }
+
+  /* PAINEL CENTRAL DE ACONTECIMENTO / LOG RJS */
+  #rjsLogPanel {
+    position: absolute; top: 80px; left: 16px; width: 220px;
+    background: var(--panel-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px; z-index: 20; backdrop-filter: blur(10px); font-size: 8px;
+  }
+  .log-title { color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .log-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+  .log-key { color: var(--muted); }
+  .log-val { color: var(--amber-bright); font-weight: 700; }
+  #logEvent { color: var(--cyan); margin-top: 4px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* BARRA DE CONTROLE DA PICAPE (INTERAÇÃO & OBSERVADOR) */
+  #controlsOverlay {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    z-index: 30; width: 90%; max-width: 440px;
+  }
+
+  .hud-bar {
+    display: flex; gap: 4px; background: var(--panel-bg); padding: 4px 6px;
+    border-radius: 30px; border: 1px solid var(--border); backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; justify-content: center;
+  }
+
+  .hud-btn {
+    background: transparent; border: none; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+    padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: all 0.2s ease;
+    letter-spacing: 1px; flex: 1; text-align: center;
+  }
+  .hud-btn.active {
+    background: var(--amber); color: #000;
+    box-shadow: 0 0 12px var(--amber-glow);
+  }
+
+  /* SLIDER DO OBSERVADOR (DISTÂNCIA DA PICAPE) */
+  .slider-box {
+    display: flex; align-items: center; gap: 8px; width: 100%; background: var(--panel-bg);
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(12px);
+  }
+  .slider-label { font-size: 8px; color: var(--muted); letter-spacing: 1px; white-space: nowrap; }
+  input[type=range] {
+    -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 3px; border-radius: 2px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--amber-bright); cursor: pointer; box-shadow: 0 0 8px var(--amber);
+  }
+
+  @media (max-width: 600px) {
+    #rjsLogPanel { width: 170px; font-size: 7.5px; }
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+  <div id="stage">
+    <div id="grid"></div>
+    <div id="horizon"></div>
+  </div>
+
+  <div id="webgl-container"></div>
+
+  <!-- HUD: TOPBAR -->
+  <div id="topbar">
+    <div class="brand">
+      <div class="lab">LABRIOLAG</div>
+      <div class="logo">
+        <span class="pi">π</span>
+        <span class="kp">KP</span>
+      </div>
+      <div class="subtitle">EXPERIMENTO RJS V0</div>
+    </div>
+    <div class="readout">
+      <div class="readout-label">ORIENTAÇÃO / RUMO</div>
+      <div id="facetText">SETOR N: 0.0°</div>
+      <div id="degreeReadout">000.0°</div>
+    </div>
+  </div>
+
+  <!-- ACONTECIMENTO & LOG DO RJS -->
+  <div id="rjsLogPanel">
+    <div class="log-title">RJS :: LOG DE ESTADO</div>
+    <div class="log-row"><span class="log-key">OBSERVADOR:</span><span id="logObsDist" class="log-val">8.0m</span></div>
+    <div class="log-row"><span class="log-key">SINAL / CAMPO:</span><span id="logSignal" class="log-val">25%</span></div>
+    <div class="log-row"><span class="log-key">RESOLUÇÃO:</span><span id="logReso" class="log-val">N=16</span></div>
+    <div class="log-row"><span class="log-key">DIMENSÃO:</span><span id="logDim" class="log-val">3D VOLUME</span></div>
+    <div class="log-row"><span class="log-key">IDTIME:</span><span id="logTime" class="log-val">00:00:00</span></div>
+    <div id="logEvent">> CAMPO ESTÁVEL</div>
+  </div>
+
+  <!-- CAMADA DE CONTROLE: CONTROLES DA PICAPE -->
+  <div id="controlsOverlay">
+    <!-- SLIDER: DISTÂNCIA DO OBSERVADOR -->
+    <div class="slider-box">
+      <span class="slider-label">DISTÂNCIA OBS:</span>
+      <input type="range" id="obsSlider" min="3.5" max="14" step="0.1" value="8">
+    </div>
+
+    <!-- SELETOR DE RESOLUÇÃO N -->
+    <div class="hud-bar">
+      <button class="hud-btn btn-reso" data-n="4">N=4</button>
+      <button class="hud-btn btn-reso" data-n="8">N=8</button>
+      <button class="hud-btn btn-reso active" data-n="16">N=16</button>
+      <button class="hud-btn btn-reso" data-n="32">N=32</button>
+    </div>
+
+    <!-- SELETOR DIMENSIONAL -->
+    <div class="hud-bar">
+      <button id="btn1D" class="hud-btn">1D</button>
+      <button id="btn2D" class="hud-btn">2D PLANO</button>
+      <button id="btn3D" class="hud-btn active">3D VOLUME</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const container = document.getElementById('webgl-container');
+  const degreeReadout = document.getElementById('degreeReadout');
+  const facetText = document.getElementById('facetText');
+  const grid = document.getElementById('grid');
+
+  // Leituras de Log
+  const logObsDist = document.getElementById('logObsDist');
+  const logSignal = document.getElementById('logSignal');
+  const logReso = document.getElementById('logReso');
+  const logDim = document.getElementById('logDim');
+  const logTime = document.getElementById('logTime');
+  const logEvent = document.getElementById('logEvent');
+
+  // Controles
+  const obsSlider = document.getElementById('obsSlider');
+  const resoBtns = document.querySelectorAll('.btn-reso');
+  const btn1D = document.getElementById('btn1D');
+  const btn2D = document.getElementById('btn2D');
+  const btn3D = document.getElementById('btn3D');
+
+  // 1. PICAPE / CENA THREE.JS
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 8);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  // 2. VISUAL / ILUMINAÇÃO
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+  scene.add(ambientLight);
+
+  const flashLight = new THREE.PointLight(0xf1c66a, 0, 15);
+  flashLight.position.set(0, 0, 4);
+  scene.add(flashLight);
+
+  const topLight = new THREE.DirectionalLight(0xfffef2, 1.5);
+  topLight.position.set(5, 10, 5);
+  scene.add(topLight);
+
+  // 3. GIROSPIN / GEOMETRIA DA ENTIDADE
+  let currentN = 16;
+  let sphereGroup = new THREE.Group();
+  scene.add(sphereGroup);
+
+  let sphereMesh, wireMesh, wireMat;
+
+  function buildGirospin(N) {
+    currentN = N;
+    while(sphereGroup.children.length > 0) { 
+      let obj = sphereGroup.children[0];
+      obj.geometry.dispose();
+      if(obj.material) obj.material.dispose();
+      sphereGroup.remove(obj); 
+    }
+
+    const vSegs = Math.max(4, Math.floor(N / 2));
+    const geometry = new THREE.SphereGeometry(2.2, N, vSegs);
+    
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x141412,
+      metalness: 0.8,
+      roughness: 0.2,
+      flatShading: true
+    });
+
+    sphereMesh = new THREE.Mesh(geometry, material);
+    sphereGroup.add(sphereMesh);
+
+    const wireGeo = new THREE.SphereGeometry(2.21, N, vSegs);
+    wireMat = new THREE.MeshBasicMaterial({
+      color: 0xd99a32,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.25
+    });
+    wireMesh = new THREE.Mesh(wireGeo, wireMat);
+    sphereGroup.add(wireMesh);
+
+    logReso.textContent = `N=${N}`;
+    triggerLog(`RESO ALTERADA: N=${N}`);
+  }
+
+  buildGirospin(16);
+
+  // 4. CAMPO DE POSSIBILIDADES E DADOS DO RJS
+  let modeDim = "3D"; // "1D", "2D", "3D"
+  let targetScaleX = 1.0, targetScaleY = 1.0, targetScaleZ = 1.0;
+  let targetPosY = 0;
+
+  let rotX = 0, rotY = 0;
+  let velX = 0, velY = 0.005;
+  let isDragging = false;
+  let lastMouseX = 0, lastMouseY = 0;
+  let lastSector = 0;
+
+  // Cronômetro IDTime
+  let startTime = Date.now();
+  function updateIDTime() {
+    let elapsed = Math.floor((Date.now() - startTime) / 1000);
+    let hrs = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    let mins = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    let secs = String(elapsed % 60).padStart(2, '0');
+    logTime.textContent = `${hrs}:${mins}:${secs}`;
+  }
+  setInterval(updateIDTime, 1000);
+
+  function triggerLog(msg) {
+    logEvent.textContent = `> ${msg}`;
+  }
+
+  // Eventos do Slider de Distância
+  obsSlider.addEventListener('input', (e) => {
+    const dist = parseFloat(e.target.value);
+    camera.position.z = dist;
+    logObsDist.textContent = `${dist.toFixed(1)}m`;
+    
+    // Cálculo do Sinal do Campo (Inverso do quadrado da distância)
+    const signal = Math.min(100, Math.max(5, Math.round((1 / Math.pow(dist / 4, 2)) * 100)));
+    logSignal.textContent = `${signal}%`;
+    
+    // Intensidade visual proporcional ao campo
+    wireMat.opacity = (signal / 100) * 0.5;
+  });
+
+  // Seletor de Resolução
+  resoBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      resoBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      buildGirospin(parseInt(btn.getAttribute('data-n')));
+    });
+  });
+
+  // Seletor de Dimensão
+  function setDimension(dim) {
+    modeDim = dim;
+    btn1D.classList.remove('active');
+    btn2D.classList.remove('active');
+    btn3D.classList.remove('active');
+
+    if (dim === '1D') {
+      btn1D.classList.add('active');
+      targetScaleX = 1.8; targetScaleY = 0.02; targetScaleZ = 0.02;
+      logDim.textContent = "1D LINHA";
+      grid.style.opacity = "0.02";
+    } else if (dim === '2D') {
+      btn2D.classList.add('active');
+      targetScaleX = 1.0; targetScaleY = 1.0; targetScaleZ = 0.01;
+      logDim.textContent = "2D PLANO";
+      grid.style.opacity = "0.05";
+    } else {
+      btn3D.classList.add('active');
+      targetScaleX = 1.0; targetScaleY = 1.0; targetScaleZ = 1.0;
+      logDim.textContent = "3D VOLUME";
+      grid.style.opacity = "0.15";
+    }
+    triggerLog(`TRANSIÇÃO: MODO ${dim}`);
+  }
+
+  btn1D.addEventListener('click', () => setDimension('1D'));
+  btn2D.addEventListener('click', () => setDimension('2D'));
+  btn3D.addEventListener('click', () => setDimension('3D'));
+
+  // 5. INTERAÇÃO TÁTIL
+  window.addEventListener('pointerdown', e => {
+    if (e.target.closest('#controlsOverlay') || e.target.closest('#rjsLogPanel')) return;
+    isDragging = true;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+  });
+
+  window.addEventListener('pointermove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - lastMouseX;
+    const dy = e.clientY - lastMouseY;
+
+    velY = dx * 0.004;
+    if (modeDim === '3D') velX = dy * 0.004;
+
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+  });
+
+  window.addEventListener('pointerup', () => isDragging = false);
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // 6. LOOP DE ANIMAÇÃO RJS
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.02;
+
+    targetPosY = (modeDim === '3D') ? Math.sin(time) * 0.15 : 0;
+
+    // Interpolador dimensional suave
+    sphereGroup.scale.x += (targetScaleX - sphereGroup.scale.x) * 0.08;
+    sphereGroup.scale.y += (targetScaleY - sphereGroup.scale.y) * 0.08;
+    sphereGroup.scale.z += (targetScaleZ - sphereGroup.scale.z) * 0.08;
+    sphereGroup.position.y += (targetPosY - sphereGroup.position.y) * 0.08;
+
+    if (modeDim !== '3D') {
+      rotX += (0 - rotX) * 0.1;
+      velX = 0;
+    } else {
+      rotX += velX;
+    }
+
+    rotY += velY;
+    velY *= 0.95;
+    velX *= 0.95;
+
+    sphereGroup.rotation.y = rotY;
+    sphereGroup.rotation.x = rotX;
+
+    // Resolução Angular
+    const currentDeg = (THREE.MathUtils.radToDeg(rotY) % 360 + 360) % 360;
+    const stepDeg = 360 / currentN;
+    const sector = Math.floor(currentDeg / stepDeg);
+
+    // Evento de Encontro / Costura (Pulso de troca de faceta)
+    if (sector !== lastSector) {
+      lastSector = sector;
+      flashLight.intensity = 8.0;
+      wireMat.opacity = 0.9;
+      triggerLog(`ENCONTRO: FACETA ${sector + 1}/${currentN}`);
+    }
+
+    flashLight.intensity *= 0.85;
+
+    degreeReadout.textContent = currentDeg.toFixed(1).padStart(5, '0') + "°";
+    facetText.textContent = `SETOR ${sector + 1}/${currentN}: ${(sector * stepDeg).toFixed(1)}°`;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+})();
+</script>
+</body>
+</html>

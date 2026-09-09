@@ -1,0 +1,2289 @@
+# Gramática Zero — Documento de Fundação (v1)
+
+## 1. O que é isto
+
+Não é um alfabeto. É o conjunto de regras geométricas capaz de **gerar** um alfabeto — e, depois dele, qualquer outra categoria simbólica (química, biologia, matéria, arquitetura, espaço...).
+
+A primeira cápsula (26 letras + 10 números = 36 símbolos-base) não é o objetivo. É o teste de estresse da gramática. Se a gramática aguenta gerar 36 símbolos coerentes entre si, ela está pronta para crescer.
+
+---
+
+## 2. As quatro referências — por que elas, especificamente
+
+Não foram escolhidas pela estética. Foram escolhidas porque cada uma **já é um sistema combinatório**, não um estilo visual:
+
+| Referência | O que ela empresta pra gramática |
+|---|---|
+| **Braille** | posição discreta, combinação de pontos, matriz fixa |
+| **Libras** | movimento, direção, gesto, transformação no tempo |
+| **Cosmologia / Big Bang** | origem, expansão, camadas, escala, passagem do tempo |
+| **Música** | ritmo, duração, altura, sequência |
+
+A ideia é literalmente somar as quatro camadas — não escolher uma "linha" visual entre elas.
+
+---
+
+## 3. Esboço da gramática geométrica de base
+
+Isto é um ponto de partida para provocar o designer — não a resposta final. É o "alfabeto geométrico" que deveria gerar os 36 símbolos, e não o contrário.
+
+### 3.1 Primitivas (os únicos elementos que existem)
+
+- **Nó (ponto):** posição ativável. Equivalente ao ponto do Braille.
+- **Conexão (linha):** liga dois nós. Tem direção (equivalente ao vetor de movimento em Libras).
+- **Arco (curva):** uma conexão "com memória de transformação" — usada quando o símbolo está mudando de estado, não parado.
+- **Eixo:** referência de orientação (vertical = escala/tempo cosmológico; horizontal = sequência/ritmo musical).
+
+Todo símbolo é, no fundo, **um subconjunto de nós ativos + uma sequência ordenada de conexões entre eles.**
+
+### 3.2 Matriz de base (o "Braille" da Gramática Zero)
+
+Proposta: matriz de **3 colunas × 4 linhas** (12 posições possíveis por símbolo), em vez das 6 posições do Braille — o suficiente para gerar 36 combinações distintas com folga, mantendo economia visual.
+
+```
+ (0,0) (1,0) (2,0)
+ (0,1) (1,1) (2,1)
+ (0,2) (1,2) (2,2)
+ (0,3) (1,3) (2,3)
+```
+
+Cada símbolo ativa entre 2 e 6 nós dessa matriz. A **posição relativa** dos nós ativos carrega significado estrutural (não é decorativa).
+
+### 3.3 A camada de movimento (Libras)
+
+Cada conexão entre nós não é só "existe/não existe" — tem uma **direção de traçado** e uma **ordem** (primeiro este nó, depois aquele). É essa ordem que, no futuro, vira a animação de "aparecendo/gerando": o símbolo se desenha na ordem em que foi definido, como um gesto.
+
+Isso resolve de graça um dos seus 6 estados: **aparecendo/gerando** = reproduzir a sequência de traçado. **Combinando-se com outro** = duas sequências de traçado se interpolando.
+
+### 3.4 A camada cosmológica (escala/expansão)
+
+Proposta: todo símbolo tem um **nó de origem** (o primeiro ativado na sequência) e os demais nós existem como "expansões" a partir dele, com uma distância crescente. Isso dá uma base literal para os estados **expandindo** e **mudando de estado** — não é metáfora, é a própria estrutura de geração do símbolo rodando para frente ou para trás.
+
+### 3.5 A camada musical (ritmo/duração)
+
+Cada conexão tem uma **duração** associada (não fixa — parametrizável). Isso permite que o mesmo símbolo "soe" mais rápido ou mais lento dependendo do estado emocional/afetivo que a camada de cor vai carregar depois. Ritmo de traçado = parte da identidade do símbolo, não só sua forma final.
+
+### 3.6 Estados como transformações da mesma estrutura
+
+Os 6 estados que você definiu não devem ser 6 desenhos — devem ser **6 formas de rodar a mesma sequência de nós/conexões**:
+
+1. **Parado** — sequência completa, sem animação, todas conexões visíveis.
+2. **Aparecendo/gerando** — sequência de traçado tocada do nó de origem em diante.
+3. **Movimentando-se** — nós deslocam levemente de posição mantendo topologia (conexões relativas preservadas).
+4. **Combinando-se** — sequência de nós de dois símbolos interpolada/mesclada.
+5. **Expandindo** — distância entre nós aumenta a partir do nó de origem.
+6. **Mudando de estado** — sequência de traçado revertida ou reordenada.
+
+Isso é exatamente o espírito impulso→estado→regra→evento do ZED, só que aplicado à camada visual em vez da camada de mundo/entidade.
+
+---
+
+## 4. Cor como gramática própria (não associação pronta)
+
+Cor não representa emoção por convenção ("vermelho = raiva"). Cor deve nascer de **parâmetros do próprio estado do símbolo**, por exemplo (proposta a validar com o designer, não fechada):
+
+- **Matiz (hue):** categoria do símbolo (letra vs número vs, no futuro, entidade/ação).
+- **Saturação:** intensidade do estado no momento (parado = baixa; combinando/expandindo = alta).
+- **Luminosidade:** "idade" do símbolo na sequência de traçado — quão perto está da origem ou da expansão total.
+
+Isso é proposta de estrutura, não de valores. A oficina de cor é uma etapa separada, deliberada, depois que a gramática de forma estiver validada.
+
+---
+
+## 5. SVG como anatomia, não como desenho final
+
+O SVG não é o produto — é a **invocação** da estrutura. Proposta de arquitetura de arquivo (esqueleto, não final):
+
+```svg
+<svg viewBox="0 0 120 160" data-symbol="A" data-state="parado">
+  <g class="gz-nodes">
+    <circle class="gz-node" data-id="n0" data-origin="true" cx="20" cy="20" r="3"/>
+    <circle class="gz-node" data-id="n1" cx="60" cy="20" r="3"/>
+    <circle class="gz-node" data-id="n2" cx="40" cy="80" r="3"/>
+    <circle class="gz-node" data-id="n3" cx="20" cy="140" r="3"/>
+    <circle class="gz-node" data-id="n4" cx="60" cy="140" r="3"/>
+  </g>
+  <g class="gz-connections">
+    <path class="gz-conn" data-from="n0" data-to="n2" data-order="1" data-duration="300" d="M20,20 L40,80"/>
+    <path class="gz-conn" data-from="n1" data-to="n2" data-order="2" data-duration="300" d="M60,20 L40,80"/>
+    <path class="gz-conn" data-from="n2" data-to="n3" data-order="3" data-duration="200" d="M40,80 L20,140"/>
+    <path class="gz-conn" data-from="n2" data-to="n4" data-order="4" data-duration="200" d="M40,80 L60,140"/>
+  </g>
+</svg>
+```
+
+Cada nó e cada conexão carrega metadados (`data-order`, `data-duration`, `data-origin`) que a camada de estado e a camada de cor vão ler depois — via CSS/JS — sem precisar redesenhar nada. **O desenho é sempre o mesmo arquivo; o que muda é o estado que é lido dele.**
+
+---
+
+## 6. Brief para o designer
+
+> Quero que você crie a primeira cápsula visual da Gramática Zero.
+>
+> Não quero uma fonte comum, nem simplesmente ícones. Quero um sistema de símbolos vivos, que possa futuramente representar letras, números, entidades, ações, estados e eventos.
+>
+> A primeira cápsula terá 36 símbolos-base: 26 letras + 10 números.
+>
+> A linguagem visual deve nascer da combinação de quatro referências principais — escolhidas não pela estética, mas porque cada uma já é um sistema combinatório:
+>
+> 1. **Braille** — pontos, posições e combinações.
+> 2. **Libras** — movimento, direção, gesto e transformação.
+> 3. **Cosmologia / Big Bang** — origem, expansão, camadas, escala e passagem do tempo.
+> 4. **Música** — ritmo, duração, altura e sequência.
+>
+> A cor será uma camada perceptiva/afetiva, mas não quero associação pronta tipo "vermelho = raiva". Primeiro vamos criar nossa própria gramática de cores, derivada dos próprios parâmetros do estado do símbolo.
+>
+> Cada símbolo precisa poder existir em diferentes estados: parado; aparecendo/gerando; movimentando-se; combinando-se com outro; expandindo; mudando de estado.
+>
+> O mais importante: não desenhe os 36 símbolos como 36 imagens independentes. Quero descobrir primeiro qual é o alfabeto geométrico que gera todos eles. Pense em pontos, linhas, posições, eixos, movimento e transformação.
+>
+> **Quero que o símbolo tenha uma anatomia, não apenas uma aparência.**
+>
+> Depois que encontrarmos essa gramática visual, os 36 símbolos serão derivados dela. A primeira cápsula é o fundamento — as futuras categorias (química, biologia, matéria, arquitetura, espaço etc.) serão construídas depois, em cima dela.
+>
+> O objetivo agora não é representar o universo inteiro. É criar o pequeno conjunto de regras visuais capaz de representar um universo inteiro no futuro.
+>
+> **Entrega:** antes dos 36 símbolos definitivos, quero 3 ou 4 estudos de linguagem visual — cada um explorando uma combinação diferente de peso das quatro referências. Isso evita cristalizar uma estética cedo demais. O SVG de cada estudo deve já expor a anatomia (nós, conexões, ordem, duração) como dados — não só a forma final.
+
+---
+
+## 7. Próximos passos sugeridos
+
+1. Designer entrega 3-4 estudos de gramática (não símbolos finais).
+2. Vocês escolhem/fundem a gramática vencedora.
+3. Só então: derivação dos 36 símbolos a partir da gramática escolhida.
+4. Oficina separada de cor (depois da forma validada).
+5. Prototipagem dos 6 estados em SVG + CSS/JS, plugado no shell do Zyro.
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gramática Zero — Estudo 01</title>
+<style>
+  :root{
+    --void:#0a0a0e;
+    --panel:#131318;
+    --line:#26262f;
+    --line-soft:#1a1a21;
+    --bone:#e8e5d8;
+    --bone-dim:#8a877c;
+    --ember:#ff6a3d;
+    --ember-dim:#7a3323;
+    --signal-a:#7fb8ff;
+    --signal-b:#ffd166;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--void);color:var(--bone);font-family:var(--sans);}
+  body{padding:0 0 80px;}
+
+  header.top{
+    padding:48px 24px 32px;
+    max-width:760px;
+    margin:0 auto;
+    border-bottom:1px solid var(--line-soft);
+  }
+  header.top h1{
+    font-family:var(--mono);
+    font-size:15px;
+    letter-spacing:0.02em;
+    color:var(--bone-dim);
+    margin:0 0 14px;
+    font-weight:500;
+  }
+  header.top p{
+    font-size:17px;
+    line-height:1.6;
+    color:var(--bone);
+    margin:0 0 10px;
+    max-width:62ch;
+  }
+  header.top p.small{
+    font-size:14px;
+    color:var(--bone-dim);
+  }
+
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  section.estudo{
+    padding:56px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  section.estudo:last-child{border-bottom:none;}
+
+  .estudo-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  .estudo-head h2{
+    font-size:22px;
+    margin:0;
+    font-weight:600;
+  }
+  .estudo-head span.tag{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--bone-dim);
+    border:1px solid var(--line);
+    padding:4px 10px;
+    border-radius:2px;
+    white-space:nowrap;
+  }
+  .estudo-sub{
+    color:var(--bone-dim);
+    font-size:14px;
+    max-width:60ch;
+    line-height:1.5;
+    margin:0 0 28px;
+  }
+
+  .grid-2col{
+    display:grid;
+    grid-template-columns: minmax(280px,420px) 1fr;
+    gap:36px;
+    align-items:start;
+  }
+  @media (max-width:760px){
+    .grid-2col{grid-template-columns:1fr;}
+  }
+
+  .stage{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px;
+  }
+  .stage svg{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:16px 0 20px;
+  }
+  button.state-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--bone-dim);
+    padding:8px 12px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+  }
+  button.state-btn:hover{ border-color:var(--bone-dim); color:var(--bone); }
+  button.state-btn.active{ border-color:var(--ember); color:var(--ember); }
+  button.state-btn:focus-visible{ outline:2px solid var(--signal-a); outline-offset:2px; }
+
+  .anatomy{
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.9;
+    color:var(--bone-dim);
+  }
+  .anatomy dt{ color:var(--bone); display:inline; }
+  .anatomy dt::after{ content:" — "; color:var(--line); }
+  .anatomy dd{ display:inline; margin:0; }
+  .anatomy .row{ margin-bottom:2px; white-space:pre-wrap; }
+
+  /* --- SVG shared node/line language --- */
+  .gz-node{ fill:var(--bone-dim); stroke:none; }
+  .gz-node.origin{ fill:var(--ember); }
+  .gz-node.origin .halo{ fill:none; }
+  .gz-trace{
+    fill:none;
+    stroke:var(--bone);
+    stroke-width:2;
+    stroke-linecap:round;
+    transition: stroke-dashoffset .55s ease, opacity .4s ease, stroke .4s ease;
+  }
+  .gz-trace.b{ stroke:var(--signal-a); }
+  .gz-grid-dot{ fill:var(--line); }
+  .gz-arrow{ fill:var(--bone-dim); }
+  .order-label{
+    font-family:var(--mono);
+    font-size:9px;
+    fill:var(--bone-dim);
+  }
+
+  footer.note{
+    max-width:760px;
+    margin:56px auto 0;
+    padding:0 24px;
+    font-size:13px;
+    color:var(--bone-dim);
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>GRAMÁTICA ZERO — ESTUDO 01 / MÁQUINAS GEOMÉTRICAS</h1>
+  <p>Três hipóteses diferentes de anatomia para o mesmo problema: um símbolo experimental por máquina, não um alfabeto. Cada máquina responde de um jeito diferente às mesmas perguntas — grid, origem, direção, traço, expansão, combinação, mudança de estado.</p>
+  <p class="small">Nenhuma delas é a letra A. São três esqueletos concorrentes. Clique nos estados para ver a estrutura se comportar — a forma parada é a menos importante das seis.</p>
+</header>
+
+<main>
+
+  <!-- ESTUDO 1: MATRIZ -->
+  <section class="estudo" id="e1">
+    <div class="estudo-head">
+      <h2>Estudo A — Matriz</h2>
+      <span class="tag">braille-dominante</span>
+    </div>
+    <p class="estudo-sub">Grid fixo de 12 posições possíveis (3×4). O símbolo é um subconjunto de nós ativados e uma sequência ordenada de conexões entre eles. Mais rígido, mais modular — o mais parecido com uma "fonte".</p>
+
+    <div class="grid-2col">
+      <div class="stage">
+        <svg id="svg-e1" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- grid dots (all 12 possible positions) -->
+          <g id="e1-grid"></g>
+          <!-- connections -->
+          <g id="e1-lines">
+            <path class="gz-trace" data-order="0" data-delay="0"    d="M60,60 L120,120"/>
+            <path class="gz-trace" data-order="1" data-delay="0.28" d="M180,60 L120,120"/>
+            <path class="gz-trace" data-order="2" data-delay="0.56" d="M120,120 L60,240"/>
+            <path class="gz-trace" data-order="3" data-delay="0.56" d="M120,120 L180,240"/>
+          </g>
+          <!-- combine partner (hidden by default) -->
+          <g id="e1-combine" opacity="0">
+            <path class="gz-trace b" data-order="0" data-delay="0"    d="M120,120 L180,180"/>
+            <path class="gz-trace b" data-order="1" data-delay="0.28" d="M180,180 L120,240"/>
+            <circle class="gz-node" cx="180" cy="180" r="5"></circle>
+            <circle class="gz-node" cx="120" cy="240" r="5"></circle>
+          </g>
+          <!-- nodes on top -->
+          <g id="e1-nodes">
+            <circle class="gz-node origin" data-id="n0" cx="60" cy="60" r="6"></circle>
+            <circle class="gz-node" data-id="n1" cx="180" cy="60" r="5"></circle>
+            <circle class="gz-node" data-id="n2" cx="120" cy="120" r="5"></circle>
+            <circle class="gz-node" data-id="n3" cx="60" cy="240" r="5"></circle>
+            <circle class="gz-node" data-id="n4" cx="180" cy="240" r="5"></circle>
+          </g>
+          <!-- direction arrows, one per connection, placed at midpoint -->
+          <g id="e1-arrows"></g>
+        </svg>
+      </div>
+
+      <div>
+        <div class="controls" id="e1-controls">
+          <button class="state-btn" data-state="parado">parado</button>
+          <button class="state-btn" data-state="gerando">aparecendo</button>
+          <button class="state-btn" data-state="movendo">movimentando</button>
+          <button class="state-btn" data-state="combinando">combinando</button>
+          <button class="state-btn" data-state="expandindo">expandindo</button>
+          <button class="state-btn" data-state="mudando">mudando de estado</button>
+        </div>
+        <dl class="anatomy">
+          <div class="row"><dt>grid</dt><dd>3 colunas × 4 linhas, 12 posições possíveis, só algumas ativas</dd></div>
+          <div class="row"><dt>origem</dt><dd>n0 — primeiro nó ativado; sempre o de cor viva</dd></div>
+          <div class="row"><dt>direção</dt><dd>seta no meio de cada conexão aponta do nó anterior pro seguinte</dd></div>
+          <div class="row"><dt>traço</dt><dd>cada conexão tem <span style="color:var(--bone)">data-order</span> — a "aparecendo" desenha nessa ordem, não todas de uma vez</dd></div>
+          <div class="row"><dt>expansão</dt><dd>todo o grupo escala a partir do nó de origem (n0 fica fixo, o resto se afasta)</dd></div>
+          <div class="row"><dt>combinação</dt><dd>um segundo símbolo entra compartilhando o nó n2 — a origem dele não é dele, é emprestada</dd></div>
+          <div class="row"><dt>mudança de estado</dt><dd>a ordem de traço se inverte — mesma forma, leitura ao contrário</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTUDO 2: RADIAL -->
+  <section class="estudo" id="e2">
+    <div class="estudo-head">
+      <h2>Estudo B — Radial</h2>
+      <span class="tag">cosmologia-dominante</span>
+    </div>
+    <p class="estudo-sub">Sem grid fixo. Um único ponto de origem no centro; os outros nós nascem de uma função geradora (raio crescente, ângulo crescente) — literalmente uma expansão. O estado "mudando" não redesenha nada: só muda o parâmetro da função.</p>
+
+    <div class="grid-2col">
+      <div class="stage">
+        <svg id="svg-e2" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+          <circle id="e2-halo" cx="150" cy="150" r="22" fill="var(--ember)" opacity="0.15"></circle>
+          <g id="e2-arcs"></g>
+          <g id="e2-nodes"></g>
+          <g id="e2-combine-arcs" opacity="0"></g>
+          <g id="e2-combine-nodes" opacity="0"></g>
+        </svg>
+      </div>
+
+      <div>
+        <div class="controls" id="e2-controls">
+          <button class="state-btn" data-state="parado">parado</button>
+          <button class="state-btn" data-state="gerando">aparecendo</button>
+          <button class="state-btn" data-state="movendo">movimentando</button>
+          <button class="state-btn" data-state="combinando">combinando</button>
+          <button class="state-btn" data-state="expandindo">expandindo</button>
+          <button class="state-btn" data-state="mudando">mudando de estado</button>
+        </div>
+        <dl class="anatomy">
+          <div class="row"><dt>grid</dt><dd>nenhum — coordenadas polares (raio, ângulo) a partir de um único centro</dd></div>
+          <div class="row"><dt>origem</dt><dd>o próprio centro — o "big bang" do símbolo, sempre ember, sempre pulsando</dd></div>
+          <div class="row"><dt>direção</dt><dd>arcos encurvam no sentido do ângulo crescente — a curva É a direção</dd></div>
+          <div class="row"><dt>traço</dt><dd>desenha do raio menor pro maior — a expansão é o próprio traçado</dd></div>
+          <div class="row"><dt>expansão</dt><dd>aumenta o incremento de raio entre nós — universo "esticando"</dd></div>
+          <div class="row"><dt>combinação</dt><dd>dois espirais nascem do mesmo centro, ângulos opostos — mesma origem, destinos diferentes</dd></div>
+          <div class="row"><dt>mudança de estado</dt><dd>muda o ângulo de incremento entre nós — recalcula a forma inteira a partir de um parâmetro</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTUDO 3: GESTUAL -->
+  <section class="estudo" id="e3">
+    <div class="estudo-head">
+      <h2>Estudo C — Gestual</h2>
+      <span class="tag">libras/música-dominante</span>
+    </div>
+    <p class="estudo-sub">Sem nós discretos: um traço contínuo, como um gesto de mão. A "anatomia" aqui não são pontos — são âncoras de curva e um perfil de velocidade (rápido-devagar-rápido, como uma frase musical).</p>
+
+    <div class="grid-2col">
+      <div class="stage">
+        <svg id="svg-e3" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+          <g id="e3-group">
+            <path id="e3-path" class="gz-trace" d="M60,240 C60,90 240,90 240,240"/>
+            <circle class="gz-node origin" cx="60" cy="240" r="6"></circle>
+            <circle id="e3-marker" cx="60" cy="240" r="4" fill="var(--signal-a)"></circle>
+          </g>
+          <g id="e3-combine" opacity="0">
+            <path id="e3-path-b" class="gz-trace b" d="M240,240 C240,90 60,90 60,240"/>
+          </g>
+        </svg>
+      </div>
+
+      <div>
+        <div class="controls" id="e3-controls">
+          <button class="state-btn" data-state="parado">parado</button>
+          <button class="state-btn" data-state="gerando">aparecendo</button>
+          <button class="state-btn" data-state="movendo">movimentando</button>
+          <button class="state-btn" data-state="combinando">combinando</button>
+          <button class="state-btn" data-state="expandindo">expandindo</button>
+          <button class="state-btn" data-state="mudando">mudando de estado</button>
+        </div>
+        <dl class="anatomy">
+          <div class="row"><dt>grid</dt><dd>nenhum — só duas âncoras (início/fim) e duas alças de curva</dd></div>
+          <div class="row"><dt>origem</dt><dd>âncora inicial do gesto — de onde a "mão" começa a se mover</dd></div>
+          <div class="row"><dt>direção</dt><dd>o próprio sentido do traçado; um marcador percorre o caminho pra deixar isso visível</dd></div>
+          <div class="row"><dt>traço</dt><dd>dashoffset animado — o gesto se desenha como se fosse feito ao vivo, não aparece pronto</dd></div>
+          <div class="row"><dt>expansão</dt><dd>a curva inteira escala a partir da âncora de origem — gesto "mais enfático"</dd></div>
+          <div class="row"><dt>combinação</dt><dd>um segundo gesto nasce da âncora final do primeiro e volta — dois traços viram um laço</dd></div>
+          <div class="row"><dt>mudança de estado</dt><dd>o marcador percorre o caminho ao contrário — mesmo gesto, sentido oposto muda o que ele "diz"</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="note">
+  Isto ainda não é o alfabeto. É a hipótese de esqueleto que poderia gerar um. Nenhuma das três máquinas está pronta pra virar 36 símbolos ainda — cada uma tem um problema diferente pra resolver antes disso (a Matriz é rígida demais pra gestos fluidos; a Radial não segura bem formas angulares; a Gestual não tem noção de posição discreta, que a gente vai precisar pra números). O próximo passo não é escolher uma — é ver se dá pra fundir as três em uma única regra.
+</footer>
+
+<script>
+(function(){
+  // ---------- helpers ----------
+  function initTrace(root){
+    root.querySelectorAll('.gz-trace').forEach(function(p){
+      var len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      p.dataset.len = len;
+      if(p.dataset.delay){ p.style.transitionDelay = p.dataset.delay + 's'; }
+    });
+  }
+  function drawAll(root, offsetZero){
+    root.querySelectorAll('.gz-trace').forEach(function(p){
+      p.style.strokeDashoffset = offsetZero ? 0 : p.dataset.len;
+    });
+  }
+  function setActiveButton(controls, state){
+    controls.querySelectorAll('.state-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.state === state);
+    });
+  }
+
+  // ============ ESTUDO 1: MATRIZ ============
+  (function(){
+    var svg = document.getElementById('svg-e1');
+    var gridG = document.getElementById('e1-grid');
+    var linesG = document.getElementById('e1-lines');
+    var combineG = document.getElementById('e1-combine');
+    var arrowsG = document.getElementById('e1-arrows');
+    var controls = document.getElementById('e1-controls');
+    var cols = [60,120,180], rows = [60,120,180,240];
+
+    // draw full 12-dot ghost grid
+    rows.forEach(function(y){
+      cols.forEach(function(x){
+        var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',2.4);
+        c.setAttribute('class','gz-grid-dot');
+        gridG.appendChild(c);
+      });
+    });
+
+    // direction arrows at midpoints of e1-lines
+    linesG.querySelectorAll('path').forEach(function(p){
+      var len = p.getTotalLength();
+      var mid = p.getPointAtLength(len/2);
+      var a = p.getPointAtLength(len/2 - 6);
+      var b = p.getPointAtLength(len/2 + 6);
+      var angle = Math.atan2(b.y-a.y, b.x-a.x) * 180/Math.PI;
+      var tri = document.createElementNS('http://www.w3.org/2000/svg','path');
+      tri.setAttribute('d','M-4,-3 L5,0 L-4,3 Z');
+      tri.setAttribute('class','gz-arrow');
+      tri.setAttribute('transform','translate('+mid.x+','+mid.y+') rotate('+angle+')');
+      arrowsG.appendChild(tri);
+    });
+
+    initTrace(linesG);
+    initTrace(combineG);
+    drawAll(linesG, true); // parado = fully drawn by default
+
+    var moving = false, expanded = false;
+
+    function apply(state){
+      setActiveButton(controls, state);
+      // reset transient visuals
+      combineG.setAttribute('opacity','0');
+      svg.style.transition = 'transform .6s ease';
+      document.getElementById('e1-nodes').style.transition = 'transform .6s ease';
+      linesG.style.transition = 'transform .6s ease';
+
+      if(state === 'parado'){
+        drawAll(linesG, true);
+        document.getElementById('e1-nodes').style.transform = '';
+        linesG.style.transform = '';
+        expanded = false;
+      }
+      if(state === 'gerando'){
+        drawAll(linesG, false);
+        void linesG.offsetWidth; // force reflow
+        setTimeout(function(){ drawAll(linesG, true); }, 30);
+      }
+      if(state === 'movendo'){
+        drawAll(linesG, true);
+        var nodes = document.getElementById('e1-nodes');
+        nodes.style.transition = 'none';
+        // toggled small oscillation via CSS animation class
+        nodes.classList.add('jitter');
+        linesG.classList.add('jitter');
+      } else {
+        document.getElementById('e1-nodes').classList.remove('jitter');
+        linesG.classList.remove('jitter');
+      }
+      if(state === 'combinando'){
+        drawAll(linesG, true);
+        combineG.setAttribute('opacity','1');
+        drawAll(combineG, false);
+        setTimeout(function(){ drawAll(combineG, true); }, 30);
+      }
+      if(state === 'expandindo'){
+        drawAll(linesG, true);
+        var scale = expanded ? 1 : 1.35;
+        expanded = !expanded;
+        var t = 'translate(60px,60px) scale('+scale+') translate(-60px,-60px)';
+        document.getElementById('e1-nodes').style.transform = t;
+        linesG.style.transform = t;
+      }
+      if(state === 'mudando'){
+        drawAll(linesG, true);
+        // reverse the trace: redraw quickly from opposite end by flipping delays
+        linesG.querySelectorAll('path').forEach(function(p){
+          var d = parseFloat(p.dataset.delay);
+          p.style.transitionDelay = (0.84 - d) + 's';
+        });
+        drawAll(linesG, false);
+        void linesG.offsetWidth;
+        setTimeout(function(){ drawAll(linesG, true); }, 30);
+      } else {
+        linesG.querySelectorAll('path').forEach(function(p){
+          p.style.transitionDelay = p.dataset.delay + 's';
+        });
+      }
+    }
+    controls.addEventListener('click', function(e){
+      var btn = e.target.closest('.state-btn');
+      if(!btn) return;
+      apply(btn.dataset.state);
+    });
+    setActiveButton(controls,'parado');
+  })();
+
+  // ============ ESTUDO 2: RADIAL ============
+  (function(){
+    var arcsG = document.getElementById('e2-arcs');
+    var nodesG = document.getElementById('e2-nodes');
+    var combineArcsG = document.getElementById('e2-combine-arcs');
+    var combineNodesG = document.getElementById('e2-combine-nodes');
+    var halo = document.getElementById('e2-halo');
+    var controls = document.getElementById('e2-controls');
+    var cx=150, cy=150;
+    var N = 6;
+
+    function genPoints(angleStep, radiusStep, angleOffset){
+      var pts = [{x:cx,y:cy}];
+      var a = angleOffset || 0;
+      var r = 0;
+      for(var i=1;i<N;i++){
+        r += radiusStep;
+        a += angleStep;
+        pts.push({x: cx + r*Math.cos(a*Math.PI/180), y: cy + r*Math.sin(a*Math.PI/180)});
+      }
+      return pts;
+    }
+
+    function render(arcsGroup, nodesGroup, pts, cls){
+      arcsGroup.innerHTML = '';
+      nodesGroup.innerHTML = '';
+      for(var i=0;i<pts.length;i++){
+        var n = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        n.setAttribute('cx', pts[i].x); n.setAttribute('cy', pts[i].y);
+        n.setAttribute('r', i===0 ? 6 : 4.5);
+        n.setAttribute('class', 'gz-node' + (i===0?' origin':''));
+        n.style.transition = 'cx .6s ease, cy .6s ease';
+        nodesGroup.appendChild(n);
+        if(i>0){
+          var p0 = pts[i-1], p1 = pts[i];
+          var mx = (p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
+          // bow perpendicular to the segment, in direction of increasing angle
+          var dx = p1.x-p0.x, dy = p1.y-p0.y;
+          var nx = -dy, ny = dx;
+          var len = Math.sqrt(nx*nx+ny*ny) || 1;
+          var bow = 10;
+          var cxq = mx + (nx/len)*bow, cyq = my + (ny/len)*bow;
+          var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+          path.setAttribute('d','M'+p0.x+','+p0.y+' Q'+cxq+','+cyq+' '+p1.x+','+p1.y);
+          path.setAttribute('class','gz-trace' + (cls?(' '+cls):''));
+          path.dataset.delay = (i*0.18).toFixed(2);
+          arcsGroup.appendChild(path);
+        }
+      }
+    }
+
+    var angleStep = 46, radiusStep = 20;
+    var pts = genPoints(angleStep, radiusStep, -90);
+    render(arcsG, nodesG, pts);
+    initTrace(arcsG);
+    drawAll(arcsG, true);
+
+    var expanded = false, altAngle = false;
+
+    function redraw(newAngle, newRadius, animateTrace){
+      var newPts = genPoints(newAngle, newRadius, -90);
+      // move existing nodes/paths smoothly by updating cx/cy and d (no full innerHTML swap, so CSS transition applies)
+      var nodeEls = nodesG.querySelectorAll('circle');
+      nodeEls.forEach(function(el,i){
+        el.setAttribute('cx', newPts[i].x);
+        el.setAttribute('cy', newPts[i].y);
+      });
+      var pathEls = arcsG.querySelectorAll('path');
+      pathEls.forEach(function(el,i){
+        var p0 = newPts[i], p1 = newPts[i+1];
+        var mx=(p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
+        var dx=p1.x-p0.x, dy=p1.y-p0.y;
+        var nx=-dy, ny=dx, len=Math.sqrt(nx*nx+ny*ny)||1, bow=10;
+        var cxq=mx+(nx/len)*bow, cyq=my+(ny/len)*bow;
+        el.setAttribute('d','M'+p0.x+','+p0.y+' Q'+cxq+','+cyq+' '+p1.x+','+p1.y);
+      });
+      pts = newPts;
+      if(animateTrace){
+        initTrace(arcsG);
+        drawAll(arcsG, false);
+        setTimeout(function(){ drawAll(arcsG,true); }, 30);
+      }
+    }
+
+    function apply(state){
+      setActiveButton(controls, state);
+      combineArcsG.setAttribute('opacity','0');
+      combineNodesG.setAttribute('opacity','0');
+      halo.style.animation = '';
+      nodesG.classList.remove('jitter');
+
+      if(state === 'parado'){
+        redraw(46, 20, false);
+        initTrace(arcsG); drawAll(arcsG, true);
+        expanded=false; altAngle=false;
+      }
+      if(state === 'gerando'){
+        initTrace(arcsG);
+        drawAll(arcsG, false);
+        void arcsG.offsetWidth;
+        setTimeout(function(){ drawAll(arcsG, true); }, 30);
+      }
+      if(state === 'movendo'){
+        nodesG.classList.add('jitter');
+      }
+      if(state === 'combinando'){
+        var pts2 = genPoints(46, 20, 90);
+        render(combineArcsG, combineNodesG, pts2, 'b');
+        combineArcsG.setAttribute('opacity','1');
+        combineNodesG.setAttribute('opacity','1');
+        initTrace(combineArcsG);
+        drawAll(combineArcsG,false);
+        setTimeout(function(){ drawAll(combineArcsG,true); },30);
+      }
+      if(state === 'expandindo'){
+        expanded = !expanded;
+        redraw(altAngle?60:46, expanded?32:20, false);
+      }
+      if(state === 'mudando'){
+        altAngle = !altAngle;
+        redraw(altAngle?60:46, expanded?32:20, true);
+      }
+      halo.style.animation = 'pulse 1.8s ease-in-out infinite';
+    }
+    controls.addEventListener('click', function(e){
+      var btn = e.target.closest('.state-btn');
+      if(!btn) return;
+      apply(btn.dataset.state);
+    });
+    halo.style.animation = 'pulse 1.8s ease-in-out infinite';
+    setActiveButton(controls,'parado');
+  })();
+
+  // ============ ESTUDO 3: GESTUAL ============
+  (function(){
+    var path = document.getElementById('e3-path');
+    var pathB = document.getElementById('e3-path-b');
+    var marker = document.getElementById('e3-marker');
+    var group = document.getElementById('e3-group');
+    var combine = document.getElementById('e3-combine');
+    var controls = document.getElementById('e3-controls');
+
+    initTrace(group);
+    initTrace(combine);
+    drawAll(group, true);
+
+    var expanded = false, reversed = false, rafId = null;
+
+    function animateMarker(reverse){
+      var len = path.getTotalLength();
+      var start = null;
+      var dur = 1400;
+      cancelAnimationFrame(rafId);
+      function step(ts){
+        if(!start) start = ts;
+        var t = Math.min(1, (ts-start)/dur);
+        var eased = t<0.5 ? 2*t*t : -1+(4-2*t)*t; // ease-in-out
+        var d = reverse ? (1-eased)*len : eased*len;
+        var pt = path.getPointAtLength(d);
+        marker.setAttribute('cx', pt.x);
+        marker.setAttribute('cy', pt.y);
+        if(t<1) rafId = requestAnimationFrame(step);
+      }
+      rafId = requestAnimationFrame(step);
+    }
+
+    function apply(state){
+      setActiveButton(controls, state);
+      combine.setAttribute('opacity','0');
+      group.style.transform = expanded ? group.style.transform : '';
+      group.classList.remove('jitter');
+
+      if(state==='parado'){
+        drawAll(group, true);
+        group.style.transform=''; expanded=false;
+        marker.setAttribute('cx',60); marker.setAttribute('cy',240);
+      }
+      if(state==='gerando'){
+        drawAll(group, false);
+        void group.offsetWidth;
+        setTimeout(function(){ drawAll(group, true); }, 30);
+        animateMarker(false);
+      }
+      if(state==='movendo'){
+        group.classList.add('jitter');
+      }
+      if(state==='combinando'){
+        combine.setAttribute('opacity','1');
+        drawAll(combine, false);
+        setTimeout(function(){ drawAll(combine, true); }, 30);
+      }
+      if(state==='expandindo'){
+        expanded = !expanded;
+        group.style.transition = 'transform .6s ease';
+        group.style.transform = expanded
+          ? 'translate(60px,240px) scale(1.3) translate(-60px,-240px)'
+          : '';
+      }
+      if(state==='mudando'){
+        reversed = !reversed;
+        animateMarker(reversed);
+      }
+    }
+    controls.addEventListener('click', function(e){
+      var btn = e.target.closest('.state-btn');
+      if(!btn) return;
+      apply(btn.dataset.state);
+    });
+    setActiveButton(controls,'parado');
+  })();
+
+})();
+</script>
+
+<style>
+  @keyframes pulse{
+    0%,100%{ opacity:0.12; r:20; }
+    50%{ opacity:0.32; r:28; }
+  }
+  .jitter{
+    animation: jitter 1.1s ease-in-out infinite;
+  }
+  @keyframes jitter{
+    0%,100%{ transform:translate(0,0); }
+    25%{ transform:translate(1.5px,-1.5px); }
+    50%{ transform:translate(-1.5px,1px); }
+    75%{ transform:translate(1px,1.5px); }
+  }
+</style>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gramática Zero — Estudo 04 / Fusão</title>
+<style>
+  :root{
+    --void:#0a0a0e;
+    --panel:#131318;
+    --line:#26262f;
+    --line-soft:#1a1a21;
+    --bone:#e8e5d8;
+    --bone-dim:#8a877c;
+    --ember:#ff6a3d;
+    --signal-a:#7fb8ff;
+    --signal-b:#ffd166;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--void);color:var(--bone);font-family:var(--sans);}
+  body{padding:0 0 80px;}
+
+  header.top{
+    padding:48px 24px 28px;
+    max-width:760px;
+    margin:0 auto;
+    border-bottom:1px solid var(--line-soft);
+  }
+  header.top h1{
+    font-family:var(--mono);
+    font-size:15px;
+    color:var(--bone-dim);
+    margin:0 0 14px;
+    font-weight:500;
+  }
+  header.top p{ font-size:17px; line-height:1.6; margin:0 0 10px; max-width:64ch; }
+  header.top p.small{ font-size:14px; color:var(--bone-dim); }
+  header.top p.question{
+    font-size:19px;
+    color:var(--ember);
+    font-style:italic;
+    margin:18px 0 0;
+  }
+
+  main{ max-width:1180px; margin:0 auto; padding:40px 24px 0; }
+
+  .grid-2col{
+    display:grid;
+    grid-template-columns: minmax(320px,540px) 1fr;
+    gap:40px;
+    align-items:start;
+  }
+  @media (max-width:820px){ .grid-2col{ grid-template-columns:1fr; } }
+
+  .stage{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:18px;
+  }
+  .stage svg{ display:block; width:100%; height:auto; }
+
+  .slider-block{
+    margin-top:18px;
+    padding:16px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    background:var(--panel);
+  }
+  .slider-block label{
+    display:flex;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--bone-dim);
+    margin-bottom:10px;
+  }
+  .slider-block label span.val{ color:var(--ember); }
+  input[type=range]{
+    width:100%;
+    accent-color: var(--ember);
+    background:transparent;
+  }
+  .slider-ends{
+    display:flex;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--bone-dim);
+    margin-top:6px;
+    letter-spacing:0.02em;
+  }
+
+  .controls{ display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 20px; }
+  button.state-btn{
+    font-family:var(--mono);
+    font-size:12px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--bone-dim);
+    padding:8px 12px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+  }
+  button.state-btn:hover{ border-color:var(--bone-dim); color:var(--bone); }
+  button.state-btn.active{ border-color:var(--ember); color:var(--ember); }
+  button.state-btn:focus-visible{ outline:2px solid var(--signal-a); outline-offset:2px; }
+
+  .anatomy{ font-family:var(--mono); font-size:12.5px; line-height:1.9; color:var(--bone-dim); }
+  .anatomy dt{ color:var(--bone); display:inline; }
+  .anatomy dt::after{ content:" — "; color:var(--line); }
+  .anatomy dd{ display:inline; margin:0; }
+  .anatomy .row{ margin-bottom:2px; white-space:pre-wrap; }
+
+  .gz-node{ fill:var(--bone-dim); stroke:none; transition: r .35s ease, cx .6s ease, cy .6s ease, opacity .35s ease; }
+  .gz-node.origin{ fill:var(--ember); }
+  .gz-trace{
+    fill:none;
+    stroke:var(--bone);
+    stroke-linecap:round;
+    transition: stroke-dashoffset .5s ease, stroke-width .35s ease, d .6s ease, opacity .4s ease;
+  }
+  .gz-trace.b{ stroke:var(--signal-b); }
+  .gz-marker{ fill:var(--signal-a); }
+
+  footer.note{
+    max-width:760px;
+    margin:48px auto 0;
+    padding:0 24px;
+    font-size:13px;
+    color:var(--bone-dim);
+    line-height:1.6;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:0.14; r:16; }
+    50%{ opacity:0.34; r:23; }
+  }
+  .jitter{ animation: jitter 1.1s ease-in-out infinite; }
+  @keyframes jitter{
+    0%,100%{ transform:translate(0,0); }
+    25%{ transform:translate(1.4px,-1.4px); }
+    50%{ transform:translate(-1.4px,1px); }
+    75%{ transform:translate(1px,1.4px); }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>GRAMÁTICA ZERO — ESTUDO 04 / FUSÃO</h1>
+  <p>Uma máquina só. O ponto discreto da Matriz, a origem-e-expansão da Radial, e o traçado gestual — tentando se comportar como uma única estrutura, não três coladas.</p>
+  <p class="small">Nasce da origem. Os pontos seguintes existem porque foram gerados a partir dela, não porque estão num grid. As conexões entre eles são gesto, não linha — e o gesto tem ritmo: cada trecho leva um tempo diferente pra se desenhar.</p>
+  <p class="question">"O que acontece quando um ponto discreto começa a se comportar como um gesto?"</p>
+</header>
+
+<main>
+  <div class="grid-2col">
+    <div>
+      <div class="stage">
+        <svg id="svg-e4" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
+          <circle id="e4-halo" cx="160" cy="200" r="16" fill="var(--ember)" opacity="0.14"></circle>
+          <g id="e4-combine-paths" opacity="0"></g>
+          <g id="e4-paths"></g>
+          <g id="e4-combine-nodes" opacity="0"></g>
+          <g id="e4-nodes"></g>
+          <circle id="e4-marker" class="gz-marker" r="4" opacity="0"></circle>
+        </svg>
+      </div>
+
+      <div class="slider-block">
+        <label>grau de gesto <span class="val" id="g-val">0.35</span></label>
+        <input type="range" id="g-slider" min="0" max="1" step="0.01" value="0.35">
+        <div class="slider-ends">
+          <span>0 — ponto discreto (Matriz)</span>
+          <span>1 — traço contínuo (Gestual)</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="controls" id="e4-controls">
+        <button class="state-btn" data-state="parado">parado</button>
+        <button class="state-btn" data-state="gerando">aparecendo</button>
+        <button class="state-btn" data-state="movendo">movimentando</button>
+        <button class="state-btn" data-state="combinando">combinando</button>
+        <button class="state-btn" data-state="expandindo">expandindo</button>
+        <button class="state-btn" data-state="mudando">mudando de estado</button>
+      </div>
+      <dl class="anatomy">
+        <div class="row"><dt>unidade</dt><dd>o nó continua sendo a unidade estrutural — mas seu raio agora é função do "grau de gesto", não uma constante</dd></div>
+        <div class="row"><dt>origem</dt><dd>n0 — único ponto que nunca perde a marca de origem, em qualquer grau de gesto</dd></div>
+        <div class="row"><dt>geração</dt><dd>n1, n2, n3 nascem de n0 por raio+ângulo crescentes (função, não grid) — a mesma máquina da Radial</dd></div>
+        <div class="row"><dt>conexão</dt><dd>cada segmento é uma curva (não reta) — o "arco" da Matriz virou gesto</dd></div>
+        <div class="row"><dt>sequência</dt><dd>cada conexão tem ordem e duração próprias — o traço não é uniforme, tem ritmo</dd></div>
+        <div class="row"><dt>chegada</dt><dd>em "aparecendo", cada ponto não surge — ele chega. um marcador percorre a curva e o ponto só existe quando o gesto para nele</dd></div>
+        <div class="row"><dt>expansão</dt><dd>aumenta o incremento de raio da função geradora — a estrutura inteira se afasta da origem mantendo a mesma curvatura</dd></div>
+        <div class="row"><dt>combinação</dt><dd>um segundo gesto nasce do mesmo n0, ângulo espelhado, cor própria</dd></div>
+        <div class="row"><dt>mudança de estado</dt><dd>o incremento de ângulo muda — a forma inteira se recalcula a partir de um único parâmetro, e o sentido do gesto pode inverter</dd></div>
+      </dl>
+    </div>
+  </div>
+</main>
+
+<footer class="note">
+  Resposta provisória: um ponto discreto é um gesto que já chegou e parou. Um gesto é um ponto em trânsito. Não são duas linguagens — são duas fases do mesmo movimento, e o "grau de gesto" acima é literalmente esse eixo de tempo virando um controle visual. Isso muda o que "estado" quer dizer pra gramática inteira: estado não é uma variante do símbolo, é uma posição nesse eixo entre pousar e estar voando.
+</footer>
+
+<script>
+(function(){
+  var svg = document.getElementById('svg-e4');
+  var pathsG = document.getElementById('e4-paths');
+  var nodesG = document.getElementById('e4-nodes');
+  var combinePathsG = document.getElementById('e4-combine-paths');
+  var combineNodesG = document.getElementById('e4-combine-nodes');
+  var halo = document.getElementById('e4-halo');
+  var marker = document.getElementById('e4-marker');
+  var controls = document.getElementById('e4-controls');
+  var slider = document.getElementById('g-slider');
+  var gVal = document.getElementById('g-val');
+
+  var ORIGIN = {x:160, y:200};
+  var N = 4; // n0..n3
+  var durations = [900, 550, 750]; // rhythm per segment, ms
+
+  var params = { angleStep:50, radiusStep:42, offset:-100, angleSign:1 };
+  var g = parseFloat(slider.value); // 0 = ponto, 1 = gesto
+
+  function genPoints(p){
+    var pts = [ {x:ORIGIN.x, y:ORIGIN.y} ];
+    var a = p.offset;
+    var r = 0;
+    for(var i=1;i<N;i++){
+      r += p.radiusStep;
+      a += p.angleStep * p.angleSign;
+      pts.push({
+        x: ORIGIN.x + r*Math.cos(a*Math.PI/180),
+        y: ORIGIN.y + r*Math.sin(a*Math.PI/180)
+      });
+    }
+    return pts;
+  }
+
+  function bowFor(p0,p1,gAmt){
+    var mx=(p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
+    var dx=p1.x-p0.x, dy=p1.y-p0.y;
+    var nx=-dy, ny=dx, len=Math.sqrt(nx*nx+ny*ny)||1;
+    var bow = 6 + gAmt*34; // straight-ish at g=0, deep swoop at g=1
+    return { x: mx+(nx/len)*bow, y: my+(ny/len)*bow };
+  }
+
+  function pathD(p0,p1,gAmt){
+    var c = bowFor(p0,p1,gAmt);
+    return 'M'+p0.x+','+p0.y+' Q'+c.x+','+c.y+' '+p1.x+','+p1.y;
+  }
+
+  var pts = genPoints(params);
+
+  function buildGroup(pathsGroup, nodesGroup, pts, colorClass, gAmt){
+    pathsGroup.innerHTML=''; nodesGroup.innerHTML='';
+    for(var i=0;i<pts.length;i++){
+      var n = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      n.setAttribute('cx',pts[i].x); n.setAttribute('cy',pts[i].y);
+      var baseR = i===0 ? 7 : 5.5;
+      n.setAttribute('r', baseR*(1-gAmt*0.85));
+      n.setAttribute('class','gz-node'+(i===0?' origin':''));
+      n.dataset.baseR = baseR;
+      nodesGroup.appendChild(n);
+      if(i>0){
+        var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d', pathD(pts[i-1],pts[i],gAmt));
+        path.setAttribute('class','gz-trace'+(colorClass?(' '+colorClass):''));
+        path.setAttribute('stroke-width', 2 + gAmt*3.5);
+        path.dataset.p0x=pts[i-1].x; path.dataset.p0y=pts[i-1].y;
+        path.dataset.p1x=pts[i].x; path.dataset.p1y=pts[i].y;
+        pathsGroup.appendChild(path);
+      }
+    }
+  }
+
+  function initTrace(root){
+    root.querySelectorAll('.gz-trace').forEach(function(p){
+      var len=p.getTotalLength();
+      p.style.strokeDasharray=len; p.style.strokeDashoffset=len; p.dataset.len=len;
+    });
+  }
+  function drawAll(root, on){
+    root.querySelectorAll('.gz-trace').forEach(function(p){
+      p.style.strokeDashoffset = on ? 0 : p.dataset.len;
+    });
+  }
+
+  function applyGesture(gAmt){
+    g = gAmt; gVal.textContent = gAmt.toFixed(2);
+    var nodeEls = nodesG.querySelectorAll('circle');
+    nodeEls.forEach(function(n){
+      var baseR = parseFloat(n.dataset.baseR);
+      n.setAttribute('r', baseR*(1-gAmt*0.85));
+    });
+    var pathEls = pathsG.querySelectorAll('path');
+    pathEls.forEach(function(p){
+      var p0={x:parseFloat(p.dataset.p0x),y:parseFloat(p.dataset.p0y)};
+      var p1={x:parseFloat(p.dataset.p1x),y:parseFloat(p.dataset.p1y)};
+      p.setAttribute('d', pathD(p0,p1,gAmt));
+      p.setAttribute('stroke-width', 2+gAmt*3.5);
+      var len=p.getTotalLength();
+      var wasOffset = p.style.strokeDashoffset === '0' || p.style.strokeDashoffset==='0px';
+      p.style.strokeDasharray=len; p.dataset.len=len;
+      p.style.strokeDashoffset = wasOffset ? 0 : len;
+    });
+  }
+
+  buildGroup(pathsG, nodesG, pts, null, g);
+  initTrace(pathsG);
+  drawAll(pathsG, true);
+
+  slider.addEventListener('input', function(){ applyGesture(parseFloat(slider.value)); });
+
+  function setActive(state){
+    controls.querySelectorAll('.state-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.state===state);
+    });
+  }
+
+  var expanded=false, flippedAngle=false, rafToken=null;
+
+  function traverseSequential(pathsGroup, nodesGroup, onSegmentEnd){
+    var pathEls = Array.prototype.slice.call(pathsGroup.querySelectorAll('path'));
+    var nodeEls = Array.prototype.slice.call(nodesGroup.querySelectorAll('circle'));
+    // hide all nodes except origin, and hide all paths, before starting
+    nodeEls.forEach(function(n,i){ if(i>0){ n.style.opacity=0; } });
+    pathEls.forEach(function(p){ p.style.strokeDashoffset = p.dataset.len; });
+    marker.setAttribute('opacity','1');
+    var idx=0;
+    function runSegment(){
+      if(idx>=pathEls.length){ marker.setAttribute('opacity','0'); return; }
+      var p = pathEls[idx];
+      var len = p.getTotalLength();
+      var dur = durations[idx] || 700;
+      var start=null;
+      cancelAnimationFrame(rafToken);
+      function step(ts){
+        if(!start) start=ts;
+        var t=Math.min(1,(ts-start)/dur);
+        var eased = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
+        var d = eased*len;
+        var pt = p.getPointAtLength(d);
+        marker.setAttribute('cx',pt.x); marker.setAttribute('cy',pt.y);
+        p.style.strokeDashoffset = len - d;
+        if(t<1){ rafToken=requestAnimationFrame(step); }
+        else{
+          if(nodeEls[idx+1]){ nodeEls[idx+1].style.opacity=1; }
+          idx++;
+          runSegment();
+        }
+      }
+      rafToken=requestAnimationFrame(step);
+    }
+    runSegment();
+  }
+
+  function apply(state){
+    setActive(state);
+    combinePathsG.setAttribute('opacity','0');
+    combineNodesG.setAttribute('opacity','0');
+    nodesG.classList.remove('jitter');
+    pathsG.classList.remove('jitter');
+
+    if(state==='parado'){
+      buildGroup(pathsG, nodesG, pts, null, g);
+      initTrace(pathsG); drawAll(pathsG, true);
+      marker.setAttribute('opacity','0');
+      expanded=false;
+    }
+    if(state==='gerando'){
+      traverseSequential(pathsG, nodesG);
+    }
+    if(state==='movendo'){
+      nodesG.classList.add('jitter');
+      pathsG.classList.add('jitter');
+    }
+    if(state==='combinando'){
+      var mirroredParams = { angleStep:params.angleStep, radiusStep:params.radiusStep, offset:params.offset, angleSign:-1 };
+      var pts2 = genPoints(mirroredParams);
+      buildGroup(combinePathsG, combineNodesG, pts2, 'b', g);
+      combinePathsG.setAttribute('opacity','1');
+      combineNodesG.setAttribute('opacity','1');
+      initTrace(combinePathsG);
+      drawAll(combinePathsG, false);
+      setTimeout(function(){ drawAll(combinePathsG, true); }, 30);
+    }
+    if(state==='expandindo'){
+      expanded = !expanded;
+      params.radiusStep = expanded ? 62 : 42;
+      pts = genPoints(params);
+      buildGroup(pathsG, nodesG, pts, null, g);
+      initTrace(pathsG); drawAll(pathsG, true);
+    }
+    if(state==='mudando'){
+      flippedAngle = !flippedAngle;
+      params.angleStep = flippedAngle ? 70 : 50;
+      params.angleSign = flippedAngle ? -1 : 1;
+      pts = genPoints(params);
+      buildGroup(pathsG, nodesG, pts, null, g);
+      initTrace(pathsG);
+      drawAll(pathsG, false);
+      setTimeout(function(){ drawAll(pathsG, true); }, 30);
+    }
+  }
+
+  halo.style.animation = 'pulse 1.8s ease-in-out infinite';
+  controls.addEventListener('click', function(e){
+    var btn = e.target.closest('.state-btn');
+    if(!btn) return;
+    apply(btn.dataset.state);
+  });
+  setActive('parado');
+})();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gramática Zero — Estudo 05 / Ausência</title>
+<style>
+  :root{
+    --void:#0a0a0e; --panel:#131318; --line:#26262f; --line-soft:#1a1a21;
+    --bone:#e8e5d8; --bone-dim:#8a877c; --ember:#ff6a3d;
+    --signal-a:#7fb8ff; --signal-b:#ffd166;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--void);color:var(--bone);font-family:var(--sans);}
+  body{padding:0 0 80px;}
+  header.top{ padding:48px 24px 28px; max-width:760px; margin:0 auto; border-bottom:1px solid var(--line-soft); }
+  header.top h1{ font-family:var(--mono); font-size:15px; color:var(--bone-dim); margin:0 0 14px; font-weight:500; }
+  header.top p{ font-size:17px; line-height:1.6; margin:0 0 10px; max-width:64ch; }
+  header.top p.small{ font-size:14px; color:var(--bone-dim); }
+
+  main{ max-width:1180px; margin:0 auto; padding:40px 24px 0; }
+  .grid-2col{ display:grid; grid-template-columns: minmax(360px,600px) 1fr; gap:40px; align-items:start; }
+  @media (max-width:860px){ .grid-2col{ grid-template-columns:1fr; } }
+
+  .stage{ background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:18px; }
+  .stage svg{ display:block; width:100%; height:auto; }
+
+  .controls{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 8px; }
+  button.state-btn{
+    font-family:var(--mono); font-size:12px; background:transparent;
+    border:1px solid var(--line); color:var(--bone-dim); padding:8px 12px;
+    border-radius:2px; cursor:pointer; transition:border-color .15s, color .15s;
+  }
+  button.state-btn:hover{ border-color:var(--bone-dim); color:var(--bone); }
+  button.state-btn.active{ border-color:var(--ember); color:var(--ember); }
+  button.state-btn:focus-visible{ outline:2px solid var(--signal-a); outline-offset:2px; }
+
+  .legend{ margin-top:8px; }
+  .legend-row{
+    display:grid; grid-template-columns:34px 1fr; gap:14px;
+    align-items:start; padding:12px 0; border-bottom:1px solid var(--line-soft);
+  }
+  .legend-row:last-child{ border-bottom:none; }
+  .legend-row svg{ display:block; }
+  .legend-name{ font-family:var(--mono); font-size:13px; color:var(--bone); margin:0 0 3px; }
+  .legend-desc{ font-size:13.5px; color:var(--bone-dim); line-height:1.5; margin:0; }
+
+  footer.note{ max-width:760px; margin:48px auto 0; padding:0 24px; font-size:13px; color:var(--bone-dim); line-height:1.65; }
+  footer.note strong{ color:var(--bone); font-weight:600; }
+
+  .gz-node{ fill:var(--bone-dim); transition: opacity .4s ease, r .4s ease; }
+  .gz-node.origin{ fill:var(--ember); }
+  .gz-node.hollow{ fill:none; stroke:var(--bone-dim); stroke-width:1.6; }
+  .gz-node.horizon-ring{ fill:none; stroke:var(--bone-dim); stroke-width:1.3; opacity:0; }
+  .gz-trace{ fill:none; stroke:var(--bone); stroke-width:2; stroke-linecap:round; transition: stroke-dashoffset .5s ease, opacity .4s ease; }
+  .gz-guide{ stroke:var(--line); stroke-width:1; stroke-dasharray:2 5; opacity:.4; }
+  .veil{ fill:var(--void); opacity:0; transition:opacity .5s ease; }
+  .marker{ fill:var(--signal-a); opacity:0; }
+
+  @keyframes softpulse{ 0%,100%{ opacity:.45; r:6; } 50%{ opacity:.9; r:8; } }
+  @keyframes slowpulse{ 0%,100%{ opacity:.18; } 50%{ opacity:.4; } }
+  .pulse-unknown{ animation: softpulse 2.2s ease-in-out infinite; }
+  .pulse-horizon{ animation: slowpulse 3.4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>GRAMÁTICA ZERO — ESTUDO 05 / O CANDIDATO DA AUSÊNCIA</h1>
+  <p>Não desenhei um buraco negro. Usei a mesma máquina do Estudo 04 — origem, ponto gerado, curva, chegada — e mudei só uma coisa: o que acontece quando a curva chega no lugar onde o ponto deveria nascer.</p>
+  <p class="small">São cinco posições geradas a partir da mesma origem, no mesmo ângulo de leque. Uma delas não tem nada desenhado nela — nem ponto, nem curva. Essa ausência de desenho é a resposta, não uma falha em gerar a imagem.</p>
+</header>
+
+<main>
+  <div class="grid-2col">
+    <div>
+      <div class="stage">
+        <svg id="svg-e5" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="180" cy="270" r="6" class="gz-node origin"></circle>
+          <g id="e5-guides"></g>
+          <g id="e5-paths"></g>
+          <g id="e5-nodes"></g>
+          <circle id="e5-marker" class="marker" r="4"></circle>
+        </svg>
+      </div>
+      <div class="controls" id="e5-controls">
+        <button class="state-btn" data-state="parado">parado</button>
+        <button class="state-btn" data-state="gerando">chegando</button>
+        <button class="state-btn" data-state="expandindo">expandindo</button>
+      </div>
+    </div>
+
+    <div class="legend" id="e5-legend"></div>
+  </div>
+</main>
+
+<footer class="note">
+  <strong>Resposta provisória:</strong> o vazio não é um símbolo novo, é um ajuste no que acontece quando a curva chega no fim do seu percurso. Presença é uma chegada que se resolve num ponto sólido. Desconhecido é uma chegada que nunca para de vibrar. Inacessível é uma chegada que se resolve, mas fica velada. Horizonte — o candidato a "buraco negro" — é uma chegada que se desfaz em espiral antes de terminar, deixando só o contorno de onde ela deveria ter parado. E ausência não é nenhuma dessas coisas: é a posição que a função geradora contemplou e para a qual nenhuma curva foi sequer traçada. Clique em "expandindo" — repare que quatro pontos se afastam da origem e um deles, o da ausência, não tem o que afastar. Isso sugere que o buraco negro é só o primeiro caso — o mais dramático — de uma categoria maior: chegada incompleta. E ausência não é uma chegada de jeito nenhum; é a categoria que fica fora da própria pergunta "chegou ou não chegou".
+</footer>
+
+<script>
+(function(){
+  var pathsG = document.getElementById('e5-paths');
+  var nodesG = document.getElementById('e5-nodes');
+  var guidesG = document.getElementById('e5-guides');
+  var marker = document.getElementById('e5-marker');
+  var controls = document.getElementById('e5-controls');
+  var legend = document.getElementById('e5-legend');
+
+  var ORIGIN = {x:180, y:270};
+  var RADIUS = 175;
+  var angles = [-150,-120,-90,-60,-30];
+  var kinds  = ['presenca','ausencia','desconhecido','inacessivel','horizonte'];
+
+  var LEGEND = {
+    presenca:      { name:'presença',      desc:'a curva chega e se resolve num ponto sólido. informação conhecida, manifestada por completo.' },
+    ausencia:      { name:'ausência',      desc:'a posição existe na sequência gerada, mas nenhuma curva foi traçada até ela. nada foi registrado — não é erro, é silêncio estrutural.' },
+    desconhecido:  { name:'desconhecido',  desc:'a curva chega, mas o ponto nunca se resolve — fica vibrando entre existir e não existir. há uma posição para a informação; o conteúdo não é conhecido.' },
+    inacessivel:   { name:'inacessível',   desc:'a curva chega e o ponto se forma, mas um véu permanece sobre ele. a informação pode existir; não conseguimos observá-la diretamente.' },
+    horizonte:     { name:'horizonte (candidato a "buraco negro")', desc:'a curva não termina — nos últimos instantes ela se enrola sobre si mesma e desaparece antes de virar ponto. o que sobra é só o contorno de onde ela deveria ter parado.' }
+  };
+
+  function genPoint(angleDeg, r){
+    var a = angleDeg*Math.PI/180;
+    return { x: ORIGIN.x + r*Math.cos(a), y: ORIGIN.y + r*Math.sin(a) };
+  }
+
+  function bow(p0,p1){
+    var mx=(p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
+    var dx=p1.x-p0.x, dy=p1.y-p0.y;
+    var nx=-dy, ny=dx, len=Math.sqrt(nx*nx+ny*ny)||1, amt=22;
+    return { x:mx+(nx/len)*amt, y:my+(ny/len)*amt };
+  }
+  function pathD(p0,p1){
+    var c=bow(p0,p1);
+    return 'M'+p0.x+','+p0.y+' Q'+c.x+','+c.y+' '+p1.x+','+p1.y;
+  }
+
+  var items = [];
+
+  function build(radius){
+    pathsG.innerHTML=''; nodesG.innerHTML=''; guidesG.innerHTML='';
+    items = [];
+    for(var i=0;i<5;i++){
+      var kind = kinds[i];
+      var pt = genPoint(angles[i], radius);
+      var item = { kind:kind, pt:pt, idx:i };
+
+      // faint guideline for every slot, including the empty one
+      var guide = document.createElementNS('http://www.w3.org/2000/svg','line');
+      guide.setAttribute('x1',ORIGIN.x); guide.setAttribute('y1',ORIGIN.y);
+      guide.setAttribute('x2',pt.x); guide.setAttribute('y2',pt.y);
+      guide.setAttribute('class','gz-guide');
+      guidesG.appendChild(guide);
+
+      if(kind === 'ausencia'){
+        items.push(item);
+        continue; // nothing else is drawn for this slot — that IS the point
+      }
+
+      var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', pathD(ORIGIN, pt));
+      path.setAttribute('class','gz-trace');
+      pathsG.appendChild(path);
+      item.pathEl = path;
+
+      var node;
+      if(kind === 'presenca'){
+        node = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        node.setAttribute('cx',pt.x); node.setAttribute('cy',pt.y); node.setAttribute('r',6);
+        node.setAttribute('class','gz-node');
+      }
+      if(kind === 'desconhecido'){
+        node = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        node.setAttribute('cx',pt.x); node.setAttribute('cy',pt.y); node.setAttribute('r',6);
+        node.setAttribute('class','gz-node hollow pulse-unknown');
+      }
+      if(kind === 'inacessivel'){
+        node = document.createElementNS('http://www.w3.org/2000/svg','g');
+        var core = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        core.setAttribute('cx',pt.x); core.setAttribute('cy',pt.y); core.setAttribute('r',6);
+        core.setAttribute('class','gz-node'); core.style.opacity=0.55;
+        var veil = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        veil.setAttribute('cx',pt.x); veil.setAttribute('cy',pt.y); veil.setAttribute('r',11);
+        veil.setAttribute('class','veil'); veil.style.opacity=0.72;
+        node.appendChild(core); node.appendChild(veil);
+        item.veilEl = veil;
+      }
+      if(kind === 'horizonte'){
+        node = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        node.setAttribute('cx',pt.x); node.setAttribute('cy',pt.y); node.setAttribute('r',7);
+        node.setAttribute('class','gz-node horizon-ring pulse-horizon');
+        node.style.opacity = 1; // visible at rest, ring only, marks "something happened here"
+      }
+      nodesG.appendChild(node);
+      item.nodeEl = node;
+      items.push(item);
+    }
+  }
+
+  function initTrace(){
+    items.forEach(function(it){
+      if(!it.pathEl) return;
+      var len = it.pathEl.getTotalLength();
+      it.pathEl.dataset.len = len;
+      if(it.kind === 'horizonte'){
+        it.pathEl.style.strokeDasharray = len;
+        it.pathEl.style.strokeDashoffset = len*0.18; // trajectory cut short — never fully arrives
+      } else {
+        it.pathEl.style.strokeDasharray = len;
+        it.pathEl.style.strokeDashoffset = 0;
+      }
+    });
+  }
+
+  function renderStatic(){
+    build(RADIUS);
+    initTrace();
+    marker.style.opacity = 0;
+  }
+
+  function playArrival(){
+    build(RADIUS);
+    items.forEach(function(it){
+      if(!it.pathEl) return;
+      var len = it.pathEl.getTotalLength();
+      it.pathEl.dataset.len = len;
+      it.pathEl.style.strokeDasharray = len;
+      it.pathEl.style.strokeDashoffset = len;
+      if(it.nodeEl){
+        if(it.kind==='inacessivel'){ it.nodeEl.style.opacity=0; }
+        else { it.nodeEl.style.opacity = (it.kind==='horizonte') ? 0 : 1; }
+      }
+      if(it.veilEl){ it.veilEl.style.opacity = 0; }
+    });
+    marker.style.opacity = 1;
+
+    items.forEach(function(it, i){
+      if(it.kind === 'ausencia') return; // nothing travels here
+      setTimeout(function(){ animateArrival(it); }, i*260);
+    });
+  }
+
+  function animateArrival(it){
+    var path = it.pathEl;
+    var full = parseFloat(path.dataset.len);
+    var target = (it.kind === 'horizonte') ? full*0.82 : full;
+    var dur = 800;
+    var start = null;
+    function step(ts){
+      if(!start) start = ts;
+      var t = Math.min(1, (ts-start)/dur);
+      var eased = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
+      var d = eased*target;
+      var pt = path.getPointAtLength(d);
+      marker.setAttribute('cx', pt.x); marker.setAttribute('cy', pt.y);
+      path.style.strokeDashoffset = full-d;
+      if(t<1){ requestAnimationFrame(step); }
+      else { onArrive(it, pt); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function onArrive(it, arrivalPoint){
+    if(it.kind === 'presenca'){
+      marker.style.opacity = 0;
+      it.nodeEl.style.opacity = 1;
+    }
+    if(it.kind === 'desconhecido'){
+      marker.style.opacity = 0;
+      it.nodeEl.style.opacity = 1; // keeps pulsing forever via CSS class
+    }
+    if(it.kind === 'inacessivel'){
+      it.nodeEl.style.opacity = 1;
+      marker.style.opacity = 0;
+      setTimeout(function(){ if(it.veilEl){ it.veilEl.style.opacity = 0.72; } }, 250);
+    }
+    if(it.kind === 'horizonte'){
+      spiralCollapse(it, arrivalPoint);
+    }
+  }
+
+  function spiralCollapse(it, center){
+    var dur = 650, start = null;
+    var r0 = 4, a0 = 0;
+    function step(ts){
+      if(!start) start = ts;
+      var t = Math.min(1, (ts-start)/dur);
+      var r = r0*(1-t)*3;
+      var a = a0 + t*720;
+      var x = center.x + r*Math.cos(a*Math.PI/180);
+      var y = center.y + r*Math.sin(a*Math.PI/180);
+      marker.setAttribute('cx', x); marker.setAttribute('cy', y);
+      marker.style.opacity = 1-t;
+      if(t<1){ requestAnimationFrame(step); }
+      else {
+        marker.style.opacity = 0;
+        it.nodeEl.style.opacity = 1; // the horizon ring remains — the only trace left
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function apply(state){
+    controls.querySelectorAll('.state-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.state===state);
+    });
+    if(state==='parado'){ RADIUS = 175; renderStatic(); }
+    if(state==='gerando'){ playArrival(); }
+    if(state==='expandindo'){
+      RADIUS = RADIUS===175 ? 235 : 175;
+      renderStatic();
+    }
+  }
+
+  // legend
+  Object.keys(LEGEND).forEach(function(k){
+    var row = document.createElement('div');
+    row.className = 'legend-row';
+    var svgWrap = document.createElement('svg');
+    svgWrap.setAttribute('viewBox','0 0 34 34');
+    svgWrap.setAttribute('width','34'); svgWrap.setAttribute('height','34');
+    var inner = '';
+    if(k==='presenca') inner = '<circle cx="17" cy="17" r="7" fill="var(--bone)"/>';
+    if(k==='ausencia') inner = '<circle cx="17" cy="17" r="7" fill="none" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 4"/>';
+    if(k==='desconhecido') inner = '<circle cx="17" cy="17" r="7" fill="none" stroke="var(--bone-dim)" stroke-width="1.6" class="pulse-unknown"/>';
+    if(k==='inacessivel') inner = '<circle cx="17" cy="17" r="7" fill="var(--bone)" opacity="0.5"/><circle cx="17" cy="17" r="11" fill="var(--void)" opacity="0.6"/>';
+    if(k==='horizonte') inner = '<circle cx="17" cy="17" r="8" fill="none" stroke="var(--bone-dim)" stroke-width="1.3" class="pulse-horizon"/>';
+    svgWrap.innerHTML = inner;
+    row.appendChild(svgWrap);
+    var textWrap = document.createElement('div');
+    textWrap.innerHTML = '<p class="legend-name">'+LEGEND[k].name+'</p><p class="legend-desc">'+LEGEND[k].desc+'</p>';
+    row.appendChild(textWrap);
+    legend.appendChild(row);
+  });
+
+  renderStatic();
+  controls.addEventListener('click', function(e){
+    var btn = e.target.closest('.state-btn');
+    if(!btn) return;
+    apply(btn.dataset.state);
+  });
+  controls.querySelector('[data-state="parado"]').classList.add('active');
+})();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gramática Zero — Estudo 06 / Horizonte</title>
+<style>
+  :root{
+    --void:#0a0a0e; --panel:#131318; --line:#26262f; --line-soft:#1a1a21;
+    --bone:#e8e5d8; --bone-dim:#8a877c; --ember:#ff6a3d;
+    --signal-a:#7fb8ff; --signal-b:#ffd166;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--void);color:var(--bone);font-family:var(--sans);}
+  body{padding:0 0 80px;}
+  header.top{ padding:48px 24px 28px; max-width:780px; margin:0 auto; border-bottom:1px solid var(--line-soft); }
+  header.top h1{ font-family:var(--mono); font-size:15px; color:var(--bone-dim); margin:0 0 14px; font-weight:500; }
+  header.top p{ font-size:17px; line-height:1.6; margin:0 0 10px; max-width:66ch; }
+  header.top p.small{ font-size:14px; color:var(--bone-dim); }
+
+  main{ max-width:1180px; margin:0 auto; padding:40px 24px 0; }
+
+  .stage{ background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:20px; }
+  .stage svg{ display:block; width:100%; height:auto; }
+
+  .slider-block{ margin-top:16px; padding:16px; border:1px solid var(--line); border-radius:4px; background:var(--panel); max-width:520px; }
+  .slider-block label{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; color:var(--bone-dim); margin-bottom:10px; }
+  .slider-block label span.val{ color:var(--ember); }
+  input[type=range]{ width:100%; accent-color:var(--ember); }
+  .slider-ends{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--bone-dim); margin-top:6px; }
+
+  .controls{ display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 8px; }
+  button.state-btn{
+    font-family:var(--mono); font-size:12px; background:transparent;
+    border:1px solid var(--line); color:var(--bone-dim); padding:9px 13px;
+    border-radius:2px; cursor:pointer; transition:border-color .15s, color .15s;
+  }
+  button.state-btn:hover{ border-color:var(--bone-dim); color:var(--bone); }
+  button.state-btn.active{ border-color:var(--ember); color:var(--ember); }
+  button.state-btn:focus-visible{ outline:2px solid var(--signal-a); outline-offset:2px; }
+
+  .legend{ margin-top:28px; display:grid; grid-template-columns:1fr 1fr; gap:0 32px; }
+  @media (max-width:760px){ .legend{ grid-template-columns:1fr; } }
+  .legend-row{ padding:11px 0; border-bottom:1px solid var(--line-soft); }
+  .legend-name{ font-family:var(--mono); font-size:12.5px; color:var(--bone); margin:0 0 3px; }
+  .legend-desc{ font-size:13px; color:var(--bone-dim); line-height:1.5; margin:0; }
+
+  footer.note{ max-width:780px; margin:48px auto 0; padding:0 24px; font-size:13px; color:var(--bone-dim); line-height:1.65; }
+  footer.note strong{ color:var(--bone); font-weight:600; }
+
+  .gz-path{ fill:none; stroke:var(--bone); stroke-linecap:round; }
+  .gz-node{ fill:var(--bone-dim); }
+  .gz-node.origin{ fill:var(--ember); }
+  .gz-node.hollow{ fill:none; stroke:var(--bone-dim); stroke-width:1.6; }
+  .marker{ fill:var(--signal-a); opacity:0; }
+  .veil{ fill:var(--void); opacity:0; transition:opacity .5s ease; }
+  .shutter{ fill:var(--void); stroke:var(--bone-dim); stroke-width:1; opacity:0; }
+  .gate-line{ stroke:var(--line); stroke-width:1; stroke-dasharray:3 5; }
+  .gate-label{ font-family:var(--mono); font-size:10px; fill:var(--bone-dim); }
+
+  @keyframes softpulse{ 0%,100%{ opacity:.4; r:6; } 50%{ opacity:.85; r:7.5; } }
+  .pulse-unknown{ animation: softpulse 2s ease-in-out infinite; }
+  @keyframes flicker{
+    0%,100%{ opacity:1; transform:translateX(0); }
+    50%{ opacity:.35; transform:translateX(7px); }
+  }
+  .flicker{ animation: flicker .5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>GRAMÁTICA ZERO — ESTUDO 06 / HORIZONTE</h1>
+  <p>O Estudo 04 chegou numa conclusão: ponto e gesto são duas fases do mesmo movimento. Este estudo continua a pergunta — e se o gesto não chegar? Não são sete ícones. É uma única travessia, e os sete estados são sete jeitos diferentes dela parar de se resolver, em pontos diferentes do caminho.</p>
+  <p class="small">A linha tracejada marca o horizonte. Antes dele, a informação ainda é observável mesmo quando incerta. Depois dele, ela pode continuar existindo — só não aparece mais neste canal.</p>
+</header>
+
+<main>
+  <div class="stage">
+    <svg id="svg-e6" viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg">
+      <line id="e6-gate" class="gate-line" x1="0" y1="0" x2="0" y2="220"></line>
+      <text id="e6-gate-label" class="gate-label" x="0" y="16">horizonte</text>
+      <path id="e6-path" class="gz-path"></path>
+      <circle class="gz-node origin" cx="50" cy="130" r="6"></circle>
+      <g id="e6-terminal"></g>
+      <circle id="e6-marker" class="marker" r="4"></circle>
+    </svg>
+  </div>
+
+  <div class="slider-block">
+    <label>grau de gesto <span class="val" id="g-val">0.40</span></label>
+    <input type="range" id="g-slider" min="0" max="1" step="0.01" value="0.40">
+    <div class="slider-ends"><span>0 — ponto discreto</span><span>1 — traço contínuo</span></div>
+  </div>
+
+  <div class="controls" id="e6-controls">
+    <button class="state-btn" data-state="presente">presente</button>
+    <button class="state-btn" data-state="ausente">ausente</button>
+    <button class="state-btn" data-state="desconhecido">desconhecido</button>
+    <button class="state-btn" data-state="oculto">oculto</button>
+    <button class="state-btn" data-state="inacessivel">inacessível</button>
+    <button class="state-btn" data-state="indeterminado">indeterminado</button>
+    <button class="state-btn" data-state="absorvido">absorvido</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-row"><p class="legend-name">presente</p><p class="legend-desc">a travessia termina bem antes do horizonte e se resolve num ponto sólido. temos a informação.</p></div>
+    <div class="legend-row"><p class="legend-name">ausente</p><p class="legend-desc">a travessia nunca começa. não existe informação registrada — nem trajetória foi traçada.</p></div>
+    <div class="legend-row"><p class="legend-name">desconhecido</p><p class="legend-desc">a travessia para antes do horizonte, numa posição real — mas nunca fecha num ponto. existe uma posição; não sabemos qual é o conteúdo.</p></div>
+    <div class="legend-row"><p class="legend-name">oculto</p><p class="legend-desc">a travessia termina, o ponto se forma — e algo fecha por cima dele de propósito, com uma borda dura. existe, mas foi deliberadamente escondida.</p></div>
+    <div class="legend-row"><p class="legend-name">inacessível</p><p class="legend-desc">a travessia chega perto do horizonte e um véu translúcido cobre o ponto — não por escolha, por limite de alcance.</p></div>
+    <div class="legend-row"><p class="legend-name">indeterminado</p><p class="legend-desc">a travessia chega exatamente no horizonte e não consegue se fixar de um lado nem do outro — o sistema ainda não resolveu.</p></div>
+    <div class="legend-row"><p class="legend-name">absorvido</p><p class="legend-desc">a travessia cruza o horizonte e continua — mas em espiral, até desaparecer. o que sobra é só o contorno de onde ela se foi.</p></div>
+  </div>
+</main>
+
+<footer class="note">
+  <strong>O que isso muda:</strong> o Estudo 04 tinha um eixo — grau de gesto, ponto contra movimento. Este estudo acrescenta o segundo eixo sem transformar isso em mais símbolos: o mesmo ponto, no mesmo gesto, pode parar de se resolver em sete lugares diferentes de uma travessia. "Estado", na Gramática Zero, deixa de ser uma variante desenhada à parte e passa a ser uma <em>posição na travessia</em> — inclusive as posições onde a travessia falha. O "buraco negro" nunca precisou ser um símbolo: ele é só o nome que demos para o que acontece quando essa travessia cruza o horizonte e não volta.
+</footer>
+
+<script>
+(function(){
+  var svg = document.getElementById('svg-e6');
+  var pathEl = document.getElementById('e6-path');
+  var gateLine = document.getElementById('e6-gate');
+  var gateLabel = document.getElementById('e6-gate-label');
+  var terminal = document.getElementById('e6-terminal');
+  var marker = document.getElementById('e6-marker');
+  var controls = document.getElementById('e6-controls');
+  var slider = document.getElementById('g-slider');
+  var gVal = document.getElementById('g-val');
+
+  var ORIGIN = {x:50,y:130}, END = {x:450,y:130};
+  var g = parseFloat(slider.value);
+
+  // length-fraction along the path where each state resolves (or attempts to)
+  var FRACS = {
+    presente: 0.34,
+    desconhecido: 0.46,
+    indeterminado: 0.56,     // sits exactly at the horizon
+    oculto: 0.62,
+    inacessivel: 0.68,
+    absorvido: 0.60          // starts resolving here, then spirals past the horizon
+  };
+  var HORIZON_FRAC = 0.56;
+
+  function bowCtrl(gAmt){
+    var mx=(ORIGIN.x+END.x)/2, my=(ORIGIN.y+END.y)/2;
+    var bow = 10 + gAmt*70;
+    return { x:mx, y: my - bow };
+  }
+
+  function buildPath(){
+    var c = bowCtrl(g);
+    var d = 'M'+ORIGIN.x+','+ORIGIN.y+' Q'+c.x+','+c.y+' '+END.x+','+END.y;
+    pathEl.setAttribute('d', d);
+    pathEl.setAttribute('stroke-width', 2 + g*3);
+    pathEl.style.strokeDasharray = '';
+    pathEl.style.strokeDashoffset = '';
+
+    var len = pathEl.getTotalLength();
+    var horizonPt = pathEl.getPointAtLength(len*HORIZON_FRAC);
+    gateLine.setAttribute('x1', horizonPt.x); gateLine.setAttribute('x2', horizonPt.x);
+    gateLabel.setAttribute('x', horizonPt.x - 30); gateLabel.setAttribute('y', 20);
+    return len;
+  }
+
+  function clearTerminal(){
+    terminal.innerHTML = '';
+    marker.style.opacity = 0;
+    marker.classList.remove('flicker');
+    pathEl.style.opacity = 1;
+  }
+
+  function setActive(state){
+    controls.querySelectorAll('.state-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.state===state);
+    });
+  }
+
+  function runTravel(len, targetFrac, dur, onDone){
+    marker.style.opacity = 1;
+    var start = null;
+    var target = len*targetFrac;
+    function step(ts){
+      if(!start) start = ts;
+      var t = Math.min(1, (ts-start)/dur);
+      var eased = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
+      var pt = pathEl.getPointAtLength(eased*target);
+      marker.setAttribute('cx', pt.x); marker.setAttribute('cy', pt.y);
+      if(t<1){ requestAnimationFrame(step); }
+      else { onDone(pt); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function apply(state){
+    setActive(state);
+    clearTerminal();
+    var len = buildPath();
+
+    if(state === 'presente'){
+      runTravel(len, FRACS.presente, 750, function(pt){
+        marker.style.opacity = 0;
+        var n = mkCircle(pt, 6.5*(1-g*0.6), 'gz-node');
+        terminal.appendChild(n);
+      });
+    }
+
+    if(state === 'ausente'){
+      pathEl.style.opacity = 0.08; // the crossing itself barely exists
+      // nothing travels
+    }
+
+    if(state === 'desconhecido'){
+      runTravel(len, FRACS.desconhecido, 750, function(pt){
+        marker.style.opacity = 0;
+        var n = mkCircle(pt, 6, 'gz-node hollow pulse-unknown');
+        terminal.appendChild(n);
+      });
+    }
+
+    if(state === 'oculto'){
+      runTravel(len, FRACS.oculto, 700, function(pt){
+        marker.style.opacity = 0;
+        var n = mkCircle(pt, 6, 'gz-node');
+        terminal.appendChild(n);
+        setTimeout(function(){
+          var sh = mkCircle(pt, 10, 'shutter');
+          sh.style.opacity = 0.95; // hard, deliberate, opaque
+          terminal.appendChild(sh);
+        }, 200);
+      });
+    }
+
+    if(state === 'inacessivel'){
+      runTravel(len, FRACS.inacessivel, 800, function(pt){
+        marker.style.opacity = 0;
+        var n = mkCircle(pt, 6, 'gz-node');
+        n.style.opacity = 0.5;
+        terminal.appendChild(n);
+        var v = mkCircle(pt, 11, 'veil');
+        terminal.appendChild(v);
+        setTimeout(function(){ v.style.opacity = 0.7; }, 150);
+      });
+    }
+
+    if(state === 'indeterminado'){
+      runTravel(len, FRACS.indeterminado, 650, function(pt){
+        marker.style.opacity = 1;
+        marker.classList.add('flicker');
+      });
+    }
+
+    if(state === 'absorvido'){
+      runTravel(len, FRACS.absorvido, 650, function(pt){
+        spiralCollapse(pt);
+      });
+    }
+  }
+
+  function mkCircle(pt, r, cls){
+    var c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx', pt.x); c.setAttribute('cy', pt.y); c.setAttribute('r', r);
+    c.setAttribute('class', cls);
+    return c;
+  }
+
+  function spiralCollapse(center){
+    var dur = 700, start = null;
+    function step(ts){
+      if(!start) start = ts;
+      var t = Math.min(1,(ts-start)/dur);
+      var r = 4*(1-t)*3.2;
+      var a = t*760;
+      var x = center.x + r*Math.cos(a*Math.PI/180);
+      var y = center.y + r*Math.sin(a*Math.PI/180);
+      marker.setAttribute('cx',x); marker.setAttribute('cy',y);
+      marker.style.opacity = 1-t;
+      if(t<1){ requestAnimationFrame(step); }
+      else{
+        marker.style.opacity = 0;
+        var ring = mkCircle(center, 7, 'gz-node hollow');
+        terminal.appendChild(ring);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  slider.addEventListener('input', function(){
+    g = parseFloat(slider.value);
+    gVal.textContent = g.toFixed(2);
+    var active = controls.querySelector('.state-btn.active');
+    buildPath();
+    if(active){ apply(active.dataset.state); }
+  });
+
+  buildPath();
+  controls.addEventListener('click', function(e){
+    var btn = e.target.closest('.state-btn');
+    if(!btn) return;
+    apply(btn.dataset.state);
+  });
+  apply('presente');
+})();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gramática Zero — Estudo 07 / Geração dos Dígitos</title>
+<style>
+  :root{
+    --void:#0a0a0e; --panel:#131318; --line:#26262f; --line-soft:#1a1a21;
+    --bone:#e8e5d8; --bone-dim:#8a877c; --ember:#ff6a3d;
+    --signal-a:#7fb8ff; --signal-b:#ffd166;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--void);color:var(--bone);font-family:var(--sans);}
+  body{padding:0 0 80px;}
+  header.top{ padding:48px 24px 28px; max-width:780px; margin:0 auto; border-bottom:1px solid var(--line-soft); }
+  header.top h1{ font-family:var(--mono); font-size:15px; color:var(--bone-dim); margin:0 0 14px; font-weight:500; }
+  header.top p{ font-size:17px; line-height:1.6; margin:0 0 10px; max-width:66ch; }
+  header.top p.small{ font-size:14px; color:var(--bone-dim); }
+
+  main{ max-width:1180px; margin:0 auto; padding:40px 24px 0; }
+
+  .stage{ background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:20px; }
+  .stage svg{ display:block; width:100%; height:auto; }
+  .digit-label{ font-family:var(--mono); font-size:11px; fill:var(--bone-dim); text-anchor:middle; }
+
+  .panel{ display:flex; flex-wrap:wrap; gap:24px; align-items:center; margin-top:18px; }
+  .slider-block{ padding:16px; border:1px solid var(--line); border-radius:4px; background:var(--panel); min-width:280px; flex:1; }
+  .slider-block label{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; color:var(--bone-dim); margin-bottom:10px; }
+  .slider-block label span.val{ color:var(--ember); }
+  input[type=range]{ width:100%; accent-color:var(--ember); }
+  .slider-ends{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--bone-dim); margin-top:6px; }
+
+  .controls{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  button.state-btn{
+    font-family:var(--mono); font-size:12px; background:transparent;
+    border:1px solid var(--line); color:var(--bone-dim); padding:9px 13px;
+    border-radius:2px; cursor:pointer; transition:border-color .15s, color .15s;
+  }
+  button.state-btn:hover{ border-color:var(--bone-dim); color:var(--bone); }
+  button.state-btn.active{ border-color:var(--ember); color:var(--ember); }
+
+  .toggle-line{ display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12px; color:var(--bone-dim); }
+  .toggle-line input{ accent-color:var(--ember); }
+
+  footer.note{ max-width:780px; margin:48px auto 0; padding:0 24px; font-size:13px; color:var(--bone-dim); line-height:1.65; }
+  footer.note strong{ color:var(--bone); font-weight:600; }
+  footer.note h3{ font-family:var(--mono); font-size:12.5px; color:var(--bone); font-weight:500; margin:26px 0 8px; }
+
+  .gz-node{ fill:var(--bone-dim); transition:r .3s ease, opacity .3s ease; }
+  .gz-node.origin{ fill:var(--ember); }
+  .gz-node.hollow{ fill:none; stroke:var(--bone-dim); stroke-width:1.4; }
+  .gz-trace{ fill:none; stroke:var(--bone); stroke-linecap:round; }
+  .gz-pause{ stroke:var(--line); stroke-width:1; stroke-dasharray:1.5 3; fill:none; }
+  .veil{ fill:var(--void); opacity:0; }
+  .shutter{ fill:var(--void); stroke:var(--bone-dim); stroke-width:1; }
+  @keyframes softpulse{ 0%,100%{ opacity:.4; r:4.2; } 50%{ opacity:.85; r:5.4; } }
+  .pulse-unknown{ animation: softpulse 2s ease-in-out infinite; }
+  @keyframes flicker{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+  .flicker{ animation: flicker .5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>GRAMÁTICA ZERO — ESTUDO 07 / GERAÇÃO DOS DÍGITOS</h1>
+  <p>Não desenhei 10 números. Escrevi uma função com os parâmetros dos Estudos 04–06 — origem, trajetória, pontos, grau de gesto, tempo, estado, observabilidade, horizonte — e passei 10 genomas diferentes por ela. O que você vê abaixo é o que a mesma máquina produz quando muda só a sequência de pontos.</p>
+  <p class="small">A pergunta não é "os números ficaram bonitos". É: dá pra olhar os dez juntos e sentir que vieram da mesma família?</p>
+</header>
+
+<main>
+  <div class="stage">
+    <svg id="svg-e7" viewBox="0 0 660 410" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <div class="panel">
+    <div class="slider-block">
+      <label>grau de gesto <span class="val" id="g-val">0.30</span></label>
+      <input type="range" id="g-slider" min="0" max="1" step="0.01" value="0.30">
+      <div class="slider-ends"><span>0 — ponto discreto</span><span>1 — traço contínuo</span></div>
+    </div>
+    <div class="controls">
+      <button class="state-btn active" id="btn-parado" data-state="parado">parado</button>
+      <button class="state-btn" id="btn-gerando" data-state="gerando">nascendo</button>
+    </div>
+    <label class="toggle-line">
+      <input type="checkbox" id="state-toggle">
+      aplicar observabilidade no ponto final de cada dígito
+    </label>
+  </div>
+</main>
+
+<footer class="note">
+  <strong>O que se manteve igual em todos os dez:</strong> a origem é sempre o primeiro ponto da sequência, e é sempre o único ponto ember. A curvatura de cada conexão vem do mesmo "grau de gesto" — o mesmo slider empurra os dez ao mesmo tempo. O tempo de cada traço não foi escolhido dígito a dígito: é uma regra só (quanto maior a distância entre dois pontos, mais tempo o traço leva pra se desenhar), aplicada igual nos dez. Quando dois pontos do mesmo dígito não estão conectados (o "4" e o "8" têm uma pausa no meio do próprio traçado), essa pausa é desenhada como uma linha pontilhada fraca — o mesmo tipo de silêncio que a Gramática Zero já usa pra ausência, só que aqui é só uma respiração dentro do gesto, não uma ausência de fato.
+
+  <h3>o que isso não resolve ainda</h3>
+  O "1" fica visualmente mais pobre que os outros — tem metade dos pontos de qualquer outro dígito, e isso pesa quando os dez estão lado a lado. O "8", por ser dois laços fechados, é o único que nunca tem uma origem "de fora" — ele nasce de si mesmo duas vezes. Isso não quebra a família, mas é a primeira rachadura visível: nem todo símbolo tem a mesma quantidade de trajetória, e a gramática ainda não decidiu se isso é uma característica (dígitos "leves" e "pesados") ou um problema a corrigir antes das 26 letras.
+
+  <h3>resposta à pergunta do experimento</h3>
+  Parcialmente sim. Os dez respondem ao mesmo parâmetro de gesto e ao mesmo tempo de traçado de um jeito que os faz parecer parentes, principalmente em movimento — "nascendo" com todos crescendo do zero ao mesmo tempo é onde a família mais se sente. Parados, alguns pesam mais que outros. Antes de ir para as 26 letras, vale decidir uma regra de peso/densidade de pontos por símbolo — hoje isso está sendo decidido caso a caso, o que é exatamente o tipo de decisão manual que a gramática deveria estar evitando.
+</footer>
+
+<script>
+(function(){
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('svg-e7');
+  var slider = document.getElementById('g-slider');
+  var gVal = document.getElementById('g-val');
+  var stateToggle = document.getElementById('state-toggle');
+  var btnParado = document.getElementById('btn-parado');
+  var btnGerando = document.getElementById('btn-gerando');
+
+  // digit genomes: fractional coords, x in [0,1], y in [0,2]. Each digit = array of subpaths.
+  var DIGITS = {
+    '0': [[[0.5,0.05],[0.95,0.5],[0.95,1.5],[0.5,1.95],[0.05,1.5],[0.05,0.5],[0.5,0.05]]],
+    '1': [[[0.2,0.25],[0.5,0.02],[0.5,1.98]]],
+    '2': [[[0.05,0.35],[0.35,0.02],[0.8,0.15],[0.95,0.55],[0.15,1.65],[0.02,1.98],[0.98,1.98]]],
+    '3': [[[0.05,0.08],[0.7,0.0],[0.95,0.4],[0.55,1.0],[0.95,1.4],[0.75,1.9],[0.08,1.98]]],
+    '4': [[[0.75,0.02],[0.75,1.98]], [[0.78,0.2],[0.05,1.35],[0.95,1.35]]],
+    '5': [[[0.95,0.02],[0.1,0.02],[0.02,0.85],[0.65,0.78],[0.95,1.25],[0.78,1.9],[0.1,1.98]]],
+    '6': [[[0.85,0.08],[0.2,0.55],[0.02,1.35],[0.3,1.95],[0.9,1.78],[0.98,1.25],[0.5,0.98],[0.08,1.18]]],
+    '7': [[[0.02,0.02],[0.98,0.02],[0.4,1.98]]],
+    '8': [[[0.5,0.05],[0.85,0.32],[0.85,0.68],[0.5,0.95],[0.15,0.68],[0.15,0.32],[0.5,0.05]],
+          [[0.5,1.05],[0.85,1.32],[0.85,1.68],[0.5,1.95],[0.15,1.68],[0.15,1.32],[0.5,1.05]]],
+    '9': [[[0.6,0.05],[0.85,0.4],[0.75,0.85],[0.35,1.0],[0.1,0.6],[0.3,0.15],[0.6,0.05],[0.45,1.3],[0.3,1.95]]]
+  };
+  var ORDER = ['0','1','2','3','4','5','6','7','8','9'];
+  var STATE_CYCLE = ['presente','desconhecido','oculto','inacessivel','indeterminado','absorvido'];
+
+  var CELL_W=120, CELL_H=190, GAP=10, PAD=22;
+  var g = parseFloat(slider.value);
+  var registry = []; // per-digit render data for re-drawing on slider change
+
+  function cellOrigin(i){
+    var col = i%5, row = Math.floor(i/5);
+    return { x: 10+col*(CELL_W+GAP), y: 10+row*(CELL_H+GAP) };
+  }
+  function toPx(cell, fx, fy){
+    var usableW = CELL_W-2*PAD, usableH = CELL_H-2*PAD;
+    return { x: cell.x+PAD+fx*usableW, y: cell.y+PAD+(fy/2)*usableH };
+  }
+  function bowPt(p0,p1,gAmt){
+    var mx=(p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
+    var dx=p1.x-p0.x, dy=p1.y-p0.y;
+    var nx=-dy, ny=dx, len=Math.sqrt(nx*nx+ny*ny)||1;
+    var bow = 3+gAmt*15;
+    return { x:mx+(nx/len)*bow, y:my+(ny/len)*bow };
+  }
+  function segD(p0,p1,gAmt){
+    var c = bowPt(p0,p1,gAmt);
+    return 'M'+p0.x+','+p0.y+' Q'+c.x+','+c.y+' '+p1.x+','+p1.y;
+  }
+  function el(tag,attrs){
+    var e = document.createElementNS(svgNS, tag);
+    for(var k in attrs){ e.setAttribute(k, attrs[k]); }
+    return e;
+  }
+  function dist(p0,p1){ return Math.hypot(p1.x-p0.x, p1.y-p0.y); }
+  function segDuration(d){ return Math.max(150, Math.min(650, d*5.2)); }
+
+  function buildDigit(i){
+    var digitChar = ORDER[i];
+    var cell = cellOrigin(i);
+    var subpaths = DIGITS[digitChar];
+    var g1 = el('g', {});
+    svg.appendChild(g1);
+
+    var segs = []; // {pathEl, duration, cumDelay}
+    var nodeEls = []; // in overall order
+    var cum = 0;
+    var isFirstPoint = true;
+
+    subpaths.forEach(function(sub, si){
+      var pxPts = sub.map(function(p){ return toPx(cell, p[0], p[1]); });
+
+      // pause guide between subpaths
+      if(si>0){
+        var prevSub = subpaths[si-1];
+        var prevLast = toPx(cell, prevSub[prevSub.length-1][0], prevSub[prevSub.length-1][1]);
+        var thisFirst = pxPts[0];
+        var pause = el('path', {d:'M'+prevLast.x+','+prevLast.y+' L'+thisFirst.x+','+thisFirst.y, class:'gz-pause'});
+        g1.appendChild(pause);
+        cum += 220;
+      }
+
+      var subFirstNode = null;
+      for(var k=0;k<pxPts.length;k++){
+        var isOrigin = (si===0 && k===0);
+        var closesLoop = (k===pxPts.length-1 && k>0 &&
+          Math.abs(pxPts[k].x-pxPts[0].x)<0.01 && Math.abs(pxPts[k].y-pxPts[0].y)<0.01);
+
+        var node;
+        if(closesLoop){
+          // the trajectory returns to a point that already exists — reuse it,
+          // don't stack a second circle on top of it
+          node = subFirstNode;
+        } else {
+          node = el('circle', {cx:pxPts[k].x, cy:pxPts[k].y, r: isOrigin?5:4, class:'gz-node'+(isOrigin?' origin':'')});
+          g1.appendChild(node);
+          if(k===0){ subFirstNode = node; }
+        }
+        nodeEls.push({el:node, cum:cum, isLast:false});
+
+        if(k>0){
+          var d = dist(pxPts[k-1], pxPts[k]);
+          var dur = segDuration(d);
+          var path = el('path', {d: segD(pxPts[k-1], pxPts[k], g), class:'gz-trace', 'stroke-width': 1.6+g*2.2});
+          g1.insertBefore(path, node);
+          var len = path.getTotalLength();
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = 0;
+          path.style.transitionProperty = 'stroke-dashoffset';
+          path.style.transitionTimingFunction = 'ease';
+          path.style.transitionDuration = dur+'ms';
+          path.style.transitionDelay = cum+'ms';
+          path.dataset.len = len; path.dataset.p0 = JSON.stringify(pxPts[k-1]); path.dataset.p1 = JSON.stringify(pxPts[k]);
+          segs.push(path);
+          cum += dur;
+        }
+      }
+    });
+
+    nodeEls[nodeEls.length-1].isLast = true;
+
+    var label = el('text', {x: cell.x+CELL_W/2, y: cell.y+CELL_H-2, class:'digit-label'});
+    label.textContent = digitChar;
+    g1.appendChild(label);
+
+    registry.push({ char:digitChar, cell:cell, subpaths:subpaths, group:g1, segs:segs, nodes:nodeEls, totalDur:cum });
+  }
+
+  function rebuildAll(){
+    svg.innerHTML='';
+    registry = [];
+    for(var i=0;i<10;i++){ buildDigit(i); }
+    applyStateOverlay();
+  }
+
+  function applyStateOverlay(){
+    registry.forEach(function(item, i){
+      var lastNodeInfo = item.nodes[item.nodes.length-1];
+      var n = lastNodeInfo.el;
+      // clear any previous overlay
+      var old = item.group.querySelector('.state-overlay');
+      if(old) old.remove();
+      n.classList.remove('hollow','pulse-unknown','flicker');
+      n.style.opacity = 1;
+      if(!n.classList.contains('origin')){ n.setAttribute('r', 4); }
+
+      if(!stateToggle.checked) return;
+      var kind = STATE_CYCLE[i % STATE_CYCLE.length];
+      var cx = parseFloat(n.getAttribute('cx')), cy = parseFloat(n.getAttribute('cy'));
+      if(kind==='presente'){ /* default look already applied */ }
+      if(kind==='desconhecido'){ n.classList.add('hollow','pulse-unknown'); }
+      if(kind==='oculto'){
+        var sh = el('circle', {cx:cx, cy:cy, r:7, class:'shutter state-overlay'});
+        sh.style.opacity = 0.95;
+        item.group.appendChild(sh);
+      }
+      if(kind==='inacessivel'){
+        n.style.opacity = 0.5;
+        var v = el('circle', {cx:cx, cy:cy, r:7.5, class:'veil state-overlay'});
+        v.style.opacity = 0.7;
+        item.group.appendChild(v);
+      }
+      if(kind==='indeterminado'){ n.classList.add('flicker'); }
+      if(kind==='absorvido'){ n.classList.add('hollow'); n.setAttribute('r',5); }
+    });
+  }
+
+  function setParado(){
+    btnParado.classList.add('active'); btnGerando.classList.remove('active');
+    registry.forEach(function(item){
+      item.segs.forEach(function(p){
+        p.style.transitionDuration='0ms'; p.style.transitionDelay='0ms';
+        p.style.strokeDashoffset = 0;
+      });
+      item.nodes.forEach(function(n){ n.el.style.opacity = 1; });
+    });
+    applyStateOverlay();
+  }
+
+  function setGerando(){
+    btnGerando.classList.add('active'); btnParado.classList.remove('active');
+    registry.forEach(function(item){
+      // hide everything
+      item.segs.forEach(function(p){
+        p.style.transitionDuration='0ms'; p.style.transitionDelay='0ms';
+        p.style.strokeDashoffset = p.dataset.len;
+      });
+      item.nodes.forEach(function(n,idx){ n.el.style.opacity = idx===0 ? 1 : 0; });
+    });
+    void svg.offsetWidth; // reflow
+    // restore transitions and trigger
+    registry.forEach(function(item){
+      var cum = 0;
+      var subpaths = item.subpaths;
+      var segIdx = 0;
+      subpaths.forEach(function(sub, si){
+        if(si>0){ cum += 220; }
+        for(var k=1;k<sub.length;k++){
+          var path = item.segs[segIdx];
+          path.style.transitionDelay = cum+'ms';
+          cum += parseFloat(path.style.transitionDuration);
+          segIdx++;
+        }
+      });
+    });
+    requestAnimationFrame(function(){
+      registry.forEach(function(item){
+        item.segs.forEach(function(p){ p.style.strokeDashoffset = 0; });
+        var cum = 0, ni = 1;
+        var subpaths = item.subpaths;
+        subpaths.forEach(function(sub, si){
+          if(si>0){ cum += 220; }
+          for(var k=1;k<sub.length;k++){
+            (function(nodeEl, delay){
+              setTimeout(function(){ nodeEl.style.opacity = 1; }, delay);
+            })(item.nodes[ni].el, cum);
+            var p0 = JSON.parse(item.segs[ni-1].dataset.p0), p1 = JSON.parse(item.segs[ni-1].dataset.p1);
+            cum += segDuration(dist(p0,p1));
+            ni++;
+          }
+        });
+      });
+      setTimeout(applyStateOverlay, 50);
+    });
+  }
+
+  slider.addEventListener('input', function(){
+    g = parseFloat(slider.value);
+    gVal.textContent = g.toFixed(2);
+    rebuildAll();
+    setParado();
+  });
+  stateToggle.addEventListener('change', applyStateOverlay);
+  btnParado.addEventListener('click', setParado);
+  btnGerando.addEventListener('click', setGerando);
+
+  rebuildAll();
+  setParado();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Esconde-Esconde · Gramática Zero</title>
+<style>
+  :root {
+    --bg: #0d1210;
+    --panel: rgba(12, 18, 15, 0.72);
+    --line: rgba(230, 240, 225, 0.14);
+    --ink: #eaf2e6;
+    --muted: #9db09a;
+    --accent: #6fbf73;
+    --accent-seek: #e0a85c;
+    --danger: #d9694f;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden; overscroll-behavior: none;
+  }
+  #scene-container { position: fixed; inset: 0; touch-action: none; }
+  canvas { display: block; width: 100%; height: 100%; }
+
+  /* ---- Lobby ---- */
+  #lobby {
+    position: fixed; inset: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(120% 100% at 50% 0%, #17231c 0%, #0d1210 60%);
+    padding: 24px;
+  }
+  #lobby.hidden { display: none; }
+  .lobby-card {
+    width: 100%; max-width: 360px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .brand { text-align: left; }
+  .brand h1 {
+    font-size: 1.5rem; font-weight: 600; margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .brand p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.4; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 0.8rem; color: var(--muted); }
+  .field input {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--line);
+    color: var(--ink); border-radius: 10px; padding: 12px 14px;
+    font-size: 1rem; outline: none;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .btn {
+    border: none; border-radius: 10px; padding: 13px 16px;
+    font-size: 0.98rem; font-weight: 600; cursor: pointer;
+    transition: transform 0.08s ease, opacity 0.15s ease;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--accent); color: #0d1210; }
+  .btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn:disabled { opacity: 0.45; pointer-events: none; }
+  .divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 0.78rem; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  #lobby-status { min-height: 20px; font-size: 0.85rem; color: var(--muted); }
+  #lobby-status.error { color: var(--danger); }
+  #room-code-display {
+    font-size: 1.1rem; letter-spacing: 0.08em; font-weight: 700;
+    color: var(--accent); word-break: break-all;
+  }
+
+  /* ---- HUD ---- */
+  #hud { position: fixed; inset: 0; z-index: 10; pointer-events: none; display: none; }
+  #hud.active { display: block; }
+  #hud-top {
+    position: absolute; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: max(14px, env(safe-area-inset-top)) 16px 0;
+    gap: 10px;
+  }
+  .pill {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 14px; font-size: 0.82rem;
+    backdrop-filter: blur(6px);
+  }
+  #role-pill { font-weight: 700; }
+  #role-pill.role-esconde { color: var(--accent); }
+  #role-pill.role-procura { color: var(--accent-seek); }
+  #timer-pill { font-variant-numeric: tabular-nums; }
+  #banner {
+    position: absolute; top: 64px; left: 50%; transform: translateX(-50%);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 18px; font-size: 0.9rem; text-align: center;
+    max-width: 82vw; backdrop-filter: blur(6px);
+  }
+  #banner.hidden { display: none; }
+  #players-panel {
+    position: absolute; top: 0; right: 0;
+    padding: max(14px, env(safe-area-inset-top)) 16px 0;
+    font-size: 0.78rem; color: var(--muted); text-align: right;
+  }
+
+  /* ---- Result overlay ---- */
+  #result {
+    position: absolute; inset: 0; display: none;
+    align-items: center; justify-content: center;
+    background: rgba(8, 12, 10, 0.55);
+  }
+  #result.active { display: flex; }
+  #result-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    padding: 22px 26px; text-align: center; max-width: 300px;
+  }
+  #result-card p { margin: 0; font-size: 1.02rem; }
+  #result-card span { display: block; margin-top: 6px; color: var(--muted); font-size: 0.82rem; }
+
+  /* ---- Joystick ---- */
+  #joystick-zone {
+    position: absolute; left: 0; bottom: 0; width: 46vw; height: 44vh;
+    pointer-events: auto;
+  }
+  .joystick-base {
+    position: absolute; left: 28px; bottom: max(28px, env(safe-area-inset-bottom));
+    width: 108px; height: 108px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+  }
+  .joystick-knob {
+    position: absolute; left: 50%; top: 50%; width: 48px; height: 48px;
+    margin-left: -24px; margin-top: -24px; border-radius: 50%;
+    background: rgba(111, 191, 115, 0.55); border: 1px solid rgba(111, 191, 115, 0.8);
+    transition: transform 0.02s linear;
+  }
+
+  /* ---- Camera touch zone ---- */
+  #camera-zone {
+    position: absolute; right: 0; bottom: 0; width: 54vw; height: 60vh;
+    pointer-events: auto;
+  }
+</style>
+</head>
+<body>
+
+  <div id="scene-container"></div>
+
+  <div id="lobby">
+    <div class="lobby-card">
+      <div class="brand">
+        <h1>Esconde-Esconde</h1>
+        <p>Laboratório 3D da Gramática Zero. Duas pessoas, um espaço, estados observados.</p>
+      </div>
+
+      <div class="field">
+        <label for="name-input">Seu nome</label>
+        <input id="name-input" maxlength="16" placeholder="Como te chamamos na sala" />
+      </div>
+
+      <button id="btn-create" class="btn btn-primary">Criar sala</button>
+
+      <div class="divider">ou entre em uma sala existente</div>
+
+      <div class="field">
+        <label for="code-input">Código da sala</label>
+        <input id="code-input" maxlength="9" placeholder="ZERO-7K4P" style="text-transform:uppercase" />
+      </div>
+      <button id="btn-join" class="btn btn-secondary">Entrar na sala</button>
+
+      <div id="room-code-display"></div>
+      <div id="lobby-status"></div>
+    </div>
+  </div>
+
+  <div id="hud">
+    <div id="hud-top">
+      <div class="pill" id="role-pill">—</div>
+      <div class="pill" id="timer-pill">--</div>
+    </div>
+    <div id="players-panel"></div>
+    <div id="banner" class="hidden"></div>
+
+    <div id="result">
+      <div id="result-card">
+        <p id="result-message"></p>
+        <span>Próxima rodada em instantes…</span>
+      </div>
+    </div>
+
+    <div id="joystick-zone"></div>
+    <div id="camera-zone"></div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+ZYRO — ZSHOPPING — PRÓXIMOS PASSOS
+
+V1 — CONCLUÍDA
+- referência raster preservada
+- setores coloridos vetorizados
+- áreas de água detectadas
+- JSON inicial de entidades
+- SVG inicial
+
+V2 — CARTOGRAFIA
+1. contorno completo do terreno
+2. eixo das ruas
+3. estacionamentos
+4. calçadas e caminhos
+5. praças
+6. pontes
+7. entradas e acessos
+
+V3 — ARQUITETURA
+1. cada edifício como entidade
+2. subdivisão por lojas/unidades quando legível
+3. entradas
+4. corredores/áreas internas relevantes
+5. setores
+
+V4 — AMBIENTE
+1. árvores
+2. canteiros
+3. mobiliário
+4. iluminação
+5. sinalização
+6. água/vegetação detalhada
+
+V5 — GRAMÁTICA ZERO
+Cada objeto recebe:
+- id
+- type
+- state
+- position X/Z
+- relation
+- interaction
+- layer
+- source/reference
+
+V6 — ZYRO
+- spawn
+- colisão
+- navegação
+- POI
+- NPC
+- loja
+- evento
+- raio de interação
+- publicação para 2D/isométrico/3D

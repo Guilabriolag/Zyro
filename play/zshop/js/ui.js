@@ -7,7 +7,7 @@
 
 (() => {
 "use strict";
-
+console.log("ZYRO UI.JS CARREGOU");
 function $(id) {
 return document.getElementById(id);
 }

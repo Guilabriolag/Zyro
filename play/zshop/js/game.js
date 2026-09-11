@@ -1,49 +1,41 @@
 // ============================================================
-// ZYRO — GAME.JS (Shopping)
-// Núcleo do jogo (mesmo do Complexo) + sistema de colisão de
-// piso e escada rolante, lido de window.ZYRO_WORLD_COLLIDERS
-// (definido pelo world.js de cada cenário).
+// ZYRO — GAME.JS V0.2
+// ESQUERDO = movimento
+// DIREITO  = câmera / visão
+// AMARELO  = pular ou interagir
+// RUN      = correr + estamina
 // ============================================================
 
 (() => {
   "use strict";
 
-  // ==========================================================
-  // CONFIGURAÇÃO
-  // ==========================================================
+  const CFG = {
+    speed: 5,
+    runSpeed: 8,
+    jump: 6.5,
+    gravity: 18,
 
-  const CONFIG = {
-    player: {
-      height: 1.8,
-      radius: 0.35,
-      speed: 5.0,
-      jumpForce: 6.5,
-      gravity: 18.0
-    },
+    staminaMax: 100,
+    staminaDrain: 25,
+    staminaRecover: 18,
 
-    camera: {
-      distance: 7.5,
-      height: 4.5,
-      lookHeight: 1.0,
-      smooth: 7.0
-    },
+    cameraDistance: 7,
+    cameraHeight: 3.8,
+    cameraLookHeight: 1.0,
+    cameraSmooth: 8,
 
-    // Limites ajustados pro footprint do shopping (ver world.js)
-    world: {
-      minX: -20,
-      maxX: 20,
-      minZ: -19,
-      maxZ: 19
-    }
+    sensitivityX: 0.006,
+    sensitivityY: 0.004,
+
+    minPitch: -0.15,
+    maxPitch: 0.8
   };
 
-
   // ==========================================================
-  // ESTADO GLOBAL ZYRO
+  // ZYRO GLOBAL
   // ==========================================================
 
   const ZYRO = {
-
     scene: null,
     camera: null,
     renderer: null,
@@ -53,18 +45,22 @@
     playerMesh: null,
 
     paused: false,
-
     clock: null,
 
     input: {
       x: 0,
       z: 0,
       jump: false,
-      action: false
+      action: false,
+      run: false
     },
 
     state: {
-      initialized: false
+      initialized: false,
+      running: false,
+      stamina: CFG.staminaMax,
+      maxStamina: CFG.staminaMax,
+      nearbyPOI: null
     },
 
     pause() {
@@ -76,172 +72,93 @@
       return {
         paused: this.paused,
         player: this.player,
-        input: this.input
+        stamina: this.state.stamina,
+        running: this.state.running,
+        nearbyPOI: this.state.nearbyPOI
       };
     }
   };
 
-
   window.ZYRO = ZYRO;
-
 
   // ==========================================================
   // CENA
   // ==========================================================
 
   const scene = new THREE.Scene();
-
-  scene.background =
-    new THREE.Color(0x1a1a1f);
-
-  // Sem fog externo — ambiente fechado
-
+  scene.background = new THREE.Color(0x18181c);
   ZYRO.scene = scene;
-
-  window.dispatchEvent(
-    new Event("zyro:game-ready")
-  );
-
 
   // ==========================================================
   // CÂMERA
   // ==========================================================
 
-  const camera =
-    new THREE.PerspectiveCamera(
-      60,
-      window.innerWidth /
-      window.innerHeight,
-      0.1,
-      1000
-    );
-
-  camera.position.set(
-    8,
-    6,
-    16
+  const camera = new THREE.PerspectiveCamera(
+    60,
+    innerWidth / innerHeight,
+    0.1,
+    1000
   );
 
   ZYRO.camera = camera;
 
+  let cameraYaw = Math.PI;
+  let cameraPitch = 0.28;
 
   // ==========================================================
   // RENDERER
   // ==========================================================
 
-  const renderer =
-    new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: "high-performance"
-    });
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance"
+  });
 
   renderer.setPixelRatio(
-    Math.min(
-      window.devicePixelRatio || 1,
-      2
-    )
+    Math.min(devicePixelRatio || 1, 2)
   );
 
-  renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-  );
-
+  renderer.setSize(innerWidth, innerHeight);
   renderer.shadowMap.enabled = true;
 
-  renderer.shadowMap.type =
-    THREE.PCFSoftShadowMap;
-
-  // NOTE: mesma observação do Complexo — THREE.sRGBEncoding foi
-  // removido na r162. Estamos na r160 via CDN, funciona com warning.
-  renderer.outputEncoding =
-    THREE.sRGBEncoding;
-
-  renderer.domElement.id =
-    "zyro-canvas";
-
   const shell =
-    document.getElementById(
-      "game-shell"
-    );
+    document.getElementById("game-shell") ||
+    document.getElementById("game-container");
 
   if (shell) {
-    shell.appendChild(
-      renderer.domElement
-    );
+    shell.appendChild(renderer.domElement);
   } else {
-    document.body.appendChild(
-      renderer.domElement
-    );
+    document.body.appendChild(renderer.domElement);
   }
+
+  renderer.domElement.style.touchAction = "none";
+  renderer.domElement.id = "zyro-canvas";
 
   ZYRO.renderer = renderer;
 
-
   // ==========================================================
-  // ILUMINAÇÃO
+  // LUZ
   // ==========================================================
 
-  const ambient =
-    new THREE.AmbientLight(
-      0xffffff,
-      0.55
-    );
-
-  scene.add(ambient);
-
-
-  const fill =
-    new THREE.DirectionalLight(
-      0xffffff,
-      0.5
-    );
-
-  fill.position.set(
-    -20,
-    30,
-    20
+  scene.add(
+    new THREE.AmbientLight(0xffffff, 0.6)
   );
 
-  fill.castShadow = true;
-
-  fill.shadow.mapSize.set(
-    2048,
-    2048
+  const light = new THREE.DirectionalLight(
+    0xffffff,
+    0.7
   );
 
-  fill.shadow.camera.left = -30;
-  fill.shadow.camera.right = 30;
-  fill.shadow.camera.top = 30;
-  fill.shadow.camera.bottom = -30;
+  light.position.set(-20, 30, 20);
+  light.castShadow = true;
 
-  scene.add(fill);
-
+  scene.add(light);
 
   // ==========================================================
-  // CÂMERA DE TERCEIRA PESSOA
-  // ==========================================================
-
-  let cameraYaw = Math.PI;
-  let cameraPitch = 0.28;
-
-  let cameraTarget =
-    new THREE.Vector3();
-
-  let cameraPosition =
-    new THREE.Vector3();
-
-  let cameraLook =
-    new THREE.Vector3();
-
-
-  // ==========================================================
-  // JOGADOR
-  // Spawna no térreo, ao sul do atrium, de frente pra escada rolante
+  // PLAYER
   // ==========================================================
 
   const player = {
-
     x: 0,
     y: 0,
     z: 15,
@@ -252,387 +169,357 @@
 
     grounded: true,
 
-    radius:
-      CONFIG.player.radius,
+    radius: 0.35,
+    height: 1.8,
 
-    height:
-      CONFIG.player.height,
-
-    speed:
-      CONFIG.player.speed
+    speed: CFG.speed
   };
 
   ZYRO.player = player;
 
-
-  // ==========================================================
-  // MATERIAL DO PLAYER
-  // ==========================================================
-
-  const playerMaterial =
+  const playerMesh = new THREE.Mesh(
+    new THREE.CapsuleGeometry(
+      0.35,
+      0.9,
+      6,
+      12
+    ),
     new THREE.MeshStandardMaterial({
-      color: 0x5fd0a0,
-      roughness: 0.65
-    });
-
-
-  const body =
-    new THREE.Mesh(
-      new THREE.CapsuleGeometry(
-        0.35,
-        0.9,
-        6,
-        12
-      ),
-      playerMaterial
-    );
-
-  body.position.y =
-    0.85;
-
-  body.castShadow = true;
-
-  body.receiveShadow = true;
-
-  scene.add(body);
-
-  ZYRO.playerMesh = body;
-
-
-  // ==========================================================
-  // MARCADOR DE DIREÇÃO
-  // ==========================================================
-
-  const directionMaterial =
-    new THREE.MeshStandardMaterial({
-      color: 0xffffff
-    });
-
-  const direction =
-    new THREE.Mesh(
-      new THREE.ConeGeometry(
-        0.12,
-        0.35,
-        8
-      ),
-      directionMaterial
-    );
-
-  direction.rotation.x =
-    Math.PI / 2;
-
-  direction.position.set(
-    0,
-    0.95,
-    -0.48
+      color: 0x5fd0a0
+    })
   );
 
-  body.add(direction);
+  playerMesh.position.set(
+    player.x,
+    player.y + 0.9,
+    player.z
+  );
 
+  playerMesh.castShadow = true;
+
+  scene.add(playerMesh);
+
+  ZYRO.playerMesh = playerMesh;
 
   // ==========================================================
-  // INPUT — TECLADO
+  // TECLADO
   // ==========================================================
 
   const keys = {};
 
+  addEventListener("keydown", e => {
+    keys[e.key.toLowerCase()] = true;
 
-  window.addEventListener(
-    "keydown",
-    event => {
-
-      keys[
-        event.key.toLowerCase()
-      ] = true;
-
-      if (
-        event.key === " "
-      ) {
-
-        event.preventDefault();
-
-        ZYRO.input.jump =
-          true;
-      }
-
+    if (e.code === "Space") {
+      ZYRO.input.jump = true;
+      e.preventDefault();
     }
-  );
 
-
-  window.addEventListener(
-    "keyup",
-    event => {
-
-      keys[
-        event.key.toLowerCase()
-      ] = false;
-
+    if (e.key === "Shift") {
+      ZYRO.input.run = true;
     }
-  );
 
+    if (e.key.toLowerCase() === "e") {
+      ZYRO.input.action = true;
+    }
+  });
+
+  addEventListener("keyup", e => {
+    keys[e.key.toLowerCase()] = false;
+
+    if (e.key === "Shift") {
+      ZYRO.input.run = false;
+    }
+  });
 
   // ==========================================================
-  // JOYSTICK
+  // JOYSTICK ESQUERDO
   // ==========================================================
 
   const joyZone =
-    document.getElementById(
-      "joy-zone"
-    );
+    document.getElementById("joy-zone");
 
   const joyKnob =
-    document.getElementById(
-      "joy-knob"
-    );
+    document.getElementById("joy-knob");
 
-  let joystickActive = false;
+  let joyActive = false;
+  let joyPointer = null;
 
-  let joystickPointerId = null;
+  let joyX = 0;
+  let joyY = 0;
 
-  let joystickCenter = {
-    x: 0,
-    y: 0
-  };
-
-  let joystickVector = {
-    x: 0,
-    y: 0
-  };
-
-
-  function getJoystickCenter() {
-
-    if (!joyZone) {
-      return {
-        x: 0,
-        y: 0
-      };
-    }
-
-    const rect =
-      joyZone.getBoundingClientRect();
+  function joyCenter() {
+    const r = joyZone.getBoundingClientRect();
 
     return {
-      x:
-        rect.left +
-        rect.width / 2,
-
-      y:
-        rect.top +
-        rect.height / 2
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2
     };
-
   }
 
+  function joyMove(x, y) {
+    const center = joyCenter();
 
-  function joystickStart(
-    pointerId,
-    x,
-    y
-  ) {
+    let dx = x - center.x;
+    let dy = y - center.y;
 
-    if (!joyZone)
-      return;
+    const radius =
+      joyZone.getBoundingClientRect().width / 2;
 
-    joystickActive =
-      true;
+    const d = Math.hypot(dx, dy);
 
-    joystickPointerId =
-      pointerId;
-
-    joystickCenter =
-      getJoystickCenter();
-
-    joystickMove(
-      x,
-      y
-    );
-
-  }
-
-
-  function joystickMove(
-    x,
-    y
-  ) {
-
-    if (
-      !joystickActive
-    )
-      return;
-
-    const rect =
-      joyZone.getBoundingClientRect();
-
-    const maxRadius =
-      rect.width / 2;
-
-    let dx =
-      x -
-      joystickCenter.x;
-
-    let dy =
-      y -
-      joystickCenter.y;
-
-    const distance =
-      Math.hypot(
-        dx,
-        dy
-      );
-
-    if (
-      distance >
-      maxRadius
-    ) {
-
-      dx =
-        dx /
-        distance *
-        maxRadius;
-
-      dy =
-        dy /
-        distance *
-        maxRadius;
-
+    if (d > radius) {
+      dx = dx / d * radius;
+      dy = dy / d * radius;
     }
 
-    joystickVector.x =
-      dx /
-      maxRadius;
-
-    joystickVector.y =
-      dy /
-      maxRadius;
+    joyX = dx / radius;
+    joyY = dy / radius;
 
     if (joyKnob) {
-
       joyKnob.style.transform =
-        `translate(${dx}px, ${dy}px)`;
-
+        `translate(${dx}px,${dy}px)`;
     }
-
   }
-
-
-  function joystickEnd() {
-
-    joystickActive =
-      false;
-
-    joystickPointerId =
-      null;
-
-    joystickVector.x = 0;
-    joystickVector.y = 0;
-
-    if (joyKnob) {
-
-      joyKnob.style.transform =
-        "translate(0,0)";
-
-    }
-
-  }
-
 
   if (joyZone) {
 
+    joyZone.style.touchAction = "none";
+
     joyZone.addEventListener(
       "pointerdown",
-      event => {
+      e => {
+        e.preventDefault();
 
-        event.preventDefault();
+        joyActive = true;
+        joyPointer = e.pointerId;
 
         joyZone.setPointerCapture(
-          event.pointerId
+          e.pointerId
         );
 
-        joystickStart(
-          event.pointerId,
-          event.clientX,
-          event.clientY
+        joyMove(
+          e.clientX,
+          e.clientY
         );
-
       }
     );
-
 
     joyZone.addEventListener(
       "pointermove",
-      event => {
+      e => {
+        if (!joyActive) return;
+        if (e.pointerId !== joyPointer) return;
 
-        if (
-          event.pointerId !==
-          joystickPointerId
-        )
-          return;
+        e.preventDefault();
 
-        event.preventDefault();
-
-        joystickMove(
-          event.clientX,
-          event.clientY
+        joyMove(
+          e.clientX,
+          e.clientY
         );
-
       }
     );
 
+    const joyEnd = e => {
+      if (
+        joyPointer !== null &&
+        e.pointerId !== joyPointer
+      ) return;
+
+      joyActive = false;
+      joyPointer = null;
+
+      joyX = 0;
+      joyY = 0;
+
+      if (joyKnob) {
+        joyKnob.style.transform =
+          "translate(0,0)";
+      }
+    };
 
     joyZone.addEventListener(
       "pointerup",
-      event => {
-
-        if (
-          event.pointerId !==
-          joystickPointerId
-        )
-          return;
-
-        joystickEnd();
-
-      }
+      joyEnd
     );
-
 
     joyZone.addEventListener(
       "pointercancel",
-      joystickEnd
+      joyEnd
     );
-
   }
 
-
   // ==========================================================
-  // BOTÃO DE PULO
+  // JOYSTICK DIREITO
+  // CÂMERA / CABEÇA / VISÃO
   // ==========================================================
 
-  const jumpButton =
-    document.getElementById(
-      "jump-btn"
-    );
+  let lookZone =
+    document.getElementById("look-zone");
 
+  if (!lookZone) {
 
-  if (jumpButton) {
+    lookZone = document.createElement("div");
 
-    jumpButton.addEventListener(
-      "pointerdown",
-      event => {
+    lookZone.id = "look-zone";
 
-        event.preventDefault();
-
-        ZYRO.input.jump =
-          true;
-
+    Object.assign(
+      lookZone.style,
+      {
+        position: "fixed",
+        top: "0",
+        right: "0",
+        width: "50%",
+        height: "100%",
+        zIndex: "5",
+        background: "transparent",
+        touchAction: "none"
       }
     );
 
+    document.body.appendChild(
+      lookZone
+    );
   }
 
+  let lookActive = false;
+  let lookPointer = null;
+
+  let lastLookX = 0;
+  let lastLookY = 0;
+
+  lookZone.addEventListener(
+    "pointerdown",
+    e => {
+
+      if (ZYRO.paused) return;
+
+      e.preventDefault();
+
+      lookActive = true;
+      lookPointer = e.pointerId;
+
+      lastLookX = e.clientX;
+      lastLookY = e.clientY;
+
+      try {
+        lookZone.setPointerCapture(
+          e.pointerId
+        );
+      } catch (_) {}
+    }
+  );
+
+  lookZone.addEventListener(
+    "pointermove",
+    e => {
+
+      if (!lookActive) return;
+
+      if (e.pointerId !== lookPointer)
+        return;
+
+      const dx =
+        e.clientX - lastLookX;
+
+      const dy =
+        e.clientY - lastLookY;
+
+      lastLookX = e.clientX;
+      lastLookY = e.clientY;
+
+      cameraYaw -=
+        dx * CFG.sensitivityX;
+
+      cameraPitch -=
+        dy * CFG.sensitivityY;
+
+      cameraPitch = Math.max(
+        CFG.minPitch,
+        Math.min(
+          CFG.maxPitch,
+          cameraPitch
+        )
+      );
+
+      e.preventDefault();
+    }
+  );
+
+  function stopLook() {
+    lookActive = false;
+    lookPointer = null;
+  }
+
+  lookZone.addEventListener(
+    "pointerup",
+    stopLook
+  );
+
+  lookZone.addEventListener(
+    "pointercancel",
+    stopLook
+  );
 
   // ==========================================================
-  // BOTÃO DE INTERAÇÃO
+  // POI
+  // ==========================================================
+
+  function nearestPOI() {
+
+    const list =
+      window.ZYRO_POINTS_OF_INTEREST;
+
+    if (!Array.isArray(list))
+      return null;
+
+    let nearest = null;
+    let distance = Infinity;
+
+    for (const poi of list) {
+
+      const px =
+        Number(
+          poi.x ??
+          poi.position?.x
+        );
+
+      const pz =
+        Number(
+          poi.z ??
+          poi.position?.z
+        );
+
+      if (
+        !Number.isFinite(px) ||
+        !Number.isFinite(pz)
+      ) continue;
+
+      const d =
+        Math.hypot(
+          player.x - px,
+          player.z - pz
+        );
+
+      const radius =
+        Number(
+          poi.radius ?? 2.8
+        );
+
+      if (
+        d <= radius &&
+        d < distance
+      ) {
+        nearest = poi;
+        distance = d;
+      }
+    }
+
+    return nearest;
+  }
+
+  // ==========================================================
+  // BOTÃO AMARELO
   // ==========================================================
 
   const actionButton =
@@ -640,307 +527,392 @@
       "action-btn"
     );
 
+  function action() {
+
+    const poi = nearestPOI();
+
+    ZYRO.state.nearbyPOI = poi;
+
+    if (poi) {
+
+      ZYRO.input.action = true;
+
+      window.dispatchEvent(
+        new CustomEvent(
+          "zyro:action",
+          {
+            detail: {
+              poi: poi,
+              player: player
+            }
+          }
+        )
+      );
+
+      console.log(
+        "ZYRO INTERAÇÃO:",
+        poi
+      );
+
+    } else {
+
+      ZYRO.input.jump = true;
+
+    }
+  }
 
   if (actionButton) {
 
     actionButton.addEventListener(
       "pointerdown",
-      event => {
-
-        event.preventDefault();
-
-        ZYRO.input.action =
-          true;
-
+      e => {
+        e.preventDefault();
+        action();
       }
     );
 
   }
 
+  // ==========================================================
+  // BOTÃO DE PULO EXISTENTE
+  // ==========================================================
+
+  const jumpButton =
+    document.getElementById(
+      "jump-btn"
+    );
+
+  if (jumpButton) {
+
+    jumpButton.addEventListener(
+      "pointerdown",
+      e => {
+        e.preventDefault();
+        ZYRO.input.jump = true;
+      }
+    );
+
+  }
 
   // ==========================================================
-  // MOVIMENTO DO JOGADOR
+  // BOTÃO RUN
   // ==========================================================
 
-  function updateInput() {
+  let runButton =
+    document.getElementById(
+      "run-btn"
+    );
 
-    let x =
-      joystickVector.x;
+  if (!runButton) {
 
-    let z =
-      joystickVector.y;
+    runButton =
+      document.createElement("button");
 
+    runButton.id = "run-btn";
+    runButton.textContent = "RUN";
+
+    Object.assign(
+      runButton.style,
+      {
+        position: "fixed",
+        right: "24px",
+        bottom: "205px",
+        width: "68px",
+        height: "68px",
+        borderRadius: "50%",
+        border: "2px solid rgba(255,255,255,.3)",
+        background: "rgba(15,15,15,.8)",
+        color: "#fffef2",
+        fontWeight: "700",
+        zIndex: "40",
+        touchAction: "none"
+      }
+    );
+
+    document.body.appendChild(
+      runButton
+    );
+  }
+
+  runButton.addEventListener(
+    "pointerdown",
+    e => {
+
+      e.preventDefault();
+
+      if (
+        ZYRO.state.stamina > 5
+      ) {
+        ZYRO.input.run = true;
+      }
+    }
+  );
+
+  runButton.addEventListener(
+    "pointerup",
+    e => {
+      e.preventDefault();
+      ZYRO.input.run = false;
+    }
+  );
+
+  runButton.addEventListener(
+    "pointercancel",
+    () => {
+      ZYRO.input.run = false;
+    }
+  );
+
+  // ==========================================================
+  // ESTAMINA HUD
+  // ==========================================================
+
+  let staminaHUD =
+    document.getElementById(
+      "stamina-hud"
+    );
+
+  if (!staminaHUD) {
+
+    staminaHUD =
+      document.createElement("div");
+
+    staminaHUD.id =
+      "stamina-hud";
+
+    Object.assign(
+      staminaHUD.style,
+      {
+        position: "fixed",
+        left: "50%",
+        bottom: "20px",
+        transform: "translateX(-50%)",
+        width: "180px",
+        height: "9px",
+        padding: "2px",
+        border: "1px solid rgba(255,255,255,.35)",
+        borderRadius: "8px",
+        background: "rgba(0,0,0,.55)",
+        zIndex: "40",
+        pointerEvents: "none"
+      }
+    );
+
+    const fill =
+      document.createElement("div");
+
+    fill.id =
+      "stamina-fill";
+
+    Object.assign(
+      fill.style,
+      {
+        width: "100%",
+        height: "100%",
+        borderRadius: "6px",
+        background: "#d99a32",
+        transformOrigin: "left"
+      }
+    );
+
+    staminaHUD.appendChild(
+      fill
+    );
+
+    document.body.appendChild(
+      staminaHUD
+    );
+  }
+
+  const staminaFill =
+    document.getElementById(
+      "stamina-fill"
+    );
+
+  function updateStaminaHUD() {
+
+    if (!staminaFill)
+      return;
+
+    const ratio =
+      ZYRO.state.stamina /
+      CFG.staminaMax;
+
+    staminaFill.style.transform =
+      `scaleX(${Math.max(0, ratio)})`;
+  }
+
+  // ==========================================================
+  // INPUT
+  // ==========================================================
+
+  function readInput() {
+
+    let x = joyX;
+    let z = joyY;
 
     if (
       keys["a"] ||
       keys["arrowleft"]
-    ) {
-
-      x -= 1;
-
-    }
-
+    ) x -= 1;
 
     if (
       keys["d"] ||
       keys["arrowright"]
-    ) {
-
-      x += 1;
-
-    }
-
+    ) x += 1;
 
     if (
       keys["w"] ||
       keys["arrowup"]
-    ) {
-
-      z -= 1;
-
-    }
-
+    ) z -= 1;
 
     if (
       keys["s"] ||
       keys["arrowdown"]
-    ) {
-
-      z += 1;
-
-    }
-
+    ) z += 1;
 
     const length =
-      Math.hypot(
-        x,
-        z
-      );
+      Math.hypot(x, z);
 
-
-    if (
-      length > 1
-    ) {
-
+    if (length > 1) {
       x /= length;
       z /= length;
-
     }
 
-
-    ZYRO.input.x =
-      x;
-
-    ZYRO.input.z =
-      z;
-
+    ZYRO.input.x = x;
+    ZYRO.input.z = z;
   }
 
-
   // ==========================================================
-  // COLISÃO DE PISO / ESCADA ROLANTE
-  // Lê window.ZYRO_WORLD_COLLIDERS (definido pelo world.js do
-  // cenário). Se não existir, comporta-se como o Complexo
-  // (chão plano em y=0).
+  // MOVIMENTO
   // ==========================================================
 
-  // Tolerância: só "gruda" numa plataforma se ela estiver a até
-  // esta distância acima da posição atual do player — assim, andar
-  // por baixo do 1º piso (no térreo) não te teleporta pra cima.
-  const SNAP_TOLERANCE = 1.0;
+  function updatePlayer(dt) {
 
-  function getEscalatorAt(x, z) {
+    readInput();
 
-    const colliders =
-      window.ZYRO_WORLD_COLLIDERS;
-
-    if (
-      !colliders ||
-      !colliders.escalators
-    )
-      return null;
-
-    for (
-      const e of
-      colliders.escalators
-    ) {
-
-      if (
-        x >= e.minX &&
-        x <= e.maxX &&
-        z >= e.minZ &&
-        z <= e.maxZ
-      ) {
-
-        return e;
-
-      }
-
-    }
-
-    return null;
-
-  }
-
-
-  function getSupportY(
-    x,
-    z,
-    currentY
-  ) {
-
-    const colliders =
-      window.ZYRO_WORLD_COLLIDERS;
-
-    if (
-      !colliders ||
-      !colliders.platforms
-    ) {
-
-      return 0;
-
-    }
-
-    let best = 0;
-
-    for (
-      const p of
-      colliders.platforms
-    ) {
-
-      if (
-        x < p.minX ||
-        x > p.maxX ||
-        z < p.minZ ||
-        z > p.maxZ
-      )
-        continue;
-
-      if (
-        p.y <=
-        currentY +
-        SNAP_TOLERANCE
-      ) {
-
-        best =
-          Math.max(
-            best,
-            p.y
-          );
-
-      }
-
-    }
-
-    return best;
-
-  }
-
-
-  // ==========================================================
-  // MOVIMENTO RELATIVO À CÂMERA
-  // ==========================================================
-
-  function updatePlayer(
-    dt
-  ) {
-
-    updateInput();
-
-
-    if (
-      ZYRO.paused
-    ) {
-
-      player.vx = 0;
-      player.vz = 0;
-
+    if (ZYRO.paused)
       return;
 
-    }
-
-
-    let inputX =
+    const ix =
       ZYRO.input.x;
 
-    let inputZ =
+    const iz =
       ZYRO.input.z;
 
+    const magnitude =
+      Math.hypot(ix, iz);
 
-    const inputLength =
-      Math.hypot(
-        inputX,
-        inputZ
-      );
+    const moving =
+      magnitude > 0.05;
 
+    // --------------------------
+    // CORRIDA / ESTAMINA
+    // --------------------------
+
+    let running = false;
 
     if (
-      inputLength >
-      0.05
+      ZYRO.input.run &&
+      moving &&
+      ZYRO.state.stamina > 0
     ) {
 
-      inputX /=
-        Math.max(
-          inputLength,
-          1
-        );
+      running = true;
 
-      inputZ /=
-        Math.max(
-          inputLength,
-          1
-        );
+      ZYRO.state.stamina -=
+        CFG.staminaDrain * dt;
 
+    } else {
+
+      ZYRO.state.stamina +=
+        CFG.staminaRecover * dt;
+    }
+
+    ZYRO.state.stamina =
+      Math.max(
+        0,
+        Math.min(
+          CFG.staminaMax,
+          ZYRO.state.stamina
+        )
+      );
+
+    if (
+      ZYRO.state.stamina <= 0
+    ) {
+      ZYRO.input.run = false;
+      running = false;
+    }
+
+    ZYRO.state.running =
+      running;
+
+    updateStaminaHUD();
+
+    // --------------------------
+    // DIREÇÃO RELATIVA À CÂMERA
+    // --------------------------
+
+    if (moving) {
+
+      const nx =
+        ix / magnitude;
+
+      const nz =
+        iz / magnitude;
 
       const forwardX =
-        -Math.sin(
-          cameraYaw
-        );
+        -Math.sin(cameraYaw);
 
       const forwardZ =
-        -Math.cos(
-          cameraYaw
-        );
-
+        -Math.cos(cameraYaw);
 
       const rightX =
-        Math.cos(
-          cameraYaw
-        );
+        Math.cos(cameraYaw);
 
       const rightZ =
-        -Math.sin(
-          cameraYaw
-        );
+        -Math.sin(cameraYaw);
 
+      let moveX =
+        rightX * nx +
+        forwardX * (-nz);
 
-      const moveX =
-        rightX * inputX +
-        forwardX * (-inputZ);
+      let moveZ =
+        rightZ * nx +
+        forwardZ * (-nz);
 
-
-      const moveZ =
-        rightZ * inputX +
-        forwardZ * (-inputZ);
-
-
-      player.vx =
-        moveX *
-        player.speed;
-
-      player.vz =
-        moveZ *
-        player.speed;
-
-
-      const angle =
-        Math.atan2(
+      const len =
+        Math.hypot(
           moveX,
           moveZ
         );
 
-      body.rotation.y =
-        angle;
+      if (len > 0) {
+
+        moveX /= len;
+        moveZ /= len;
+
+      }
+
+      const speed =
+        running
+          ? CFG.runSpeed
+          : CFG.speed;
+
+      player.vx =
+        moveX * speed;
+
+      player.vz =
+        moveZ * speed;
+
+      // personagem vira para onde anda
+
+      playerMesh.rotation.y =
+        Math.atan2(
+          moveX,
+          moveZ
+        );
 
     } else {
 
@@ -955,78 +927,43 @@
           0.001,
           dt
         );
-
     }
 
-
-    // Movimento horizontal
+    // --------------------------
+    // POSIÇÃO
+    // --------------------------
 
     player.x +=
-      player.vx *
-      dt;
+      player.vx * dt;
 
     player.z +=
-      player.vz *
-      dt;
+      player.vz * dt;
 
-
-    // ======================================================
-    // ESCADA ROLANTE — carrega o player pra cima ao longo do
-    // eixo da escada, além do movimento normal dele
-    // ======================================================
-
-    const escalator =
-      getEscalatorAt(
-        player.x,
-        player.z
-      );
-
-    if (escalator) {
-
-      if (
-        escalator.axis ===
-        "z"
-      ) {
-
-        player.z +=
-          escalator.carry *
-          dt;
-
-      } else {
-
-        player.x +=
-          escalator.carry *
-          dt;
-
-      }
-
-    }
-
-
-    // Limites do mundo
+    // --------------------------
+    // LIMITES BÁSICOS
+    // --------------------------
 
     player.x =
       Math.max(
-        CONFIG.world.minX,
+        -20,
         Math.min(
-          CONFIG.world.maxX,
+          20,
           player.x
         )
       );
 
     player.z =
       Math.max(
-        CONFIG.world.minZ,
+        -20,
         Math.min(
-          CONFIG.world.maxZ,
+          20,
           player.z
         )
       );
 
-
-    // ======================================================
+    // --------------------------
     // PULO
-    // ======================================================
+    // --------------------------
 
     if (
       ZYRO.input.jump &&
@@ -1034,352 +971,167 @@
     ) {
 
       player.vy =
-        CONFIG.player.jumpForce;
+        CFG.jump;
 
       player.grounded =
         false;
-
     }
 
     ZYRO.input.jump =
       false;
 
-
-    // ======================================================
-    // GRAVIDADE + COLISÃO DE PISO
-    // ======================================================
+    // --------------------------
+    // GRAVIDADE
+    // --------------------------
 
     player.vy -=
-      CONFIG.player.gravity *
-      dt;
+      CFG.gravity * dt;
 
     player.y +=
-      player.vy *
-      dt;
+      player.vy * dt;
 
+    // --------------------------
+    // PLATAFORMAS
+    // --------------------------
 
-    let supportY;
+    let floorY = 0;
 
-    if (escalator) {
-
-      // Na escada rolante, a "superfície" é a rampa em si —
-      // interpola a altura ao longo do eixo dela
-      const t =
-        escalator.axis === "z"
-          ? (player.z - escalator.minZ) /
-            (escalator.maxZ - escalator.minZ)
-          : (player.x - escalator.minX) /
-            (escalator.maxX - escalator.minX);
-
-      const clampedT =
-        Math.max(0, Math.min(1, t));
-
-      supportY =
-        escalator.y0 +
-        (escalator.y1 - escalator.y0) *
-        clampedT;
-
-    } else {
-
-      supportY =
-        getSupportY(
-          player.x,
-          player.z,
-          player.y
-        );
-
-    }
-
+    const colliders =
+      window.ZYRO_WORLD_COLLIDERS;
 
     if (
-      player.y <= supportY
+      colliders &&
+      Array.isArray(
+        colliders.platforms
+      )
     ) {
 
-      player.y = supportY;
+      for (
+        const p of colliders.platforms
+      ) {
 
-      player.vy = 0;
+        if (
+          player.x >= p.minX &&
+          player.x <= p.maxX &&
+          player.z >= p.minZ &&
+          player.z <= p.maxZ &&
+          p.y <= player.y + 1
+        ) {
+
+          floorY =
+            Math.max(
+              floorY,
+              p.y
+            );
+        }
+      }
+    }
+
+    if (
+      player.y <= floorY
+    ) {
+
+      player.y =
+        floorY;
+
+      player.vy =
+        0;
 
       player.grounded =
         true;
-
     }
 
+    // --------------------------
+    // MESH
+    // --------------------------
 
-    // Atualiza mesh
-
-    body.position.set(
+    playerMesh.position.set(
       player.x,
-      player.y +
-      CONFIG.player.height / 2,
+      player.y + 0.9,
       player.z
     );
 
-  }
+    // --------------------------
+    // POI
+    // --------------------------
 
+    ZYRO.state.nearbyPOI =
+      nearestPOI();
+  }
 
   // ==========================================================
   // CÂMERA
   // ==========================================================
 
-  function updateCamera(
-    dt
-  ) {
+  function updateCamera(dt) {
 
     const target =
       new THREE.Vector3(
         player.x,
         player.y +
-        CONFIG.camera.lookHeight,
+          CFG.cameraLookHeight,
         player.z
       );
 
+    const horizontal =
+      CFG.cameraDistance *
+      Math.cos(cameraPitch);
 
-    cameraTarget.lerp(
-      target,
+    const vertical =
+      CFG.cameraDistance *
+      Math.sin(cameraPitch);
+
+    const desired =
+      new THREE.Vector3(
+        player.x +
+          Math.sin(cameraYaw) *
+          horizontal,
+
+        player.y +
+          CFG.cameraHeight +
+          vertical,
+
+        player.z +
+          Math.cos(cameraYaw) *
+          horizontal
+      );
+
+    const factor =
       1 -
       Math.exp(
-        -CONFIG.camera.smooth *
-        dt
-      )
-    );
-
-
-    const horizontalDistance =
-      CONFIG.camera.distance *
-      Math.cos(
-        cameraPitch
+        -CFG.cameraSmooth * dt
       );
-
-
-    const verticalDistance =
-      CONFIG.camera.distance *
-      Math.sin(
-        cameraPitch
-      );
-
-
-    const desiredX =
-      player.x +
-      Math.sin(
-        cameraYaw
-      ) *
-      horizontalDistance;
-
-
-    const desiredZ =
-      player.z +
-      Math.cos(
-        cameraYaw
-      ) *
-      horizontalDistance;
-
-
-    const desiredY =
-      player.y +
-      CONFIG.camera.height +
-      verticalDistance;
-
-
-    cameraPosition.set(
-      desiredX,
-      desiredY,
-      desiredZ
-    );
-
 
     camera.position.lerp(
-      cameraPosition,
-      1 -
-      Math.exp(
-        -CONFIG.camera.smooth *
-        dt
-      )
+      desired,
+      factor
     );
-
-
-    cameraLook.copy(
-      cameraTarget
-    );
-
 
     camera.lookAt(
-      cameraLook
+      target
     );
-
   }
-
-
-  // ==========================================================
-  // CÂMERA TOUCH / MOUSE
-  // ==========================================================
-
-  let cameraDragging =
-    false;
-
-  let cameraPointerId =
-    null;
-
-  let lastPointerX = 0;
-  let lastPointerY = 0;
-
-
-  renderer.domElement.addEventListener(
-    "pointerdown",
-    event => {
-
-      if (
-        event.pointerType ===
-        "mouse" &&
-        event.button !== 0
-      ) {
-
-        return;
-
-      }
-
-
-      cameraDragging =
-        true;
-
-      cameraPointerId =
-        event.pointerId;
-
-      lastPointerX =
-        event.clientX;
-
-      lastPointerY =
-        event.clientY;
-
-      renderer.domElement.setPointerCapture(
-        event.pointerId
-      );
-
-    }
-  );
-
-
-  renderer.domElement.addEventListener(
-    "pointermove",
-    event => {
-
-      if (
-        !cameraDragging ||
-        event.pointerId !==
-        cameraPointerId
-      ) {
-
-        return;
-
-      }
-
-
-      const dx =
-        event.clientX -
-        lastPointerX;
-
-      const dy =
-        event.clientY -
-        lastPointerY;
-
-
-      lastPointerX =
-        event.clientX;
-
-      lastPointerY =
-        event.clientY;
-
-
-      cameraYaw -=
-        dx *
-        0.006;
-
-
-      cameraPitch -=
-        dy *
-        0.004;
-
-
-      cameraPitch =
-        Math.max(
-          -0.05,
-          Math.min(
-            0.85,
-            cameraPitch
-          )
-        );
-
-    }
-  );
-
-
-  renderer.domElement.addEventListener(
-    "pointerup",
-    event => {
-
-      if (
-        event.pointerId ===
-        cameraPointerId
-      ) {
-
-        cameraDragging =
-          false;
-
-        cameraPointerId =
-          null;
-
-      }
-
-    }
-  );
-
-
-  renderer.domElement.addEventListener(
-    "pointercancel",
-    () => {
-
-      cameraDragging =
-        false;
-
-      cameraPointerId =
-        null;
-
-    }
-  );
-
 
   // ==========================================================
   // RESIZE
   // ==========================================================
 
-  function resize() {
-
-    const width =
-      window.innerWidth;
-
-    const height =
-      window.innerHeight;
-
-
-    camera.aspect =
-      width /
-      height;
-
-    camera.updateProjectionMatrix();
-
-
-    renderer.setSize(
-      width,
-      height
-    );
-
-  }
-
-
-  window.addEventListener(
+  addEventListener(
     "resize",
-    resize
-  );
+    () => {
 
+      camera.aspect =
+        innerWidth /
+        innerHeight;
+
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(
+        innerWidth,
+        innerHeight
+      );
+    }
+  );
 
   // ==========================================================
   // LOOP
@@ -1391,13 +1143,11 @@
   ZYRO.clock =
     clock;
 
-
   function animate() {
 
     requestAnimationFrame(
       animate
     );
-
 
     const dt =
       Math.min(
@@ -1405,30 +1155,14 @@
         0.05
       );
 
-
-    if (
-      !ZYRO.paused
-    ) {
-
-      updatePlayer(
-        dt
-      );
-
-    }
-
-
-    updateCamera(
-      dt
-    );
-
+    updatePlayer(dt);
+    updateCamera(dt);
 
     renderer.render(
       scene,
       camera
     );
-
   }
-
 
   // ==========================================================
   // BOOT
@@ -1437,11 +1171,9 @@
   ZYRO.state.initialized =
     true;
 
-
   console.log(
-    "ZYRO GAME (shopping) iniciado."
+    "ZYRO GAME.JS V0.2 carregado"
   );
-
 
   animate();
 

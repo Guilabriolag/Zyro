@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Labriolog Multiplex — V3 · Gramática Zero</title>
+<link rel="stylesheet" href="css/multiplex.css">
+</head>
+<body>
+<div id="hud">
+  <div class="brand">LABRIOLOG <span>MULTIPLEX V3</span></div>
+  <div id="status">HALL · entrada principal</div>
+  <div id="prompt"></div>
+</div>
+
+<div id="crosshair">+</div>
+
+<div id="topActions">
+  <button data-action="log">LOG</button>
+  <button data-action="check">G0</button>
+  <button data-action="rain">☂</button>
+  <button data-action="time">☼</button>
+  <button data-action="reset">↻</button>
+</div>
+
+<div id="sheet" class="hidden">
+  <div class="sheetHead">
+    <strong id="sheetTitle">GRAMÁTICA ZERO</strong>
+    <button id="closeSheet">×</button>
+  </div>
+  <div id="sheetContent"></div>
+</div>
+
+<div id="actionButton" class="hidden">INTERAGIR</div>
+<div id="joystick"><div id="stick"></div></div>
+<div id="lookHint">ARRASTE<br>PARA OLHAR</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+
+<script src="js/core/Checklist.js"></script>
+<script src="js/core/EventLog.js"></script>
+<script src="js/core/StateMachine.js"></script>
+<script src="js/core/EntityRegistry.js"></script>
+<script src="js/core/GramaticaEngine.js"></script>
+
+<script src="js/interaction/Perception.js"></script>
+<script src="js/interaction/Pickup.js"></script>
+<script src="js/interaction/Gestures.js"></script>
+
+<script src="js/world/World.js"></script>
+<script src="js/world/Environment.js"></script>
+
+<script src="js/entities/CinemaRoom.js"></script>
+<script src="js/entities/CinemaEntities.js"></script>
+<script src="js/entities/NPC.js"></script>
+
+<script src="js/player/Player.js"></script>
+<script src="js/ui/HUD.js"></script>
+<script src="js/ui/ActionMenu.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

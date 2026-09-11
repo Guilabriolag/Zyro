@@ -1,233 +1,104 @@
 // ============================================================
-// ZYRO — GIROSPIN.JS
-// V0.1 — apenas o campo do PLAYER
-//
-// Não altera GAME.JS
-// Não altera WORLD.JS
-// Não altera POI.JS
-// Não altera UI.JS
+// ZYRO — UI.JS
+// Liga os botões do HTML (menu, pause, painéis) ao estado do jogo.
+// Igual ao núcleo do Complexo, com um acréscimo: mostra em qual
+// piso o player está no painel de personagem.
 // ============================================================
 
 (() => {
-  "use strict";
-
-  function boot() {
-
-    // Espera o núcleo do jogo existir.
-    if (!window.ZYRO) {
-      setTimeout(boot, 100);
-      return;
-    }
-
-    if (!window.ZYRO.scene) {
-      setTimeout(boot, 100);
-      return;
-    }
-
-    if (!window.ZYRO.playerMesh) {
-      setTimeout(boot, 100);
-      return;
-    }
-
-    console.log("GIROSPIN: iniciando...");
-
-    createPlayerField();
-
-    console.log("GIROSPIN: PLAYER conectado.");
-  }
-
-
-  // ==========================================================
-  // CAMPO DO PLAYER
-  // ==========================================================
-
-  function createPlayerField() {
-
-    const playerMesh = window.ZYRO.playerMesh;
-
-    const field = new THREE.Group();
-
-    field.name = "GIROSPIN_PLAYER";
-
-    playerMesh.add(field);
-
-
-    // --------------------------------------------------------
-    // CAMADAS
-    // --------------------------------------------------------
-
-    const layers = [
-      {
-        name: "SER",
-        radius: 1.5,
-        color: 0x4cc9f0,
-        speed: 0.25
-      },
-
-      {
-        name: "PODER",
-        radius: 2.2,
-        color: 0x6fa8dc,
-        speed: -0.18
-      },
-
-      {
-        name: "QUERER",
-        radius: 3.0,
-        color: 0xd99a32,
-        speed: 0.14
-      },
-
-      {
-        name: "IMPULSO",
-        radius: 3.8,
-        color: 0xf1c66a,
-        speed: -0.10
-      }
-    ];
-
-
-    layers.forEach(layer => {
-
-      const geometry =
-        new THREE.IcosahedronGeometry(
-          layer.radius,
-          1
-        );
-
-      const edges =
-        new THREE.EdgesGeometry(
-          geometry
-        );
-
-      const material =
-        new THREE.LineBasicMaterial({
-          color: layer.color,
-          transparent: true,
-          opacity: 0.30,
-          depthWrite: false
-        });
-
-      const mesh =
-        new THREE.LineSegments(
-          edges,
-          material
-        );
-
-      mesh.name =
-        `GIROSPIN_${layer.name}`;
-
-      field.add(mesh);
-
-      layer.mesh = mesh;
-    });
-
-
-    // --------------------------------------------------------
-    // PEQUENOS NÓS NAS FACETAS
-    // --------------------------------------------------------
-
-    const nodeGeometry =
-      new THREE.SphereGeometry(
-        0.08,
-        8,
-        8
-      );
-
-    layers.forEach((layer, index) => {
-
-      const material =
-        new THREE.MeshBasicMaterial({
-          color: layer.color,
-          transparent: true,
-          opacity: 0.8
-        });
-
-      const node =
-        new THREE.Mesh(
-          nodeGeometry,
-          material
-        );
-
-      const angle =
-        index * Math.PI * 0.5;
-
-      node.position.set(
-        Math.cos(angle) * layer.radius,
-        Math.sin(angle) * layer.radius,
-        0
-      );
-
-      field.add(node);
-
-      layer.node = node;
-    });
-
-
-    // --------------------------------------------------------
-    // API
-    // --------------------------------------------------------
-
-    window.ZYRO_GIROSPIN = {
-
-      field: field,
-
-      layers: layers,
-
-      player: playerMesh
-
-    };
-
-
-    // --------------------------------------------------------
-    // ANIMAÇÃO
-    // --------------------------------------------------------
-
-    let previous = performance.now();
-
-    function animate(now) {
-
-      requestAnimationFrame(
-        animate
-      );
-
-      const dt =
-        Math.min(
-          0.05,
-          (now - previous) / 1000
-        );
-
-      previous = now;
-
-
-      layers.forEach(layer => {
-
-        layer.mesh.rotation.x +=
-          layer.speed * dt;
-
-        layer.mesh.rotation.y +=
-          layer.speed * 0.7 * dt;
-
-        layer.mesh.rotation.z +=
-          layer.speed * 0.35 * dt;
-
-      });
-
-    }
-
-    requestAnimationFrame(
-      animate
-    );
-  }
-
-
-  // ==========================================================
-  // BOOT
-  // ==========================================================
-
-  window.addEventListener(
-    "load",
-    boot
-  );
+"use strict";
+
+function $(id) {
+return document.getElementById(id);
+}
+
+function showPanel(el) {
+if (el) el.classList.remove("hidden");
+}
+
+function hidePanel(el) {
+if (el) el.classList.add("hidden");
+}
+
+// Metade da altura de piso (ver CONFIG.floors.height no game.js) —
+// usado só pra decidir se mostra "Térreo" ou "1º Piso" no painel.
+const FLOOR_SPLIT_Y = 2.2;
+
+window.addEventListener("load", () => {
+
+const loadingScreen = $("loading-screen");  
+const pauseScreen = $("pause-screen");  
+const mainMenu = $("main-menu");  
+const playerPanel = $("player-panel");  
+
+if (loadingScreen) {  
+  setTimeout(() => hidePanel(loadingScreen), 300);  
+}  
+
+$("menu-button")?.addEventListener("click", () => {  
+  showPanel(mainMenu);  
+  if (window.ZYRO && !window.ZYRO.paused) window.ZYRO.pause();  
+});  
+
+$("pause-button")?.addEventListener("click", () => {  
+  const paused = window.ZYRO ? window.ZYRO.pause() : true;  
+  if (paused) {  
+    showPanel(pauseScreen);  
+  } else {  
+    hidePanel(pauseScreen);  
+  }  
+});  
+
+$("resume-button")?.addEventListener("click", () => {  
+  if (window.ZYRO && window.ZYRO.paused) window.ZYRO.pause();  
+  hidePanel(pauseScreen);  
+});  
+
+$("character-button")?.addEventListener("click", () => {  
+  hidePanel(pauseScreen);  
+  showPanel(playerPanel);  
+});  
+
+$("close-player-panel")?.addEventListener("click", () => {  
+  hidePanel(playerPanel);  
+});  
+
+$("close-main-menu")?.addEventListener("click", () => {  
+  hidePanel(mainMenu);  
+  if (window.ZYRO && window.ZYRO.paused) window.ZYRO.pause();  
+});  
+
+$("main-menu")?.querySelectorAll("[data-menu]").forEach(btn => {  
+  btn.addEventListener("click", () => {  
+    const target = btn.dataset.menu;  
+    if (target === "continue") {  
+      hidePanel(mainMenu);  
+      if (window.ZYRO && window.ZYRO.paused) window.ZYRO.pause();  
+    } else if (target === "character") {  
+      hidePanel(mainMenu);  
+      showPanel(playerPanel);  
+    }  
+  });  
+});  
+
+setInterval(() => {  
+  if (!window.ZYRO || !window.ZYRO.player) return;  
+  if (!playerPanel || playerPanel.classList.contains("hidden")) return;  
+
+  const p = window.ZYRO.player;  
+
+  const posEl = $("character-position");  
+  if (posEl) {  
+    posEl.textContent = `${p.x.toFixed(1)} / ${p.z.toFixed(1)}`;  
+  }  
+
+  const floorEl = $("character-floor");  
+  if (floorEl) {  
+    floorEl.textContent = p.y > FLOOR_SPLIT_Y ? "1º Piso" : "Térreo";  
+  }  
+}, 300);
+
+});
 
 })();
+Olha, ele tá sim, esse ele tá compatível.

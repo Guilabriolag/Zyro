@@ -42,9 +42,9 @@
       height: 100%;
     }
 
-    /* =====================================================
+    /* =========================================================
        LOADING
-    ===================================================== */
+    ========================================================= */
 
     .screen {
       position: fixed;
@@ -76,9 +76,9 @@
       font-size: 12px;
     }
 
-    /* =====================================================
+    /* =========================================================
        HUD
-    ===================================================== */
+    ========================================================= */
 
     #hud {
       position: fixed;
@@ -104,9 +104,13 @@
       background: rgba(10, 11, 14, .78);
       border: 1px solid rgba(255, 255, 255, .12);
       border-radius: 10px;
+
       padding: 9px 12px;
+
       backdrop-filter: blur(8px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, .25);
+
+      box-shadow:
+        0 4px 20px rgba(0, 0, 0, .25);
     }
 
     #zyro-title {
@@ -122,19 +126,22 @@
       letter-spacing: 1px;
     }
 
-    /* =====================================================
+    /* =========================================================
        GIROSPIN HUD
-    ===================================================== */
+    ========================================================= */
 
     #girospin-hud {
       position: absolute;
+
       top: 75px;
       left: 12px;
 
       min-width: 190px;
 
       background: rgba(3, 3, 3, .78);
+
       border: 1px solid rgba(76, 201, 240, .28);
+
       border-radius: 10px;
 
       padding: 10px 12px;
@@ -146,27 +153,35 @@
 
     #girospin-label {
       color: #4cc9f0;
+
       font-size: 9px;
+
       letter-spacing: 2px;
     }
 
     #girospin-intent {
       margin-top: 5px;
+
       color: #f1c66a;
+
       font-size: 12px;
+
       font-weight: bold;
     }
 
     #girospin-help {
       margin-top: 6px;
+
       color: #aaa;
+
       font-size: 9px;
+
       line-height: 1.4;
     }
 
-    /* =====================================================
-       INTERAÇÃO
-    ===================================================== */
+    /* =========================================================
+       INTERACTION PANEL
+    ========================================================= */
 
     #interaction-panel {
       position: absolute;
@@ -179,6 +194,7 @@
       width: min(360px, calc(100% - 32px));
 
       background: rgba(8, 9, 12, .86);
+
       border: 1px solid rgba(255, 255, 255, .13);
 
       border-radius: 14px;
@@ -204,16 +220,19 @@
 
     #interaction-description {
       margin-top: 3px;
+
       font-size: 10px;
+
       opacity: .6;
     }
 
-    /* =====================================================
+    /* =========================================================
        BOTÕES
-    ===================================================== */
+    ========================================================= */
 
     .button {
       position: fixed;
+
       z-index: 30;
 
       border: 1px solid rgba(255, 255, 255, .16);
@@ -237,6 +256,8 @@
         0 5px 20px rgba(0, 0, 0, .35);
 
       user-select: none;
+
+      touch-action: manipulation;
     }
 
     .button:active {
@@ -269,9 +290,9 @@
       font-weight: bold;
     }
 
-    /* =====================================================
+    /* =========================================================
        JOYSTICK
-    ===================================================== */
+    ========================================================= */
 
     #joystick-area {
       position: fixed;
@@ -285,6 +306,8 @@
       z-index: 30;
 
       pointer-events: auto;
+
+      touch-action: none;
     }
 
     #joystick-base {
@@ -317,19 +340,23 @@
       background: rgba(255, 255, 255, .18);
 
       border: 1px solid rgba(255, 255, 255, .2);
+
+      pointer-events: none;
     }
 
-    /* =====================================================
+    /* =========================================================
        PAINÉIS
-    ===================================================== */
+    ========================================================= */
 
     .panel {
       position: fixed;
+
       inset: 0;
 
       z-index: 90;
 
       display: flex;
+
       align-items: center;
       justify-content: center;
 
@@ -355,17 +382,21 @@
 
     .panel-title {
       font-size: 18px;
+
       font-weight: bold;
+
       margin-bottom: 16px;
     }
 
     .panel-row {
       display: flex;
+
       justify-content: space-between;
 
       padding: 9px 0;
 
-      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      border-bottom:
+        1px solid rgba(255, 255, 255, .07);
 
       font-size: 12px;
     }
@@ -392,12 +423,9 @@
       font-weight: bold;
     }
 
-    /* =====================================================
-       MENU
-    ===================================================== */
-
     #main-menu .menu-buttons {
       display: grid;
+
       gap: 9px;
     }
 
@@ -417,17 +445,13 @@
       text-align: left;
     }
 
-    /* =====================================================
-       PAUSE
-    ===================================================== */
-
     #pause-screen .panel-box {
       text-align: center;
     }
 
-    /* =====================================================
+    /* =========================================================
        MOBILE
-    ===================================================== */
+    ========================================================= */
 
     @media (max-width: 600px) {
 
@@ -455,16 +479,16 @@
 
 <body>
 
-  <!-- =====================================================
+  <!-- =======================================================
        GAME
-  ====================================================== -->
+  ======================================================== -->
 
   <div id="game-container"></div>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        LOADING
-  ====================================================== -->
+  ======================================================== -->
 
   <div id="loading-screen" class="screen">
 
@@ -479,9 +503,9 @@
   </div>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        HUD
-  ====================================================== -->
+  ======================================================== -->
 
   <div id="hud">
 
@@ -515,14 +539,17 @@
       </div>
 
       <div id="girospin-help">
+
         E / AÇÃO → emitir impulso<br>
+
         1 camiseta · 2 skate · 3 empréstimo · 4 celular
+
       </div>
 
     </div>
 
 
-    <!-- INTERAÇÃO POI -->
+    <!-- INTERAÇÃO -->
 
     <div id="interaction-panel">
 
@@ -543,9 +570,9 @@
   </div>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        BOTÕES
-  ====================================================== -->
+  ======================================================== -->
 
   <button
     id="menu-button"
@@ -555,6 +582,7 @@
     ☰
   </button>
 
+
   <button
     id="pause-button"
     class="button"
@@ -563,6 +591,7 @@
     II
   </button>
 
+
   <button
     id="character-button"
     class="button"
@@ -570,6 +599,7 @@
   >
     ●
   </button>
+
 
   <button
     id="action-btn"
@@ -580,9 +610,9 @@
   </button>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        JOYSTICK
-  ====================================================== -->
+  ======================================================== -->
 
   <div id="joystick-area">
 
@@ -593,9 +623,9 @@
   </div>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        PAUSE
-  ====================================================== -->
+  ======================================================== -->
 
   <div
     id="pause-screen"
@@ -629,9 +659,9 @@
   </div>
 
 
-  <!-- =====================================================
-       MENU PRINCIPAL
-  ====================================================== -->
+  <!-- =======================================================
+       MENU
+  ======================================================== -->
 
   <div
     id="main-menu"
@@ -677,9 +707,9 @@
   </div>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        PERSONAGEM
-  ====================================================== -->
+  ======================================================== -->
 
   <div
     id="player-panel"
@@ -704,6 +734,7 @@
 
       </div>
 
+
       <div class="panel-row">
 
         <span>
@@ -716,6 +747,7 @@
 
       </div>
 
+
       <div class="panel-row">
 
         <span>
@@ -727,6 +759,7 @@
         </span>
 
       </div>
+
 
       <button
         id="close-player-panel"
@@ -741,47 +774,66 @@
   </div>
 
 
-  <!-- =====================================================
+  <!-- =======================================================
        THREE.JS
-  ====================================================== -->
+  ======================================================== -->
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js">
-  </script>
-<script>
-  <script>
-<script>
-  document.getElementById("loading-screen").style.display = "none";
-  alert("HTML ESTÁ EXECUTANDO");
-</script>
-  
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-  <!-- =====================================================
-       ZYRO ENGINE
-       IMPORTANTE: ORDEM
-  ====================================================== -->
+
+  <!-- =======================================================
+       ZYRO CORE
+  ======================================================== -->
 
   <script src="js/game.js"></script>
-<script src="js/world.js"></script>
-<script src="js/poi.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/girospin.js"></script>
-  <!-- =====================================================
-       BOOT EXTRA
-       Garante que o HUD do Girospin acompanhe a intenção.
-  ====================================================== -->
+
+  <script src="js/world.js"></script>
+
+  <script src="js/poi.js"></script>
+
+  <script src="js/ui.js"></script>
+
+  <script src="js/girospin.js"></script>
+
+
+  <!-- =======================================================
+       GIROSPIN HUD
+  ======================================================== -->
 
   <script>
 
-    window.addEventListener("load", () => {
+    window.addEventListener("load", function () {
+
+      /*
+       * O HTML controla o loading.
+       * Assim o carregamento não depende do UI.JS.
+       */
+
+      const loadingScreen =
+        document.getElementById("loading-screen");
+
+      if (loadingScreen) {
+
+        setTimeout(function () {
+
+          loadingScreen.classList.add("hidden");
+
+        }, 300);
+
+      }
+
+
+      /*
+       * Atualização do texto do Girospin.
+       */
 
       const intentEl =
         document.getElementById("girospin-intent");
 
       if (!intentEl) return;
 
-      setInterval(() => {
+
+      setInterval(function () {
 
         if (
           window.ZYRO_GIROSPIN &&
@@ -791,8 +843,15 @@
           const intent =
             window.ZYRO_GIROSPIN.getIntent();
 
-          intentEl.textContent =
-            `QUERER: ${intent.action} ${intent.entity}`;
+          if (intent) {
+
+            intentEl.textContent =
+              "QUERER: " +
+              intent.action +
+              " " +
+              intent.entity;
+
+          }
 
         }
 
@@ -803,4 +862,5 @@
   </script>
 
 </body>
+
 </html>

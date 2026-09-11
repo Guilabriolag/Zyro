@@ -750,38 +750,11 @@
   </script>
 <script>
   <script>
-window.onerror = function(message, source, line, column, error) {
-  const box = document.createElement("div");
-
-  box.style.cssText = `
-    position:fixed;
-    z-index:99999;
-    left:10px;
-    right:10px;
-    top:10px;
-    padding:14px;
-    background:#300;
-    color:#fff;
-    font-family:monospace;
-    font-size:12px;
-    white-space:pre-wrap;
-    border:2px solid #f44;
-    border-radius:10px;
-  `;
-
-  box.textContent =
-    "ERRO ZYRO\n\n" +
-    message +
-    "\n\n" +
-    source +
-    ":" +
-    line +
-    ":" +
-    column;
-
-  document.body.appendChild(box);
-};
+<script>
+  document.getElementById("loading-screen").style.display = "none";
+  alert("HTML ESTÁ EXECUTANDO");
 </script>
+  
 </script>
 
   <!-- =====================================================

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0a0e14">
+  <title>Copa Button 3D</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!--
+    Three.js vem de CDN. Para rodar 100% offline, baixe three.module.js para
+    ./vendor/three.module.js e troque a URL abaixo por "./vendor/three.module.js".
+  -->
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.181.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+
+  <!-- ============ MENU ============ -->
+  <main id="screen-menu" class="screen is-active">
+    <div class="menu-wrap">
+      <h1 class="logo">Copa<br>Button <span>3D</span></h1>
+      <p class="tag">Futebol de botão com física de verdade. Arraste, solte e petelece.</p>
+      <div class="menu-actions">
+        <button class="btn btn-primary" data-go="prematch">Partida rápida</button>
+        <button class="btn btn-ghost" id="btn-howto">Como jogar</button>
+      </div>
+      <dl class="profile">
+        <div><dt>XP</dt><dd id="p-xp">0</dd></div>
+        <div><dt>Moedas</dt><dd id="p-coins">0</dd></div>
+        <div><dt>Partidas</dt><dd id="p-played">0</dd></div>
+        <div><dt>Vitórias</dt><dd id="p-wins">0</dd></div>
+      </dl>
+    </div>
+  </main>
+
+  <!-- ============ PRÉ-JOGO ============ -->
+  <main id="screen-prematch" class="screen">
+    <div class="pre-wrap">
+      <header class="pre-head">
+        <button class="btn btn-ghost btn-sm" data-go="menu">Voltar</button>
+        <h2>Pré-jogo</h2>
+      </header>
+
+      <section class="versus">
+        <label class="team-pick">
+          <span class="lbl">Você</span>
+          <span class="flag" id="flag-home">🇧🇷</span>
+          <select id="sel-home"></select>
+        </label>
+        <span class="x">×</span>
+        <label class="team-pick">
+          <span class="lbl">Adversário</span>
+          <span class="flag" id="flag-away">🇦🇷</span>
+          <select id="sel-away"></select>
+        </label>
+      </section>
+
+      <section class="grid-opts">
+        <label>Estádio
+          <select id="sel-stadium"></select>
+        </label>
+        <label>Clima
+          <select id="sel-weather">
+            <option value="sol">Sol</option>
+            <option value="nublado">Nublado</option>
+            <option value="chuva">Chuva</option>
+            <option value="chuva-forte">Chuva forte</option>
+          </select>
+        </label>
+        <label>Horário
+          <select id="sel-time">
+            <option value="manha">Manhã</option>
+            <option value="tarde">Tarde</option>
+            <option value="poente">Pôr do sol</option>
+            <option value="noite">Noite</option>
+          </select>
+        </label>
+        <label>Gramado
+          <select id="sel-grass"></select>
+        </label>
+        <label>Duração de cada tempo
+          <select id="sel-half">
+            <option value="45">45 s</option>
+            <option value="75">75 s</option>
+            <option value="120">120 s</option>
+          </select>
+        </label>
+        <label>Qualidade gráfica
+          <select id="sel-quality">
+            <option value="alta">Alta</option>
+            <option value="media">Média (celulares)</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="checks">
+        <label><input type="checkbox" id="chk-walls" checked> Tabelas nas laterais</label>
+        <label><input type="checkbox" id="chk-gk" checked> Goleiros</label>
+        <label><input type="checkbox" id="chk-assist" checked> Trajetória de mira</label>
+        <label><input type="checkbox" id="chk-sound" checked> Som da torcida</label>
+        <label><input type="checkbox" id="chk-training"> Modo treino (sem relógio)</label>
+      </section>
+
+      <p id="stadium-desc" class="stadium-desc"></p>
+      <button class="btn btn-primary btn-wide" id="btn-start">Entrar em campo</button>
+    </div>
+  </main>
+
+  <!-- ============ PARTIDA ============ -->
+  <main id="screen-match" class="screen">
+    <canvas id="game-canvas"></canvas>
+
+    <div class="hud-top">
+      <div class="scoreboard">
+        <div class="sb-team" id="sb-home"><span class="sb-flag"></span><span class="sb-code"></span></div>
+        <div class="sb-score"><span id="sc-h">0</span><i>×</i><span id="sc-a">0</span></div>
+        <div class="sb-team sb-away" id="sb-away"><span class="sb-code"></span><span class="sb-flag"></span></div>
+        <div class="sb-clock"><b id="sb-min">00'</b><small id="sb-half">1º T</small></div>
+      </div>
+    </div>
+
+    <div class="hud-left">
+      <div class="pill" id="turn-pill">Seu peteleco</div>
+      <div class="pill pill-dim" id="phase-pill"></div>
+      <div class="pill pill-dim pill-sel" id="sel-pill"></div>
+    </div>
+
+    <div class="hud-right" id="hud-right">
+      <div id="cam-buttons"></div>
+      <button class="chip" id="btn-assist">Trajetória: ligada</button>
+      <button class="chip" id="btn-sound">Som: ligado</button>
+      <button class="chip" id="btn-pause">Pausar</button>
+    </div>
+
+    <div class="feed" id="feed"></div>
+
+    <div class="hud-bottom">
+      <div class="controls">
+        <label class="spin">
+          <span>Efeito</span>
+          <input type="range" id="spin" min="-1" max="1" step="0.1" value="0">
+          <output id="spin-out">0.0</output>
+        </label>
+        <div class="power">
+          <div class="power-top"><span>Força</span><output id="power-out">0%</output></div>
+          <div class="power-bar"><i id="power-fill"></i></div>
+        </div>
+      </div>
+      <p class="hint">Toque no botão, arraste na direção do alvo e solte para petelecar.</p>
+    </div>
+
+    <div class="goal-flash" id="goal-flash" hidden>
+      <div class="goal-big">GOOOL!</div>
+      <div class="goal-who" id="goal-who"></div>
+    </div>
+
+    <div class="overlay" id="ov-pause" hidden>
+      <div class="panel">
+        <h3>Pausado</h3>
+        <p class="ov-score" id="pause-score"></p>
+        <div class="stack">
+          <button class="btn btn-primary" id="pz-resume">Continuar</button>
+          <button class="btn btn-ghost" id="pz-end">Encerrar partida</button>
+          <button class="btn btn-ghost" id="pz-menu">Sair para o menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="ov-end" hidden>
+      <div class="panel panel-wide">
+        <p class="kicker">Fim de jogo</p>
+        <div class="end-score">
+          <div><span id="end-flag-h"></span><b id="end-code-h"></b></div>
+          <strong id="end-score"></strong>
+          <div><span id="end-flag-a"></span><b id="end-code-a"></b></div>
+        </div>
+        <div class="stats" id="end-stats"></div>
+        <ul class="scorers" id="end-scorers"></ul>
+        <p class="reward" id="end-reward"></p>
+        <div class="row">
+          <button class="btn btn-primary" id="end-again">Revanche</button>
+          <button class="btn btn-ghost" id="end-pre">Pré-jogo</button>
+          <button class="btn btn-ghost" id="end-menu">Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="ov-error" hidden>
+      <div class="panel">
+        <h3>Não foi possível iniciar a partida</h3>
+        <p id="err-text"></p>
+        <p class="small">Se o erro for de rede, o Three.js não foi baixado do CDN. Veja o comentário no index.html para usar uma cópia local.</p>
+        <button class="btn btn-primary" id="err-back">Voltar</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============ COMO JOGAR ============ -->
+  <dialog id="dlg-howto">
+    <h3>Como jogar</h3>
+    <ol>
+      <li>Toque em um dos seus botões (ou deixe o jogo escolher o melhor).</li>
+      <li>Arraste na direção do alvo. Quanto mais longe, mais força.</li>
+      <li>Ajuste o efeito para curvar o disparo e solte para petelecar.</li>
+      <li>Depois do seu lance, o adversário joga. Vence quem fizer mais gols nos dois tempos.</li>
+    </ol>
+    <form method="dialog"><button class="btn btn-primary">Entendi</button></form>
+  </dialog>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+CIDADE ZERO
+
+Mundo Vivo 3D • Simulador Urbano • Sandbox de Construção
+
+Projeto: CIDADE ZERO
+Organização: ZYRO LABS
+Versão da demonstração: 1.0
+Categoria: Simulação urbana 3D / Construção / Gestão / Sandbox
+Tecnologia: HTML5, CSS3, JavaScript e Three.js
+Idioma: Português brasileiro
+
+---
+
+1. VISÃO GERAL DO PROJETO
+
+A CIDADE ZERO é um projeto de simulação urbana tridimensional que representa uma cidade brasileira de grande escala, organizada em distritos, bairros, setores, vias públicas, construções, áreas residenciais, comerciais, industriais, institucionais, rurais e ambientais.
+
+O projeto tem como objetivo construir um ambiente urbano que funcione como um mundo vivo, no qual diferentes sistemas coexistem e interagem.
+
+A cidade não deve ser apenas um cenário visual. Ela possui uma estrutura de funcionamento que representa:
+
+- Organização territorial.
+- Desenvolvimento urbano.
+- Construção e demolição.
+- População e cidadãos.
+- Comércio e indústria.
+- Produção e distribuição de recursos.
+- Economia municipal.
+- Abastecimento de água.
+- Geração e distribuição de energia.
+- Sistema viário.
+- Transporte público e particular.
+- Tráfego urbano.
+- Serviços públicos.
+- Meio ambiente.
+- Ciclo de dia e noite.
+- Condições climáticas.
+- Eventos e acontecimentos.
+- Exploração de ambientes.
+- Personalização do território.
+
+A demonstração apresenta dois grandes ambientes operacionais:
+
+MUNDO VIVO: representa a cidade funcionando, com suas construções, infraestrutura, população, veículos, clima, tempo e economia.
+
+LABORATÓRIO SANDBOX: permite modificar o ambiente urbano, construir edificações, adicionar objetos, inserir veículos e NPCs, demolir estruturas e experimentar diferentes configurações da cidade.
+
+A proposta é unir a experiência de observar uma cidade funcionando com a liberdade de interferir em sua organização e desenvolvimento.
+
+2. DIMENSÕES E ORGANIZAÇÃO TERRITORIAL
+
+A CIDADE ZERO possui uma escala territorial definida de:
+
+- Largura: 12.000 metros.
+- Comprimento: 12.000 metros.
+- Área total: 144 km².
+- Divisão: 2.304 setores.
+- Dimensão de cada setor: 250 × 250 metros.
+- Organização: 12 distritos funcionais.
+
+A cidade utiliza coordenadas tridimensionais para representar posições, construções, terreno, estradas e entidades.
+
+Cada setor possui uma identificação territorial que permite localizar construções e objetos dentro da estrutura urbana.
+
+Exemplo:
+
+"CZ-D01-B03-S014"
+
+Essa identificação representa a organização da cidade por distrito, bairro e setor.
+
+A setorização permite:
+
+- Identificar a localização de uma entidade.
+- Associar construções ao território.
+- Organizar os bairros.
+- Consultar informações de cada região.
+- Visualizar diferentes camadas urbanas.
+- Expandir o sistema de gerenciamento territorial.
+
+3. OS 12 DISTRITOS DA CIDADE ZERO
+
+A cidade é organizada em doze regiões funcionais, cada uma com características, atividades e finalidade próprias.
+
+D01 — Centro Urbano
+
+<descrição>
+É o principal núcleo administrativo, financeiro e corporativo da cidade.
+</descrição>
+
+Principais estruturas:
+
+- Centro Histórico.
+- Avenida Paulista Zero.
+- Setor Bancário.
+- Praça dos Poderes.
+- Prefeitura Municipal.
+- Praça Marco Zero.
+- Terminal Central de Transporte Público.
+- Torres corporativas.
+- Bancos.
+- Hotéis.
+- Calçadões.
+- Edifícios empresariais.
+
+É a região de maior densidade construtiva e concentração de atividades urbanas.
+
+D02 — Residencial Norte
+
+Área destinada à moradia e à vida cotidiana.
+
+Principais estruturas:
+
+- Jardim Aurora.
+- Vila das Flores.
+- Parque Imperial.
+- Alto do Norte.
+- Casas térreas.
+- Sobrados.
+- Casas geminadas.
+- Condomínios.
+- Escolas.
+- Padarias.
+- Farmácias.
+- Praças.
+
+D03 — Residencial Leste
+
+Região residencial com maior presença de conjuntos habitacionais e edifícios.
+
+Principais estruturas:
+
+- Bela Vista Leste.
+- Conjunto Horizonte.
+- Jardim Alvorada.
+- Vila Esperança.
+- Condomínios verticais.
+- Garagens.
+- Comércio local.
+- Clínicas.
+- Escolas.
+
+D04 — Residencial Sul
+
+Região voltada à habitação, convivência e atividades de lazer.
+
+Principais estruturas:
+
+- Jardim das Palmeiras.
+- Morada do Sul.
+- Vila Nova.
+- Parque dos Lagos.
+- Casas.
+- Sobrados.
+- Condomínios horizontais.
+- Academias.
+- Restaurantes.
+- Praças.
+- Áreas esportivas.
+
+D05 — Comercial
+
+Principal região de atividades comerciais e serviços privados.
+
+Principais estruturas:
+
+- Polo Shopping.
+- Shopping Center Cidade Zero.
+- Corredor Comercial.
+- Avenida das Lojas.
+- Setor Automotivo.
+- Supermercados.
+- Lojas.
+- Postos de combustível.
+- Oficinas.
+
+O shopping possui uma funcionalidade especial de exploração interna.
+
+D06 — Industrial
+
+Região destinada à produção e transformação de materiais.
+
+Principais estruturas:
+
+- Distrito Metalúrgico.
+- Polo Fabril.
+- Parque Alimentício.
+- Zona Técnica.
+- Fábricas.
+- Metalúrgicas.
+- Indústrias alimentícias.
+- Indústrias têxteis.
+- Chaminés.
+- Reservatórios.
+- Pátios industriais.
+
+D07 — Logística
+
+Região responsável pela movimentação e distribuição de mercadorias.
+
+Principais estruturas:
+
+- Polo de Distribuição.
+- Terminal de Cargas.
+- Setor de Docas.
+- Pátio Rodoviário.
+- Centros de distribuição.
+- Galpões.
+- Contêineres.
+- Pátios de caminhões.
+- Conexões rodoviárias.
+
+D08 — Institucional
+
+Região concentradora de serviços públicos, educação, saúde e segurança.
+
+Principais estruturas:
+
+- Campus Universitário.
+- Setor Hospitalar.
+- Centro Cívico.
+- Vila Militar e Bombeiros.
+- Hospital Geral.
+- Universidade.
+- Biblioteca.
+- Delegacia.
+- Corpo de Bombeiros.
+- Correios.
+
+D09 — Lazer e Esportes
+
+Região dedicada à recreação, cultura e atividades esportivas.
+
+Principais estruturas:
+
+- Parque Metropolitano.
+- Arena Cidade Zero.
+- Polo Cultural.
+- Alameda dos Esportes.
+- Lago.
+- Estádio de futebol.
+- Ginásio.
+- Quadras.
+- Piscina.
+- Skatepark.
+- Teatro.
+- Roda-gigante.
+
+D10 — Rural e Agrícola
+
+Área destinada às atividades agropecuárias e à produção de alimentos.
+
+Principais estruturas:
+
+- Fazenda Boa Esperança.
+- Cinturão Verde.
+- Vale dos Silos.
+- Estância Sol Nascente.
+- Fazendas.
+- Plantações.
+- Hortas.
+- Pomares.
+- Estufas.
+- Granjas.
+- Galpões agrícolas.
+- Silos.
+- Pivôs de irrigação.
+
+D11 — Reserva Natural
+
+Área de preservação ambiental.
+
+Principais estruturas:
+
+- Serra da Mata Viva.
+- Mirante do Horizonte.
+- Vale das Nascentes.
+- Trilha Ecológica.
+- Morros.
+- Serras.
+- Mata Atlântica.
+- Nascentes.
+- Cachoeira.
+- Mirante.
+- Base ambiental.
+
+D12 — Infraestrutura e Rodovias
+
+Região destinada aos grandes sistemas de abastecimento e conexão territorial.
+
+Principais estruturas:
+
+- Complexo Solar.
+- Represa e ETA.
+- Corredor de Alta Tensão.
+- Aeródromo Municipal.
+- Usina solar fotovoltaica.
+- Subestação.
+- Torres de energia.
+- Estação de tratamento de água.
+- Estação de tratamento de esgoto.
+- Represa.
+- Anel Viário.
+
+4. GEOGRAFIA E AMBIENTE NATURAL
+
+A CIDADE ZERO possui um sistema geográfico tridimensional.
+
+O terreno não é apenas uma superfície plana. A estrutura prevê elementos naturais e variações de altitude.
+
+Elementos geográficos:
+
+- Planície urbana.
+- Morros.
+- Serras.
+- Rio Zero.
+- Lagos.
+- Represa.
+- Nascentes.
+- Cachoeira.
+- Vegetação.
+- Áreas rurais.
+- Áreas de preservação.
+
+Rio Zero
+
+O Rio Zero é um dos principais elementos geográficos da cidade.
+
+Seu percurso atravessa o território de maneira orgânica, com variações de largura e curvatura.
+
+O sistema contempla:
+
+- Leito do rio.
+- Variação de largura.
+- Represa.
+- Lagos.
+- Pontes.
+- Conexões entre margens.
+- Elementos de navegação.
+
+O rio também funciona como referência para a organização territorial e para a infraestrutura hídrica.
+
+5. SISTEMA DE CONSTRUÇÕES
+
+A cidade possui um catálogo de edificações organizadas por categorias.
+
+Cada construção possui parâmetros próprios, incluindo:
+
+- Identificação.
+- Nome.
+- Categoria.
+- Dimensões.
+- Altura.
+- Custo.
+- Materiais necessários.
+- Capacidade residencial.
+- Quantidade de empregos.
+- Demanda de energia.
+- Demanda de água.
+- Receita ou impacto financeiro.
+
+Categoria residencial
+
+- Casa térrea.
+- Sobrado brasileiro.
+- Prédio residencial.
+- Torre de condomínio.
+
+Categoria comercial
+
+- Padaria e comércio.
+- Supermercado.
+- Torre corporativa.
+- Posto de gasolina.
+
+Categoria industrial e logística
+
+- Fábrica com chaminé.
+- Centro logístico.
+- Tanques industriais.
+
+Categoria institucional
+
+- Escola municipal.
+- Clínica e hospital.
+- Delegacia e bombeiros.
+
+Categoria lazer
+
+- Praça arborizada.
+- Quadra poliesportiva.
+
+Categoria rural
+
+- Galpão e silos.
+- Estufa agrícola.
+
+Categoria infraestrutura
+
+- Bloco de energia solar.
+- Estação de água.
+- Torre de alta tensão.
+
+As construções podem ser posicionadas no terreno utilizando o editor Sandbox.
+
+6. SISTEMA DE OBJETOS E ENTIDADES
+
+Além das edificações, a cidade possui objetos independentes.
+
+O catálogo inclui:
+
+Natureza
+
+- Ipê amarelo.
+- Árvore nativa.
+- Palmeira imperial.
+
+Mobiliário urbano
+
+- Poste LED.
+- Ponto de ônibus.
+- Contêiner.
+- Conjunto de bancos de praça.
+
+Veículos
+
+- Carro urbano.
+- Ônibus municipal.
+- Caminhão de carga.
+- Ambulância.
+- Viatura policial.
+
+Cidadãos
+
+- Cidadãos NPC.
+
+As entidades possuem identificação e podem ser registradas no sistema central da cidade.
+
+Isso permite localizar, selecionar, inspecionar e administrar diferentes elementos do ambiente.
+
+7. SISTEMA VIÁRIO E TRANSPORTE
+
+A cidade possui uma rede de circulação integrada ao território.
+
+O sistema de estradas contempla:
+
+- Vias urbanas.
+- Avenidas.
+- Rodovias.
+- Anel viário.
+- Rotas de ônibus.
+- Rotas de carga.
+- Rotas de emergência.
+- Rotas rurais.
+- Pontes.
+- Semáforos.
+
+Tráfego de veículos
+
+A demonstração inicial cria diferentes categorias de veículos em circulação.
+
+Tipo| Quantidade inicial
+Automóveis| 56
+Ônibus| 12
+Caminhões| 14
+Ambulâncias| 2
+Viaturas| 2
+Caminhão de bombeiros| 1
+Trator agrícola| 1
+Caminhão rural| 1
+
+Também existe uma embarcação de patrulha ou lazer no Rio Zero.
+
+Os veículos possuem movimentação baseada em rotas e parâmetros específicos de velocidade.
+
+Transporte público
+
+O sistema contempla ônibus municipais e terminal central.
+
+Transporte de cargas
+
+A logística utiliza caminhões e rotas conectadas ao distrito industrial e ao polo de distribuição.
+
+Serviços de emergência
+
+Existem veículos de:
+
+- Polícia.
+- Atendimento médico.
+- Bombeiros.
+
+8. SISTEMA DE CIDADÃOS E NPCs
+
+A CIDADE ZERO possui cidadãos controlados pelo sistema de personagens.
+
+Os NPCs representam a população que ocupa o ambiente urbano.
+
+O sistema contempla:
+
+- Identificação dos cidadãos.
+- Nomes.
+- Posicionamento no território.
+- Animação de caminhada.
+- Movimentação.
+- Rotinas de circulação.
+
+A proposta é representar uma cidade habitada, em vez de um ambiente composto apenas por construções e veículos.
+
+A demonstração contém uma estrutura inicial de cidadãos com movimentação e animação.
+
+Sistemas mais avançados de inteligência, relacionamentos, profissões e decisões individuais são possibilidades de expansão, não funcionalidades que devem ser presumidas como concluídas nesta versão.
+
+9. SISTEMA ECONÔMICO MUNICIPAL
+
+A cidade possui um sistema de economia responsável por acompanhar indicadores financeiros.
+
+Indicadores apresentados:
+
+- PIB estimado.
+- Caixa municipal.
+- Receitas por ciclo.
+- Despesas por ciclo.
+- Empregos ativos.
+- População.
+- Receita associada às construções.
+
+As edificações possuem parâmetros econômicos próprios.
+
+Uma construção pode:
+
+- Gerar empregos.
+- Abrigar moradores.
+- Consumir água.
+- Consumir energia.
+- Gerar receitas.
+- Representar despesas públicas.
+
+O sistema também considera os custos de construção e os recursos necessários para determinadas edificações.
+
+O objetivo é estabelecer uma relação entre crescimento urbano, capacidade financeira e infraestrutura disponível.
+
+10. INVENTÁRIO E CADEIA DE RECURSOS
+
+A cidade possui um inventário urbano demonstrativo.
+
+Esse inventário é utilizado pelo Laboratório Sandbox e pela estrutura de cadeia produtiva.
+
+Os recursos possuem informações como:
+
+- Nome.
+- Ícone.
+- Quantidade.
+- Unidade de medida.
+- Produção por ciclo.
+
+O inventário permite acompanhar os materiais disponíveis para experimentação e construção.
+
+Existe também uma opção para solicitar suprimentos do Polo Logístico, localizado no D07.
+
+Outra funcionalidade permite adicionar uma verba de experimentação ao caixa municipal.
+
+O inventário representa uma base importante para futuras expansões de produção, armazenamento, distribuição e consumo.
+
+11. SISTEMA DE INFRAESTRUTURA
+
+A infraestrutura acompanha os principais recursos necessários ao funcionamento urbano.
+
+Energia elétrica
+
+O sistema considera:
+
+- Geração.
+- Demanda.
+- Capacidade energética.
+- Usinas solares.
+- Torres de transmissão.
+- Subestações.
+
+Água
+
+O sistema considera:
+
+- Abastecimento.
+- Demanda.
+- Produção.
+- Estações de tratamento.
+- Reservatórios.
+- Represa.
+
+Saneamento
+
+O painel apresenta indicadores de saneamento e serviços urbanos.
+
+Indicadores de serviços
+
+Também são apresentados indicadores de saúde e segurança.
+
+A intenção é relacionar o desenvolvimento das construções à capacidade de atendimento da infraestrutura.
+
+12. CICLO DE TEMPO E CLIMA
+
+A CIDADE ZERO possui um sistema de tempo solar e iluminação dinâmica.
+
+O relógio permite configurar o horário entre 00:00 e 23:59.
+
+Existem horários predefinidos:
+
+- 06h — Amanhecer.
+- 12h — Meio-dia.
+- 18h — Entardecer.
+- 21h — Noite.
+
+O sistema altera a iluminação do ambiente de acordo com o horário.
+
+Condições climáticas
+
+A demonstração disponibiliza seis condições:
+
+1. Ensolarado.
+2. Parcialmente nublado.
+3. Nublado.
+4. Chuva.
+5. Tempestade.
+6. Neblina.
+
+O clima pode ser controlado manualmente ou configurado no modo automático.
+
+A iluminação e a tonalidade ambiental também respondem às condições climáticas.
+
+13. SHOPPING CENTER CIDADE ZERO
+
+O Shopping Center é uma das estruturas especiais do projeto.
+
+Diferentemente de uma construção comum, ele possui um modo específico de exploração interna.
+
+A interface oferece um botão para acessar o interior do shopping e um controle para sair da câmera especial.
+
+Isso estabelece uma importante possibilidade de expansão: permitir que determinadas construções possuam ambientes internos exploráveis, conectados ao mundo urbano exterior.
+
+O shopping representa uma primeira demonstração dessa integração entre cidade externa e ambiente interno.
+
+A arquitetura futura poderá ampliar esse conceito para:
+
+- Lojas.
+- Corredores.
+- Prateleiras.
+- Balcões.
+- Ambientes comerciais.
+- Outros edifícios públicos.
+- Residências.
+- Indústrias.
+
+Essas expansões deverão ser especificadas e implementadas individualmente.
+
+14. LABORATÓRIO SANDBOX
+
+O Sandbox é o editor de construção e modificação da cidade.
+
+Ele permite que o usuário altere o ambiente tridimensional sem precisar editar diretamente o código-fonte.
+
+O editor possui quatro ferramentas principais.
+
+14.1 Selecionar
+
+Permite selecionar construções, objetos, entidades e elementos do ambiente.
+
+14.2 Construir
+
+Permite selecionar uma edificação do catálogo e posicioná-la no terreno.
+
+O sistema utiliza uma representação visual temporária da construção antes de confirmar seu posicionamento.
+
+A representação muda de aparência conforme a validade do local.
+
+14.3 Objetos e NPCs
+
+Permite adicionar elementos independentes, como árvores, mobiliário, veículos e cidadãos.
+
+14.4 Demolir
+
+Permite remover construções e objetos selecionados.
+
+Ferramentas auxiliares
+
+O Sandbox também oferece:
+
+- Rotação de peças em 90 graus.
+- Alinhamento por grade.
+- Desfazer.
+- Refazer.
+- Catálogo por categorias.
+- Seleção de itens.
+- Visualização de posicionamento.
+- Integração com os dados territoriais.
+
+A construção de novas estruturas também permite associar as entidades ao distrito, bairro e setor correspondente.
+
+15. SISTEMA DE INTERAÇÃO E INSPEÇÃO
+
+O usuário pode selecionar elementos do mundo e consultar suas informações.
+
+O inspetor contextual apresenta informações de acordo com o tipo de entidade.
+
+Exemplos:
+
+Edificação:
+
+- Nome.
+- Categoria.
+- Distrito.
+- Bairro.
+- Setor.
+- Dimensões.
+- Moradores.
+- Empregos.
+- Consumo.
+- Situação operacional.
+
+Setor urbano:
+
+- Identificação.
+- Distrito.
+- Bairro.
+- Altitude.
+- Coordenadas.
+- Quantidade de construções.
+
+Também existe a possibilidade de abrir o Sandbox diretamente a partir da inspeção de um setor.
+
+Isso conecta a exploração da cidade à sua edição.
+
+16. MAPA, RADAR E CAMADAS DE VISUALIZAÇÃO
+
+A interface possui um radar metropolitano de 12 × 12 km.
+
+O radar permite selecionar uma localização e movimentar a câmera para a região correspondente.
+
+Também existem quatro opções de visualização territorial:
+
+- Realista.
+- Setores de 250 metros.
+- Zoneamento.
+- Infraestrutura.
+
+O objetivo é oferecer diferentes maneiras de compreender a organização da cidade.
+
+O sistema também apresenta uma lista dos doze distritos, permitindo navegar entre regiões por meio de movimentações automáticas da câmera.
+
+17. SISTEMA DE SIMULAÇÃO
+
+A simulação possui controles independentes da câmera.
+
+O usuário pode:
+
+- Pausar o mundo vivo.
+- Retomar a simulação.
+- Executar em velocidade normal.
+- Acelerar para 5×.
+- Acelerar para 20×.
+
+A câmera continua funcionando mesmo quando a simulação está pausada.
+
+Isso permite observar e administrar o ambiente sem interromper a navegação.
+
+O sistema atualiza os principais componentes do mundo, incluindo:
+
+- Terreno.
+- Nuvens.
+- Estradas.
+- Construções animadas.
+- Veículos.
+- Cidadãos.
+- Clima.
+- Tempo.
+- Economia.
+- Inventário.
+
+Os ciclos econômicos e de produção são processados periodicamente.
+
+18. SISTEMA DE EVENTOS E REGISTROS
+
+A CIDADE ZERO possui um sistema central de eventos.
+
+Ele permite que diferentes componentes comuniquem acontecimentos sem depender de chamadas diretas entre todos os sistemas.
+
+Os eventos podem ser registrados no histórico da cidade.
+
+O painel apresenta os acontecimentos mais recentes, com horário e classificação.
+
+Isso oferece uma base para futuras funcionalidades como:
+
+- Histórico de construções.
+- Registros econômicos.
+- Alterações territoriais.
+- Eventos urbanos.
+- Alertas de infraestrutura.
+- Auditoria das ações realizadas.
+
+19. SALVAMENTO E EXPORTAÇÃO
+
+A demonstração possui persistência local no navegador.
+
+O sistema utiliza armazenamento local e oferece três slots de salvamento.
+
+Os dados contemplados incluem:
+
+- Construções criadas no Sandbox.
+- Demolições.
+- Anotações.
+- Clima.
+- Economia.
+
+Funcionalidades disponíveis
+
+- Salvar no slot 1.
+- Salvar no slot 2.
+- Salvar no slot 3.
+- Carregar um slot.
+- Exportar JSON.
+- Importar JSON.
+- Baixar uma versão HTML da cidade.
+- Restaurar a cidade padrão.
+
+Essa estrutura permite preservar experimentos e compartilhar estados da cidade por meio de arquivos.
+
+O salvamento atual é local, não um sistema de sincronização online entre usuários.
+
+20. INTERFACE E EXPERIÊNCIA DE USO
+
+A interface foi desenvolvida com uma proposta visual tecnológica.
+
+Características:
+
+- Painéis translúcidos.
+- Efeito de vidro.
+- Indicadores em tempo real.
+- HUD.
+- Barras de controle.
+- Painéis contextuais.
+- Menus modulares.
+- Notificações.
+- Indicadores coloridos.
+- Tipografia Inter.
+- Tipografia técnica JetBrains Mono.
+
+A interface é organizada em três regiões principais:
+
+Barra superior: modos, velocidade, indicadores, relógio, clima e atalhos.
+
+Painel lateral: distritos, radar, camadas de visualização e sistemas.
+
+Área inferior: ferramentas do Sandbox, catálogo e informações de navegação.
+
+Existe adaptação responsiva para dispositivos móveis, com reorganização dos painéis.
+
+21. ARQUITETURA TÉCNICA — 21 SISTEMAS
+
+O código organiza a aplicação em 21 componentes principais.
+
+Nº| Sistema| Responsabilidade
+01| CityConfig| Configurações, distritos e catálogos
+02| EventSystem| Eventos e histórico
+03| TerrainSystem| Geografia e terreno
+04| DistrictSystem| Distritos e setorização
+05| CityWorld| Mundo 3D, câmera, iluminação e renderização
+06| RoadSystem| Estradas, rotas e infraestrutura viária
+07| EntitySystem| Registro e gerenciamento de entidades
+08| BuildingSystem| Construções e marcos arquitetônicos
+09| CharacterSystem| Cidadãos e NPCs
+10| VehicleSystem| Veículos e tráfego
+11| InventorySystem| Recursos e estoque
+12| InfrastructureSystem| Energia, água e infraestrutura
+13| EconomySystem| Economia municipal
+14| TimeSystem| Horário e ciclo solar
+15| WeatherSystem| Condições climáticas
+16| InteractionSystem| Interação e seleção
+17| InspectorSystem| Inspeção contextual
+18| SandboxController| Construção e edição
+19| SimulationController| Loop de simulação
+20| SaveSystem| Persistência e exportação
+21| UIController| Interface e controles
+
+A inicialização é coordenada por "CidadeZeroApp", responsável por instanciar e conectar os sistemas.
+
+Essa separação facilita a manutenção e permite evoluir partes específicas sem transformar todo o projeto em um único bloco de lógica.
+
+22. TECNOLOGIAS UTILIZADAS
+
+HTML5
+
+Responsável pela estrutura principal da aplicação.
+
+CSS3
+
+Responsável pela identidade visual, animações, layout e responsividade.
+
+JavaScript
+
+Responsável pela lógica, simulação, gerenciamento das entidades e interação.
+
+Three.js
+
+Biblioteca responsável pelo ambiente tridimensional, renderização WebGL, câmera, iluminação, geometrias, materiais e animações.
+
+Versão utilizada: Three.js 0.152.2.
+
+Tailwind CSS
+
+Utilizado na composição dos elementos da interface.
+
+Google Fonts
+
+- Inter.
+- JetBrains Mono.
+
+A demonstração é executada como uma aplicação web em arquivo HTML único, com dependências externas carregadas por CDN.
+
+23. CONTROLES
+
+Mouse e teclado
+
+Controle| Ação
+Clique esquerdo| Selecionar entidade
+Arrastar esquerdo| Orbitar câmera
+Arrastar direito| Mover câmera
+Botão do meio| Mover câmera
+Scroll| Aproximar ou afastar
+WASD| Navegar pela câmera
+Setas| Navegar pela câmera
+Espaço| Pausar ou retomar
+H| Voltar à visão geral
+R| Girar peça no Sandbox
+Ctrl + Z| Desfazer
+Ctrl + Y| Refazer
+
+Dispositivos móveis
+
+Gesto| Ação
+Toque curto| Selecionar ou posicionar
+Arrastar um dedo| Orbitar ou mover câmera
+Pinça com dois dedos| Zoom e deslocamento
+Botão de distrito| Navegar até a região
+Toque no radar| Ir até a localização
+
+24. INDICADORES DE MONITORAMENTO
+
+O painel principal apresenta informações sobre a situação geral da cidade.
+
+Indicadores disponíveis:
+
+- População.
+- Caixa municipal.
+- Energia.
+- Água.
+- Índice de qualidade de vida.
+- Horário.
+- Clima.
+
+O painel de sistemas também apresenta:
+
+- PIB estimado.
+- Receitas.
+- Despesas.
+- Empregos.
+- Geração e demanda de energia.
+- Abastecimento de água.
+- Saneamento.
+- Saúde e segurança.
+- Construções.
+- Veículos.
+- NPCs.
+- FPS da simulação.
+- Histórico de eventos.
+
+Os números exibidos na demonstração representam valores e estados iniciais do modelo, não dados de uma cidade real.
+
+25. OBJETIVO DO PROJETO
+
+A CIDADE ZERO pretende estabelecer uma estrutura urbana tridimensional na qual o território, as construções, os recursos, os habitantes, os veículos e os serviços possam existir dentro de um mesmo ambiente.
+
+A intenção não é apenas criar uma cidade bonita.
+
+É estabelecer uma cidade que tenha organização, funcionamento, atividades, circulação e possibilidades de interação.
+
+O projeto parte de uma estrutura que pode ser expandida para experiências mais complexas, como:
+
+- Administração urbana.
+- Construção de cidades.
+- Desenvolvimento comercial.
+- Desenvolvimento industrial.
+- Gestão de recursos.
+- Exploração de ambientes.
+- Simulação de atividades econômicas.
+- Interação com personagens.
+- Expansão territorial.
+- Personalização de espaços.
+
+26. LIMITES DA VERSÃO 1.0
+
+A versão atual é uma demonstração funcional de simulação urbana e construção.
+
+É importante distinguir os recursos existentes das funcionalidades que ainda exigiriam desenvolvimento.
+
+A versão 1.0 já apresenta:
+
+- Mundo tridimensional.
+- Território de 144 km².
+- Doze distritos.
+- Setorização.
+- Construções.
+- Estradas.
+- Veículos.
+- NPCs.
+- Simulação de tempo.
+- Clima.
+- Economia demonstrativa.
+- Infraestrutura.
+- Inventário.
+- Shopping com modo interno.
+- Sandbox.
+- Salvamento local.
+- Importação e exportação.
+
+Não devem ser considerados concluídos, apenas pela existência dessa estrutura:
+
+- Multiplayer.
+- Servidores persistentes.
+- Contas de jogadores.
+- Economia online compartilhada.
+- Inteligência artificial avançada dos habitantes.
+- Rede social.
+- Sistema de comércio real entre usuários.
+- Sistema de propriedade online.
+- Sincronização entre dispositivos.
+- Simulação completa de todas as cadeias produtivas.
+- Sistema completo de profissões e relacionamentos.
+
+Esses recursos podem fazer parte de versões futuras.
+
+27. DIRETRIZES PARA A EVOLUÇÃO
+
+O desenvolvimento futuro deve preservar a organização modular.
+
+Cada novo recurso deve ter responsabilidade bem definida e integração com os sistemas existentes.
+
+Recomenda-se priorizar:
+
+1. Estabilidade do motor 3D.
+2. Organização territorial.
+3. Gerenciamento de entidades.
+4. Infraestrutura urbana.
+5. Sistemas econômicos.
+6. Simulação de habitantes.
+7. Interiores exploráveis.
+8. Interações entre construções.
+9. Persistência dos dados.
+10. Possibilidade de expansão para múltiplos usuários.
+
+A evolução deve evitar que todos os recursos sejam concentrados em uma única estrutura de código.
+
+A cidade precisa continuar funcionando como um ambiente integrado, mesmo quando novos sistemas forem adicionados.
+
+28. CONCEITO FINAL
+
+CIDADE ZERO — Uma cidade que não existe apenas para ser observada. Existe para funcionar, evoluir e ser transformada.
+
+Um mundo urbano tridimensional em que território, população, construções, comércio, indústria, transporte, recursos naturais, economia e infraestrutura fazem parte de uma mesma estrutura.
+
+O usuário não está limitado a observar uma cidade pronta.
+
+Ele pode explorar suas regiões, conhecer suas estruturas, analisar seus sistemas e modificar o ambiente por meio do Sandbox.
+
+A CIDADE ZERO representa a base de um universo urbano expansível, no qual cada construção, setor, recurso e entidade pode fazer parte de uma experiência maior.
+
+---
+
+ZYRO LABS
+
+CIDADE ZERO — MUNDO VIVO + LABORATÓRIO SANDBOX
+
+Versão de referência: 1.0
+Arquivo principal da demonstração: "index.html"

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cidade Zero — Mundo Vivo 3D + Laboratório Sandbox</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{--bg:#f4f6f8;--surf:#fff;--surf2:#eaeef2;--tx:#14202b;--mut:#5b6b7a;--ac:#0b8f8a;--ac2:#d98200;--bd:#d5dce3;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1118;--surf:#111c26;--surf2:#18273443;--tx:#e6eef5;--mut:#8fa3b5;--ac:#2fd4c8;--ac2:#ffb43a;--bd:#223445;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1118;--surf:#111c26;--surf2:#182734;--tx:#e6eef5;--mut:#8fa3b5;--ac:#2fd4c8;--ac2:#ffb43a;--bd:#223445;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+.hero{padding:56px 0 28px;background:radial-gradient(ellipse at 70% 0%,color-mix(in srgb,var(--ac) 22%,transparent),transparent 60%)}
+.kicker{font-size:12px;letter-spacing:.18em;color:var(--ac);text-transform:uppercase}
+h1{font-size:clamp(40px,9vw,84px);line-height:1;margin:10px 0 14px;font-weight:800;letter-spacing:-.03em}
+h1 span{color:var(--ac)}
+.lead{font-size:clamp(17px,2.4vw,21px);color:var(--mut);max-width:680px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}
+.btn{display:inline-block;padding:12px 20px;border-radius:10px;font-weight:600;text-decoration:none;border:1px solid var(--ac);color:var(--ac);cursor:pointer;background:none;font:inherit;font-weight:600}
+.btn.p{background:var(--ac);color:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:10px}
+.stat{background:var(--surf);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.stat b{display:block;font-size:28px;color:var(--ac2)}
+.stat small{color:var(--mut)}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+nav.tabs .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:8px;padding-bottom:8px}
+nav.tabs button{flex:none;border:1px solid var(--bd);background:var(--surf);color:var(--mut);padding:8px 14px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:600}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+section.pane{display:none;padding:28px 0 56px}
+section.pane.on{display:block}
+h2{font-size:clamp(24px,4vw,34px);margin:0 0 6px;letter-spacing:-.02em}
+h3{margin:0 0 4px;font-size:17px}
+.sub{color:var(--mut);margin:0 0 20px;max-width:700px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.card{background:var(--surf);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.card p{margin:4px 0 0;color:var(--mut);font-size:14.5px}
+.card .ic{font-size:26px}
+.big{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:22px}
+.big .card{border-top:3px solid var(--ac)}
+.big .card.b{border-top-color:var(--ac2)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--surf2);color:var(--mut);border:1px solid var(--bd)}
+.code{font-size:12px;color:var(--ac2)}
+.scroll{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bd)}
+th{color:var(--mut);font-weight:600}
+kbd{font-family:"JetBrains Mono",monospace;background:var(--surf2);border:1px solid var(--bd);border-radius:6px;padding:1px 7px;font-size:13px}
+.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.ok li::marker{content:"✓  ";color:var(--ac)}
+.no li::marker{content:"○  ";color:var(--ac2)}
+ul{padding-left:20px;margin:8px 0}
+.map{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;max-width:420px;margin:0 0 20px}
+.map i{aspect-ratio:1;border-radius:3px;background:var(--surf2);border:1px solid var(--bd)}
+.map i.h{background:var(--ac)}
+footer{border-top:1px solid var(--bd);padding:26px 0 40px;color:var(--mut);font-size:14px}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+<div class="kicker mono">ZYRO LABS · Demonstração 1.0</div>
+<h1>CIDADE <span>ZERO</span></h1>
+<p class="lead">Uma cidade brasileira 3D de 144 km² que não existe só para ser observada. Existe para funcionar, evoluir e ser transformada.</p>
+<div class="cta">
+<a class="btn p" href="https://guilabriolag.github.io/Zyro/city/" target="_blank" rel="noopener">Entrar na demo →</a>
+<a class="btn" href="#distritos">Explorar os 12 distritos</a>
+</div>
+<div class="stats">
+<div class="stat"><b class="mono">144 km²</b><small>12 × 12 km de território</small></div>
+<div class="stat"><b class="mono">12</b><small>distritos funcionais</small></div>
+<div class="stat"><b class="mono">2.304</b><small>setores de 250 m</small></div>
+<div class="stat"><b class="mono">21</b><small>sistemas modulares</small></div>
+</div>
+</div></header>
+
+<nav class="tabs" aria-label="Seções"><div class="wrap" role="tablist" id="tabs"></div></nav>
+
+<main class="wrap">
+
+<section class="pane" id="p-visao">
+<h2>O que é a Cidade Zero</h2>
+<p class="sub">Duas experiências no mesmo arquivo: assistir a cidade viva e meter a mão para mudá-la.</p>
+<div class="big">
+<div class="card"><div class="ic">🌆</div><h3>Mundo Vivo</h3><p>A cidade funcionando: construções, estradas, população, veículos, clima, ciclo de dia e noite e economia, tudo girando ao mesmo tempo.</p></div>
+<div class="card b"><div class="ic">🧪</div><h3>Laboratório Sandbox</h3><p>Construa, demole, posicione árvores, veículos e cidadãos. Edite a cidade sem tocar em código.</p></div>
+</div>
+<h2 style="font-size:22px">O que você vai encontrar lá dentro</h2>
+<div class="grid" style="margin-top:12px">
+<div class="card"><div class="ic">🏔️</div><h3>Terreno de verdade</h3><p>Morros, serras, lagos, represa, cachoeira e o Rio Zero atravessando o território em curvas orgânicas.</p></div>
+<div class="card"><div class="ic">🚌</div><h3>Tráfego e transporte</h3><p>Automóveis, ônibus, caminhões, ambulâncias, viaturas, bombeiros, trator e até uma embarcação no rio.</p></div>
+<div class="card"><div class="ic">🚶</div><h3>Cidadãos NPC</h3><p>Moradores com nome, animação de caminhada e rotinas de circulação pelas ruas.</p></div>
+<div class="card"><div class="ic">💰</div><h3>Economia municipal</h3><p>PIB estimado, caixa, receitas, despesas e empregos. Cada prédio tem custo e impacto financeiro.</p></div>
+<div class="card"><div class="ic">⚡</div><h3>Energia, água e saneamento</h3><p>Geração, demanda, estações de tratamento e represa ligadas ao crescimento urbano.</p></div>
+<div class="card"><div class="ic">🌦️</div><h3>Tempo e clima</h3><p>Relógio de 00:00 a 23:59 e seis condições climáticas, com a luz respondendo a cada uma.</p></div>
+<div class="card"><div class="ic">🛍️</div><h3>Shopping explorável</h3><p>O Shopping Center Cidade Zero tem modo de câmera interna: a primeira ponte entre cidade e interiores.</p></div>
+<div class="card"><div class="ic">🗺️</div><h3>Radar e camadas</h3><p>Radar de 12 km e quatro visões: realista, setores de 250 m, zoneamento e infraestrutura.</p></div>
+</div>
+</section>
+
+<section class="pane" id="p-distritos">
+<h2>Os 12 distritos</h2>
+<p class="sub">Cada região tem função, estruturas e personalidade próprias. Toque em um distrito para destacá-lo no mapa esquemático.</p>
+<div class="map mono" id="map" aria-hidden="true"></div>
+<div class="grid" id="dist"></div>
+<p class="sub" style="margin-top:18px">Cada setor tem um endereço único, como <span class="mono code">CZ-D01-B03-S014</span> (distrito, bairro e setor).</p>
+</section>
+
+<section class="pane" id="p-sandbox">
+<h2>Laboratório Sandbox</h2>
+<p class="sub">O editor que transforma a cidade em um brinquedo sério.</p>
+<div class="grid">
+<div class="card"><h3>1 · Selecionar</h3><p>Clique em qualquer construção, objeto ou entidade para inspecionar.</p></div>
+<div class="card"><h3>2 · Construir</h3><p>Escolha do catálogo e veja uma prévia que muda de cor conforme a validade do local.</p></div>
+<div class="card"><h3>3 · Objetos e NPCs</h3><p>Árvores, mobiliário urbano, veículos e cidadãos.</p></div>
+<div class="card"><h3>4 · Demolir</h3><p>Remova construções e objetos selecionados.</p></div>
+</div>
+<div class="chips" style="margin:14px 0 22px"><span class="chip">Rotação de 90°</span><span class="chip">Alinhamento por grade</span><span class="chip">Desfazer / Refazer</span><span class="chip">Catálogo por categorias</span><span class="chip">Vínculo com distrito, bairro e setor</span></div>
+<h2 style="font-size:22px">Catálogo de construções</h2>
+<div class="grid" id="cat" style="margin-top:12px"></div>
+<h2 style="font-size:22px;margin-top:24px">Objetos e entidades</h2>
+<div class="chips"><span class="chip">Ipê amarelo</span><span class="chip">Árvore nativa</span><span class="chip">Palmeira imperial</span><span class="chip">Poste LED</span><span class="chip">Ponto de ônibus</span><span class="chip">Contêiner</span><span class="chip">Bancos de praça</span><span class="chip">Carro urbano</span><span class="chip">Ônibus municipal</span><span class="chip">Caminhão de carga</span><span class="chip">Ambulância</span><span class="chip">Viatura policial</span><span class="chip">Cidadãos NPC</span></div>
+</section>
+
+<section class="pane" id="p-sistemas">
+<h2>Como a cidade funciona</h2>
+<p class="sub">Cada prédio abriga moradores, gera empregos, consome água e energia e movimenta dinheiro. Crescer exige infraestrutura.</p>
+<div class="two">
+<div class="card"><h3>Clima: 6 condições</h3><div class="chips"><span class="chip">☀️ Ensolarado</span><span class="chip">⛅ Parcialmente nublado</span><span class="chip">☁️ Nublado</span><span class="chip">🌧️ Chuva</span><span class="chip">⛈️ Tempestade</span><span class="chip">🌫️ Neblina</span></div><p>Atalhos de horário: 06h amanhecer, 12h meio-dia, 18h entardecer, 21h noite. Clima manual ou automático.</p></div>
+<div class="card"><h3>Simulação</h3><p>Pause, rode em 1×, 5× ou 20×. A câmera continua livre mesmo com o mundo pausado.</p></div>
+</div>
+<h2 style="font-size:22px;margin-top:24px">Frota inicial em circulação</h2>
+<div class="scroll card" style="margin-top:10px"><table><tr><th>Tipo</th><th>Quantidade</th></tr>
+<tr><td>Automóveis</td><td class="mono">56</td></tr><tr><td>Ônibus</td><td class="mono">12</td></tr><tr><td>Caminhões</td><td class="mono">14</td></tr><tr><td>Ambulâncias</td><td class="mono">2</td></tr><tr><td>Viaturas</td><td class="mono">2</td></tr><tr><td>Caminhão de bombeiros · Trator · Caminhão rural</td><td class="mono">1 cada</td></tr></table></div>
+<h2 style="font-size:22px;margin-top:24px">Os 21 sistemas por baixo do capô</h2>
+<p class="sub">Arquitetura modular, coordenada pelo CidadeZeroApp.</p>
+<div class="chips" id="sys"></div>
+</section>
+
+<section class="pane" id="p-controles">
+<h2>Controles e recursos</h2>
+<p class="sub">Funciona no computador e no celular, com painéis que se reorganizam.</p>
+<div class="two">
+<div class="card scroll"><h3>Mouse e teclado</h3><table>
+<tr><td>Clique esquerdo</td><td>Selecionar</td></tr><tr><td>Arrastar esquerdo</td><td>Orbitar</td></tr><tr><td>Arrastar direito / meio</td><td>Mover câmera</td></tr><tr><td>Scroll</td><td>Zoom</td></tr>
+<tr><td><kbd>WASD</kbd> / setas</td><td>Navegar</td></tr><tr><td><kbd>Espaço</kbd></td><td>Pausar / retomar</td></tr><tr><td><kbd>H</kbd></td><td>Visão geral</td></tr><tr><td><kbd>R</kbd></td><td>Girar peça</td></tr><tr><td><kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd></td><td>Desfazer / refazer</td></tr></table></div>
+<div class="card scroll"><h3>Celular</h3><table>
+<tr><td>Toque curto</td><td>Selecionar ou posicionar</td></tr><tr><td>Um dedo</td><td>Orbitar / mover</td></tr><tr><td>Pinça</td><td>Zoom e deslocamento</td></tr><tr><td>Botão de distrito</td><td>Ir até a região</td></tr><tr><td>Toque no radar</td><td>Ir até o local</td></tr></table></div>
+</div>
+<div class="two" style="margin-top:14px">
+<div class="card"><h3>Salvamento</h3><p>3 slots locais no navegador, exportar e importar JSON, baixar uma versão HTML da cidade e restaurar o padrão.</p></div>
+<div class="card"><h3>Interface</h3><p>HUD em vidro translúcido, indicadores em tempo real, inspetor contextual e histórico de eventos.</p></div>
+</div>
+</section>
+
+<section class="pane" id="p-roadmap">
+<h2>O que já existe e o que vem depois</h2>
+<p class="sub">Transparência antes de entrar: a 1.0 é uma demonstração funcional, e tudo abaixo está marcado com honestidade.</p>
+<div class="two">
+<div class="card"><h3>Já está na versão 1.0</h3><ul class="ok"><li>Mundo 3D de 144 km² e 12 distritos</li><li>Setorização e endereços</li><li>Construções, estradas, veículos, NPCs</li><li>Tempo, clima e iluminação</li><li>Economia, infraestrutura e inventário</li><li>Shopping com modo interno</li><li>Sandbox completo</li><li>Salvamento local, importar e exportar</li></ul></div>
+<div class="card"><h3>Possibilidades futuras</h3><ul class="no"><li>Multiplayer e servidores persistentes</li><li>Contas e propriedade online</li><li>Economia compartilhada e comércio entre usuários</li><li>IA avançada, profissões e relacionamentos</li><li>Interiores em outros edifícios</li><li>Cadeias produtivas completas</li><li>Sincronização entre dispositivos</li></ul></div>
+</div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+<p><b>CIDADE ZERO</b> · ZYRO LABS · Demo 1.0 · HTML5, CSS3, JavaScript e Three.js 0.152.2</p>
+<p>Os números exibidos na demo são estados iniciais do modelo, não dados de uma cidade real.</p>
+<a class="btn p" href="https://guilabriolag.github.io/Zyro/city/" target="_blank" rel="noopener">Abrir a Cidade Zero →</a>
+</div></footer>
+
+<script>
+var TABS=[["visao","Visão geral"],["distritos","Distritos"],["sandbox","Sandbox"],["sistemas","Sistemas"],["controles","Controles"],["roadmap","Versão 1.0"]];
+var D=[["Centro Urbano","Núcleo administrativo, financeiro e corporativo.",["Av. Paulista Zero","Prefeitura","Praça Marco Zero","Terminal Central","Torres","Hotéis"]],
+["Residencial Norte","Moradia e vida cotidiana.",["Jardim Aurora","Vila das Flores","Casas e sobrados","Escolas","Padarias"]],
+["Residencial Leste","Conjuntos habitacionais e edifícios.",["Bela Vista Leste","Cj. Horizonte","Condomínios verticais","Clínicas"]],
+["Residencial Sul","Habitação, convivência e lazer.",["Jardim das Palmeiras","Parque dos Lagos","Academias","Restaurantes"]],
+["Comercial","Comércio e serviços privados.",["Shopping Center","Avenida das Lojas","Supermercados","Setor Automotivo"]],
+["Industrial","Produção e transformação.",["Distrito Metalúrgico","Polo Fabril","Parque Alimentício","Chaminés"]],
+["Logística","Movimentação de mercadorias.",["Terminal de Cargas","Setor de Docas","Galpões","Contêineres"]],
+["Institucional","Saúde, educação e segurança.",["Hospital Geral","Universidade","Delegacia","Bombeiros","Biblioteca"]],
+["Lazer e Esportes","Recreação, cultura e esporte.",["Parque Metropolitano","Arena","Estádio","Skatepark","Roda-gigante"]],
+["Rural e Agrícola","Produção de alimentos.",["Fazenda Boa Esperança","Vale dos Silos","Estufas","Pivôs de irrigação"]],
+["Reserva Natural","Preservação ambiental.",["Serra da Mata Viva","Cachoeira","Mirante","Trilha Ecológica"]],
+["Infraestrutura e Rodovias","Energia, água e conexão territorial.",["Complexo Solar","Represa e ETA","Aeródromo","Anel Viário","Subestação"]]];
+var C=[["Residencial","Casa térrea · Sobrado · Prédio · Torre de condomínio"],["Comercial","Padaria · Supermercado · Torre corporativa · Posto"],["Industrial e logística","Fábrica com chaminé · Centro logístico · Tanques"],["Institucional","Escola · Clínica e hospital · Delegacia e bombeiros"],["Lazer","Praça arborizada · Quadra poliesportiva"],["Rural","Galpão e silos · Estufa agrícola"],["Infraestrutura","Energia solar · Estação de água · Torre de alta tensão"]];
+var S="CityConfig,EventSystem,TerrainSystem,DistrictSystem,CityWorld,RoadSystem,EntitySystem,BuildingSystem,CharacterSystem,VehicleSystem,InventorySystem,InfrastructureSystem,EconomySystem,TimeSystem,WeatherSystem,InteractionSystem,InspectorSystem,SandboxController,SimulationController,SaveSystem,UIController".split(",");
+function $(i){return document.getElementById(i)}
+var tabs=$("tabs"),panes={};
+TABS.forEach(function(t){var b=document.createElement("button");b.textContent=t[1];b.setAttribute("role","tab");b.dataset.k=t[0];b.onclick=function(){go(t[0])};tabs.appendChild(b);panes[t[0]]=$("p-"+t[0])});
+function go(k,skip){if(!panes[k])k="visao";for(var p in panes)panes[p].classList.toggle("on",p===k);
+[].forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.dataset.k===k)});
+if(!skip){try{history.replaceState(null,"","#"+k)}catch(e){location.hash=k}}
+window.scrollTo({top:Math.max(0,tabs.parentNode.offsetTop-1),behavior:"smooth"})}
+window.addEventListener("hashchange",function(){go(location.hash.slice(1),true)});
+var map=$("map");for(var i=0;i<144;i++){map.appendChild(document.createElement("i"))}
+var dl=$("dist");
+D.forEach(function(d,n){var c=document.createElement("div");c.className="card";c.style.cursor="pointer";
+c.innerHTML='<div class="code mono">D'+String(n+1).padStart(2,"0")+'</div><h3>'+d[0]+'</h3><p>'+d[1]+'</p><div class="chips">'+d[2].map(function(x){return '<span class="chip">'+x+'</span>'}).join("")+'</div>';
+c.onclick=function(){var cells=map.children;for(var i=0;i<144;i++)cells[i].className="";
+var r=Math.floor(n/4),q=n%4;for(var y=0;y<4;y++)for(var x=0;x<3;x++){cells[(r*4+y)*12+q*3+x].className="h"}};
+dl.appendChild(c)});
+$("cat").innerHTML=C.map(function(c){return '<div class="card"><h3>'+c[0]+'</h3><p>'+c[1]+'</p></div>'}).join("");
+$("sys").innerHTML=S.map(function(s,i){return '<span class="chip mono">'+String(i+1).padStart(2,"0")+' '+s+'</span>'}).join("");
+var h=location.hash.slice(1);
+if(h==="distritos"||panes[h]){go(h,true)}else{go("visao",true)}
+window.scrollTo(0,0);
+</script>
+</body>
+</html>

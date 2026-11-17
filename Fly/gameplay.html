@@ -109,6 +109,29 @@ select{background:#101c36;color:#fff;border:1px solid var(--panel-border);border
 /* =====================================================================
    CSS — RESPONSIVIDADE
    ===================================================================== */
+.brand{text-align:center;margin:4px 0 14px;padding:12px;border:1px solid var(--panel-border);border-radius:12px;background:rgba(255,255,255,.05)}
+.brand img{max-height:56px;max-width:180px;display:block;margin:0 auto 8px;border-radius:8px}
+.brand .bn{font-size:20px;font-weight:900;letter-spacing:.08em}
+.brand .bt{font-size:12px;color:var(--fw-accent);font-weight:700;margin-top:2px}
+.brand .bb{font-size:12px;color:#c7d7f3;line-height:1.45;margin-top:8px;white-space:pre-line}
+.ad-box{margin:12px 0;padding:12px;border-radius:12px;border:1px solid rgba(255,170,40,.5);background:rgba(255,160,20,.1);text-align:center}
+.ad-box .an{font-weight:900;letter-spacing:.06em;font-size:16px}
+.ad-box .ab{font-size:12px;color:#d7e4fa;margin:6px 0;white-space:pre-line}
+.coupon{display:inline-block;margin:6px 0;padding:6px 14px;border:2px dashed var(--fw-accent);border-radius:8px;font-weight:900;letter-spacing:.2em;color:#ffcc66}
+a.btn{text-decoration:none;text-align:center}
+#studio{justify-content:flex-start;background:linear-gradient(90deg,rgba(5,10,24,.92),rgba(5,10,24,.35) 60%,rgba(5,10,24,0));backdrop-filter:none}
+#studio .card{max-width:400px;width:min(94vw,400px);max-height:96vh;margin-left:max(10px,env(safe-area-inset-left));touch-action:pan-y}
+#studio.peek{background:none;pointer-events:none}
+#studio.peek .card{display:none}
+#studio .peekbtn{display:none;position:fixed;right:12px;top:12px;width:auto;padding:10px 16px;pointer-events:auto}
+#studio.peek .peekbtn{display:block}
+.fgroup{margin:14px 0 4px;font-size:11px;letter-spacing:.25em;color:var(--fw-accent);font-weight:800}
+.fld{display:block;margin:8px 0;font-size:12px;color:#b8cbea}
+.fld input[type=text],.fld textarea,.fld select{width:100%;margin-top:4px;background:#101c36;color:#fff;border:1px solid var(--panel-border);border-radius:8px;padding:8px;font:inherit;font-size:13px;user-select:text;-webkit-user-select:text}
+.fld textarea{min-height:70px;resize:vertical}
+.colors{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.colors label{font-size:10px;text-align:center;color:#9db9e8}
+.colors input[type=color]{width:100%;height:36px;border:none;border-radius:8px;background:none;padding:0}
 @media (max-height:420px){
   .hud-value{font-size:16px}.hud-box{padding:4px 8px;min-width:110px;margin-bottom:4px}
   .hud-top-right .hud-box.small{display:none}
@@ -130,7 +153,10 @@ select{background:#101c36;color:#fff;border:1px solid var(--panel-border);border
   <div class="card">
     <div class="logo">FLIGHT WORLD<small>LABRIOLAG · ZYRO</small></div>
     <div class="mode">MODALIDADE · PARAGLIDER</div>
+    <div id="brandBlock" class="brand hidden"></div>
     <button id="btnStart" class="btn primary" disabled>INICIAR VOO</button>
+    <button id="btnStudio" class="btn">🎨 ESTÚDIO DO COMÉRCIO</button>
+    <button id="btnLoadCfg" class="btn">CARREGAR JOGO (.JSON)</button>
     <button id="btnSettings" class="btn">CONFIGURAÇÕES</button>
     <button id="btnCredits" class="btn">CRÉDITOS</button>
     <div class="loading" id="loadingText">Carregando mundo…</div>
@@ -139,6 +165,46 @@ select{background:#101c36;color:#fff;border:1px solid var(--panel-border);border
     <div class="loading" style="margin-top:10px;font-size:10px">MOUNTAIN FLIGHT · PROTÓTIPO V0.1</div>
   </div>
 </div>
+
+<!-- ======================= ESTÚDIO DO COMÉRCIO ======================= -->
+<div id="studio" class="screen hidden">
+  <button id="btnStudioPeek" class="btn peekbtn">← EDITAR</button>
+  <div class="card">
+    <h2>ESTÚDIO DO COMÉRCIO</h2>
+    <div class="fgroup">1 · SEU COMÉRCIO</div>
+    <label class="fld">Nome do comércio<input type="text" id="cfName" maxlength="40" placeholder="Ex.: Adega Grau do Portela"></label>
+    <label class="fld">Slogan<input type="text" id="cfTagline" maxlength="60" placeholder="Ex.: A gelada mais perto de você"></label>
+    <label class="fld">Briefing (aparece na capa do jogo)<textarea id="cfBriefing" maxlength="280" placeholder="O que vende, onde fica, horário de funcionamento…"></textarea></label>
+    <label class="fld">Logo (PNG/JPG)<input type="file" id="cfLogo" accept="image/*"></label>
+    <button class="btn" id="btnLogoClear" style="padding:6px;font-size:11px">REMOVER LOGO</button>
+    <div class="fgroup">2 · CORES</div>
+    <div class="colors">
+      <label>Vela<input type="color" id="cfC1"></label><label>Listras<input type="color" id="cfC2"></label>
+      <label>Pontas<input type="color" id="cfC3"></label><label>Piloto<input type="color" id="cfC4"></label>
+    </div>
+    <div class="colors" style="grid-template-columns:repeat(2,1fr)">
+      <label>Fundo do anúncio<input type="color" id="cfAdBg"></label><label>Texto do anúncio<input type="color" id="cfAdFg"></label>
+    </div>
+    <div class="fgroup">3 · PROMOÇÃO E CONTATO</div>
+    <label class="fld">Oferta (aparece nas placas)<input type="text" id="cfOffer" maxlength="50" placeholder="Ex.: 10% OFF na primeira compra"></label>
+    <label class="fld">Código do cupom<input type="text" id="cfCode" maxlength="20" placeholder="VOA10"></label>
+    <div class="row"><label>Pontos p/ liberar cupom <span id="cfMinVal"></span></label><input id="cfMin" type="range" min="0" max="1500" step="50"></div>
+    <label class="fld">WhatsApp (com DDD)<input type="text" id="cfWhats" inputmode="tel" maxlength="20" placeholder="19999999999"></label>
+    <label class="fld">Site ou @instagram<input type="text" id="cfLink" maxlength="120" placeholder="@meucomercio ou https://…"></label>
+    <label class="fld">Texto do botão<input type="text" id="cfCta" maxlength="28" placeholder="CHAMAR NO WHATSAPP"></label>
+    <div class="fgroup">4 · JOGO</div>
+    <label class="fld">Ritmo da partida<select id="cfPace"><option value="relax">Relaxado</option><option value="normal">Normal</option><option value="arcade">Arcade (rápido)</option><option value="turbo">Turbo</option></select></label>
+    <label class="fld">Horário do dia<select id="cfSky"><option value="day">Dia</option><option value="sunset">Entardecer</option></select></label>
+    <div class="row"><label>Anéis de pontuação</label><input id="cfRings" type="checkbox"></div>
+    <button class="btn primary" id="btnStudioTest">▶ TESTAR GAMEPLAY</button>
+    <button class="btn" id="btnStudioDownload">⬇ BAIXAR JSON PARA OS CLIENTES</button>
+    <button class="btn" id="btnStudioImport">CARREGAR JSON</button>
+    <button class="btn" id="btnStudioPeekBtn">👁 VER SÓ O PARAGLIDER</button>
+    <button class="btn" id="btnStudioBack">VOLTAR À CAPA</button>
+    <p class="loading" style="text-align:left;line-height:1.5">Envie o arquivo .json aos seus clientes. Eles abrem o jogo, tocam em “Carregar jogo” e voam com a sua marca.</p>
+  </div>
+</div>
+<input type="file" id="fileCfg" accept=".json,application/json" class="hidden">
 
 <!-- ======================= CONFIGURAÇÕES ======================= -->
 <div id="settings" class="screen hidden">
@@ -174,6 +240,7 @@ select{background:#101c36;color:#fff;border:1px solid var(--panel-border);border
     <div class="hud-box"><div class="hud-label">ALTITUDE</div><div class="hud-value" id="hudAlt">0 m</div><div class="hud-sub" id="hudAgl">solo: 0 m</div></div>
     <div class="hud-box"><div class="hud-label">VELOCIDADE</div><div class="hud-value" id="hudSpeed">0 km/h</div><div class="hud-sub" id="hudGs">solo: 0 km/h</div></div>
     <div class="hud-box"><div class="hud-label">VARIAÇÃO VERTICAL</div><div class="hud-value" id="hudVario">0,0 m/s</div><div class="vario-bar"><div id="varioFill"></div></div></div>
+    <div class="hud-box"><div class="hud-label">PONTOS</div><div class="hud-value" id="hudScore">0</div><div class="hud-sub" id="hudRings">anéis 0/0</div></div>
   </div>
   <div class="hud-top-center">
     <div id="hudState" class="hud-state">PREPARANDO DECOLAGEM</div><br>
@@ -221,6 +288,7 @@ select{background:#101c36;color:#fff;border:1px solid var(--panel-border);border
     <div id="resultTitle" class="result-title ok">FLIGHT COMPLETED</div>
     <div id="resultSub" class="result-sub"></div>
     <div class="stats" id="resultStats"></div>
+    <div id="resultAd" class="ad-box hidden"></div>
     <button id="btnAgain" class="btn primary">VOAR NOVAMENTE</button>
     <button id="btnResultMenu" class="btn">MENU INICIAL</button>
   </div>
@@ -278,7 +346,7 @@ const CONFIG = {
     mass: 95, area: 24, aspectRatio: 5.4, oswald: 0.8, cd0: 0.045,
     alphaTrim: 6, alphaBrake: 7, alphaSpeedbar: 4, speedStability: 0.45,
     maxBank: 0.70, brakeBank: 0.45, bankResponse: 2.2,
-    runAccel: 3.4, maxRunSpeed: 10.5, groundTurnRate: 1.1
+    runAccel: 5.2, maxRunSpeed: 10.5, groundTurnRate: 1.1
   },
   QUALITY: {
     low:    { pixelRatio: 1,   trees: 1200, shadows: false, fogNear: 900,  fogFar: 3600 },
@@ -357,16 +425,103 @@ class StateManager {
 
 /** Persistência local (configurações e recordes). */
 class SaveManager {
-  constructor() { this.KEY_SET = 'flightworld.settings.v01'; this.KEY_REC = 'flightworld.records.v01'; }
+  constructor() { this.KEY_SET = 'flightworld.settings.v01'; this.KEY_REC = 'flightworld.records.v01'; this.KEY_CFG = 'flightworld.config.v1'; }
   defaultSettings() { return { quality: 'medium', sensitivity: 1.0, volume: 0.6, camera: 'third', hud: true }; }
-  defaultRecords() { return { bestDistance: 0, bestTime: 0, bestAltitude: 0, bestLanding: 0, flights: 0 }; }
+  defaultRecords() { return { bestDistance: 0, bestTime: 0, bestAltitude: 0, bestLanding: 0, bestScore: 0, flights: 0 }; }
   _load(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ? Object.assign(d, v) : d; } catch (e) { return d; } }
   loadSettings() { return this._load(this.KEY_SET, this.defaultSettings()); }
   loadRecords() { return this._load(this.KEY_REC, this.defaultRecords()); }
   saveSettings(s) { try { localStorage.setItem(this.KEY_SET, JSON.stringify(s)); } catch (e) {} }
   saveRecords(r) { try { localStorage.setItem(this.KEY_REC, JSON.stringify(r)); } catch (e) {} }
+  loadConfig() { try { return JSON.parse(localStorage.getItem(this.KEY_CFG)); } catch (e) { return null; } }
+  saveConfig(c) { try { localStorage.setItem(this.KEY_CFG, JSON.stringify(c)); } catch (e) {} }
   reset() { try { localStorage.removeItem(this.KEY_SET); localStorage.removeItem(this.KEY_REC); } catch (e) {} }
 }
+
+/* =====================================================================
+   PROJETO — configuração do comércio (JSON exportável/importável)
+   ===================================================================== */
+const PACES = {
+  relax:  { label: 'Relaxado', time: 1.0, sink: 0 },
+  normal: { label: 'Normal',   time: 1.4, sink: 0.6 },
+  arcade: { label: 'Arcade',   time: 1.8, sink: 1.0 },
+  turbo:  { label: 'Turbo',    time: 2.4, sink: 1.0 }
+};
+const SKIES = {
+  day:    { top: 0x2a6fd6, bottom: 0xcfe3f5, fog: 0xc9dcee, sun: [0.45, 0.72, 0.35], sunColor: 0xfff1dc, sunInt: 2.4, hemiSky: 0xbfe3ff, hemiGround: 0x5a7a3a, hemiInt: 0.9 },
+  sunset: { top: 0x2b3a7a, bottom: 0xf2a36b, fog: 0xe9b48a, sun: [0.85, 0.2, 0.3], sunColor: 0xffb070, sunInt: 2.0, hemiSky: 0xffc9a0, hemiGround: 0x6a5a4a, hemiInt: 0.75 }
+};
+const Project = {
+  FORMAT: 'flightworld-config',
+  defaults() {
+    return {
+      format: Project.FORMAT, version: 1,
+      business: { name: '', tagline: '', briefing: '', offer: '', couponCode: '', couponMin: 600, whatsapp: '', link: '', cta: 'CHAMAR NO WHATSAPP', logo: '' },
+      paraglider: { primary: '#ff5a1f', secondary: '#f2f2f2', accent: '#1f3b73', suit: '#2457c5' },
+      ad: { bg: '#0b2a5b', fg: '#ffffff' },
+      game: { pace: 'arcade', sky: 'day', rings: true }
+    };
+  },
+  _str(v, max) { return typeof v === 'string' ? v.replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').slice(0, max) : ''; },
+  _color(v, d) { return (typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v)) ? v : d; },
+  _link(v) {
+    v = Project._str(v, 200).trim(); if (!v) return '';
+    if (/^@[\w.]{1,30}$/.test(v)) return v;
+    if (/^https:\/\/[^\s"'<>]{3,190}$/i.test(v)) return v;
+    if (/^[\w-]+(\.[\w-]+)+(\/[^\s"'<>]*)?$/.test(v)) return 'https://' + v;
+    return '';
+  },
+  /** Valida e normaliza qualquer JSON recebido (nunca confia no arquivo). */
+  sanitize(raw) {
+    const d = Project.defaults(), r = (raw && typeof raw === 'object') ? raw : {};
+    const b = (r.business && typeof r.business === 'object') ? r.business : {}, w = r.paraglider || {}, a = r.ad || {}, g = r.game || {};
+    const logo = (typeof b.logo === 'string' && b.logo.length < 400000 && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(b.logo)) ? b.logo : '';
+    const cm = Number(b.couponMin), has = Object.prototype.hasOwnProperty;
+    return {
+      format: Project.FORMAT, version: 1,
+      business: {
+        name: Project._str(b.name, 40).trim(), tagline: Project._str(b.tagline, 60).trim(), briefing: Project._str(b.briefing, 280),
+        offer: Project._str(b.offer, 50).trim(), couponCode: Project._str(b.couponCode, 20).trim().toUpperCase(),
+        couponMin: Number.isFinite(cm) ? Math.round(Utils.clamp(cm, 0, 1500)) : d.business.couponMin,
+        whatsapp: Project._str(b.whatsapp, 30).replace(/\D/g, '').slice(0, 15), link: Project._link(b.link),
+        cta: Project._str(b.cta, 28).trim() || d.business.cta, logo
+      },
+      paraglider: { primary: Project._color(w.primary, d.paraglider.primary), secondary: Project._color(w.secondary, d.paraglider.secondary), accent: Project._color(w.accent, d.paraglider.accent), suit: Project._color(w.suit, d.paraglider.suit) },
+      ad: { bg: Project._color(a.bg, d.ad.bg), fg: Project._color(a.fg, d.ad.fg) },
+      game: { pace: has.call(PACES, g.pace) ? g.pace : d.game.pace, sky: has.call(SKIES, g.sky) ? g.sky : d.game.sky, rings: g.rings !== false }
+    };
+  },
+  slug(n) { return (n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30) || 'meu-comercio'; },
+  waLink(b, text) { let n = b.whatsapp || ''; if (n.length < 8) return ''; if (n.length <= 11) n = '55' + n; return `https://wa.me/${n}?text=${encodeURIComponent(text)}`; },
+  linkHref(l) { if (!l) return ''; return l[0] === '@' ? 'https://instagram.com/' + l.slice(1) : l; },
+  download(cfg) {
+    const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = `flightworld-${Project.slug(cfg.business.name)}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+  },
+  async readFile(file) {
+    if (file.size > 800000) throw new Error('arquivo muito grande');
+    let raw; try { raw = JSON.parse(await file.text()); } catch (e) { throw new Error('JSON ilegível'); }
+    if (!raw || raw.format !== Project.FORMAT) throw new Error('não é uma configuração do Flight World');
+    return Project.sanitize(raw);
+  },
+  fileToLogo(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader(); fr.onerror = () => reject(new Error('leitura'));
+      fr.onload = () => {
+        const im = new Image(); im.onerror = () => reject(new Error('imagem'));
+        im.onload = () => {
+          const k = Math.min(1, 240 / Math.max(im.width, im.height, 1)), c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(im.width * k)); c.height = Math.max(1, Math.round(im.height * k));
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          let out = c.toDataURL('image/png'); if (out.length > 300000) out = c.toDataURL('image/jpeg', 0.85);
+          resolve(out);
+        };
+        im.src = fr.result;
+      };
+      fr.readAsDataURL(file);
+    });
+  }
+};
 
 /* =====================================================================
    INTERFACES (contratos para expansão futura: asa-delta, paramotor, drones)
@@ -655,6 +810,12 @@ class SkySystem {
     this.sunDisc = new THREE.Mesh(new THREE.SphereGeometry(70, 12, 8), new THREE.MeshBasicMaterial({ color: 0xfff6d0, fog: false }));
     scene.add(this.sunDisc);
   }
+  setPreset(p) {
+    const u = this.sky.material.uniforms; u.top.value.set(p.top); u.bottom.value.set(p.bottom);
+    this.sunDir.set(p.sun[0], p.sun[1], p.sun[2]).normalize(); this.sun.color.set(p.sunColor); this.sun.intensity = p.sunInt;
+    this.hemi.color.set(p.hemiSky); this.hemi.groundColor.set(p.hemiGround); this.hemi.intensity = p.hemiInt;
+    if (this.scene.fog) this.scene.fog.color.set(p.fog);
+  }
   setShadows(on) {
     this.sun.castShadow = on;
     if (on) { const c = this.sun.shadow.camera; c.left = -60; c.right = 60; c.top = 60; c.bottom = -60; c.near = 1; c.far = 900; this.sun.shadow.mapSize.set(2048, 2048); this.sun.shadow.bias = -0.0005; }
@@ -841,7 +1002,7 @@ class ParagliderMovement extends FlightMovement {
       onGround: true, agl: 0, alpha: 0, lift: 0, drag: 0, inflation: 0, thermalLift: 0, ridgeLift: 0, wind: new THREE.Vector3(), touchdown: null, airTime: 0 };
     this.input = { steer: 0, brakeL: 0, brakeR: 0, run: 0, speedbar: 0 };
     this.frozen = false; this.collapsed = false;
-    this._wind = new THREE.Vector3(); this._air = new THREE.Vector3(); this._va = new THREE.Vector3(); this._vaHat = new THREE.Vector3();
+    this.extraSink = 0; this._wind = new THREE.Vector3(); this._air = new THREE.Vector3(); this._va = new THREE.Vector3(); this._vaHat = new THREE.Vector3();
     this._right = new THREE.Vector3(); this._wingUp = new THREE.Vector3(); this._liftDir = new THREE.Vector3(); this._F = new THREE.Vector3(); this._n = new THREE.Vector3(); this._fwd = new THREE.Vector3();
     this.UP = new THREE.Vector3(0, 1, 0);
   }
@@ -861,7 +1022,7 @@ class ParagliderMovement extends FlightMovement {
     // --- ar relativo (vento + térmica) ---
     this.env.getWind(s.pos, s.agl, this._wind); s.wind.copy(this._wind); s.ridgeLift = this._wind.y;
     s.thermalLift = this.env.getThermal(s.pos);
-    this._air.copy(this._wind); this._air.y += s.thermalLift;
+    this._air.copy(this._wind); this._air.y += s.thermalLift - this.extraSink * Utils.smoothstep(25, 160, s.agl) * (1 - Utils.clamp(s.thermalLift / 2.5, 0, 1));
     this._va.subVectors(s.vel, this._air);
     const V = this._va.length(); s.airspeed = V;
     this._fwd.set(Math.sin(s.heading), 0, Math.cos(s.heading));
@@ -933,20 +1094,20 @@ class ParagliderWing {
     const rows = this.nSpan + 1, cols = this.nChord + 1, nV = rows * cols * 2;
     this.bx = new Float32Array(nV); this.by = new Float32Array(nV); this.bz = new Float32Array(nV); this.u = new Float32Array(nV); this.c = new Float32Array(nV);
     const positions = new Float32Array(nV * 3), colors = new Float32Array(nV * 3);
-    const orange = new THREE.Color(0xff5a1f), white = new THREE.Color(0xf2f2f2), navy = new THREE.Color(0x1f3b73), cyan = new THREE.Color(0x2ec4ff);
+    this.kind = new Uint8Array(nV); this.shade = new Float32Array(nV);
     for (let surf = 0; surf < 2; surf++) for (let i = 0; i < rows; i++) {
       const u = i / this.nSpan - 0.5, uu = 2 * u, x = u * this.span, yArc = -this.arcDepth * uu * uu;
       const chord = this.chordCenter * (1 - 0.5 * Math.pow(Math.abs(uu), 2.2));
       const dydx = -2 * this.arcDepth * uu * (2 / this.span), len = Math.hypot(dydx, 1), nx = -dydx / len, ny = 1 / len;
       const k = Math.floor(Math.abs(uu) * 7);
-      const col = Math.abs(uu) > 0.86 ? navy : (Math.abs(uu) < 0.14 ? cyan : (k % 2 === 0 ? orange : white));
+      const kind = Math.abs(uu) > 0.86 ? 2 : (Math.abs(uu) < 0.14 ? 3 : (k % 2 === 0 ? 0 : 1));
       for (let j = 0; j < cols; j++) {
         const c = j / this.nChord, v = surf * rows * cols + i * cols + j;
         const camber = 0.08 * chord * Math.sin(Math.PI * c), thick = 0.15 * chord * Math.pow(Math.sin(Math.PI * c), 0.6);
         const off = camber + (surf === 0 ? 0.5 : -0.5) * thick;
         this.bx[v] = x + nx * off; this.by[v] = yArc + ny * off; this.bz[v] = chord * (0.35 - c); this.u[v] = u; this.c[v] = c;
         positions[v * 3] = this.bx[v]; positions[v * 3 + 1] = this.by[v]; positions[v * 3 + 2] = this.bz[v];
-        const shade = surf === 0 ? 1 : 0.8; colors[v * 3] = col.r * shade; colors[v * 3 + 1] = col.g * shade; colors[v * 3 + 2] = col.b * shade;
+        this.kind[v] = kind; this.shade[v] = surf === 0 ? 1 : 0.8;
       }
     }
     const idx = [];
@@ -958,10 +1119,18 @@ class ParagliderWing {
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3)); geo.setAttribute('color', new THREE.BufferAttribute(colors, 3)); geo.setIndex(idx); geo.computeVertexNormals();
     this.mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide })); this.mesh.castShadow = true; this.mesh.frustumCulled = false;
     this.group.add(this.mesh);
+    this.setColors({ primary: '#ff5a1f', secondary: '#f2f2f2', accent: '#1f3b73' });
     // pontos de ancoragem das linhas (coordenadas locais da vela)
     this.anchors = [];
     [0.15, 0.45, 0.75].forEach(c => [0.12, 0.3, 0.44].forEach(u => { this.anchors.push(this._point(u, c)); this.anchors.push(this._point(-u, c)); }));
     this.anchors.push(this._point(0.38, 1)); this.anchors.push(this._point(-0.38, 1)); // linhas de freio
+  }
+  /** Cores personalizadas: listras (primary/secondary), pontas e centro (accent). */
+  setColors(c) {
+    const cols = [new THREE.Color(c.primary), new THREE.Color(c.secondary), new THREE.Color(c.accent), new THREE.Color(c.accent)];
+    const a = this.mesh.geometry.attributes.color.array;
+    for (let v = 0; v < this.kind.length; v++) { const col = cols[this.kind[v]], sh = this.shade[v]; a[v * 3] = col.r * sh; a[v * 3 + 1] = col.g * sh; a[v * 3 + 2] = col.b * sh; }
+    this.mesh.geometry.attributes.color.needsUpdate = true;
   }
   _point(u, c) {
     const uu = 2 * u, chord = this.chordCenter * (1 - 0.5 * Math.pow(Math.abs(uu), 2.2));
@@ -987,7 +1156,7 @@ class Pilot {
   constructor() {
     this.group = new THREE.Group();
     const suit = new THREE.MeshLambertMaterial({ color: 0x2457c5 }), dark = new THREE.MeshLambertMaterial({ color: 0x1b1f2a }), skin = new THREE.MeshLambertMaterial({ color: 0xe0b08a });
-    const helmet = new THREE.MeshLambertMaterial({ color: 0xf5f5f5 }), orange = new THREE.MeshLambertMaterial({ color: 0xff7a1a });
+    const helmet = new THREE.MeshLambertMaterial({ color: 0xf5f5f5 }), orange = new THREE.MeshLambertMaterial({ color: 0xff7a1a }); this.suitMat = suit;
     this.harness = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, 0.62), dark); this.harness.position.set(0, -0.08, 0.06); this.group.add(this.harness);
     this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.55, 0.28), suit); this.torso.position.set(0, 0.26, 0); this.group.add(this.torso);
     const strap = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.1, 0.32), orange); strap.position.set(0, 0.42, 0); this.group.add(strap);
@@ -1052,6 +1221,9 @@ class FlightController {
     const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 6), 3));
     this.lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: 0xf0f0f0, transparent: true, opacity: 0.75 })); this.lines.frustumCulled = false; this.root.add(this.lines);
     this.input = { steer: 0, brakeL: 0, brakeR: 0, run: 0, speedbar: 0 };
+    this.bannerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+    this.banner = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 1.6), this.bannerMat); this.banner.rotation.y = Math.PI; this.banner.position.set(0, 3.4, -3.2); this.banner.visible = false; this.root.add(this.banner);
+    this.hasBanner = false;
     this.crashAnim = 0; this._tmp = new THREE.Vector3(); this._riserL = new THREE.Vector3(0.25, 0.55, 0); this._riserR = new THREE.Vector3(-0.25, 0.55, 0);
   }
   reset() { const L = CONFIG.LAUNCH; this.movement.reset(L.x, L.z, L.heading); this.crashAnim = 0; this.wing.group.scale.set(1, 1, 1); this.root.rotation.set(0, L.heading, 0); this.syncVisual(0, 0); }
@@ -1078,6 +1250,7 @@ class FlightController {
     this.wing.group.scale.x = 0.35 + 0.65 * infl;
     this.wing.update(time, s.airspeed, this.input.brakeL, this.input.brakeR, infl);
     this.pilot.update(dt, s, this.input);
+    this.banner.visible = !!this.hasBanner && s.inflation > 0.6 && !crashed; this.banner.rotation.x = 0.05 * Math.sin(time * 3); this.banner.position.y = 3.4 + 0.05 * Math.sin(time * 2.2);
     // linhas de suspensão
     this.wing.group.updateMatrix();
     const a = this.lines.geometry.attributes.position.array;
@@ -1091,6 +1264,117 @@ class FlightController {
 }
 
 /* =====================================================================
+   GAMEPLAY — RingCourse (anéis de pontuação) e Branding (anúncios no mundo)
+   ===================================================================== */
+class RingCourse {
+  constructor(world, scene) {
+    this.world = world; this.group = new THREE.Group(); scene.add(this.group);
+    this.rings = []; this.next = 0; this.collected = 0; this.enabled = true; this.shown = true; this.sinkNeeded = 0; this.t = 0; this.pops = [];
+    this.geo = new THREE.TorusGeometry(15, 1.1, 8, 36);
+    this.matNext = new THREE.MeshBasicMaterial({ color: 0xffd23a, transparent: true, opacity: 0.95, fog: false });
+    this.matDim = new THREE.MeshBasicMaterial({ color: 0x6fd8ff, transparent: true, opacity: 0.45 });
+    this.matMiss = new THREE.MeshBasicMaterial({ color: 0xff6a5a, transparent: true, opacity: 0.2 });
+    this.build();
+  }
+  build() {
+    const L = CONFIG.LAUNCH, Z = CONFIG.LANDING, terrain = this.world.terrain, n = 12;
+    const y0 = terrain.getHeight(L.x, L.z) + 6, yEnd = this.world.landingZone.y + 75, zStart = L.z + 90, zEnd = Z.z - 70, D = zEnd - zStart;
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const t = (i + 0.5) / n, z = Utils.lerp(zStart, zEnd, t), x = 130 * Math.sin(t * Math.PI * 2.6) * Math.min(1, t * 3) * (1 - 0.7 * t);
+      pts.push(new THREE.Vector3(x, Math.max(Utils.lerp(y0, yEnd, t), terrain.getHeight(x, z) + 40), z));
+    }
+    pts.forEach((p, i) => {
+      const m = new THREE.Mesh(this.geo, i === 0 ? this.matNext : this.matDim); m.position.copy(p);
+      m.lookAt(pts[i + 1] || new THREE.Vector3(Z.x, p.y, Z.z)); this.group.add(m); this.rings.push({ mesh: m, pos: p });
+    });
+    // descida extra necessária para a trajetória casar com a linha dos anéis (partidas mais curtas)
+    const gs = Math.max(4, 10 - CONFIG.WIND.baseSpeed), T = D / gs;
+    this.sinkNeeded = Utils.clamp((y0 - yEnd) / T - 1.2, 0, 6);
+  }
+  _vis() { this.group.visible = this.enabled && this.shown; }
+  setEnabled(on) { this.enabled = on; this._vis(); }
+  setVisible(on) { this.shown = on; this._vis(); }
+  reset() {
+    this.pops.forEach(p => p.mesh.material.dispose()); this.pops.length = 0; this.next = 0; this.collected = 0;
+    this.rings.forEach((r, i) => { r.mesh.visible = true; r.mesh.scale.setScalar(1); r.mesh.material = i === 0 ? this.matNext : this.matDim; });
+  }
+  _advance() { this.next++; const n = this.rings[this.next]; if (n) n.mesh.material = this.matNext; }
+  /** Chamado na simulação; retorna true quando um anel é coletado. */
+  check(pos) {
+    const cur = this.rings[this.next]; if (!cur) return false;
+    if (pos.distanceTo(cur.pos) < 17) { cur.mesh.material = this.matNext.clone(); this.pops.push({ mesh: cur.mesh, age: 0 }); this.collected++; this._advance(); return true; }
+    if (pos.z > cur.pos.z + 50) { cur.mesh.material = this.matMiss; this._advance(); }
+    return false;
+  }
+  animate(dt) {
+    this.t += dt; const cur = this.rings[this.next];
+    if (cur) { cur.mesh.rotateZ(dt * 1.2); cur.mesh.scale.setScalar(1 + 0.07 * Math.sin(this.t * 6)); }
+    for (let i = this.pops.length - 1; i >= 0; i--) {
+      const p = this.pops[i]; p.age += dt; const k = p.age / 0.5;
+      p.mesh.scale.setScalar(1 + k * 1.2); p.mesh.material.opacity = Math.max(0, 0.95 * (1 - k));
+      if (k >= 1) { p.mesh.visible = false; p.mesh.material.dispose(); this.pops.splice(i, 1); }
+    }
+  }
+}
+
+/** Anúncio do comércio: faixa rebocada na vela, placas (decolagem e pouso) e pintura no campo de pouso. */
+class Branding {
+  constructor(world, flight) {
+    this.world = world; this.flight = flight; this.logoImg = null; this.logoSrc = ''; this.cfg = null;
+    const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return { c, t }; };
+    this.banner = mk(1024, 256); this.board = mk(1024, 384); this.ground = mk(1024, 320);
+    flight.bannerMat.map = this.banner.t; flight.bannerMat.needsUpdate = true;
+    const lz = world.landingZone, L = CONFIG.LAUNCH, terrain = world.terrain;
+    this.group = new THREE.Group(); world.scene.add(this.group);
+    const boardMat = new THREE.MeshBasicMaterial({ map: this.board.t }), backMat = new THREE.MeshLambertMaterial({ color: 0x333a48 }), poleMat = new THREE.MeshLambertMaterial({ color: 0x555a66 });
+    const makeBoard = (x, z, w, h) => {
+      const g = new THREE.Group(); g.position.set(x, terrain.getHeight(x, z), z); g.rotation.y = Math.PI; // de frente para quem vem do norte
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(w, h), boardMat); panel.position.y = h / 2 + 4; g.add(panel);
+      const back = new THREE.Mesh(new THREE.PlaneGeometry(w, h), backMat); back.position.set(0, h / 2 + 4, -0.1); back.rotation.y = Math.PI; g.add(back);
+      [-1, 1].forEach(sg => { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, h + 4, 6), poleMat); p.position.set(sg * (w / 2 - 1.5), (h + 4) / 2, -0.4); g.add(p); });
+      this.group.add(g);
+    };
+    makeBoard(lz.cx, lz.cz + lz.half + 10, 44, 16.5);
+    makeBoard(-30, L.RAMP_CZ - 12, 22, 8.25);
+    const gm = new THREE.Mesh(new THREE.PlaneGeometry(70, 21.9), new THREE.MeshBasicMaterial({ map: this.ground.t, transparent: true }));
+    gm.rotation.x = -Math.PI / 2; gm.rotation.z = Math.PI; gm.position.set(lz.cx, lz.y + 0.5, lz.cz + 48); this.group.add(gm);
+  }
+  setConfig(cfg) {
+    this.cfg = cfg; const src = cfg.business.logo;
+    if (src !== this.logoSrc) {
+      this.logoSrc = src; this.logoImg = null;
+      if (src) { const im = new Image(); im.onload = () => { if (this.logoSrc === src) { this.logoImg = im; this.redraw(); } }; im.src = src; }
+    }
+    this.redraw(); this.flight.hasBanner = true;
+  }
+  redraw() {
+    const b = this.cfg.business, a = this.cfg.ad, name = b.name || 'SEU COMÉRCIO AQUI', tag = b.tagline || (b.name ? '' : 'Anuncie no Flight World');
+    this._ad(this.banner, a, name, tag, '');
+    this._ad(this.board, a, name, tag, b.offer);
+    this._ad(this.ground, a, name, tag, '');
+  }
+  _ad(tex, a, name, tag, offer) {
+    const c = tex.c, ctx = c.getContext('2d'), W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = a.bg; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = a.fg; ctx.globalAlpha = 0.9; ctx.fillRect(0, 0, W, H * 0.04); ctx.fillRect(0, H * 0.96, W, H * 0.04); ctx.globalAlpha = 1;
+    let x0 = 40;
+    if (this.logoImg) { const lh = H * 0.72, lw = Math.min(W * 0.28, lh * this.logoImg.width / this.logoImg.height), lhh = lw * this.logoImg.height / this.logoImg.width; ctx.drawImage(this.logoImg, 28, (H - lhh) / 2, lw, lhh); x0 = lw + 64; }
+    const maxW = W - x0 - 30, lines = [{ t: name.toUpperCase(), k: 0.34, w: 800, col: a.fg }];
+    if (tag) lines.push({ t: tag, k: 0.16, w: 500, col: a.fg }); if (offer) lines.push({ t: '★ ' + offer + ' ★', k: 0.17, w: 800, col: '#ffd23a' });
+    if (lines.length === 1) lines[0].k = 0.5;
+    const gap = H * 0.05, total = lines.reduce((sum, l) => sum + H * l.k, 0) + gap * (lines.length - 1);
+    let y = (H - total) / 2; ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+    for (const l of lines) {
+      let size = H * l.k; const font = px => `${l.w} ${px}px "Segoe UI", Roboto, Arial, sans-serif`;
+      ctx.font = font(size); while (ctx.measureText(l.t).width > maxW && size > 18) { size -= 4; ctx.font = font(size); }
+      ctx.fillStyle = l.col; ctx.fillText(l.t, x0 + maxW / 2, y + (H * l.k - size) / 2); y += H * l.k + gap;
+    }
+    tex.t.needsUpdate = true;
+  }
+}
+
+/* =====================================================================
    CAMERA — CameraManager
    ===================================================================== */
 class CameraManager {
@@ -1098,6 +1382,7 @@ class CameraManager {
     this.camera = camera; this.world = world; this.modes = ['third', 'first', 'cine']; this.mode = 'third';
     this.pos = new THREE.Vector3(); this.look = new THREE.Vector3(); this.cineAngle = 0;
     this._fwd = new THREE.Vector3(); this._d = new THREE.Vector3(); this._l = new THREE.Vector3(); this._head = new THREE.Vector3();
+    this.override = null; this.fov = CONFIG.CAMERA.fov; this.orbit = 0;
     this.labels = { third: '3ª PESSOA', first: '1ª PESSOA', cine: 'CINEMÁTICA' };
   }
   setMode(m) { if (this.modes.includes(m)) this.mode = m; }
@@ -1105,13 +1390,19 @@ class CameraManager {
   label() { return this.labels[this.mode]; }
   snap(st) { this._fwd.set(Math.sin(st.heading), 0, Math.cos(st.heading)); this.pos.copy(st.pos).addScaledVector(this._fwd, -12).add(new THREE.Vector3(0, 5, 0)); this.look.copy(st.pos); this.cineAngle = 0; }
   update(dt, st, flight) {
-    const cam = this.camera, pos = st.pos;
+    const cam = this.camera, pos = st.pos, mode = this.override || this.mode;
     this._fwd.set(Math.sin(st.heading), 0, Math.cos(st.heading));
-    if (this.mode === 'third') {
+    const tf = CONFIG.CAMERA.fov + (mode === 'showcase' ? -8 : Utils.clamp((st.airspeed - 9) * 1.1, 0, 11));
+    this.fov = Utils.damp(this.fov, tf, 3, dt); if (Math.abs(cam.fov - this.fov) > 0.05) { cam.fov = this.fov; cam.updateProjectionMatrix(); }
+    if (mode === 'showcase') {
+      this.orbit += dt * 0.4; const r = 17;
+      this._d.set(pos.x + Math.cos(this.orbit) * r, pos.y + 6.5, pos.z + Math.sin(this.orbit) * r); this._l.set(pos.x, pos.y + 6, pos.z);
+      this.pos.lerp(this._d, 1 - Math.exp(-3 * dt)); this.look.lerp(this._l, 1 - Math.exp(-6 * dt));
+    } else if (mode === 'third') {
       this._d.copy(pos).addScaledVector(this._fwd, -12).add({ x: 0, y: 4.5, z: 0 });
       this._l.copy(pos).addScaledVector(this._fwd, 10).add({ x: 0, y: 2.5, z: 0 });
       this.pos.lerp(this._d, 1 - Math.exp(-4.5 * dt)); this.look.lerp(this._l, 1 - Math.exp(-7 * dt));
-    } else if (this.mode === 'cine') {
+    } else if (mode === 'cine') {
       this.cineAngle += dt * 0.22;
       const r = 20 + 6 * Math.sin(this.cineAngle * 0.5);
       this._d.set(pos.x + Math.cos(this.cineAngle) * r, pos.y + 5 + 3 * Math.sin(this.cineAngle * 0.7), pos.z + Math.sin(this.cineAngle) * r);
@@ -1124,10 +1415,10 @@ class CameraManager {
       this._l.set(this.pos.x + vx * 10, this.pos.y + (st.onGround ? 0 : Utils.clamp(st.vel.y, -4, 4) * 0.6 - 1.2), this.pos.z + vz * 10);
       this.look.lerp(this._l, 1 - Math.exp(-8 * dt));
     }
-    if (this.mode !== 'first') { const minY = this.world.getTerrainHeight(this.pos.x, this.pos.z) + 2.5; if (this.pos.y < minY) this.pos.y = minY; }
+    if (mode !== 'first') { const minY = this.world.getTerrainHeight(this.pos.x, this.pos.z) + 2.5; if (this.pos.y < minY) this.pos.y = minY; }
     cam.position.copy(this.pos); cam.up.set(0, 1, 0); cam.lookAt(this.look);
-    if (this.mode === 'first') cam.rotateZ(-st.bank * 0.5);
-    flight.setFirstPerson(this.mode === 'first');
+    if (mode === 'first') cam.rotateZ(-st.bank * 0.5);
+    flight.setFirstPerson(mode === 'first');
   }
 }
 
@@ -1162,6 +1453,7 @@ class KeyboardController {
   constructor(input, events) {
     this.input = input; this.keys = new Set();
     window.addEventListener('keydown', e => {
+      if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
       if (e.repeat) { if (['Space', 'ArrowUp', 'ArrowDown'].includes(e.code)) e.preventDefault(); return; }
       const k = e.code; this.keys.add(k); this._sync();
       if (k === 'KeyC') events.emit('input:camera'); if (k === 'KeyR') events.emit('input:restart'); if (k === 'Escape') events.emit('input:pause');
@@ -1198,347 +1490,4 @@ class TouchController {
     const end = e => { if (active !== null && e.pointerId !== active) return; active = null; setKnob(0, 0); input.raw.joyX = 0; input.raw.joyY = 0; };
     base.addEventListener('pointerdown', e => { if (active !== null) return; active = e.pointerId; base.setPointerCapture(e.pointerId); move(e); e.preventDefault(); });
     base.addEventListener('pointermove', e => { if (e.pointerId === active) move(e); });
-    base.addEventListener('pointerup', end); base.addEventListener('pointercancel', end); base.addEventListener('lostpointercapture', end);
-    const hold = (id, key) => {
-      const b = document.getElementById(id);
-      const on = e => { input.raw[key] = true; b.classList.add('active'); try { b.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); };
-      const off = () => { input.raw[key] = false; b.classList.remove('active'); };
-      b.addEventListener('pointerdown', on); ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => b.addEventListener(ev, off));
-      b.addEventListener('contextmenu', e => e.preventDefault());
-    };
-    hold('btnBrakeL', 'touchBrakeL'); hold('btnBrakeR', 'touchBrakeR');
-    const tap = (id, evt) => { const b = document.getElementById(id); b.addEventListener('pointerup', e => { events.emit(evt); e.preventDefault(); }); b.addEventListener('contextmenu', e => e.preventDefault()); };
-    tap('btnCam', 'input:camera'); tap('btnPause', 'input:pause'); tap('btnRestart', 'input:restart');
-    window.addEventListener('blur', () => { input.raw.touchBrakeL = input.raw.touchBrakeR = false; end({ pointerId: active }); document.querySelectorAll('.tbtn.active').forEach(b => b.classList.remove('active')); });
-  }
-  setVisible(v) { this.el.classList.toggle('hidden', !(v && this.isTouch)); }
-}
-
-/* =====================================================================
-   UI — HUD / Menu / Results
-   ===================================================================== */
-class HUD {
-  constructor() {
-    this.el = document.getElementById('hud'); this.$ = id => document.getElementById(id);
-    this.alt = this.$('hudAlt'); this.agl = this.$('hudAgl'); this.speed = this.$('hudSpeed'); this.gs = this.$('hudGs'); this.vario = this.$('hudVario'); this.varioFill = this.$('varioFill');
-    this.state = this.$('hudState'); this.thermal = this.$('hudThermal'); this.msg = this.$('hudMsg'); this.wind = this.$('hudWind'); this.windArrow = this.$('hudWindArrow');
-    this.lz = this.$('hudLz'); this.lzArrow = this.$('hudLzArrow'); this.cam = this.$('hudCam'); this.time = this.$('hudTime'); this.warn = this.$('hudWarn');
-    this.lastUpdate = 0; this.enabled = true;
-    this.$('keyHints').style.display = (('ontouchstart' in window) || navigator.maxTouchPoints > 0) ? 'none' : '';
-  }
-  show(v) { this.el.classList.toggle('hidden', !(v && this.enabled)); }
-  setMessage(t) { this.msg.textContent = t; }
-  setWarning(t) { this.warn.classList.toggle('hidden', !t); if (t) this.warn.textContent = t; }
-  update(now, st, game) {
-    if (now - this.lastUpdate < 0.1) return; this.lastUpdate = now;
-    this.alt.textContent = `${Utils.fmt(st.pos.y)} m`; this.agl.textContent = `solo: ${Utils.fmt(Math.max(0, st.agl))} m`;
-    this.speed.textContent = `${Utils.fmt(st.airspeed * 3.6)} km/h`; this.gs.textContent = `solo: ${Utils.fmt(st.groundSpeed * 3.6)} km/h`;
-    const v = st.onGround ? 0 : st.vario;
-    this.vario.textContent = `${v >= 0.05 ? '+' : ''}${Utils.fmt(v, 1)} m/s`; this.vario.style.color = v > 0.3 ? '#8dff9a' : v < -2.5 ? '#ff9a9a' : '#fff';
-    const pct = Utils.clamp(v / 5, -1, 1) * 50; this.varioFill.style.left = pct >= 0 ? '50%' : `${50 + pct}%`; this.varioFill.style.width = `${Math.abs(pct)}%`; this.varioFill.style.background = v >= 0 ? '#8dff9a' : '#ff9a9a';
-    const w = game.world.wind.vector;
-    this.wind.textContent = `${Utils.fmt(w.length() * 3.6)} km/h ${Utils.cardinal(-w.x, -w.z)}`;
-    this.windArrow.style.transform = `rotate(${-Utils.wrapAngle(Math.atan2(w.x, w.z) - st.heading) * 180 / Math.PI}deg)`;
-    const lz = game.world.landingZone, dx = lz.cx - st.pos.x, dz = lz.cz - st.pos.z, d = Math.hypot(dx, dz);
-    this.lz.textContent = d > 999 ? `${Utils.fmt(d / 1000, 2)} km` : `${Utils.fmt(d)} m`;
-    this.lzArrow.style.transform = `rotate(${-Utils.wrapAngle(Math.atan2(dx, dz) - st.heading) * 180 / Math.PI}deg)`;
-    this.cam.textContent = game.cameraMgr.label();
-    this.time.textContent = Utils.fmtTime(game.stats.flightTime);
-    const inThermal = st.thermalLift > 0.5 && !st.onGround, inRidge = st.ridgeLift > 0.8 && !st.onGround;
-    this.thermal.classList.toggle('hidden', !(inThermal || inRidge));
-    this.thermal.textContent = inThermal ? `▲ CORRENTE TÉRMICA DETECTADA  +${Utils.fmt(st.thermalLift, 1)} m/s` : '▲ ASCENDENTE DE ENCOSTA';
-    this.state.textContent = game.stateLabel(inThermal);
-  }
-}
-
-class UIManager {
-  constructor(game) {
-    this.game = game; this.$ = id => document.getElementById(id);
-    this.screens = ['menu', 'settings', 'credits', 'pause', 'result', 'orient'].reduce((o, k) => (o[k] = this.$(k), o), {});
-    this.toastTimer = null; this.settingsReturn = 'menu';
-    this.$('btnStart').onclick = () => game.startFlight();
-    this.$('btnSettings').onclick = () => this.openSettings('menu');
-    this.$('btnCredits').onclick = () => this.show('credits');
-    this.$('btnCloseCredits').onclick = () => this.show('menu');
-    this.$('btnCloseSettings').onclick = () => { if (this.settingsReturn === 'pause') this.show('pause'); else this.show('menu'); };
-    this.$('btnResetData').onclick = () => { game.resetData(); this.syncSettings(); this.renderRecords(); this.toast('Dados reiniciados'); };
-    this.$('btnResume').onclick = () => game.togglePause();
-    this.$('btnPauseRestart').onclick = () => { game.togglePause(); game.restartFlight(); };
-    this.$('btnPauseSettings').onclick = () => this.openSettings('pause');
-    this.$('btnPauseMenu').onclick = () => game.toMenu();
-    this.$('btnAgain').onclick = () => game.restartFlight();
-    this.$('btnResultMenu').onclick = () => game.toMenu();
-    this.$('btnOrientOk').onclick = () => { game.orientDismissed = true; this.screens.orient.classList.add('hidden'); };
-    // configurações
-    const s = game.settings;
-    this.$('setQuality').onchange = e => game.updateSetting('quality', e.target.value);
-    this.$('setSens').oninput = e => { game.updateSetting('sensitivity', parseFloat(e.target.value)); this.$('setSensVal').textContent = Utils.fmt(s.sensitivity, 1) + 'x'; };
-    this.$('setVol').oninput = e => { game.updateSetting('volume', parseFloat(e.target.value)); this.$('setVolVal').textContent = Math.round(s.volume * 100) + '%'; };
-    this.$('setCamera').onchange = e => game.updateSetting('camera', e.target.value);
-    this.$('setHud').onchange = e => game.updateSetting('hud', e.target.checked);
-    this.syncSettings(); this.renderRecords();
-  }
-  openSettings(ret) { this.settingsReturn = ret; this.show('settings'); }
-  show(name) { Object.entries(this.screens).forEach(([k, el]) => { if (k !== 'orient') el.classList.toggle('hidden', k !== name); }); }
-  hideAll() { this.show(null); }
-  syncSettings() {
-    const s = this.game.settings;
-    this.$('setQuality').value = s.quality; this.$('setSens').value = s.sensitivity; this.$('setSensVal').textContent = Utils.fmt(s.sensitivity, 1) + 'x';
-    this.$('setVol').value = s.volume; this.$('setVolVal').textContent = Math.round(s.volume * 100) + '%'; this.$('setCamera').value = s.camera; this.$('setHud').checked = s.hud;
-  }
-  renderRecords() {
-    const r = this.game.records;
-    this.$('menuRecords').innerHTML = `<span>Voos: <b>${r.flights}</b></span><span>Melhor distância: <b>${Utils.fmt(r.bestDistance / 1000, 2)} km</b></span>
-      <span>Melhor tempo: <b>${Utils.fmtTime(r.bestTime)}</b></span><span>Recorde de altitude: <b>${Utils.fmt(r.bestAltitude)} m</b></span><span>Melhor pouso: <b>${r.bestLanding} pts</b></span>`;
-  }
-  setLoading(p, text) { this.$('loadingBar').style.width = `${Math.round(p * 100)}%`; this.$('loadingText').textContent = text; }
-  ready() { this.$('btnStart').disabled = false; this.$('loadingText').textContent = 'Pronto para voar'; }
-  toast(t, ms = 2200) { const el = this.$('toast'); el.textContent = t; el.classList.add('show'); clearTimeout(this.toastTimer); this.toastTimer = setTimeout(() => el.classList.remove('show'), ms); }
-  showResult(ok, title, sub, stats) {
-    const t = this.$('resultTitle'); t.textContent = title; t.className = 'result-title ' + (ok ? 'ok' : 'bad');
-    this.$('resultSub').textContent = sub;
-    this.$('resultStats').innerHTML = stats.map(([k, v, rec]) => `<span>${k}</span><span>${v}${rec ? '<span class="rec">★ RECORDE</span>' : ''}</span>`).join('');
-    this.show('result');
-  }
-  checkOrientation(inGame) {
-    const portrait = window.innerHeight > window.innerWidth, touch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-    this.screens.orient.classList.toggle('hidden', !(inGame && portrait && touch && !this.game.orientDismissed));
-  }
-}
-
-/* =====================================================================
-   AUDIO — Web Audio sintetizado (sem arquivos externos)
-   ===================================================================== */
-class AudioManager {
-  constructor() { this.ctx = null; this.volume = 0.6; this.lastBeep = 0; }
-  init() {
-    if (this.ctx) { this.resume(); return; }
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext; this.ctx = new AC();
-      this.master = this.ctx.createGain(); this.master.gain.value = this.volume; this.master.connect(this.ctx.destination);
-      const len = this.ctx.sampleRate * 2, buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate), d = buf.getChannelData(0); let last = 0;
-      for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
-      this.noiseBuf = buf;
-      this.noise = this.ctx.createBufferSource(); this.noise.buffer = buf; this.noise.loop = true;
-      this.windFilter = this.ctx.createBiquadFilter(); this.windFilter.type = 'bandpass'; this.windFilter.frequency.value = 400; this.windFilter.Q.value = 0.6;
-      this.windGain = this.ctx.createGain(); this.windGain.gain.value = 0.0;
-      this.noise.connect(this.windFilter).connect(this.windGain).connect(this.master); this.noise.start();
-      // vento ambiente constante leve
-      this.ambGain = this.ctx.createGain(); this.ambGain.gain.value = 0.05;
-      const amb = this.ctx.createBufferSource(); amb.buffer = buf; amb.loop = true; const f2 = this.ctx.createBiquadFilter(); f2.type = 'lowpass'; f2.frequency.value = 300;
-      amb.connect(f2).connect(this.ambGain).connect(this.master); amb.start();
-    } catch (e) { console.warn('Áudio indisponível', e); }
-  }
-  resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); }
-  setVolume(v) { this.volume = v; if (this.master) this.master.gain.setTargetAtTime(v, this.ctx.currentTime, 0.05); }
-  updateWind(airspeed) { if (!this.ctx) return; const g = Utils.clamp((airspeed - 2) / 16, 0, 1) * 0.55; this.windGain.gain.setTargetAtTime(g, this.ctx.currentTime, 0.15); this.windFilter.frequency.setTargetAtTime(250 + airspeed * 45, this.ctx.currentTime, 0.15); }
-  updateVario(vario, time) { if (!this.ctx || vario < 0.4) return; const interval = Utils.clamp(0.55 - vario * 0.07, 0.12, 0.55); if (time - this.lastBeep > interval) { this.lastBeep = time; this.tone(550 + vario * 120, 0.08, 0.12, 'square'); } }
-  tone(freq, dur, vol = 0.2, type = 'sine', delay = 0) {
-    if (!this.ctx) return; const t0 = this.ctx.currentTime + delay, o = this.ctx.createOscillator(), g = this.ctx.createGain();
-    o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur); o.connect(g).connect(this.master); o.start(t0); o.stop(t0 + dur + 0.02);
-  }
-  burst(dur, vol, freq) {
-    if (!this.ctx) return; const s = this.ctx.createBufferSource(); s.buffer = this.noiseBuf; const f = this.ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = freq; const g = this.ctx.createGain();
-    const t0 = this.ctx.currentTime; g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur); s.connect(f).connect(g).connect(this.master); s.start(t0); s.stop(t0 + dur + 0.05);
-  }
-  playTakeoff() { this.burst(1.4, 0.5, 900); this.tone(520, 0.18, 0.1); this.tone(780, 0.25, 0.1, 'sine', 0.15); }
-  playLandingWarning() { this.tone(880, 0.12, 0.18); this.tone(880, 0.12, 0.18, 'sine', 0.2); this.tone(1100, 0.2, 0.18, 'sine', 0.4); }
-  playLanding() { this.burst(0.5, 0.45, 250); this.tone(130, 0.3, 0.35, 'triangle'); this.tone(660, 0.15, 0.12, 'sine', 0.5); this.tone(880, 0.3, 0.12, 'sine', 0.65); }
-  playCrash() { this.burst(0.9, 0.9, 180); this.tone(70, 0.7, 0.6, 'sawtooth'); }
-}
-
-/* =====================================================================
-   GAME — GameManager (orquestra tudo)
-   ===================================================================== */
-class GameManager {
-  constructor() {
-    this.events = new EventManager(); this.save = new SaveManager();
-    this.settings = this.save.loadSettings(); this.records = this.save.loadRecords();
-    this.stateMgr = new StateManager(this.events);
-    this.accum = 0; this.last = performance.now(); this.time = 0; this.simTime = 0;
-    this.stats = this._newStats(); this.orientDismissed = false; this.landingResult = null; this.pendingPanel = null;
-  }
-  _newStats() { return { distance: 0, flightTime: 0, maxAlt: 0, maxSpeed: 0, minAlt: Infinity, maxGain: 0, takeoffAlt: 0, lastX: 0, lastZ: 0, airborne: false }; }
-  async init() {
-    const q = CONFIG.QUALITY[this.settings.quality] || CONFIG.QUALITY.medium;
-    this.ui = new UIManager(this);
-    this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: this.settings.quality !== 'low', powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, q.pixelRatio)); this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(CONFIG.CAMERA.fov, window.innerWidth / window.innerHeight, CONFIG.CAMERA.near, CONFIG.CAMERA.far);
-    this.world = new WorldManager(this.scene, q);
-    await this.world.build((p, t) => this.ui.setLoading(p, t));
-    this.flight = new FlightController(this.world, this.scene);
-    this.cameraMgr = new CameraManager(this.camera, this.world); this.cameraMgr.setMode(this.settings.camera);
-    this.input = new InputManager(this.settings.sensitivity);
-    this.keyboard = new KeyboardController(this.input, this.events); this.touch = new TouchController(this.input, this.events);
-    this.hud = new HUD(); this.hud.enabled = this.settings.hud; this.audio = new AudioManager(); this.audio.volume = this.settings.volume;
-    this._bindEvents();
-    this.flight.reset(); this.cameraMgr.snap(this.flight.getState());
-    window.addEventListener('resize', () => this.onResize()); this.onResize();
-    document.addEventListener('visibilitychange', () => { if (document.hidden && this.isActiveFlight()) this.togglePause(true); });
-    this.ui.ready();
-    requestAnimationFrame(t => this.frame(t));
-  }
-  _bindEvents() {
-    this.events.on('input:camera', () => { if (this.inGame()) { this.cameraMgr.next(); this.ui.toast('Câmera: ' + this.cameraMgr.label(), 1200); } });
-    this.events.on('input:restart', () => { if (this.inGame() || this.stateMgr.is('LANDED', 'CRASHED')) this.restartFlight(); });
-    this.events.on('input:pause', () => { if (this.inGame() || this.stateMgr.is('PAUSED')) this.togglePause(); });
-    this.events.on('input:confirm', () => {
-      if (this.stateMgr.is('MENU') && !document.getElementById('btnStart').disabled && !document.getElementById('menu').classList.contains('hidden')) this.startFlight();
-      else if (this.stateMgr.is('LANDED', 'CRASHED') && !document.getElementById('result').classList.contains('hidden')) this.restartFlight();
-    });
-    this.events.on('state:enter', ({ from, to }) => this.onStateEnter(from, to));
-  }
-  onResize() { this.camera.aspect = window.innerWidth / window.innerHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(window.innerWidth, window.innerHeight); this.ui.checkOrientation(this.inGame()); }
-  inGame() { return this.stateMgr.is('PREPARATION', 'RUNNING', 'TAKEOFF', 'FLYING', 'APPROACH', 'LANDING'); }
-  isActiveFlight() { return this.inGame(); }
-  // ---------- fluxo ----------
-  startFlight() { this.audio.init(); this.audio.setVolume(this.settings.volume); this.ui.hideAll(); this.hud.show(true); this.touch.setVisible(true); this.resetFlight(); this.stateMgr.transition('PREPARATION', true); this.ui.checkOrientation(true); }
-  restartFlight() { this.audio.resume(); this.ui.hideAll(); this.hud.show(true); this.touch.setVisible(true); this.resetFlight(); this.stateMgr.transition('PREPARATION', true); }
-  resetFlight() { this.flight.reset(); this.input.resetAll(); this.input.update(0); this.stats = this._newStats(); this.landingResult = null; this.pendingPanel = null; this.cameraMgr.snap(this.flight.getState()); this.hud.setWarning(null); this.accum = 0; }
-  toMenu() { this.ui.show('menu'); this.hud.show(false); this.touch.setVisible(false); this.stateMgr.transition('MENU', true); this.ui.renderRecords(); this.ui.checkOrientation(false); }
-  togglePause(force) {
-    if (this.stateMgr.is('PAUSED')) { if (force === true) return; this.stateMgr.transition(this.stateMgr.previous || 'PREPARATION', true); this.ui.hideAll(); this.audio.resume(); }
-    else if (this.inGame()) { this.stateMgr.transition('PAUSED'); this.ui.show('pause'); this.input.resetAll(); }
-  }
-  updateSetting(k, v) {
-    this.settings[k] = v; this.save.saveSettings(this.settings);
-    // (guardas: o painel de configurações pode ser aberto antes do mundo terminar de carregar)
-    if (k === 'quality') { const q = CONFIG.QUALITY[v]; if (this.renderer) this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, q.pixelRatio)); if (this.world && this.world.vegetation && this.scene.fog) this.world.applyQuality(q); }
-    if (k === 'sensitivity' && this.input) this.input.sens = v;
-    if (k === 'volume' && this.audio) this.audio.setVolume(v);
-    if (k === 'camera' && this.cameraMgr) this.cameraMgr.setMode(v);
-    if (k === 'hud' && this.hud) { this.hud.enabled = v; this.hud.show(this.inGame()); }
-  }
-  resetData() { this.save.reset(); this.settings = this.save.defaultSettings(); this.records = this.save.defaultRecords(); Object.keys(this.settings).forEach(k => this.updateSetting(k, this.settings[k])); }
-  // ---------- estados ----------
-  onStateEnter(from, to) {
-    const H = this.hud;
-    switch (to) {
-      case 'PREPARATION': H.setMessage('Prepare-se para decolar. Corra em direção à rampa. (W / joystick para frente)'); break;
-      case 'RUNNING': H.setMessage('Ganhe velocidade! A vela infla e a sustentação levanta você do solo.'); break;
-      case 'TAKEOFF': H.setMessage('Decolando… mantenha o rumo.'); break;
-      case 'FLYING': if (from === 'TAKEOFF') { this.audio.playTakeoff(); H.setMessage('Voo livre. A/D curvar · Q/E freios · W acelerador. Procure as térmicas e siga a seta até o campo de pouso.'); } else H.setMessage(''); break;
-      case 'APPROACH': this.audio.playLandingWarning(); H.setMessage('Aproximação: pouse contra o vento (siga a seta do campo) e freie suavemente antes de tocar o solo.'); break;
-      case 'LANDING': if (from !== 'LANDED') H.setMessage('Pouso: puxe os freios para suavizar o toque.'); break;
-      case 'LANDED': this.audio.playLanding(); H.setMessage('Pouso concluído!'); this.pendingPanel = this.time + 1.4; break;
-      case 'CRASHED': this.audio.playCrash(); this.flight.movement.frozen = true; this.pendingPanel = this.time + 1.8; break;
-    }
-  }
-  stateLabel(inThermal) {
-    const m = { PREPARATION: 'PREPARANDO DECOLAGEM', RUNNING: 'CORRENDO', TAKEOFF: 'DECOLANDO', FLYING: inThermal ? 'TÉRMICA DETECTADA' : 'VOO LIVRE', APPROACH: 'APROXIMAÇÃO', LANDING: 'POUSO', LANDED: 'POUSO CONCLUÍDO', CRASHED: 'FALHA DE VOO', PAUSED: 'PAUSADO', MENU: 'MENU' };
-    return m[this.stateMgr.current] || '';
-  }
-  /** Transições da máquina de estados baseadas na simulação. */
-  checkTransitions(dt) {
-    const S = this.stateMgr, st = this.flight.getState(), lz = this.world.landingZone;
-    const distLZ = lz.distToCenter(st.pos.x, st.pos.z);
-    // colisões (árvores/construções)
-    if (S.is('TAKEOFF', 'FLYING', 'APPROACH', 'LANDING') && !st.onGround) { const c = this.world.checkCollisions(st.pos); if (c) return this.crash(c); }
-    // limite da área
-    const dStart = Math.hypot(st.pos.x - CONFIG.LAUNCH.x, st.pos.z - CONFIG.LAUNCH.z);
-    this.hud.setWarning(dStart > CONFIG.FLIGHT_AREA_RADIUS - 300 && this.inGame() ? 'LIMITE DA ÁREA DE VOO — RETORNE' : null);
-    if (dStart > CONFIG.FLIGHT_AREA_RADIUS + 400 && !st.onGround) return this.crash('Saiu da área de voo');
-    // toque no solo durante o voo
-    if (st.touchdown && S.is('FLYING', 'APPROACH', 'LANDING')) { const td = st.touchdown; st.touchdown = null; return this.onTouchdown(td); }
-    st.touchdown = null;
-    switch (S.current) {
-      case 'PREPARATION': if (st.groundSpeed > 0.4 && this.input.state.run > 0) S.transition('RUNNING'); break;
-      case 'RUNNING':
-        if (!st.onGround && (st.airspeed > 7.5 || st.airTime > 0.6)) S.transition('TAKEOFF');
-        else if (st.onGround && st.groundSpeed < 0.15 && this.input.state.run === 0 && S.elapsed() > 1) { S.transition('PREPARATION'); this.ui.toast('Corrida interrompida. Tente novamente.'); }
-        break;
-      case 'TAKEOFF':
-        if (st.agl > 12 && !st.onGround) { S.transition('FLYING'); this.stats.airborne = true; this.stats.takeoffAlt = st.pos.y; this.stats.minAlt = st.pos.y; }
-        else if (st.onGround && st.groundSpeed < 0.3) S.transition('RUNNING');
-        else if (S.elapsed() > 6 && st.onGround) S.transition('RUNNING');
-        break;
-      case 'FLYING': if (distLZ < CONFIG.LANDING.approachRadius && st.agl < 350) S.transition('APPROACH'); break;
-      case 'APPROACH': if (distLZ > CONFIG.LANDING.approachRadius + 200 || st.agl > 450) S.transition('FLYING'); else if (st.agl < 12) S.transition('LANDING'); break;
-      case 'LANDING':
-        if (this.landingResult) { if (st.groundSpeed < 0.5) S.transition('LANDED'); }
-        else if (st.agl > 30) S.transition('APPROACH');
-        break;
-    }
-  }
-  onTouchdown(td) {
-    const st = this.flight.getState(), res = TakeoffLanding.evaluateTouchdown(td, st.pos, this.world);
-    if (!res.ok) return this.crash(res.reason);
-    this.landingResult = res; this.flight.movement.collapsed = true;
-    if (!this.stateMgr.is('LANDING')) this.stateMgr.transition('LANDING', true);
-    this.hud.setMessage(res.inField ? 'Toque no campo! Corra para parar.' : 'Pouso fora do campo. Corra para parar.');
-  }
-  crash(reason) { this.crashReason = reason; this.stateMgr.transition('CRASHED', true); this.hud.setMessage(reason); }
-  // ---------- estatísticas / resultados ----------
-  updateStats(dt) {
-    const st = this.flight.getState(), s = this.stats;
-    if (!s.airborne) { s.lastX = st.pos.x; s.lastZ = st.pos.z; return; }
-    if (this.stateMgr.is('FLYING', 'APPROACH', 'LANDING') && !this.landingResult) {
-      s.flightTime += dt; s.distance += Math.hypot(st.pos.x - s.lastX, st.pos.z - s.lastZ);
-      s.maxAlt = Math.max(s.maxAlt, st.pos.y); s.maxSpeed = Math.max(s.maxSpeed, st.airspeed * 3.6);
-      s.minAlt = Math.min(s.minAlt, st.pos.y); s.maxGain = Math.max(s.maxGain, st.pos.y - s.minAlt);
-    }
-    s.lastX = st.pos.x; s.lastZ = st.pos.z;
-  }
-  finishFlight(ok) {
-    const s = this.stats, r = this.records, lr = this.landingResult;
-    const recD = s.distance > r.bestDistance, recT = s.flightTime > r.bestTime, recA = s.maxAlt > r.bestAltitude, recL = ok && lr && lr.score > r.bestLanding;
-    r.bestDistance = Math.max(r.bestDistance, Math.round(s.distance)); r.bestTime = Math.max(r.bestTime, Math.round(s.flightTime)); r.bestAltitude = Math.max(r.bestAltitude, Math.round(s.maxAlt));
-    if (ok && lr) r.bestLanding = Math.max(r.bestLanding, lr.score); r.flights++;
-    this.save.saveRecords(r); this.ui.renderRecords();
-    const stats = [
-      ['Distância percorrida', s.distance > 999 ? `${Utils.fmt(s.distance / 1000, 2)} km` : `${Utils.fmt(s.distance)} m`, recD && s.distance > 0],
-      ['Tempo de voo', Utils.fmtTime(s.flightTime), recT && s.flightTime > 0],
-      ['Altitude máxima', `${Utils.fmt(s.maxAlt)} m`, recA && s.maxAlt > 0],
-      ['Velocidade máxima', `${Utils.fmt(s.maxSpeed)} km/h`, false],
-      ['Ganho máximo de altitude', `${Utils.fmt(s.maxGain)} m`, false]
-    ];
-    if (ok && lr) { stats.push(['Precisão do pouso', lr.inField ? `${Math.round(lr.precision * 100)}% (${Utils.fmt(lr.dist)} m do centro)` : 'Fora do campo', false]); stats.push(['Pontuação do pouso', `${lr.score} pts`, recL]); }
-    if (ok) this.ui.showResult(true, 'FLIGHT COMPLETED', lr && lr.inField ? 'Pouso concluído no campo de pouso.' : 'Pouso seguro, mas fora do campo de pouso.', stats);
-    else this.ui.showResult(false, 'FALHA DE VOO', this.crashReason || 'Colisão', stats);
-    this.touch.setVisible(false);
-  }
-  // ---------- loop ----------
-  fixedUpdate(dt) {
-    this.simTime += dt; this.stateMgr.time = this.simTime;
-    this.input.update(dt);
-    this.flight.applyInput(this.input.state);
-    this.world.updatePhysics(dt);
-    this.flight.updatePhysics(dt);
-    this.updateStats(dt);
-    this.checkTransitions(dt);
-  }
-  frame(now) {
-    requestAnimationFrame(t => this.frame(t));
-    let dt = (now - this.last) / 1000; this.last = now; dt = Math.min(dt, CONFIG.MAX_ACCUM); this.time += dt;
-    const S = this.stateMgr;
-    const simulate = this.inGame() || S.is('LANDED', 'CRASHED');
-    if (simulate && !S.is('PAUSED')) {
-      this.accum += dt;
-      while (this.accum >= CONFIG.PHYSICS_STEP) { this.fixedUpdate(CONFIG.PHYSICS_STEP); this.accum -= CONFIG.PHYSICS_STEP; if (!this.inGame() && !S.is('LANDED', 'CRASHED')) break; }
-    }
-    const st = this.flight.getState();
-    // visual
-    this.flight.syncVisual(S.is('PAUSED') ? 0 : dt, this.time, S.is('CRASHED'));
-    if (!S.is('PAUSED')) this.cameraMgr.update(dt, st, this.flight);
-    this.world.updateVisual(S.is('PAUSED') ? 0 : dt, this.camera.position, st.pos);
-    // interface
-    if (this.inGame()) { this.hud.update(this.time, st, this); this.audio.updateWind(st.airspeed); if (!st.onGround) this.audio.updateVario(st.vario, this.time); }
-    else if (S.is('LANDED', 'CRASHED')) { this.hud.update(this.time, st, this); this.audio.updateWind(0); }
-    else this.audio.updateWind(0);
-    if (this.pendingPanel && this.time > this.pendingPanel) { this.pendingPanel = null; this.finishFlight(S.is('LANDED')); }
-    this.renderer.render(this.scene, this.camera);
-  }
-}
-
-/* =====================================================================
-   BOOT
-   ===================================================================== */
-const game = new GameManager();
-window.FLIGHT_WORLD = game; // acesso para depuração
-game.init().catch(e => { console.error(e); document.getElementById('loadingText').textContent = 'Erro na inicialização: ' + e.message; });
-</script>
-</body>
-</html>
+    base.addEventListener('pointerup', end); base.addEventListener('pointercancel', end); base.addEventListener(

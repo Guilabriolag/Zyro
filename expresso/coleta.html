@@ -11,7 +11,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 canvas{position:fixed;inset:0;width:100%;height:100%}
 #hud{position:fixed;inset:0;pointer-events:none;display:none}#hud.on{display:block}
 #top{position:absolute;top:max(10px,env(safe-area-inset-top));left:10px;right:10px;display:flex;flex-wrap:wrap;gap:6px}
-.pill{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:.8rem;backdrop-filter:blur(6px)}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:.8rem;backdrop-filter:blur(6px);box-shadow:0 3px 12px #0008}
 #bar{position:absolute;top:calc(max(10px,env(safe-area-inset-top)) + 40px);left:10px;width:120px;height:8px;border-radius:9px;background:var(--panel);border:1px solid var(--line);overflow:hidden}
 #bf{height:100%;width:100%;background:var(--ac)}
 #msg{position:absolute;top:30%;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 16px;font-size:.88rem;text-align:center;max-width:86vw;opacity:0;transition:opacity .25s}
@@ -24,18 +24,15 @@ canvas{position:fixed;inset:0;width:100%;height:100%}
 #jk{position:absolute;left:37px;top:37px;width:44px;height:44px;border-radius:50%;background:rgba(111,191,115,.55);border:1px solid var(--ac)}
 #run{position:absolute;right:calc(22px + env(safe-area-inset-right));bottom:calc(36px + env(safe-area-inset-bottom));width:92px;height:92px;border-radius:50%;background:var(--panel);border:1px solid var(--warn);color:var(--warn);font-weight:700;font-size:.9rem;pointer-events:auto;touch-action:none;display:flex;align-items:center;justify-content:center}
 #run.on{background:rgba(224,168,92,.35)}
-#interact{position:absolute;right:calc(24px + env(safe-area-inset-right));bottom:calc(145px + env(safe-area-inset-bottom));min-width:112px;display:none;pointer-events:auto;background:rgba(111,191,115,.92);color:#0d1210;border:1px solid #b8e8b7;box-shadow:0 4px 18px #0008}
+#interact{position:absolute;right:calc(24px + env(safe-area-inset-right));bottom:calc(145px + env(safe-area-inset-bottom));min-width:112px;display:none;pointer-events:auto;background:rgba(111,191,115,.92);color:#0d1210;border:1px solid #b8e8b7;box-shadow:0 4px 18px #0008;font-weight:800;letter-spacing:.02em}
 #interact.on{display:block}
 #camhint{position:absolute;left:50%;top:calc(max(54px,env(safe-area-inset-top) + 48px));transform:translateX(-50%);font-size:.68rem;color:var(--mut);background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 9px;white-space:nowrap}
-
-#shop{position:absolute;left:50%;bottom:calc(170px + env(safe-area-inset-bottom));transform:translateX(-50%);display:none;gap:8px;flex-direction:column;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;pointer-events:auto}
+#shop{position:absolute;left:50%;bottom:calc(150px + env(safe-area-inset-bottom));transform:translateX(-50%);display:none;gap:6px;flex-direction:column;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px 10px;pointer-events:auto}
 #shop.on{display:flex}
 #shop small{color:var(--mut)}
 #shop button{border:1px solid #d7b16b;background:linear-gradient(135deg,#182331,#30251b);color:#f5d79b}
 #shop button:disabled{opacity:.35}
-#interact{font-weight:800;letter-spacing:.02em}
-#top .pill{box-shadow:0 3px 12px #0008}
-#shop div{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}#shop button{font-size:.7rem;padding:8px 9px;max-width:48%}
+#shop div{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}#shop button{font-size:.68rem;padding:7px 8px;max-width:48%}
 button{border:0;border-radius:10px;padding:10px 12px;font-size:.82rem;font-weight:600;background:var(--ac);color:#0d1210;font-family:inherit}
 button:disabled{opacity:.4}
 #intro{position:fixed;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(120% 100% at 50% 0,#17231c,#0d1210 60%)}
@@ -48,20 +45,20 @@ h1{margin:0;font-size:1.45rem}.card p{margin:0;color:var(--mut);font-size:.9rem;
 <body>
 <div id="hud">
   <div id="alert"></div>
-  <div id="top"><span class="pill" id="cr">💰 0</span><span class="pill" id="car">🧻 0 · ☕ 0</span><span class="pill" id="pw" style="display:none"></span><span class="pill" id="sense">👃 Rastro: —</span></div>
+  <div id="top"><span class="pill" id="cr">🎟 0</span><span class="pill" id="car">🧻 0 · 🧪 0</span><span class="pill" id="pw" style="display:none"></span><span class="pill" id="sense">👃 Rastro: —</span></div>
   <div id="bar"><div id="bf"></div></div>
   <div id="arrow"><b id="ar">▲</b><span id="ad">casinha</span></div>
   <div id="msg"></div>
   <div id="shop"><small>BASE SECRETA · OFICINA DE EQUIPAMENTOS · tickets: <b id="ticketShop">0</b></small><div><button id="b1"></button><button id="b2"></button></div><div><button id="b3"></button><button id="b4"></button></div><div><button id="b5"></button><button id="nextWave" style="display:none">Nova rodada</button></div></div>
   <div id="jb"><div id="jk"></div></div>
-  <div id="run">CORRER</div>\n  <button id="interact">INTERAGIR</button><div id="camhint">Arraste a tela para olhar ao redor</div>
+  <div id="run">CORRER</div>
+  <button id="interact">INTERAGIR</button><div id="camhint">Arraste a tela para olhar ao redor</div>
 </div>
 <div id="intro"><div class="card">
   <h1>Tic-Tac · Coleta Infiltrada</h1>
-  <p>Você é um infiltrado no planeta alienígena. No shopping, marcas como OrbitBrew e Noir Brew vendem bebidas que os moradores consomem — e deixam embalagens valiosas pelo caminho.</p>
-  <p>Você é um invasor infiltrado no shopping alienígena. <b>Recolha o Lixo Cósmico</b> que eles deixam após comer hambúrgueres e beber café. Guardanapos aparecem pelo shopping; embalagens POC-POFT são mais raras e valiosas. Não deixe os moradores verem você.</p>
-  <p>Volte à base para vender o Lixo Cósmico e comprar melhorias. Explore lojas abertas, procure loot e respeite as portas trancadas. Não deixe os moradores perceberem sua infiltração.</p>
-  <p><b>Poderes</b> (esferas coloridas) só existem dentro da arena. Se for pego, perde a carga.</p>
+  <p>Você é um infiltrado no shopping alienígena. Os moradores bebem café e comem hambúrguer, e deixam <b>Lixo Cósmico</b> pelo caminho: guardanapos são comuns, embalagens POC-POFT são raras e valem mais.</p>
+  <p>Recolha tudo sem ser visto. <b>Cuidado com o vidro das lojas:</b> quem está do lado de fora pode ver você lá dentro, principalmente se estiver perto da vitrine. Se for pego, perde a carga.</p>
+  <p>Volte à base para processar o lixo e comprar melhorias. Poderes (esferas coloridas) aparecem só na arena. Alienígenas coloridos e outros Tic-Tacs são civis: passeiam, fazem compras e dirigem, e não ligam para você. Só a patrulha (com cone de visão) te persegue. A escada rolante leva ao 2º andar, ainda em obras.</p>
   <p>Mover: joystick ou WASD · Correr: botão ou Shift · Olhar: arraste a tela · Interagir: botão contextual</p>
   <button id="go">Entrar na arena</button>
 </div></div>
@@ -73,48 +70,51 @@ const sc=new THREE.Scene();sc.background=new THREE.Color(0x0d1210);sc.fog=new TH
 const cam=new THREE.PerspectiveCamera(55,1,.1,200);
 const rd=new THREE.WebGLRenderer({antialias:true});rd.setPixelRatio(Math.min(devicePixelRatio,2));document.body.prepend(rd.domElement);
 function rs(){rd.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
-sc.add(new THREE.HemisphereLight(0xcfe8ff,0x2a3a2e,.95));const sun=new THREE.DirectionalLight(0xffffff,.55);sun.position.set(20,40,10);sc.add(sun);
+sc.add(new THREE.HemisphereLight(0xcfe8ff,0x2a3a2e,1.05));const sun=new THREE.DirectionalLight(0xffffff,.6);sun.position.set(20,40,10);sc.add(sun);
+// Luzes internas compartilhadas: quantidade constante (evita recompilar shaders ao entrar nas lojas).
+const IL=[new THREE.PointLight(0xffffff,0,28),new THREE.PointLight(0xe5f4ff,0,24),new THREE.PointLight(0xffffff,0,18)];IL.forEach(l=>sc.add(l));
 const M=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:c},o||{}));
 const fl=new THREE.Mesh(new THREE.PlaneGeometry(W*2,W*2),M(0x1b2a22));fl.rotation.x=-Math.PI/2;sc.add(fl);
 const gr=new THREE.GridHelper(W*2,34,0x2f4a3a,0x243a2d);gr.position.y=.02;sc.add(gr);
 
 /* ===== mundo ===== */
 const B=[];
-function box(x,z,w,d,h,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,h/2,z);sc.add(m);B.push({x,z,hx:w/2,hz:d/2});return m}
+function addBlock(x,z,w,d){B.push({x,z,hx:w/2,hz:d/2})}
+function box(x,z,w,d,h,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,h/2,z);sc.add(m);addBlock(x,z,w,d);return m}
 box(0,-W-1,W*2+4,2,3,0x2a3a30);box(0,W+1,W*2+4,2,3,0x2a3a30);box(-W-1,0,2,W*2+4,3,0x2a3a30);box(W+1,0,2,W*2+4,3,0x2a3a30);
 const free=(x,z,r)=>!B.some(b=>Math.abs(x-b.x)<b.hx+r&&Math.abs(z-b.z)<b.hz+r);
-const HOME={x:-W+5,z:W-5},DOOR={x:-W+5,z:W-5+2.45};
-// Fachada da base com abertura real na entrada (sem bloco sólido bloqueando a porta).
+// Casa do personagem: 9x9, sem teto (dá para ver dentro), porta virada para o centro do mapa (leste), com colisão.
+const HOME={x:-W+5,z:W-5},DOOR={x:HOME.x+4.9,z:HOME.z};
 const homeShell=new THREE.Group();sc.add(homeShell);
-function homePart(x,z,w,d,h,c=0x6b4f3a){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(HOME.x+x,h/2,HOME.z+z);homeShell.add(m)}
-homePart(-3,0,2,6,4);homePart(3,0,2,6,4);homePart(0,-2.5,4,1,4);homePart(-2,2.5,2,1,4);homePart(2,2.5,2,1,4);const homeFloor=new THREE.Mesh(new THREE.BoxGeometry(8,.12,6),M(0x34483c));homeFloor.position.set(HOME.x,-.06,HOME.z);homeShell.add(homeFloor);
-const door=new THREE.Mesh(new THREE.BoxGeometry(1.8,2.6,.12),M(0xffd54f,{emissive:0x553d00}));door.position.set(DOOR.x,1.3,DOOR.z);sc.add(door);
+function homePart(x,z,w,d,h=3.5,c=0x6b4f3a){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(HOME.x+x,h/2,HOME.z+z);homeShell.add(m);addBlock(HOME.x+x,HOME.z+z,w,d)}
+homePart(-4.25,0,.5,9);homePart(0,-4.25,9,.5);homePart(0,4.25,9,.5);homePart(4.25,-2.85,.5,3.3);homePart(4.25,2.85,.5,3.3);
+const lintel=new THREE.Mesh(new THREE.BoxGeometry(.5,.8,2.4),M(0xffd54f,{emissive:0x553d00}));lintel.position.set(HOME.x+4.25,3.1,HOME.z);homeShell.add(lintel);
+const homeFloor=new THREE.Mesh(new THREE.BoxGeometry(9,.12,9),M(0x34483c));homeFloor.position.set(HOME.x,-.06,HOME.z);homeShell.add(homeFloor);
+const bed=new THREE.Mesh(new THREE.BoxGeometry(2.4,.6,1.3),M(0x5b7fa6));bed.position.set(HOME.x-2.6,.3,HOME.z-2.8);homeShell.add(bed);
+const hcrate=new THREE.Mesh(new THREE.BoxGeometry(.9,.8,.9),M(0x8a6545));hcrate.position.set(HOME.x-3.4,.4,HOME.z+2.6);homeShell.add(hcrate);
 const zone=new THREE.Mesh(new THREE.CircleGeometry(2.8,24),new THREE.MeshBasicMaterial({color:0xffd54f,transparent:true,opacity:.18}));zone.rotation.x=-Math.PI/2;zone.position.set(DOOR.x,.04,DOOR.z);sc.add(zone);
-// Base secreta: interior separado, acessado pela porta externa.
+// Base secreta: interior amplo (16x12) em outra área; parede frontal baixa para a câmera enxergar.
 const BASE={x:100,z:100},baseRoom=new THREE.Group();sc.add(baseRoom);
-const baseMat=M(0x263b35),wallMat=M(0x40594d),trimMat=M(0x86b99a,{emissive:0x183b2b}),floorMat=M(0x172720);
-const floor=new THREE.Mesh(new THREE.BoxGeometry(12,.25,10),floorMat);floor.position.set(BASE.x,-.13,BASE.z);baseRoom.add(floor);
+const wallMat=M(0x40594d),trimMat=M(0x86b99a,{emissive:0x183b2b}),floorMat=M(0x172720);
+const floor=new THREE.Mesh(new THREE.BoxGeometry(16,.25,12),floorMat);floor.position.set(BASE.x,-.13,BASE.z);baseRoom.add(floor);
 function roomWall(x,z,w,d,h=3.5){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),wallMat);m.position.set(BASE.x+x,h/2,BASE.z+z);baseRoom.add(m);}
-roomWall(0,-5,12,.35);roomWall(-6,0,.35,10);roomWall(6,0,.35,10);roomWall(-3,5,6,.35);roomWall(3.8,5,4.4,.35);
-const ceiling=new THREE.Mesh(new THREE.BoxGeometry(12,.22,10),baseMat);ceiling.position.set(BASE.x,3.55,BASE.z);baseRoom.add(ceiling);ceiling.visible=false; // teto removido da vista da câmera durante a exploração
-const baseLight=new THREE.PointLight(0x9de7b2,1.5,22);baseLight.position.set(BASE.x,2.9,BASE.z);baseRoom.add(baseLight);
-// Painel e máquina de processamento do Lixo Cósmico.
-const machine=new THREE.Group();machine.position.set(BASE.x-3.6,0,BASE.z-1.2);baseRoom.add(machine);
+roomWall(0,-6,16,.35);roomWall(-8,0,.35,12);roomWall(8,0,.35,12);roomWall(-4.6,6,6.8,.35,1.2);roomWall(4.6,6,6.8,.35,1.2);
+const baseLight=new THREE.PointLight(0x9de7b2,1.6,30);baseLight.position.set(BASE.x,3.2,BASE.z);baseRoom.add(baseLight);
+const MACH={x:BASE.x-4.5,z:BASE.z-1.5};
+const machine=new THREE.Group();machine.position.set(MACH.x,0,MACH.z);baseRoom.add(machine);
 const machineBody=new THREE.Mesh(new THREE.BoxGeometry(1.8,2.2,1.15),M(0x536b62));machineBody.position.y=1.1;machine.add(machineBody);
 const machineScreen=new THREE.Mesh(new THREE.BoxGeometry(1.1,.62,.06),M(0x55d9b2,{emissive:0x17694c}));machineScreen.position.set(0,1.65,.61);machine.add(machineScreen);
 const machineSlot=new THREE.Mesh(new THREE.BoxGeometry(1.2,.18,.08),M(0x111b17));machineSlot.position.set(0,.72,.62);machine.add(machineSlot);
-const machineLamp=new THREE.PointLight(0x55d9b2,.7,5);machineLamp.position.set(0,2.1,1);machine.add(machineLamp);
-const shelf=new THREE.Mesh(new THREE.BoxGeometry(2.8,.18,.65),M(0x748c7e));shelf.position.set(BASE.x+2,1.25,BASE.z-2.5);baseRoom.add(shelf);
-const crate=new THREE.Mesh(new THREE.BoxGeometry(.9,.75,.65),M(0x8a6545));crate.position.set(BASE.x+2.5,.48,BASE.z-2.5);baseRoom.add(crate);
-// Expositor de café e embalagens que inspiram os upgrades de energia.
-for(let j=0;j<3;j++){const bottle=new THREE.Group();const glass=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.8,12),M(j===1?0x15171d:0x6b351b,{metalness:.35,roughness:.25}));glass.position.y=.48;bottle.add(glass);const cap=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.16,10),M(0xc9a56b));cap.position.y=.96;bottle.add(cap);bottle.position.set(BASE.x+1+j*.75,.15,BASE.z-2.5);baseRoom.add(bottle)}
-const coffeeSign=(()=>{const c=document.createElement('canvas');c.width=512;c.height=120;const x=c.getContext('2d');x.fillStyle='#e6c78c';x.font='bold 48px serif';x.textAlign='center';x.fillText('ORBITBREW  /  NOIR BREW',256,76);const t=new THREE.CanvasTexture(c),m=new THREE.Mesh(new THREE.PlaneGeometry(3.6,.8),new THREE.MeshBasicMaterial({map:t,transparent:true}));m.position.set(BASE.x+2,2.35,BASE.z-2.9);baseRoom.add(m);return m})();
-const exitMark=new THREE.Mesh(new THREE.BoxGeometry(1.5,2.5,.12),trimMat);exitMark.position.set(BASE.x,1.25,BASE.z+4.82);baseRoom.add(exitMark);
-const baseLabel=(()=>{const c=document.createElement('canvas');c.width=512;c.height=128;const x=c.getContext('2d');x.fillStyle='#b8f4d0';x.font='bold 46px sans-serif';x.textAlign='center';x.fillText('BASE DE OPERAÇÕES',256,78);const t=new THREE.CanvasTexture(c),m=new THREE.Mesh(new THREE.PlaneGeometry(4.8,1.2),new THREE.MeshBasicMaterial({map:t,transparent:true}));m.position.set(BASE.x,2.85,BASE.z-4.78);baseRoom.add(m);return m})();
+const shelf=new THREE.Mesh(new THREE.BoxGeometry(2.8,.18,.65),M(0x748c7e));shelf.position.set(BASE.x+5,1.25,BASE.z-5.4);baseRoom.add(shelf);
+const crate=new THREE.Mesh(new THREE.BoxGeometry(.9,.75,.65),M(0x8a6545));crate.position.set(BASE.x+6.5,.48,BASE.z-5.3);baseRoom.add(crate);
+for(let j=0;j<3;j++){const bottle=new THREE.Group();const glass=new THREE.Mesh(new THREE.CylinderGeometry(.22,.25,.8,12),M(j===1?0x15171d:0x6b351b));glass.position.y=.48;bottle.add(glass);const cap=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.16,10),M(0xc9a56b));cap.position.y=.96;bottle.add(cap);bottle.position.set(BASE.x+4.2+j*.75,.15+.09,BASE.z-5.4);baseRoom.add(bottle)}
+function wallSign(text,col,font,w,h,x,y,z){const c=document.createElement('canvas');c.width=512;c.height=128;const g=c.getContext('2d');g.fillStyle=col;g.font=font;g.textAlign='center';g.fillText(text,256,78);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));m.position.set(x,y,z);baseRoom.add(m)}
+wallSign('ORBITBREW  /  NOIR BREW','#e6c78c','bold 40px serif',3.6,.9,BASE.x+5,2.5,BASE.z-5.78);
+wallSign('BASE DE OPERAÇÕES','#b8f4d0','bold 46px sans-serif',4.8,1.2,BASE.x-1,2.7,BASE.z-5.78);
+const exitMark=new THREE.Mesh(new THREE.BoxGeometry(2.2,.06,.8),trimMat);exitMark.position.set(BASE.x,.02,BASE.z+5.5);baseRoom.add(exitMark);
 for(let i=0,n=0;i<400&&n<17;i++){
   const w=R(4,9),d=R(4,9),x=R(-W+6,W-6),z=R(-W+6,W-6);
-  // Mantém um corredor central livre para a avenida e as fachadas do shopping.
-  if(Math.hypot(x,z)<8||Math.hypot(x-HOME.x,z-HOME.z)<15||(Math.abs(z)<20&&Math.abs(x)<28)||!free(x,z,Math.max(w,d)/2+3.2)) continue;
+  if(Math.hypot(x,z)<8||Math.hypot(x-HOME.x,z-HOME.z)<16||(Math.abs(z)<20&&Math.abs(x)<28)||(x>14&&Math.abs(z)<9)||!free(x,z,Math.max(w,d)/2+3.2)) continue;
   box(x,z,w,d,R(3,7),new THREE.Color().setHSL(R(.55,.8),.3,.28).getHex());n++}
 
 /* ===== shopping: avenida, postes e lojas ===== */
@@ -122,78 +122,78 @@ const avenue=new THREE.Mesh(new THREE.PlaneGeometry(58,10),M(0x252a32));avenue.r
 const sidewalkMat=M(0x687078),glassMat=new THREE.MeshPhongMaterial({color:0x8dd9ed,transparent:true,opacity:.24,shininess:100,side:THREE.DoubleSide}),neonMat=c=>new THREE.MeshBasicMaterial({color:c});
 for(const side of [-1,1]){
   const walk=new THREE.Mesh(new THREE.BoxGeometry(58,.16,2.1),sidewalkMat);walk.position.set(0,.08,side*6.05);sc.add(walk);
-  for(let x=-25;x<=25;x+=10){const pole=new THREE.Group();pole.position.set(x,0,side*4.5);const stem=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,3.8,8),M(0x303b48));stem.position.y=1.9;pole.add(stem);const arm=new THREE.Mesh(new THREE.BoxGeometry(.8,.09,.09),M(0x303b48));arm.position.set(.32,3.65,0);pole.add(arm);const lamp=new THREE.Mesh(new THREE.BoxGeometry(.55,.16,.35),M(0xffe4a0,{emissive:0x8a5b20}));lamp.position.set(.58,3.58,0);pole.add(lamp);const light=new THREE.PointLight(0xffd99a,.65,10);light.position.set(.58,3.3,0);pole.add(light);sc.add(pole)}
+  // Postes só com lâmpada emissiva (sem PointLight): bem mais leve no celular.
+  for(let x=-25;x<=25;x+=10){const pole=new THREE.Group();pole.position.set(x,0,side*4.5);const stem=new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,3.8,8),M(0x303b48));stem.position.y=1.9;pole.add(stem);const arm=new THREE.Mesh(new THREE.BoxGeometry(.8,.09,.09),M(0x303b48));arm.position.set(.32,3.65,0);pole.add(arm);const lamp=new THREE.Mesh(new THREE.BoxGeometry(.55,.16,.35),neonMat(0xffe4a0));lamp.position.set(.58,3.58,0);pole.add(lamp);sc.add(pole)}
 }
 const shopDefs=[
- {name:'ORBITBREW',sub:'CAFÉ EM QUALQUER ÓRBITA',x:-21,z:-14,side:1,color:0xffc66d,open:true,loot:'Cápsula OrbitBrew'},
- {name:'NOIR BREW',sub:'CAFÉ • LINHA PREMIUM',x:-7,z:-14,side:1,color:0xe5c58b,open:true,loot:null},
- {name:'GALAXY BURGER',sub:'HAMBÚRGUERES EXTRATERRESTRES',x:7,z:-14,side:1,color:0xff6e59,open:false,loot:'Embalagem de refeição'},
- {name:'NEBULA TECH',sub:'ACESSÓRIOS E TECNOLOGIA',x:21,z:-14,side:1,color:0x67d9ff,open:false,loot:null},
- {name:'COSMIC MART',sub:'CONVENIÊNCIA 24H',x:-21,z:14,side:-1,color:0x8effa1,open:true,loot:'Kit de suprimentos'},
- {name:'MOON SNACKS',sub:'LANCHES E BEBIDAS',x:-7,z:14,side:-1,color:0xff9cce,open:true,loot:null},
- {name:'STAR ARCADE',sub:'DIVERSÃO DE OUTRO MUNDO',x:7,z:14,side:-1,color:0xa68bff,open:false,loot:null},
- {name:'ORBITAL EXPRESS',sub:'ENTREGAS INTERPLANETÁRIAS',x:21,z:14,side:-1,color:0x7bd8ff,open:false,loot:null},
- {name:'NEBULA AUTO SPA',sub:'LAVA-RÁPIDO • SERVIÇOS E ARMÁRIOS',x:0,z:26,side:-1,color:0x61e1d1,open:true,loot:'Compartimento de ferramentas'}
+ {name:'ORBITBREW',x:-21,z:-14,side:1,color:0xffc66d,open:true,loot:'Cápsula OrbitBrew'},
+ {name:'NOIR BREW',x:-7,z:-14,side:1,color:0xe5c58b,open:true,loot:null},
+ {name:'GALAXY BURGER',x:7,z:-14,side:1,color:0xff6e59,open:false,loot:'Embalagem de refeição'},
+ {name:'NEBULA TECH',x:21,z:-14,side:1,color:0x67d9ff,open:false,loot:null},
+ {name:'COSMIC MART',x:-21,z:14,side:-1,color:0x8effa1,open:true,loot:'Kit de suprimentos'},
+ {name:'MOON SNACKS',x:-7,z:14,side:-1,color:0xff9cce,open:true,loot:null},
+ {name:'STAR ARCADE',x:7,z:14,side:-1,color:0xa68bff,open:false,loot:null},
+ {name:'ORBITAL EXPRESS',x:21,z:14,side:-1,color:0x7bd8ff,open:false,loot:null},
+ {name:'NEBULA AUTO SPA',x:0,z:26,side:-1,color:0x61e1d1,open:true,loot:'Compartimento de ferramentas'}
 ];
-const stores=[],interiorGroups=[],shopResidents=[];
+// Modelo Tic-Tac reutilizável (civis e funcionários). stripe = cor da faixa; hat = cor do boné (ou null).
+const gTB=new THREE.CylinderGeometry(.42,.42,.9,12),gTS=new THREE.SphereGeometry(.42,12,9),gTR=new THREE.CylinderGeometry(.435,.435,.22,12),gTE=new THREE.SphereGeometry(.07,8,6),gHat=new THREE.CylinderGeometry(.3,.34,.14,12),gBag=new THREE.BoxGeometry(.3,.38,.22);
+const mTW=M(0xe9f7e4,{emissive:0x1d3a22}),mTE=M(0x111111),mBag=M(0xc9a56b);
+function mkTT(stripe,hat){const g=new THREE.Group(),b=new THREE.Mesh(gTB,mTW);b.position.y=.75;g.add(b);
+  const a=new THREE.Mesh(gTS,mTW);a.position.y=1.2;g.add(a);const c=new THREE.Mesh(gTS,mTW);c.position.y=.3;g.add(c);
+  const r=new THREE.Mesh(gTR,M(stripe));r.position.y=.75;g.add(r);
+  for(const e of[-1,1]){const m=new THREE.Mesh(gTE,mTE);m.position.set(.16*e,1.3,.36);g.add(m)}
+  if(hat!==null){const h=new THREE.Mesh(gHat,M(hat));h.position.y=1.66;g.add(h)}
+  const bag=new THREE.Mesh(gBag,mBag);bag.position.set(.55,.55,.05);bag.visible=false;g.add(bag);
+  g.scale.setScalar(.72);return{g,bag}}
+const stores=[],shopResidents=[];
 function makeSign(text,color){const c=document.createElement('canvas');c.width=768;c.height=160;const x=c.getContext('2d');x.fillStyle='#071019';x.fillRect(0,0,768,160);x.strokeStyle='#'+color.toString(16).padStart(6,'0');x.lineWidth=8;x.strokeRect(5,5,758,150);x.fillStyle='#fff';x.font='bold 58px sans-serif';x.textAlign='center';x.fillText(text,384,100);const tex=new THREE.CanvasTexture(c);return new THREE.Mesh(new THREE.PlaneGeometry(6.3,1.3),new THREE.MeshBasicMaterial({map:tex,transparent:true}))}
 shopDefs.forEach((d,i)=>{
  const g=new THREE.Group();g.position.set(d.x,0,d.z);sc.add(g);
- const frontZ=d.side* -3.1;
- // Fachada aberta: laterais, fundo e cobertura; o vidro fica realmente translúcido.
- const shellMat=M(0x26313d),back=new THREE.Mesh(new THREE.BoxGeometry(10,5.2,.28),shellMat);back.position.set(0,2.6,d.side*2.95);g.add(back);
+ // side=+1: loja ao norte da avenida (z negativo) com a frente voltada para +z; side=-1: o oposto.
+ const S=d.side,frontZ=S*3.1,out=S;   // out: sentido "para fora da vitrine"
+ const shellMat=M(0x26313d),back=new THREE.Mesh(new THREE.BoxGeometry(10,5.2,.28),shellMat);back.position.set(0,2.6,-S*2.95);g.add(back);
  for(const sx of [-4.86,4.86]){const sideWall=new THREE.Mesh(new THREE.BoxGeometry(.28,5.2,6.2),shellMat);sideWall.position.set(sx,2.6,0);g.add(sideWall)}
  const roof=new THREE.Mesh(new THREE.BoxGeometry(10,.28,6.2),M(0x344453));roof.position.y=5.12;g.add(roof);
  const shopFloor=new THREE.Mesh(new THREE.BoxGeometry(9.7,.18,5.9),M(0x303b48));shopFloor.position.y=.02;g.add(shopFloor);
- const glass=new THREE.Mesh(new THREE.PlaneGeometry(8.6,3.2),glassMat.clone());glass.position.set(0,2.05,frontZ);glass.rotation.y=d.side===1?Math.PI:0;g.add(glass);
- // Montantes metálicos e painéis com variações sutis por loja.
- for(const sx of [-4.35,0,4.35]){const mullion=new THREE.Mesh(new THREE.BoxGeometry(.09,3.35,.12),M(0x91a9b9));mullion.position.set(sx,2.05,frontZ-d.side*.035);g.add(mullion)}
- const sill=new THREE.Mesh(new THREE.BoxGeometry(8.8,.12,.2),neonMat(d.color));sill.position.set(0,.42,frontZ-d.side*.06);g.add(sill);
+ const glass=new THREE.Mesh(new THREE.PlaneGeometry(8.6,3.2),glassMat.clone());glass.position.set(0,2.05,frontZ);g.add(glass);
+ for(const sx of [-4.35,0,4.35]){const mullion=new THREE.Mesh(new THREE.BoxGeometry(.09,3.35,.12),M(0x91a9b9));mullion.position.set(sx,2.05,frontZ+out*.035);g.add(mullion)}
+ const sill=new THREE.Mesh(new THREE.BoxGeometry(8.8,.12,.2),neonMat(d.color));sill.position.set(0,.42,frontZ+out*.06);g.add(sill);
  if(i%3===1){const awningGlass=new THREE.Mesh(new THREE.BoxGeometry(8.6,.55,.18),new THREE.MeshPhongMaterial({color:d.color,transparent:true,opacity:.22,side:THREE.DoubleSide}));awningGlass.position.set(0,3.85,frontZ);g.add(awningGlass)}
  const frame=new THREE.Mesh(new THREE.BoxGeometry(9,.18,.18),neonMat(d.color));frame.position.set(0,4.55,frontZ);g.add(frame);
- const sign=makeSign(d.name,d.color);sign.position.set(0,4.05,frontZ-d.side*.12);sign.rotation.y=d.side===1?Math.PI:0;g.add(sign);
+ const sign=makeSign(d.name,d.color);sign.position.set(0,4.05,frontZ+out*.12);sign.rotation.y=S===1?0:Math.PI;g.add(sign);
  const doorGlow=new THREE.Mesh(new THREE.BoxGeometry(1.35,2.6,.16),neonMat(d.open?d.color:0xff554f));doorGlow.position.set(0,1.35,frontZ);g.add(doorGlow);
- const doorLabel=makeSign(d.open?'ABERTO':'TRANCADO',d.open?d.color:0xff554f);doorLabel.scale.set(.42,.22,1);doorLabel.position.set(0,2.95,frontZ-d.side*.14);doorLabel.rotation.y=d.side===1?Math.PI:0;g.add(doorLabel);
- const neon=new THREE.PointLight(d.color,.9,13);neon.position.set(0,3.7,frontZ-d.side);g.add(neon);
- // letreiro secundário lateral para dar profundidade de shopping
+ const doorLabel=makeSign(d.open?'ABERTO':'TRANCADO',d.open?d.color:0xff554f);doorLabel.scale.set(.42,.22,1);doorLabel.position.set(0,2.95,frontZ+out*.14);doorLabel.rotation.y=S===1?0:Math.PI;g.add(doorLabel);
  const awning=new THREE.Mesh(new THREE.BoxGeometry(9,.18,.8),M(0x384653));awning.position.set(0,3.25,frontZ);g.add(awning);
- const roomX=150+i*18,roomZ=100,room=new THREE.Group();room.position.set(roomX,0,roomZ);sc.add(room);interiorGroups.push(room);
+ // interior separado
+ const roomX=150+i*18,roomZ=100,room=new THREE.Group();sc.add(room);
  const rf=new THREE.Mesh(new THREE.BoxGeometry(9,.2,8),M(0x303a43));rf.position.set(roomX,0,roomZ);room.add(rf);
- // Interior completo com iluminação ambiente, paredes, teto e decoração temática por loja.
  const roomWallMat=M(0x485460);
- for(const [wx,wz,ww,wd] of [[0,-4,9,.2],[-4.5,0,.2,8],[4.5,0,.2,8],[-2.75,4,3.5,.2],[2.75,4,3.5,.2]]){const wall=new THREE.Mesh(new THREE.BoxGeometry(ww,3.5,wd),roomWallMat);wall.position.set(roomX+wx,1.75,roomZ+wz);room.add(wall)}
- const lintel=new THREE.Mesh(new THREE.BoxGeometry(2,0.35,.22),roomWallMat);lintel.position.set(roomX,3.35,roomZ+4);room.add(lintel);
- const ceiling=new THREE.Mesh(new THREE.BoxGeometry(9,.16,8),M(0x26333d));ceiling.position.set(roomX,3.55,roomZ);room.add(ceiling);ceiling.visible=false;room.userData.ceiling=ceiling;g.userData.roof=roof;
- const ceilingLight=new THREE.PointLight(d.color,3.2,28);ceilingLight.position.set(roomX,3.05,roomZ);room.add(ceilingLight);
- const fillLight=new THREE.PointLight(0xe5f4ff,1.8,24);fillLight.position.set(roomX-2,2.1,roomZ+1);room.add(fillLight);
- const frontLight=new THREE.PointLight(0xffffff,1.1,18);frontLight.position.set(roomX+2,2.2,roomZ-2);room.add(frontLight);
+ // [x,z,largura,profundidade,altura] — paredes da frente (z=+4) são baixas para a câmera enxergar o interior.
+ for(const [wx,wz,ww,wd,wh] of [[0,-4,9,.2,3.5],[-4.5,0,.2,8,3.5],[4.5,0,.2,8,3.5],[-2.75,4,3.5,.2,1.2],[2.75,4,3.5,.2,1.2]]){const wall=new THREE.Mesh(new THREE.BoxGeometry(ww,wh,wd),roomWallMat);wall.position.set(roomX+wx,wh/2,roomZ+wz);room.add(wall)}
  const counter=new THREE.Mesh(new THREE.BoxGeometry(3,.95,.9),M(0x596674));counter.position.set(roomX-1,.5,roomZ-1.6);room.add(counter);
  const counterTop=new THREE.Mesh(new THREE.BoxGeometry(3.15,.12,1.02),neonMat(d.color));counterTop.position.set(roomX-1,1.02,roomZ-1.6);room.add(counterTop);
- // Prateleiras laterais, produtos e expositores variam conforme a identidade de cada estabelecimento.
  for(const sideX of [-3.55,3.55]){const rack=new THREE.Mesh(new THREE.BoxGeometry(.55,2.25,2.9),M(0x354653));rack.position.set(roomX+sideX,1.15,roomZ-.1);room.add(rack);for(let shelfY of [.55,1.2,1.85]){const plank=new THREE.Mesh(new THREE.BoxGeometry(.72,.09,3.0),M(0x82919a));plank.position.set(roomX+sideX, shelfY,roomZ-.1);room.add(plank);for(let k=0;k<4;k++){const prod=new THREE.Mesh(new THREE.CylinderGeometry(.13,.15,.34,9),M([0x8a4d2e,0x18212b,0x9a7b43,0x477c83][(k+i)%4]));prod.position.set(roomX+sideX, shelfY+.22,roomZ-1.15+k*.7);room.add(prod)}}}
  if(i%2===0){for(let k=0;k<3;k++){const table=new THREE.Mesh(new THREE.CylinderGeometry(.48,.5,.12,12),M(0x77838b));table.position.set(roomX-.8+k*.85,.9,roomZ+1.55);room.add(table);const stem=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,.85,8),M(0x3b4650));stem.position.set(roomX-.8+k*.85,.43,roomZ+1.55);room.add(stem)}}
- // Moradores alienígenas: atendente atrás do balcão e cliente em área de consumo.
  const makeShopAlien=(x,z,scale=1)=>{const ag=new THREE.Group(),skin=M(0x82d66d,{emissive:0x142d0d});const torso=new THREE.Mesh(new THREE.SphereGeometry(.43,12,10),skin);torso.scale.y=1.2;torso.position.y=.72;ag.add(torso);const head=new THREE.Mesh(new THREE.SphereGeometry(.34,12,10),skin);head.position.y=1.35;ag.add(head);for(const ex of [-1,1]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.085,8,6),M(0x10151a));eye.position.set(ex*.13,1.39,.29);ag.add(eye)}ag.position.set(roomX+x,0,roomZ+z);ag.scale.setScalar(scale);room.add(ag);return ag};
  shopResidents.push(makeShopAlien(-1,-2.55,1));if(i%2===0)shopResidents.push(makeShopAlien(1.7,1.45,.88));
- // O lava-rápido recebe armários, boxes de serviço e compartimentos pesquisáveis.
+ {const emp=mkTT(d.color,d.color).g;emp.position.set(roomX+.1,0,roomZ-2.55);room.add(emp);shopResidents.push(emp)}
  if(d.name==='NEBULA AUTO SPA'){
    for(let k=0;k<4;k++){const locker=new THREE.Mesh(new THREE.BoxGeometry(.78,1.9,.65),M(k%2?0x28636a:0x344b58));locker.position.set(roomX-3.15+k*1.05,1,roomZ-2.7);room.add(locker);const handle=new THREE.Mesh(new THREE.BoxGeometry(.06,.28,.08),M(0xb6d8d5));handle.position.set(roomX-2.85+k*1.05,1,roomZ-2.33);room.add(handle)}
    const washBay=new THREE.Mesh(new THREE.BoxGeometry(2.6,.16,3.4),M(0x1a3940));washBay.position.set(roomX,0.12,roomZ+.1);room.add(washBay);
    for(let k=0;k<3;k++){const hose=new THREE.Mesh(new THREE.TorusGeometry(.32,.045,6,16),neonMat(d.color));hose.position.set(roomX+2.7,1.3+k*.55,roomZ-1.7);room.add(hose)}
  }
- // Placa luminosa interna com o nome da loja.
  const insideSign=makeSign(d.name,d.color);insideSign.scale.set(.72,.5,1);insideSign.position.set(roomX,2.85,roomZ-3.88);room.add(insideSign);
  let loot=null;if(d.loot){loot=new THREE.Group();const crate=new THREE.Mesh(new THREE.BoxGeometry(.7,.55,.7),M(0xb58a4f));crate.position.y=.28;loot.add(crate);const glow=new THREE.Mesh(new THREE.TorusGeometry(.48,.045,6,18),neonMat(d.color));glow.rotation.x=Math.PI/2;glow.position.y=.7;loot.add(glow);loot.position.set(roomX+1.8,0,roomZ+2.35);room.add(loot)}
- room.visible=false;stores.push({...d,g,room,roomX,roomZ,loot,lootOn:!!loot,lootName:d.loot,doorX:d.x,doorZ:d.z+d.side*-3.9});
+ room.visible=false;
+ // doorX/doorZ: ponto na calçada, do lado de fora da porta (voltado para a avenida)
+ stores.push({...d,g,room,roomX,roomZ,loot,lootOn:!!loot,lootName:d.loot,doorX:d.x,doorZ:d.z+S*4.0});
 });
-// Colisões das fachadas: laterais, fundos e vidro frontal; a porta central fica livre.
-function addBlock(x,z,w,d){B.push({x,z,hx:w/2,hz:d/2})}
-for(const st of stores){const side=st.side,fx=st.x,fz=st.z+side*-3.1;addBlock(fx-4.86,st.z,.28,6.2);addBlock(fx+4.86,st.z,.28,6.2);addBlock(st.x,st.z+side*2.95,10,.28);addBlock(st.x-2.9,fz,4.2,.18);addBlock(st.x+2.9,fz,4.2,.18);
- // Paredes e móveis do interior também bloqueiam a passagem.
+// Colisões: laterais, fundo e vidro frontal (porta central livre) + paredes e móveis do interior.
+for(const st of stores){const S=st.side,fx=st.x,fz=st.z+S*3.1;addBlock(fx-4.86,st.z,.28,6.2);addBlock(fx+4.86,st.z,.28,6.2);addBlock(st.x,st.z-S*2.95,10,.28);addBlock(st.x-2.9,fz,4.2,.18);addBlock(st.x+2.9,fz,4.2,.18);
  const rx=st.roomX,rz=st.roomZ;addBlock(rx,rz-4,9,.2);addBlock(rx-4.5,rz,.2,8);addBlock(rx+4.5,rz,.2,8);addBlock(rx-2.75,rz+4,3.5,.2);addBlock(rx+2.75,rz+4,3.5,.2);
  addBlock(rx-1,rz-1.6,3,.9);addBlock(rx-3.55,rz-.1,.72,3);addBlock(rx+3.55,rz-.1,.72,3);
 }
-// Pequenos imóveis de apoio entre as lojas: formam uma fachada contínua com passagens estreitas.
 for(const side of [-1,1])for(const x of [-14,0,14]){
  const z=side*14,accent=[0x8a9cff,0xffa36d,0x7ce0bf][(x+14)/14];
  const block=new THREE.Group();block.position.set(x,0,z);sc.add(block);
@@ -202,11 +202,34 @@ for(const side of [-1,1])for(const x of [-14,0,14]){
  const strip=new THREE.Mesh(new THREE.BoxGeometry(2.9,.12,6.1),neonMat(accent));strip.position.y=4.25;block.add(strip);
  addBlock(x,z,2.8,6.05);
 }
-// Ambientação visual da avenida: faixas, canteiros e bancos.
 for(let x=-25;x<=25;x+=5){const dash=new THREE.Mesh(new THREE.BoxGeometry(2,.025,.12),M(0xe6d9a6));dash.position.set(x,.04,0);sc.add(dash)}
+for(const cx of [-10,10])for(let k=0;k<9;k++){const zb=new THREE.Mesh(new THREE.BoxGeometry(2.4,.03,.5),M(0xe8e8e0));zb.position.set(cx,.045,-4.8+k*1.2);sc.add(zb)}
 for(const x of [-17,0,17]){const planter=new THREE.Mesh(new THREE.BoxGeometry(2.4,.45,1.1),M(0x46564b));planter.position.set(x,.22,3.9);sc.add(planter);const shrub=new THREE.Mesh(new THREE.SphereGeometry(.65,10,8),M(0x3f8553));shrub.position.set(x,.8,3.9);sc.add(shrub)}
 
-function rpos(r,far){for(let i=0;i<80;i++){const x=R(-W+3,W-3),z=R(-W+3,W-3);if(free(x,z,r)&&(!far||Math.hypot(x-far.x,z-far.z)>25))return{x,z}}return{x:0,z:0}}
+/* ===== escada rolante → 2º andar (em obras) ===== */
+// Rampa maciça de x=22 a x=29 (sobe 4,2 m) e plataforma 5x8. O jogador "viaja" nela pelo botão de interação.
+const ESC={bot:{x:20.6,z:0},top:{x:30.6,z:0},H:4.2};
+{const sh=new THREE.Shape();sh.moveTo(0,0);sh.lineTo(7,0);sh.lineTo(7,ESC.H);sh.lineTo(0,0);
+ const wedge=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:2.4,bevelEnabled:false}),M(0x2c3640));wedge.position.set(22,0,-1.2);sc.add(wedge);
+ const plat=new THREE.Mesh(new THREE.BoxGeometry(5,.25,8),M(0x3a4654));plat.position.set(31.5,ESC.H-.125,0);sc.add(plat);
+ const pcol=new THREE.Mesh(new THREE.BoxGeometry(5,ESC.H-.25,8),M(0x232c35));pcol.position.set(31.5,(ESC.H-.25)/2,0);sc.add(pcol);
+ addBlock(25.5,0,7,2.6);addBlock(31.5,0,5,8);
+ const rail=(x,z,w,d)=>{const r=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),neonMat(0x4fc3f7));r.position.set(x,ESC.H+.9,z);sc.add(r)};
+ rail(31.5,-3.9,5,.12);rail(31.5,3.9,5,.12);rail(33.9,0,.12,8);rail(29.1,2.55,.12,2.7);rail(29.1,-2.55,.12,2.7);
+ const ec=document.createElement('canvas');ec.width=128;ec.height=16;const ex=ec.getContext('2d');ex.fillStyle='#1b2530';ex.fillRect(0,0,128,16);ex.fillStyle='#4fc3f7';for(let i=0;i<4;i++)ex.fillRect(i*32+26,0,6,16);
+ window.__escTex=new THREE.CanvasTexture(ec);__escTex.wrapS=THREE.RepeatWrapping;__escTex.repeat.set(7,1);
+ const steps=new THREE.Mesh(new THREE.PlaneGeometry(8.15,2.0),new THREE.MeshBasicMaterial({map:__escTex}));steps.rotation.x=-Math.PI/2;
+ const sg=new THREE.Group();sg.position.set(25.5,2.12,0);sg.rotation.z=Math.atan2(ESC.H,7);sg.add(steps);
+ for(const z of [-1.1,1.1]){const r=new THREE.Mesh(new THREE.BoxGeometry(8.15,.5,.2),neonMat(0x4fc3f7));r.position.set(0,.3,z);sg.add(r)}
+ sc.add(sg);
+ const s1=makeSign('ESCADA ROLANTE',0x4fc3f7);s1.scale.set(.55,.5,1);s1.position.set(21.4,3.4,0);s1.rotation.y=-Math.PI/2;sc.add(s1);
+ const post=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,3,6),M(0x303b48));post.position.set(21.4,1.5,0);sc.add(post);
+ const s2=makeSign('2º ANDAR · OBRAS',0xffd54f);s2.scale.set(.55,.5,1);s2.position.set(33.75,ESC.H+1.6,0);s2.rotation.y=-Math.PI/2;sc.add(s2);
+}
+
+// Áreas onde nada deve nascer: dentro das lojas, na casa e na escada rolante.
+const noSpawn=(x,z)=>stores.some(s=>Math.abs(x-s.x)<6.2&&Math.abs(z-s.z)<4.4)||Math.hypot(x-HOME.x,z-HOME.z)<7||(x>18&&Math.abs(z)<6);
+function rpos(r,far){for(let i=0;i<120;i++){const x=R(-W+3,W-3),z=R(-W+3,W-3);if(free(x,z,r)&&!noSpawn(x,z)&&(!far||Math.hypot(x-far.x,z-far.z)>25))return{x,z}}return{x:0,z:8}}
 function push(o,r){for(const b of B){const cx=Math.max(b.x-b.hx,Math.min(o.x,b.x+b.hx)),cz=Math.max(b.z-b.hz,Math.min(o.z,b.z+b.hz)),dx=o.x-cx,dz=o.z-cz,d=Math.hypot(dx,dz);
   if(d<r){if(d>1e-4){o.x+=dx/d*(r-d);o.z+=dz/d*(r-d)}else{o.x+=r}}}
   o.x=Math.max(-W+.6,Math.min(W-.6,o.x));o.z=Math.max(-W+.6,Math.min(W-.6,o.z))}
@@ -226,7 +249,7 @@ const c2=c1.clone();c2.position.y=.3;pg.add(c2);
 const stripe=new THREE.Mesh(new THREE.CylinderGeometry(.435,.435,.22,14),M(0x6fbf73));stripe.position.y=.75;pg.add(stripe);
 for(const s of[-1,1]){const e=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),M(0x111111));e.position.set(.16*s,1.3,.36);pg.add(e)}
 pg.scale.setScalar(.72);sc.add(pg);
-const P={x:DOOR.x,z:DOOR.z+1.8,h:0};
+const P={x:DOOR.x+1.8,z:DOOR.z,h:Math.PI/2,y:0,lvl:0};
 
 /* ===== alienígenas ===== */
 const VR=13,FOV=1.7,aliens=[];
@@ -239,27 +262,81 @@ function mkAlien(){
   cone.rotation.x=-Math.PI/2;cone.position.y=.06;g.add(cone);sc.add(g);
   const p=rpos(2,P);return{g,cone,x:p.x,z:p.z,h:R(0,6),st:'pat',wp:null,lost:0,last:null,stuck:0}}
 
-/* ===== itens e poderes ===== */
-const items=[],pows=[];let litterClock=0,packClock=0;
-const nGeo=new THREE.BoxGeometry(.55,.06,.55),nMat=M(0xffffff,{emissive:0x333333}),cGeo=new THREE.CylinderGeometry(.2,.16,.42,10),cMat=M(0x8a5a35);
-function spawn(){
-  // Lixo espalhado pelo shopping: guardanapos surgem continuamente; embalagens são raras.
-  for(let i=0;i<12;i++)spawnLitter('n');
+/* ===== civis: moradores, Tic-Tacs e trânsito (não são patrulha: ignoram o jogador) ===== */
+const civs=[],cars=[];
+const IPTS=[[-2.2,.3],[.2,.2],[2.2,.4],[1.6,-1],[-2.5,.8]];   // pontos livres para passear dentro das lojas
+const gAB=new THREE.SphereGeometry(.62,12,9),gAE=new THREE.SphereGeometry(.15,8,6),gAA=new THREE.CylinderGeometry(.03,.03,.5,5);
+function mkCivAlien(col){const g=new THREE.Group(),m=M(col,{emissive:new THREE.Color(col).multiplyScalar(.18).getHex()});
+  const b=new THREE.Mesh(gAB,m);b.scale.y=1.25;b.position.y=.85;g.add(b);
+  for(const e of[-1,1]){const m2=new THREE.Mesh(gAE,mTE);m2.scale.set(1,1.4,.6);m2.position.set(.24*e,1.05,.5);g.add(m2)}
+  const an=new THREE.Mesh(gAA,m);an.position.y=1.85;g.add(an);
+  const bag=new THREE.Mesh(gBag,mBag);bag.position.set(.7,.6,.1);bag.visible=false;g.add(bag);
+  g.scale.setScalar(.78);return{g,bag}}
+function mkCar(col){const g=new THREE.Group(),b=new THREE.Mesh(new THREE.BoxGeometry(3.2,.7,1.6),M(col));b.position.y=.55;g.add(b);
+  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.6,.55,1.4),M(0x1d2a35));cab.position.set(-.2,1.1,0);g.add(cab);
+  for(const x of[-1,1])for(const z of[-1,1]){const w=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.25,10),M(0x111111));w.rotation.x=Math.PI/2;w.position.set(x,.3,z*.82);g.add(w)}
+  for(const z of[-.5,.5]){const h=new THREE.Mesh(new THREE.BoxGeometry(.08,.18,.35),neonMat(0xfff2b0));h.position.set(1.62,.6,z);g.add(h);const t=new THREE.Mesh(new THREE.BoxGeometry(.08,.18,.35),neonMat(0xff4a3a));t.position.set(-1.62,.6,z);g.add(t)}
+  return g}
+function initTraffic(){
+  const cols=[0x9ad0ff,0xffb36b,0xd69bff,0xf4e58a,0xff9fb2,0xffd0a0];
+  for(let i=0;i<10;i++){const al=i<6,o=al?mkCivAlien(cols[i%6]):mkTT([0x4fc3f7,0xffa36d,0xff9cce,0xa68bff][i%4],null);
+    const s=Math.random()<.5?1:-1;sc.add(o.g);civs.push({g:o.g,bag:o.bag,x:R(-26,26),z:s*R(5.6,9.2),h:R(0,6),spd:R(1.7,2.5),q:[],pause:R(0,2),inside:false,store:null,t:0,ip:null,leaving:false})}
+  const cc=[0xd9694f,0x4f8fd9,0xe0c25c,0x7ac47a,0xb07ad9,0xe8e8e0];
+  [[-2.3,1,-18,5.5],[-2.3,1,8,5.5],[2.3,-1,14,6.5],[2.3,-1,-12,6.5]].forEach(([z,dir,x,vm],i)=>{const g=mkCar(cc[i]);g.rotation.y=dir>0?0:Math.PI;g.position.set(x,0,z);sc.add(g);cars.push({g,x,z,dir,lane:dir,v:vm,vmax:vm})})}
+const openShops=()=>stores.filter(s=>s.open&&Math.abs(s.z)<20);
+function route(n,goal){const s=Math.sign(n.z)||1,gs=Math.sign(goal.z);n.q=[];
+  if(s!==gs){const cx=Math.abs(n.x-10)<Math.abs(n.x+10)?10:-10;n.q.push({x:cx,z:s*5.8},{x:cx,z:-s*5.8})}   // atravessa na faixa de pedestres
+  n.q.push(goal)}
+function planNext(n){const r=Math.random(),s=Math.sign(n.z)||1,os=openShops();
+  if(r<.3&&os.length){const sh=os[(Math.random()*os.length)|0];route(n,{x:sh.doorX,z:sh.doorZ,door:sh})}
+  else route(n,{x:R(-26,26),z:(r<.4?-s:s)*R(5.6,9.2)})}
+function enterShop(n,s){n.inside=true;n.store=s;n.t=R(8,16);n.x=s.roomX+R(-.6,.6);n.z=s.roomZ+3.1;n.ip=null;n.leaving=false;n.pause=0}
+function stepTo(n,tx,tz,sp,dt){const dx=tx-n.x,dz=tz-n.z,d=Math.hypot(dx,dz);if(d<1e-3)return 0;const m=Math.min(d,sp*dt);n.x+=dx/d*m;n.z+=dz/d*m;let df=Math.atan2(dx,dz)-n.h;df=Math.atan2(Math.sin(df),Math.cos(df));n.h+=df*Math.min(1,dt*8);return d}
+function carBlocked(c){const d=c.dir;
+  for(const o of cars){if(o===c||o.lane!==c.lane)continue;const gap=(o.x-c.x)*d;if(gap>0&&gap<5.5)return true}
+  const chk=(x,z)=>{const gap=(x-c.x)*d;return gap>-.5&&gap<4.5&&Math.abs(z-c.z)<1.5};
+  if(!inBase&&!currentStore&&P.lvl===0&&chk(P.x,P.z))return true;      // carros freiam para o jogador e para os civis
+  for(const n of civs)if(!n.inside&&chk(n.x,n.z))return true;
+  return false}
+function traffic(dt){
+  for(const c of cars){const tv=carBlocked(c)?0:c.vmax;c.v+=Math.max(-14*dt,Math.min(6*dt,tv-c.v));c.x+=c.dir*c.v*dt;if(c.dir>0&&c.x>27)c.x=-29;else if(c.dir<0&&c.x<-29)c.x=27;c.g.position.x=c.x}
+  const onGround=P.lvl===0&&!inBase&&!currentStore&&!ride;
+  for(const n of civs){
+    if(n.inside){const s=n.store;n.t-=dt;
+      if(n.pause>0)n.pause-=dt;
+      else if(n.t<=0||n.leaving){n.leaving=true;if(stepTo(n,s.roomX,s.roomZ+3.2,1.5,dt)<.4){n.inside=false;n.leaving=false;n.x=s.doorX;n.z=s.doorZ;n.store=null;n.bag.visible=true;n.q=[];n.pause=.3}}
+      else if(!n.ip){const p=IPTS[(Math.random()*IPTS.length)|0];n.ip={x:s.roomX+p[0],z:s.roomZ+p[1]}}
+      else if(Math.hypot(n.ip.x-n.x,n.ip.z-n.z)<.25){n.ip=null;n.pause=R(.8,2.2)}
+      else stepTo(n,n.ip.x,n.ip.z,1.4,dt);
+      n.g.visible=currentStore===s;                       // só aparece se o jogador estiver na mesma loja
+    }else{
+      n.g.visible=true;
+      if(n.pause>0)n.pause-=dt;
+      else{if(!n.q.length)planNext(n);const tg=n.q[0],d=stepTo(n,tg.x,tg.z,n.spd,dt);
+        if(d<.5){n.q.shift();if(tg.door)enterShop(n,tg.door);else if(!n.q.length)n.pause=R(.6,3)}}
+      if(onGround){const px=n.x-P.x,pz=n.z-P.z,pd=Math.hypot(px,pz);if(pd<.9&&pd>.001){n.x+=px/pd*(.9-pd);n.z+=pz/pd*(.9-pd)}}   // não atravessa o jogador
+    }
+    n.g.position.set(n.x,0,n.z);n.g.rotation.y=n.h}
 }
+
+/* ===== itens e poderes ===== */
+const items=[],pows=[];let litterClock=0,packClock=0,hudT=0;
+const nGeo=new THREE.BoxGeometry(.55,.06,.55),nMat=M(0xffffff,{emissive:0x333333}),cGeo=new THREE.CylinderGeometry(.2,.16,.42,10),cMat=M(0x8a5a35);
+function spawn(){for(let i=0;i<12;i++)spawnLitter('n')}
 function spawnLitter(type,source){
-  let p=rpos(.8,P);if(source){for(let k=0;k<30;k++){const x=source.x+R(-3.5,3.5),z=source.z+R(-3.5,3.5);if(free(x,z,.8)){p={x,z};break}}}const m=type==='n'?new THREE.Mesh(nGeo,nMat):new THREE.Mesh(cGeo,cMat);
+  let p=rpos(.8,P);if(source){for(let k=0;k<30;k++){const x=source.x+R(-3.5,3.5),z=source.z+R(-3.5,3.5);if(free(x,z,.8)&&!noSpawn(x,z)){p={x,z};break}}}const m=type==='n'?new THREE.Mesh(nGeo,nMat):new THREE.Mesh(cGeo,cMat);
   m.position.set(p.x,type==='n'?.2:.3,p.z);m.rotation.y=R(0,6);sc.add(m);items.push({m,t:type,on:true,x:p.x,z:p.z});
 }
 const PT=[{k:'inv',c:0x9b6bff,n:'Capa da invisibilidade (8 s)'},{k:'tp',c:0x4fc3f7,n:'Teletransporte!'},{k:'sta',c:0x6fbf73,n:'Estamina infinita (10 s)'},{k:'spd',c:0xffd54f,n:'Supervelocidade (6 s)'}];
 for(const t of PT){const p=rpos(1.5);const m=new THREE.Mesh(new THREE.SphereGeometry(.55,14,10),new THREE.MeshBasicMaterial({color:t.c}));m.position.set(p.x,1.2,p.z);sc.add(m);
   const r=new THREE.Mesh(new THREE.TorusGeometry(.85,.05,6,20),new THREE.MeshBasicMaterial({color:t.c}));r.rotation.x=Math.PI/2;m.add(r);pows.push({m,t,on:true,x:p.x,z:p.z,cd:0})}
 
-/* ===== pontos de coleta e esconderijos interativos ===== */
+/* ===== pontos de coleta e esconderijos ===== */
 const bins=[],hides=[];
 function makeBin(){
   const p=rpos(1.4,P),type=Math.random()<.72?'n':'p',qty=Math.floor(R(5,51));
   const g=new THREE.Group(),base=M(type==='n'?0x65776a:0x426c83),rim=M(0xb5c7b8),glow=M(type==='n'?0x6fbf73:0x4fc3f7,{emissive:type==='n'?0x183b1c:0x123344});
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(.62,.55,1.05,10),base);body.position.y=.55;g.add(body);
+  const bd=new THREE.Mesh(new THREE.CylinderGeometry(.62,.55,1.05,10),base);bd.position.y=.55;g.add(bd);
   const lid=new THREE.Mesh(new THREE.CylinderGeometry(.68,.68,.13,10),rim);lid.position.y=1.12;g.add(lid);
   const mark=new THREE.Mesh(new THREE.TorusGeometry(.25,.045,6,14),glow);mark.position.y=1.2;mark.rotation.x=Math.PI/2;g.add(mark);
   g.position.set(p.x,0,p.z);sc.add(g);bins.push({g,x:p.x,z:p.z,type,qty,on:true});
@@ -276,19 +353,24 @@ for(let i=0;i<9;i++)makeHide();
 
 /* ===== estado ===== */
 let started=false,inBase=false,wave=1,cred=0,car={n:0,c:0},st=100,tired=false,stun=0,safe=0,lvS=0,lvE=0,lvCoffee=0,lvNose=0,lvStealth=0,runHeld=false,toastT=0,roundReady=false;
-let hidden=0,camYaw=0,camPitch=.48,dragCam=null,nearTarget=null,currentStore=null;
+let hidden=0,camYaw=0,camPitch=.48,dragCam=null,nearTarget=null,currentStore=null,ride=null;
 const fx={inv:0,spd:0,sta:0},keys={},joy={x:0,z:0};
 const maxSt=()=>100+20*lvE+10*lvCoffee;
 function say(t,ms){const m=$('msg');m.textContent=t;m.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>m.classList.remove('on'),ms||2200)}
-function hud(){$('cr').textContent='💰 '+cred;$('car').textContent='🧻 '+car.n+' · 🧪 POC-POFT '+car.c+'  | restam '+items.filter(i=>i.on&&i.t==='n').length;
+function hud(){$('cr').textContent='🎟 '+cred;$('car').textContent='🧻 '+car.n+' · 🧪 POC-POFT '+car.c+'  | restam '+items.filter(i=>i.on&&i.t==='n').length;
   const a=[];if(fx.inv>0)a.push('👻 '+fx.inv.toFixed(0)+'s');if(fx.spd>0)a.push('⚡ '+fx.spd.toFixed(0)+'s');if(fx.sta>0)a.push('♾ '+fx.sta.toFixed(0)+'s');
   const pw=$('pw');pw.style.display=a.length?'':'none';pw.textContent=a.join('  ')}
 const cost=l=>30+20*l;
 function buy(level,apply){const c=cost(level());if(cred<c)return;cred-=c;apply();shopUI();hud()}
 function shopUI(){$('ticketShop').textContent=cred;$('b1').textContent='Velocidade +8% · '+cost(lvS)+' 🎟';$('b2').textContent='Estamina +20 · '+cost(lvE)+' 🎟';$('b3').textContent='Café + energia · '+cost(lvCoffee)+' 🎟';$('b4').textContent='Olfato + alcance · '+cost(lvNose)+' 🎟';$('b5').textContent='Disfarce de cheiro · '+cost(lvStealth)+' 🎟';$('b1').disabled=cred<cost(lvS);$('b2').disabled=cred<cost(lvE);$('b3').disabled=cred<cost(lvCoffee);$('b4').disabled=cred<cost(lvNose);$('b5').disabled=cred<cost(lvStealth);$('nextWave').style.display=roundReady?'':'none'}
-$('b1').onclick=()=>buy(lvS,()=>lvS++);$('b2').onclick=()=>buy(lvE,()=>lvE++);$('b3').onclick=()=>buy(lvCoffee,()=>lvCoffee++);$('b4').onclick=()=>buy(lvNose,()=>lvNose++);$('b5').onclick=()=>buy(lvStealth,()=>lvStealth++);
+$('b1').onclick=()=>buy(()=>lvS,()=>lvS++);$('b2').onclick=()=>buy(()=>lvE,()=>lvE++);$('b3').onclick=()=>buy(()=>lvCoffee,()=>lvCoffee++);$('b4').onclick=()=>buy(()=>lvNose,()=>lvNose++);$('b5').onclick=()=>buy(()=>lvStealth,()=>lvStealth++);
 $('nextWave').onclick=()=>{if(roundReady)newWave()};
-function caught(){hidden=0;car={n:0,c:0};stun=1.2;safe=3;P.x=DOOR.x;P.z=DOOR.z+1.8;say('Pego! Você perdeu a carga.',2200);hud()}
+function enterStore(s){currentStore=s;s.room.visible=true;
+  IL[0].color.setHex(s.color);IL[0].position.set(s.roomX,3.05,s.roomZ);IL[0].intensity=3.2;
+  IL[1].position.set(s.roomX-2,2.1,s.roomZ+1);IL[1].intensity=1.8;IL[2].position.set(s.roomX+2,2.2,s.roomZ-2);IL[2].intensity=1.1;
+  inBase=false;P.x=s.roomX;P.z=s.roomZ+1;P.h=Math.PI;safe=1.2;camYaw=0;camPitch=.5;say('Entrou em '+s.name+'. Cuidado: o vidro da vitrine deixa você visível lá fora!',2600)}
+function leaveStore(){const s=currentStore;if(!s)return;s.room.visible=false;IL.forEach(l=>l.intensity=0);P.x=s.doorX;P.z=s.doorZ;P.h=s.side===1?Math.PI:0;currentStore=null;camPitch=.48}
+function caught(){if(currentStore)leaveStore();hidden=0;car={n:0,c:0};stun=1.2;safe=3;P.x=DOOR.x+1.8;P.z=DOOR.z;say('Pego! Você perdeu a carga.',2200);hud()}
 function newWave(){wave++;roundReady=false;for(const b of bins){b.g.visible=false;b.on=false}bins.length=0;for(let i=0;i<6;i++)makeBin();spawn();if(aliens.length<7)aliens.push(mkAlien());for(const a of aliens)a.st='pat';say('Rodada '+wave+': seis novos pontos de descarte!',2800);shopUI()}
 
 /* ===== entrada ===== */
@@ -303,7 +385,6 @@ jb.addEventListener('pointerup',jend);jb.addEventListener('pointercancel',jend);
 const rn=$('run');rn.addEventListener('pointerdown',e=>{runHeld=true;rn.classList.add('on');rn.setPointerCapture(e.pointerId)});
 const rend=()=>{runHeld=false;rn.classList.remove('on')};rn.addEventListener('pointerup',rend);rn.addEventListener('pointercancel',rend);
 
-// Arrastar em qualquer área livre da tela gira a câmera; os controles mantêm seus próprios gestos.
 const canvas=rd.domElement;
 canvas.addEventListener('pointerdown',e=>{dragCam={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(!dragCam||e.pointerId!==dragCam.id)return;const dx=e.clientX-dragCam.x,dy=e.clientY-dragCam.y;dragCam.x=e.clientX;dragCam.y=e.clientY;camYaw-=dx*.006;camPitch=Math.max(.18,Math.min(1.05,camPitch+dy*.004));});
@@ -311,119 +392,148 @@ const endCam=e=>{if(dragCam&&e.pointerId===dragCam.id)dragCam=null};
 canvas.addEventListener('pointerup',endCam);canvas.addEventListener('pointercancel',endCam);
 
 $('interact').onclick=()=>{
-  if(!nearTarget)return;
-  if(nearTarget.kind==='storeLocked'){say('Esta loja está trancada. Talvez encontre uma chave em outra área.',2100);return}
-  if(nearTarget.kind==='bin'){
-    const b=nearTarget.ref;if(!b.on)return;b.on=false;b.g.visible=false;
+  if(!nearTarget||ride)return;
+  const k=nearTarget.kind;
+  if(k==='storeLocked'){say('Esta loja está trancada. Talvez encontre uma chave em outra área.',2100)}
+  else if(k==='bin'){const b=nearTarget.ref;if(!b.on)return;b.on=false;b.g.visible=false;
     if(b.type==='n')car.n+=b.qty;else car.c+=b.qty;
-    say('Coleta recuperada: '+b.qty+' '+(b.type==='n'?'guardanapos':'embalagens POC-POFT')+'!',2300);hud();
-  }else if(nearTarget.kind==='hide'){
-    hidden=8;nearTarget.ref.on=false;nearTarget.ref.g.visible=false;runHeld=false;say('Você se escondeu por 8 segundos.',1800);
-  }else if(nearTarget.kind==='exit'){hidden=0;say('Você saiu do esconderijo.',1400)}
-  else if(nearTarget.kind==='baseEnter'){
-    inBase=true;sc.fog=null;ceiling.visible=false;hidden=0;runHeld=false;P.x=BASE.x;P.z=BASE.z+1.8;P.h=Math.PI;safe=99;
-    camYaw=0;camPitch=.25;$('shop').classList.add('on');shopUI();say('Você entrou na base. Processe o Lixo Cósmico e equipe-se.',2600);hud();
-  }else if(nearTarget.kind==='sell'){
-    const gain=car.n+car.c*12;
+    say('Coleta recuperada: '+b.qty+' '+(b.type==='n'?'guardanapos':'embalagens POC-POFT')+'!',2300);hud()}
+  else if(k==='hide'){hidden=8;nearTarget.ref.on=false;nearTarget.ref.g.visible=false;runHeld=false;say('Você se escondeu por 8 segundos.',1800)}
+  else if(k==='exit'){hidden=0;say('Você saiu do esconderijo.',1400)}
+  else if(k==='baseEnter'){inBase=true;hidden=0;runHeld=false;P.x=BASE.x;P.z=BASE.z+2;P.h=Math.PI;safe=99;camYaw=0;camPitch=.5;$('shop').classList.add('on');shopUI();say('Você entrou na base. Processe o Lixo Cósmico e equipe-se.',2600);hud()}
+  else if(k==='sell'){const gain=car.n+car.c*12;
     if(gain>0){cred+=gain;say('Material processado! +'+gain+' tickets 🎟',2400);car={n:0,c:0};hud();shopUI()}
-    else say('Nenhum Lixo Cósmico na carga para processar.',1800);
-  }else if(nearTarget.kind==='storeEnter'){
-    currentStore=nearTarget.ref;currentStore.room.visible=true;currentStore.room.userData.ceiling.visible=false;currentStore.g.userData.roof.visible=false;inBase=false;sc.fog=null;P.x=currentStore.roomX;P.z=currentStore.roomZ-.8;P.h=0;safe=99;camYaw=0;camPitch=.22;say('Entrou em '+currentStore.name+'. Explore o interior!',2000);
-  }else if(nearTarget.kind==='storeLoot'){
-    const st=currentStore;if(st&&st.lootOn){st.lootOn=false;st.loot.visible=false;car.c+=1;say('Encontrou '+st.lootName+'! +1 embalagem valiosa.',2200);hud()}
-  }else if(nearTarget.kind==='storeExit'){
-    if(currentStore){currentStore.room.visible=false;currentStore.room.userData.ceiling.visible=true;currentStore.g.userData.roof.visible=true;P.x=currentStore.doorX;P.z=currentStore.doorZ;currentStore=null;sc.fog=new THREE.Fog(0x0d1210,38,105);safe=2;camPitch=.48;say('Você voltou ao corredor do shopping.',1600)}
-  }else if(nearTarget.kind==='baseExit'){
-    inBase=false;ceiling.visible=true;sc.fog=new THREE.Fog(0x0d1210,38,105);camPitch=.48;safe=2;P.x=DOOR.x;P.z=DOOR.z+1.8;P.h=0;$('shop').classList.remove('on');say('De volta ao shopping. Continue a infiltração!',2000);
-  }
+    else say('Nenhum Lixo Cósmico na carga para processar.',1800)}
+  else if(k==='storeEnter'){enterStore(nearTarget.ref)}
+  else if(k==='storeLoot'){const s=currentStore;if(s&&s.lootOn){s.lootOn=false;s.loot.visible=false;car.c+=1;say('Encontrou '+s.lootName+'! +1 embalagem valiosa.',2200);hud()}}
+  else if(k==='storeExit'){leaveStore();safe=2;say('Você voltou ao corredor do shopping.',1600)}
+  else if(k==='baseExit'){inBase=false;camPitch=.48;safe=2;P.x=DOOR.x+1.8;P.z=DOOR.z;P.h=Math.PI/2;$('shop').classList.remove('on');say('De volta ao shopping. Continue a infiltração!',2000)}
+  else if(k==='escUp'){ride={t:0,dir:1};runHeld=false;hidden=0;say('Subindo para o 2º andar…',1600)}
+  else if(k==='escDown'){ride={t:0,dir:-1};runHeld=false;say('Descendo…',1400)}
 };
 
+/* ===== visão pelo vidro das lojas ===== */
+// Posição "virtual" do jogador na vitrine, vista de fora. Quanto mais fundo na loja, menor o alcance de visão.
+function virt(s){const g=s.side===1?1:-1;return{x:s.x+(P.x-s.roomX)*g,z:s.z+(P.z-s.roomZ)*.72*g}}
+function glassSight(a,s){const v=virt(s),fz=s.z+s.side*3.1,depth=Math.max(0,(fz-v.z)*s.side);
+  if((a.z-fz)*s.side<0||Math.abs(a.x-s.x)>7.5)return false;          // só enxerga quem está do lado de fora, de frente para a vitrine
+  const range=(fx.inv>0?.4:1)*(depth<1.3?9:depth<2.6?6.2:3.8),dx=v.x-a.x,dz=v.z-a.z,d=Math.hypot(dx,dz);
+  return d<range&&(Math.sin(a.h)*dx+Math.cos(a.h)*dz)/(d||1)>.5}
+
 /* ===== loop ===== */
-let lt=performance.now(),inZone=false;
-function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-lt)/1000,.08);lt=now;
+let lt=performance.now();
+function frame(t){requestAnimationFrame(frame);const dt=Math.min((t-lt)/1000,.08);lt=t;
   if(started)update(dt);
-  const dist=currentStore?6.8:(inBase?6.8:14),horizontal=dist*Math.cos(camPitch),tx=P.x+Math.sin(camYaw)*horizontal,tz=P.z+Math.cos(camYaw)*horizontal;
-  cam.position.x+=(tx-cam.position.x)*Math.min(1,dt*6);cam.position.y+=((currentStore||inBase?2.0:2.4)+dist*Math.sin(camPitch)-cam.position.y)*Math.min(1,dt*6);cam.position.z+=(tz-cam.position.z)*Math.min(1,dt*6);
-  cam.lookAt(P.x,1.0,P.z);
+  const dist=currentStore?7.5:(inBase?8.5:14),horizontal=dist*Math.cos(camPitch),tx=P.x+Math.sin(camYaw)*horizontal,tz=P.z+Math.cos(camYaw)*horizontal;
+  cam.position.x+=(tx-cam.position.x)*Math.min(1,dt*6);cam.position.y+=((currentStore||inBase?2.0:2.4)+P.y+dist*Math.sin(camPitch)-cam.position.y)*Math.min(1,dt*6);cam.position.z+=(tz-cam.position.z)*Math.min(1,dt*6);
+  cam.lookAt(P.x,1.0+P.y,P.z);
+  __escTex.offset.x-=dt*.6;
   for(const i of items)if(i.on&&i.t==='n')i.m.rotation.y+=dt;
-  for(const resident of shopResidents)resident.position.y=.025+Math.sin(now/520+resident.position.x)*.035;
-  for(const p of pows){p.m.visible=p.on;p.m.rotation.y+=dt*2;p.m.position.y=1.2+Math.sin(now/300)*.15}
+  for(const r of shopResidents)r.position.y=.025+Math.sin(t/520+r.position.x)*.035;
+  for(const p of pows){p.m.visible=p.on;p.m.rotation.y+=dt*2;p.m.position.y=1.2+Math.sin(t/300)*.15}
   rd.render(sc,cam)}
+const nowS=()=>performance.now()/1000;
+const ARR=['⬆','↗','➡','↘','⬇','↙','⬅','↖'];
 function update(dt){
-  // Lixo cósmico descartado pelos frequentadores do shopping ao longo da partida.
-  litterClock+=dt;packClock+=dt;
+  litterClock+=dt;packClock+=dt;hudT+=dt;if(hudT>.5){hudT=0;hud()}
+  traffic(dt);
   if(litterClock>R(3.2,5.2)&&items.filter(i=>i.on&&i.t==='n').length<42){spawnLitter('n');litterClock=0}
   if(packClock>R(17,25)&&items.filter(i=>i.on&&i.t==='c').length<7){const eater=aliens[Math.floor(Math.random()*aliens.length)];spawnLitter('c',eater);packClock=0}
   // jogador
   let ix=joy.x+(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0),iz=joy.z+(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);
   const l=Math.hypot(ix,iz);if(l>1){ix/=l;iz/=l}
   const rawX=ix*Math.cos(camYaw)+iz*Math.sin(camYaw),rawZ=-ix*Math.sin(camYaw)+iz*Math.cos(camYaw);ix=rawX;iz=rawZ;
-  const mv=l>.12&&stun<=0&&hidden<=0,wantRun=(runHeld||keys.ShiftLeft||keys.ShiftRight)&&mv;
+  const mv=l>.12&&stun<=0&&hidden<=0&&!ride,wantRun=(runHeld||keys.ShiftLeft||keys.ShiftRight)&&mv;
   if(st<=0)tired=true;else if(st>15)tired=false;
   const run=wantRun&&(fx.sta>0||!tired);
   if(run&&fx.sta<=0)st=Math.max(0,st-(32- Math.min(12,lvCoffee*3))*dt);else if(!run)st=Math.min(maxSt(),st+(16+lvCoffee*2)*dt);
   const sp=(run?9.6:5.6)*(1+.08*lvS)*(1+.035*lvCoffee)*(fx.spd>0?1.5:1);
   if(mv){P.x+=ix*sp*dt;P.z+=iz*sp*dt;const th=Math.atan2(ix,iz);let d=th-P.h;d=Math.atan2(Math.sin(d),Math.cos(d));P.h+=d*Math.min(1,dt*12)}
-  if(inBase){P.x=Math.max(BASE.x-5.55,Math.min(BASE.x+5.55,P.x));P.z=Math.max(BASE.z-4.55,Math.min(BASE.z+4.25,P.z));}else if(currentStore){P.x=Math.max(currentStore.roomX-4.05,Math.min(currentStore.roomX+4.05,P.x));P.z=Math.max(currentStore.roomZ-3.55,Math.min(currentStore.roomZ+3.45,P.z));pushIndoor(P,.5);}else push(P,.5);
+  if(ride){ride.t+=dt/2.4;const k=Math.min(1,ride.t),e=ride.dir>0?k:1-k;P.x=21.4+8*e;P.z=0;P.y=ESC.H*e;P.h=ride.dir>0?Math.PI/2:-Math.PI/2;
+    if(k>=1){if(ride.dir>0){P.lvl=1;P.x=ESC.top.x;P.y=ESC.H;say('2º andar: ainda em obras. Aqui em cima nenhum morador vê você.',2600)}else{P.lvl=0;P.x=20.8;P.y=0}ride=null}}
+  else if(inBase){P.x=Math.max(BASE.x-7.5,Math.min(BASE.x+7.5,P.x));P.z=Math.max(BASE.z-5.5,Math.min(BASE.z+5.25,P.z))}
+  else if(currentStore){P.x=Math.max(currentStore.roomX-4.05,Math.min(currentStore.roomX+4.05,P.x));P.z=Math.max(currentStore.roomZ-3.55,Math.min(currentStore.roomZ+3.45,P.z));pushIndoor(P,.5)}
+  else if(P.lvl===1){P.x=Math.max(29.5,Math.min(33.5,P.x));P.z=Math.max(-3.5,Math.min(3.5,P.z))}
+  else push(P,.5);
   stun=Math.max(0,stun-dt);safe=Math.max(0,safe-dt);hidden=Math.max(0,hidden-dt);for(const k in fx)fx[k]=Math.max(0,fx[k]-dt);
-  pg.position.set(P.x,0,P.z);pg.rotation.y=P.h;pg.visible=hidden>0?false:(safe>0?Math.floor(now()*8)%2===0:true);
+  pg.position.set(P.x,P.y,P.z);pg.rotation.y=P.h;pg.visible=hidden>0?false:(safe>0?Math.floor(nowS()*8)%2===0:true);
   body.material.opacity=fx.inv>0?.35:1;body.material.transparent=fx.inv>0;c1.material=c2.material=body.material;
   $('bf').style.width=(st/maxSt()*100)+'%';$('bf').style.background=tired?'#d9694f':'#6fbf73';
-  // coleta
-  for(const i of items)if(i.on&&(i.x-P.x)**2+(i.z-P.z)**2<1.3){i.on=false;i.m.visible=false;if(i.t==='n')car.n++;else car.c++;hud();
-    }
-  for(const p of pows){if(!p.on){p.cd-=dt;if(p.cd<=0)p.on=true;continue}
-    if((p.x-P.x)**2+(p.z-P.z)**2<2.2){p.on=false;p.cd=25;const k=p.t.k;say(p.t.n,2000);
-      if(k==='inv')fx.inv=8;else if(k==='spd')fx.spd=6;else if(k==='sta'){fx.sta=10;st=maxSt()}
-      else{const q=rpos(2,P);P.x=q.x;P.z=q.z}hud()}}
-  // Interações: coleta na arena; venda, loja e saída acontecem dentro da base.
+  const ground=!ride&&P.lvl===0&&!inBase&&!currentStore;
+  // coleta e poderes (só no térreo, ao ar livre)
+  if(ground){
+    for(const i of items)if(i.on&&(i.x-P.x)**2+(i.z-P.z)**2<1.3){i.on=false;i.m.visible=false;if(i.t==='n')car.n++;else car.c++;hud()}
+    for(const p of pows){if(!p.on){p.cd-=dt;if(p.cd<=0)p.on=true;continue}
+      if((p.x-P.x)**2+(p.z-P.z)**2<2.2){p.on=false;p.cd=25;const k=p.t.k;say(p.t.n,2000);
+        if(k==='inv')fx.inv=8;else if(k==='spd')fx.spd=6;else if(k==='sta'){fx.sta=10;st=maxSt()}
+        else{const q=rpos(2,P);P.x=q.x;P.z=q.z}hud()}}
+  }else for(const p of pows)if(!p.on){p.cd-=dt;if(p.cd<=0)p.on=true}
+  // interações
   nearTarget=null;let best=2.5;
-  if(currentStore){
+  if(ride){}
+  else if(P.lvl===1){if(Math.hypot(P.x-ESC.top.x,P.z)<3.4)nearTarget={kind:'escDown',label:'Descer de escada rolante'}}
+  else if(currentStore){
     const ex=Math.hypot(P.x-currentStore.roomX,P.z-(currentStore.roomZ+3.15));
     if(ex<1.8)nearTarget={kind:'storeExit',label:'Sair da loja'};
-    if(currentStore.lootOn&&currentStore.loot){const lp=currentStore.loot.position,ld=Math.hypot(P.x-lp.x,P.z-lp.z);if(ld<2.4)nearTarget={kind:'storeLoot',label:'Recolher loot'};}
+    if(currentStore.lootOn&&currentStore.loot){const lp=currentStore.loot.position,ld=Math.hypot(P.x-lp.x,P.z-lp.z);if(ld<2.4)nearTarget={kind:'storeLoot',label:'Recolher loot'}}
   }else if(inBase){
-    const dm=Math.hypot(P.x-(BASE.x-3.6),P.z-(BASE.z-1.2));
-    const de=Math.hypot(P.x-BASE.x,P.z-(BASE.z+3.8));
+    const dm=Math.hypot(P.x-MACH.x,P.z-(MACH.z+1.4));
+    const de=Math.hypot(P.x-BASE.x,P.z-(BASE.z+5.2));
     if(dm<3)nearTarget={kind:'sell',label:car.n||car.c?'Processar Lixo Cósmico':'Máquina de processamento'};
-    if(de<2.8&&(!nearTarget||de<dm))nearTarget={kind:'baseExit',label:'Sair para o shopping'};
+    if(de<2.4&&(!nearTarget||de<dm))nearTarget={kind:'baseExit',label:'Sair para o shopping'};
   }else if(hidden<=0){
     const db=Math.hypot(P.x-DOOR.x,P.z-DOOR.z);if(db<3.1){best=db;nearTarget={kind:'baseEnter',label:'Entrar na base'}}
+    const de2=Math.hypot(P.x-ESC.bot.x,P.z-ESC.bot.z);if(de2<2.6&&de2<best){best=de2;nearTarget={kind:'escUp',label:'Subir de escada rolante'}}
     for(const shop of stores){const sd=Math.hypot(P.x-shop.doorX,P.z-shop.doorZ);if(sd<3&&sd<best){best=sd;nearTarget=shop.open?{kind:'storeEnter',ref:shop,label:'Entrar em '+shop.name}:{kind:'storeLocked',ref:shop,label:shop.name+' · TRANCADA'}}}
     for(const b of bins)if(b.on){const d=Math.hypot(P.x-b.x,P.z-b.z);if(d<best){best=d;nearTarget={kind:'bin',ref:b,label:'Coletar '+b.qty+' '+(b.type==='n'?'guardanapos':'POC-POFT')}}}
     for(const h of hides)if(h.on){const d=Math.hypot(P.x-h.x,P.z-h.z);if(d<best){best=d;nearTarget={kind:'hide',ref:h,label:'Esconder-se'}}}
   }else nearTarget={kind:'exit',label:'Sair do esconderijo'};
   const ib=$('interact');ib.classList.toggle('on',!!nearTarget);ib.textContent=nearTarget?nearTarget.label:'INTERAGIR';
-  const z=!inBase&&Math.hypot(P.x-DOOR.x,P.z-DOOR.z)<3.1;
-  if(z&&!roundReady&&bins.every(b=>!b.on)){roundReady=true;say('Rodada concluída! Entre na base, processe a carga e compre melhorias.',2600)}
+  const zz=ground&&Math.hypot(P.x-DOOR.x,P.z-DOOR.z)<3.1;
+  if(zz&&!roundReady&&bins.every(b=>!b.on)){roundReady=true;say('Rodada concluída! Entre na base, processe a carga e compre melhorias.',2600)}
   if(inBase){$('shop').classList.add('on');shopUI()}else $('shop').classList.remove('on');
-  // Indicador aponta para a entrada da base enquanto estiver no shopping.
-  const dx=DOOR.x-P.x,dz=DOOR.z-P.z;$('ar').style.transform='rotate('+Math.atan2(dx,-dz)+'rad)';$('ad').textContent=inBase?'BASE · INTERIOR':'base '+Math.round(Math.hypot(dx,dz))+' m';
+  // seta da base (relativa à câmera)
+  const dx=DOOR.x-P.x,dz=DOOR.z-P.z;$('ar').style.transform='rotate('+(Math.atan2(dx,-dz)+camYaw)+'rad)';$('ad').textContent=inBase?'BASE · INTERIOR':(currentStore?'LOJA · INTERIOR':'base '+Math.round(Math.hypot(dx,dz))+' m');
   // alienígenas
   let alert=false;
+  const upper=P.lvl===1||ride;
   for(const a of aliens){
-    if(inBase||currentStore){a.g.visible=false;continue}else a.g.visible=true;
+    if(inBase){a.g.visible=false;continue}
+    a.g.visible=!currentStore;
+    const T=currentStore?{x:currentStore.doorX,z:currentStore.doorZ}:P;
     const dx=P.x-a.x,dz=P.z-a.z,d=Math.hypot(dx,dz),R2=fx.inv>0?2.5:Math.max(5,VR-lvStealth*1.4);
-    let see=false;if(hidden<=0&&safe<=0&&d<R2){const dot=(Math.sin(a.h)*dx+Math.cos(a.h)*dz)/(d||1);if((dot>Math.cos(Math.max(.65,FOV/2-lvStealth*.08))||d<2.5)&&los(a.x,a.z,P.x,P.z))see=true}
-    if(see){a.st='chase';a.lost=0;a.last={x:P.x,z:P.z}}else if(a.st==='chase'){a.lost+=dt;if(a.lost>3.5){a.st='pat';a.wp=null}}
+    let see=false;
+    if(hidden<=0&&safe<=0&&!upper){
+      if(currentStore)see=glassSight(a,currentStore);
+      else if(d<R2){const dot=(Math.sin(a.h)*dx+Math.cos(a.h)*dz)/(d||1);if((dot>Math.cos(Math.max(.65,FOV/2-lvStealth*.08))||d<2.5)&&los(a.x,a.z,P.x,P.z))see=true}
+    }
+    if(see){if(a.st!=='chase'&&currentStore)say('Um morador viu você pela vitrine!',1800);a.st='chase';a.lost=0;a.last={x:T.x,z:T.z}}
+    else if(a.st==='chase'){a.lost+=dt;if(a.lost>3.5){a.st='pat';a.wp=null}}
     let tg;
-    if(a.st==='chase')tg=see?P:a.last;
+    if(a.st==='chase')tg=see?T:a.last;
     else{if(!a.wp||Math.hypot(a.wp.x-a.x,a.wp.z-a.z)<1.5||a.stuck>1)a.wp=rpos(1.5),a.stuck=0;tg=a.wp}
     const ex=tg.x-a.x,ez=tg.z-a.z,ed=Math.hypot(ex,ez)||1,spd=(a.st==='chase'?8.2:3.4)+.25*wave;
     if(ed>.8){const ox=a.x,oz=a.z;a.x+=ex/ed*spd*dt;a.z+=ez/ed*spd*dt;push(a,.7);
       if(Math.hypot(a.x-ox,a.z-oz)<spd*dt*.3)a.stuck+=dt;const th=Math.atan2(ex,ez);let df=th-a.h;df=Math.atan2(Math.sin(df),Math.cos(df));a.h+=df*Math.min(1,dt*6)}
     a.g.position.set(a.x,0,a.z);a.g.rotation.y=a.h;a.cone.material.color.setHex(a.st==='chase'?0xff5a4a:0xffe08a);a.cone.material.opacity=a.st==='chase'?.22:.14;
     if(a.st==='chase')alert=true;
-    if(hidden<=0&&safe<=0&&fx.inv<=0&&d<1.25)caught();
+    if(fx.inv<=0&&hidden<=0&&!upper){
+      if(currentStore){if(a.st==='chase'&&Math.hypot(a.x-T.x,a.z-T.z)<2.1&&safe<=0){caught();break}}
+      else if(safe<=0&&d<1.25){caught();break}
+    }
   }
   $('alert').classList.toggle('on',alert);
-  // Sensor olfativo: indica a direção do alienígena mais próximo dentro do alcance do faro.
-  const nearest=aliens.reduce((best,a)=>{const d=Math.hypot(P.x-a.x,P.z-a.z);return d<best.d?{a,d}:best},{a:null,d:Infinity});
-  const sense=$('sense');if(nearest.a&&nearest.d<12+lvNose*8){const ang=Math.atan2(nearest.a.x-P.x,nearest.a.z-P.z)-camYaw;sense.textContent='👃 Rastro alienígena · '+Math.round(nearest.d)+'m';sense.style.borderColor='#e0a85c';sense.style.transform='';sense.title='Direção relativa: '+Math.round(ang*180/Math.PI)+'°'}else{sense.textContent='👃 Rastro: —';sense.style.borderColor='';}
+  // faro: direção (relativa à câmera) e distância do alienígena mais próximo
+  const sense=$('sense');
+  if(!inBase&&!currentStore&&!upper){
+    const nearest=aliens.reduce((bs,a)=>{const d=Math.hypot(P.x-a.x,P.z-a.z);return d<bs.d?{a,d}:bs},{a:null,d:Infinity});
+    if(nearest.a&&nearest.d<12+lvNose*8){const rel=Math.atan2(nearest.a.x-P.x,nearest.a.z-P.z)-Math.atan2(-Math.sin(camYaw),-Math.cos(camYaw)),idx=((Math.round(-rel/(Math.PI/4))%8)+8)%8;
+      sense.textContent='👃 '+ARR[idx]+' Rastro alienígena · '+Math.round(nearest.d)+'m';sense.style.borderColor='#e0a85c'}
+    else{sense.textContent='👃 Rastro: —';sense.style.borderColor=''}
+  }else{sense.textContent='👃 Rastro: —';sense.style.borderColor=''}
 }
-const now=()=>performance.now()/1000;
 
-$('go').onclick=()=>{$('intro').classList.add('off');$('hud').classList.add('on');started=true;aliens.push(mkAlien(),mkAlien(),mkAlien());spawn();hud();shopUI();say('Shopping aberto: explore a avenida, as lojas e recolha Lixo Cósmico sem ser visto.',3200)};
+$('go').onclick=()=>{$('intro').classList.add('off');$('hud').classList.add('on');started=true;aliens.push(mkAlien(),mkAlien(),mkAlien());initTraffic();spawn();hud();shopUI();say('Shopping aberto: explore a avenida, as lojas e recolha Lixo Cósmico sem ser visto.',3200)};
 requestAnimationFrame(frame);
 })();
 </script>

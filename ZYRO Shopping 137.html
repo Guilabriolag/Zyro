@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>ZYRO Shopping 137</title>
+<style>
+:root{--p:rgba(16,20,28,.94);--b:#26344a;--a:#5fd0a0;--t:#dbe3ee;--m:#7d8aa3}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;font-family:system-ui,sans-serif;color:var(--t);touch-action:none}
+canvas{position:fixed;inset:0}
+.top{position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;right:10px;display:flex;gap:8px;align-items:center;z-index:5;pointer-events:none}
+.pill{pointer-events:auto;background:var(--p);border:1px solid var(--b);border-radius:20px;padding:8px 12px;font-size:13px;cursor:pointer}
+#brand{font-weight:700;letter-spacing:.1em;color:var(--a);flex:1}
+#hint{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);z-index:5;background:var(--p);border:1px solid var(--a);border-radius:12px;padding:9px 14px;font-size:13px;display:none;pointer-events:none;white-space:nowrap}
+#wp{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:5;font-size:12px;background:var(--p);border:1px solid #ffd23f;border-radius:14px;padding:5px 12px;display:none}
+#toast{position:fixed;top:90px;left:50%;transform:translateX(-50%);z-index:9;background:var(--p);border:1px solid var(--b);border-radius:10px;padding:9px 14px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;max-width:86vw;text-align:center}
+#toast.on{opacity:1}
+#joy{position:fixed;left:20px;bottom:max(24px,env(safe-area-inset-bottom));width:150px;height:150px;border-radius:50%;border:1px solid var(--b);background:rgba(255,255,255,.04);z-index:6;touch-action:none}
+#knob{position:absolute;left:50px;top:50px;width:50px;height:50px;border-radius:50%;background:rgba(95,208,160,.3);border:1px solid var(--a);pointer-events:none}
+.ab{position:fixed;bottom:max(34px,env(safe-area-inset-bottom));width:64px;height:64px;border-radius:50%;background:var(--p);border:1px solid var(--a);color:var(--a);font-size:22px;z-index:6;touch-action:manipulation}
+#act{right:20px;opacity:.45}#act.on{opacity:1;background:#7c3aed;color:#fff;border-color:#c4b5fd}#jump{right:96px;font-size:18px}
+#panel,#game{position:fixed;inset:0;z-index:20;display:none;background:rgba(5,8,12,.6);align-items:flex-end;justify-content:center}
+#panel.on,#game.on{display:flex}
+.card{width:min(480px,100%);max-height:86vh;overflow:auto;background:#12161f;border:1px solid var(--a);border-radius:18px 18px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom))}
+#phead{font-size:15px;margin-bottom:12px;display:flex;gap:8px;align-items:center}#phead small{color:var(--m);display:block;font-size:11px}
+.q{background:rgba(167,139,250,.08);border-left:3px solid #a78bfa;border-radius:6px;padding:10px 12px;font-style:italic;font-size:14px;line-height:1.5;margin-bottom:12px}
+.b{display:block;width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1px solid var(--b);background:rgba(255,255,255,.04);color:var(--t);font-size:14px;font-weight:600;cursor:pointer;text-align:center}
+.b.g{background:rgba(95,208,160,.15);border-color:var(--a);color:var(--a)}.b.v{background:linear-gradient(135deg,#a78bfa,#7c3aed);border-color:#c4b5fd;color:#fff}.b.y{background:linear-gradient(135deg,#f5c518,#d97706);color:#111;border:0}
+.b:active{transform:scale(.97)}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.08);font-size:13px}.row b{color:var(--a)}
+.row button{padding:7px 10px;border-radius:8px;border:1px solid var(--b);background:rgba(255,255,255,.05);color:var(--t);font-size:14px;margin-left:6px}
+.sec{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin:12px 0 2px}
+#game{flex-direction:column;align-items:stretch;background:#05070c}
+#gtop{display:flex;justify-content:space-between;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:var(--p);border-bottom:1px solid var(--b);font-weight:700;color:var(--a)}
+#gbody{flex:1;overflow:auto;display:flex;flex-direction:column}#gbody iframe{flex:1;border:0;width:100%;background:#000}
+.mg{padding:18px;text-align:center}.mg .big{font-size:80px;margin:10px 0}.mg .opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.mg .opts button{font-size:34px;padding:12px 0;border-radius:12px;border:1px solid var(--b);background:rgba(255,255,255,.05)}
+.note{font-size:12px;color:var(--m);line-height:1.5}
+</style></head><body>
+<div class="top"><div id="brand">ZYRO · SHOPPING 137</div><div class="pill" id="thm">🛍️</div></div>
+<div id="wp"></div><div id="hint"></div><div id="toast"></div>
+<div id="joy"><div id="knob"></div></div><button class="ab" id="jump">↑</button><button class="ab" id="act">💬</button>
+<div id="panel"><div class="card"><div id="phead"></div><div id="pbody"></div></div></div>
+<div id="game"><div id="gtop"><span id="gt"></span><button class="pill" id="gx">✕ Fechar</button></div><div id="gbody"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id),V=THREE.Vector3,rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.random()*a.length|0],clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const holds=new Set(),LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ===== LOJAS (cadastro único: para criar uma loja nova, acrescente um objeto aqui) =====
+ links.menu / links.job = páginas externas · play = gameplay especial {label,txt,url,tab:true abre em outra aba}
+ items = emojis do expediente rápido (simulador simples) · wall = [x,z,rotação] */
+const B='https://guilabriolag.github.io',H=Math.PI/2;
+const mk=o=>Object.assign({hat:null,items:[],links:{}},o);
+const SHOPS=[
+mk({id:'lava',name:'Lava Rápido Galáctico',sign:'LAVA RÁPIDO',color:0x7c4dff,npc:'Rafa',role:'Gerente',emoji:'🧑‍💼',uni:0x3b2f8f,hat:'cap',items:['🚗','🧼','🫧','✨'],greet:'E aí! Quer lavar seu veículo ou entrar pro time?',mt:'🚗 Serviços',menu:[['Lavagem Simples','R$ 40'],['Lavagem Completa','R$ 90'],['Aspiração','R$ 35']],info:'Aluga-se. O lava rápido mais rápido da galáxia.',wall:[-21,-20,0],links:{job:B+'/LP/play01'},play:{label:'Lava Rápido alienígena',txt:'Uma versão alienígena do lava rápido.',url:B+'/LP/galaxy'}}),
+mk({id:'salao',name:'Salão BLZ',sign:'SALÃO BLZ',color:0xe26ce2,npc:'Bia',role:'Recepcionista',emoji:'💇‍♀️',uni:0xb03aa0,items:['💇','💅','💄','✂️'],greet:'Oiê! Vai marcar horário ou entrar pro time?',mt:'💅 Serviços',menu:[['Corte & Escova','R$ 65'],['Coloração','R$ 150'],['Manicure','R$ 50']],info:'Aluga-se. Salão de beleza do shopping.',wall:[-7,-20,0],links:{job:B+'/Salao/blz'}}),
+mk({id:'pizza',name:'Pizzaria Vitorelli',sign:'VITORELLI',color:0xff7b00,npc:'Marcos',role:'Pizzaiolo',emoji:'👨‍🍳',uni:0xf2f2f2,hat:'chef',apron:0xb22222,items:['🍕','🧀','🍅','🥤'],greet:'Fala, parceiro! Pizza ou cozinha?',mt:'🍕 Cardápio',menu:[['Margherita','R$ 42'],['Calabresa','R$ 46'],['Quatro Queijos','R$ 52']],info:'Pizzaria delivery. Quem compra pode ganhar um voo de parapente!',wall:[7,-20,0],links:{menu:B+'/VITORELLI',job:B+'/RB/pizza'},play:{label:'Voo de parapente',txt:'Você ganhou um voo de parapente!',url:B+'/Zyro/Fly/voo01.html',tab:true}}),
+mk({id:'rei',name:'Rei Burguers',sign:'REI BURGUERS',color:0xf5b301,npc:'Nando',role:'Chapeiro',emoji:'👑',uni:0xc62828,hat:'cap',apron:0xf5b301,items:['🍔','🍟','🥤','🧀'],greet:'Salve, majestade! Hambúrguer real ou cozinha?',mt:'👑 Cardápio',menu:[['Clássico','R$ 25'],['Cheeseburger Duplo','R$ 30'],['Refrigerante','R$ 8']],info:'Hambúrgueres do trailer mais famoso da cidade.',wall:[21,-20,0],links:{job:B+'/RB/Play01'},play:{label:'Coleta infiltrada',txt:'Recolha o Lixo Cósmico que os moradores deixam. Não deixe ninguém ver você!',url:B+'/Zyro/expresso/coleta'}}),
+mk({id:'tonny',name:'MC Tonny',sign:'MC TONNY',color:0x29b6f6,npc:'Tonny',role:'Dono',emoji:'🍔',uni:0x0277bd,hat:'cap',items:['🍔','🍟','🥤','🌭'],greet:'Fala! Lanche ou assumir a chapa?',mt:'🍔 Cardápio',menu:[['X-Tonny','R$ 24'],['Batata Média','R$ 12'],['Combo Tonny','R$ 36']],info:'Lanchonete simples e rápida.',wall:[-30,-14,H],links:{menu:B+'/MCTONNY'},play:{label:'Gameplay MC Tonny',txt:'Entre na lanchonete e jogue.',url:B+'/Zyro/map/com/mctonny'}}),
+mk({id:'pontox',name:'Ponto X',sign:'PONTO X',color:0x8bc34a,npc:'Xandi',role:'Pasteleiro',emoji:'🥟',uni:0x558b2f,hat:'chef',items:['🥟','🥤','🧀','🍖'],greet:'Pastel quentinho! Quer um ou vai fritar comigo?',mt:'🥟 Cardápio',menu:[['Pastel de Carne','R$ 9'],['Pastel de Queijo','R$ 9'],['Caldo de Cana','R$ 7']],info:'Pastelaria do shopping.',wall:[-30,0,H],links:{menu:B+'/PONTOX'}}),
+mk({id:'orbit',name:'OrbitBrew',sign:'ORBITBREW',color:0x26c6da,npc:'Orbi',role:'Barista',emoji:'☕',uni:0x00838f,hat:'cap',items:['☕','🥐','🧋','🍰'],greet:'Bem-vindo à OrbitBrew! Café fresco ou vaga?',mt:'☕ Cardápio',menu:[['Café Orbital','R$ 9'],['Latte Lunar','R$ 14'],['Bolo Cometa','R$ 13']],info:'Cafeteria alienígena. Suas embalagens viram Lixo Cósmico pelo shopping.',wall:[-30,14,H]}),
+mk({id:'noir',name:'Noir Brew',sign:'NOIR BREW',color:0xa1887f,npc:'Noa',role:'Barista',emoji:'🫖',uni:0x4e342e,hat:'cap',items:['☕','🍪','🥛','🍫'],greet:'Noir Brew, café forte e escuro. O que vai ser?',mt:'☕ Cardápio',menu:[['Espresso Noir','R$ 8'],['Cappuccino Escuro','R$ 13'],['Cookie','R$ 9']],info:'Cafés fortes. Muito movimento à noite.',wall:[30,-14,-H]}),
+mk({id:'cinema',name:'Cinema',sign:'CINEMA',color:0xff5252,npc:'Cine',role:'Gerente',emoji:'🎬',uni:0x7f1d1d,hat:'cap',items:['🎬','🍿','🎟️','🥤'],greet:'Boa sessão! Filme ou controle de acesso?',mt:'🎬 Filmes',menu:[['Invasão Cósmica','Sala 1 · R$ 20'],['A Última Pizza','Sala 2 · R$ 20']],info:'Aluga-se. Simulador de cinema com controle de acesso e gestão.',wall:[30,0,-H]}),
+mk({id:'pizza2',name:'Pizzaria (Aluga-se)',sign:'ALUGA-SE',color:0x6c7891,npc:'Zeca',role:'Corretor',emoji:'🍕',uni:0x445066,greet:'Espaço disponível! Quer colocar sua marca aqui?',mt:'💰 Valores',menu:[['Marca na fachada','a definir'],['Vender produtos','a definir'],['Presença em eventos','a definir']],info:'Aluga-se. Participe do universo Zyro: marca na fachada, venda de produtos e presença nos eventos.',wall:[30,14,-H],play:{label:'Visite o local',txt:'Visite o espaço da pizzaria.',url:B+'/Zyro/map/com/pizzafood002'}})];
+
+/* ===== TEMAS ===== */
+const THEMES={default:{n:'Padrão',e:'🛍️',bg:0xbcd4ea,tint:0xffffff,hat:null,txt:'Bem-vindo ao ZYRO Shopping!'},natal:{n:'Natal',e:'🎄',bg:0x1c2a44,tint:0xffe4dc,hat:0xd22b2b,txt:'Feliz Natal! 🎅'},carnaval:{n:'Carnaval',e:'🎭',bg:0x4a2a6a,tint:0xffe0ff,hat:0xff9f1c,txt:'É Carnaval! 🎉'},criancas:{n:'Dia das Crianças',e:'🎈',bg:0x9fd8ff,tint:0xffffff,hat:0x3aa6ff,txt:'Feliz Dia das Crianças! 🎈'},namorados:{n:'Namorados',e:'💘',bg:0x6a2a4a,tint:0xffd6e6,hat:0xff4d88,txt:'Feliz Dia dos Namorados! 💘'}};
+const AUTO={11:'natal',1:'carnaval',9:'criancas',5:'namorados'};
+let THEME=THEMES.default;
+
+/* ===== THREE (geometrias e materiais compartilhados = leve) ===== */
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,150);
+const ren=new THREE.WebGLRenderer({antialias:devicePixelRatio<2});ren.setPixelRatio(Math.min(devicePixelRatio,1.5));ren.setSize(innerWidth,innerHeight);document.body.prepend(ren.domElement);
+const hemi=new THREE.HemisphereLight(0xffffff,0x887766,.9),sun=new THREE.DirectionalLight(0xffffff,.6);sun.position.set(-10,25,12);scene.add(hemi,sun);
+const GB=new THREE.BoxGeometry(1,1,1),GC=new THREE.CylinderGeometry(1,1,1,12),GS=new THREE.SphereGeometry(1,10,8),CONE=new THREE.ConeGeometry(.17,.4,8),mc={};
+const M=(c,e,t)=>{const k=c+'_'+(e||0)+'_'+(t||0);return mc[k]||(mc[k]=new THREE.MeshLambertMaterial({color:c,emissive:e||0,transparent:!!t,opacity:t||1}))};
+const mesh=(g,geo,m,x,y,z,sx,sy,sz)=>{const q=new THREE.Mesh(geo,m);q.position.set(x,y,z);q.scale.set(sx,sy,sz);g.add(q);return q};
+const box=(g,x,y,z,w,h,d,m)=>mesh(g,GB,m,x,y,z,w,h,d),cyl=(g,x,y,z,r,h,m)=>mesh(g,GC,m,x,y,z,r,h,r),sph=(g,x,y,z,r,m)=>mesh(g,GS,m,x,y,z,r,r,r);
+const hex=c=>'#'+c.toString(16).padStart(6,'0');
+function signMesh(txt,col,w=7,h=1.3){const c=document.createElement('canvas');c.width=512;c.height=Math.round(512*h/w);const x=c.getContext('2d');x.fillStyle='#0c0f16';x.fillRect(0,0,c.width,c.height);x.strokeStyle=hex(col);x.lineWidth=6;x.strokeRect(5,5,c.width-10,c.height-10);x.fillStyle=hex(col);x.font='bold '+Math.round(c.height*.5)+'px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,256,c.height/2+2);return new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c)}))}
+
+/* ===== ESTADO ===== */
+const P={x:0,y:0,z:14,vx:0,vz:0,vy:0,g:true},IN={x:0,z:0,jump:false};
+const cols=[],iacts=[],staff=[],trees=[];let dlg=null,wpt=null,near=null;
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2800)};
+
+/* ===== PESSOAS ===== */
+function person(o){const g=new THREE.Group(),sk=M(o.skin||0xe0b090),un=M(o.uni||0x3366cc),pa=M(o.pants||0x222a3a);
+const lL=new THREE.Group(),lR=new THREE.Group();lL.position.set(-.14,.72,0);lR.position.set(.14,.72,0);box(lL,0,-.36,0,.22,.72,.26,pa);box(lR,0,-.36,0,.22,.72,.26,pa);g.add(lL,lR);box(g,0,1.08,0,.58,.72,.32,un);
+const aL=new THREE.Group(),aR=new THREE.Group();aL.position.set(-.38,1.4,0);aR.position.set(.38,1.4,0);[aL,aR].forEach(a=>{box(a,0,-.27,0,.15,.55,.16,un);box(a,0,-.6,0,.13,.12,.13,sk);g.add(a)});
+sph(g,0,1.72,0,.21,sk);
+if(o.hat==='cap')cyl(g,0,1.9,0,.23,.12,un);if(o.hat==='chef'){cyl(g,0,2.02,0,.2,.28,M(0xffffff));sph(g,0,2.2,0,.22,M(0xffffff))}
+if(o.apron)box(g,0,1,.18,.5,.55,.04,M(o.apron));
+const th=new THREE.Mesh(CONE,M(0xd22b2b));th.position.y=2.07;th.visible=false;g.add(th);g.userData={lL,lR,aL,aR,th};return g}
+const dress=g=>{const u=g.userData;u.th.visible=!!THEME.hat;if(THEME.hat)u.th.material=M(THEME.hat)};
+function anim(g,t,mv,wave,ph){const u=g.userData,s=mv?Math.sin(t*9+ph)*.7:0;u.lL.rotation.x=s;u.lR.rotation.x=-s;u.aL.rotation.x=-s*.8;if(wave){u.aR.rotation.z=2.4+Math.sin(t*8)*.3;u.aR.rotation.x=0}else{u.aR.rotation.z=0;u.aR.rotation.x=s*.8}}
+const turn=(g,dx,dz,k)=>{let d=Math.atan2(dx,dz)-g.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));g.rotation.y+=d*Math.min(1,k)};
+function addStaff(o,x,z,ex){const g=person(o);g.position.set(x,0,z);scene.add(g);const s=Object.assign({g,hx:x,hz:z,tx:x,tz:z,ph:rnd(0,6),wait:rnd(0,2),sp:.8,rg:1.2},ex);dress(g);staff.push(s)}
+function updStaff(dt,t){for(const s of staff){const p=s.g.position;let mv=false;
+if(s.shop&&dlg===s.shop.id)turn(s.g,P.x-p.x,P.z-p.z,dt*8);
+else if(!holds.size){const dx=s.tx-p.x,dz=s.tz-p.z,d=Math.hypot(dx,dz);
+if(d>.08){const k=Math.min(d,s.sp*dt);p.x+=dx/d*k;p.z+=dz/d*k;mv=true;turn(s.g,dx,dz,dt*5)}
+else{s.wait-=dt;if(s.fa!=null)turn(s.g,Math.sin(s.fa),Math.cos(s.fa),dt*2);if(s.wait<=0){s.wait=rnd(.8,2.8);s.tx=clamp(s.hx+rnd(-s.rg,s.rg),-26,26);s.tz=clamp(s.hz+rnd(-s.rg,s.rg),-15,17)}}}
+anim(s.g,t,mv,s.shop&&Math.hypot(P.x-p.x,P.z-p.z)<4.5,s.ph)}}
+
+/* ===== MUNDO ===== */
+function tree(x,z,s=1){const g=new THREE.Group(),top=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(s);cyl(g,0,1,0,.18,2,M(0x5a4030));top.position.y=2;g.add(top);sph(top,0,.9,0,1.2,M(0x2f6f3a));sph(top,.7,.4,.3,.9,M(0x3a8a45));scene.add(g);trees.push({g,top,ph:rnd(0,6)});cols.push({x,z,r:.5*s})}
+function planter(g,x,z,w,d,n){box(g,x,.3,z,w,.6,d,M(0xb0a090));box(g,x,.62,z,w-.3,.1,d-.3,M(0x4a3426));for(let i=0;i<n;i++)sph(g,x+rnd(-w/2+.3,w/2-.3),1.1,z+rnd(-d/2+.3,d/2-.3),.15,M(pick([0xff5a7a,0xffd23f,0xffffff,0xb06cff])));cols.push({x,z,r:Math.max(w,d)/2})}
+function storefront(s){const[wx,wz,a]=s.wall,g=new THREE.Group(),c=s.color;g.position.set(wx,0,wz);g.rotation.y=a;scene.add(g);
+box(g,0,3.2,.15,10.4,6.4,.3,M(0x2a2d36));[-3.1,3.1].forEach(x=>box(g,x,2.2,.32,3.6,3,.04,M(c,c)));box(g,0,1.5,.32,1.8,3,.05,M(0x14161c));
+const aw=box(g,0,4.5,.9,10.6,.22,1.7,M(c));aw.rotation.x=.18;const sg=signMesh(s.sign,c);sg.position.set(0,5.6,.34);g.add(sg);
+[-5.3,5.3].forEach(x=>box(g,x,3.2,.5,.4,6.4,.6,M(0xf2efe6)));box(g,-2.4,.5,1.7,3.6,1,.8,M(c));box(g,-2.4,1.02,1.7,3.8,.06,1,M(0xffffff));
+const sn=Math.sin(a),cs=Math.cos(a);s.door=[wx+sn*4.4,wz+cs*4.4];
+iacts.push({x:s.door[0],z:s.door[1],r:3.4,icon:s.emoji,label:s.npc+' · '+s.name,fn:()=>shopPanel(s)});
+addStaff({uni:s.uni,hat:s.hat,apron:s.apron,skin:pick([0xe0b090,0xc68a60,0xf1c8a8])},wx+2.8*cs+2.6*sn,wz-2.8*sn+2.6*cs,{shop:s,fa:a,rg:1,sp:.6})}
+function build(){const g=new THREE.Group();scene.add(g);
+const ck=document.createElement('canvas');ck.width=ck.height=64;const x=ck.getContext('2d');x.fillStyle='#e9e4da';x.fillRect(0,0,64,64);x.fillStyle='#d6cfc0';x.fillRect(0,0,32,32);x.fillRect(32,32,32,32);const tx=new THREE.CanvasTexture(ck);tx.wrapS=tx.wrapT=THREE.RepeatWrapping;tx.repeat.set(15,10);
+const fl=new THREE.Mesh(new THREE.PlaneGeometry(60,40),new THREE.MeshLambertMaterial({map:tx}));fl.rotation.x=-Math.PI/2;g.add(fl);
+box(g,0,-.1,0,200,.1,200,M(0x4a4f56));
+const W=M(0xe8e2d6);box(g,0,5,-20.3,61,10,.6,W);box(g,-30.3,5,0,.6,10,40,W);box(g,30.3,5,0,.6,10,40,W);box(g,-17,5,20.3,26,10,.6,W);box(g,17,5,20.3,26,10,.6,W);box(g,0,8.5,20.3,8,3,.6,W);
+const dg=signMesh('ZYRO SHOPPING 137',0x5fd0a0,7,1);dg.position.set(0,8.5,19.95);dg.rotation.y=Math.PI;g.add(dg);
+[[-16,-9],[16,-9],[-16,9],[16,9]].forEach(([a,b])=>{cyl(g,a,5,b,.45,10,M(0xf2efe6));cols.push({x:a,z:b,r:.5})});
+cyl(g,0,.3,-1,3.2,.6,M(0xaaa49a));const wt=cyl(g,0,.55,-1,2.9,.08,M(0x4aa3df,0,.8));cyl(g,0,1.3,-1,.3,1.8,M(0xaaa49a));cols.push({x:0,z:-1,r:3.3});
+planter(g,-9,-10,6,1.4,10);planter(g,9,-10,6,1.4,10);planter(g,-8,17,4,1.4,7);planter(g,8,17,4,1.4,7);
+[[-14,3],[14,3],[-22,14],[22,14]].forEach(([a,b])=>tree(a,b,1.1));
+const tt=new THREE.Group();tt.position.set(0,0,9);g.add(tt);box(tt,0,1.7,0,2.8,3.4,.4,M(0x1a1f2b));const ts=signMesh('ℹ DIRETÓRIO',0x5fd0a0,2.5,.7);ts.position.set(0,2.9,.22);tt.add(ts);box(tt,0,1.8,.21,2.4,1.5,.02,M(0x0f3a2a,0x14a06a));cols.push({x:0,z:9,r:1.5});
+iacts.push({x:0,z:11.2,r:3,icon:'ℹ️',label:'Diretório do Shopping',fn:totemPanel});
+SHOPS.forEach(storefront);
+for(let i=0;i<5;i++)addStaff({uni:pick([0xd86a6a,0x6a9ad8,0xd8c36a,0x9a6ad8,0x6ad8a0]),skin:pick([0xe0b090,0xc68a60,0x8d5a3a,0xf1c8a8])},rnd(-18,18),rnd(0,12),{rg:10,sp:rnd(.7,1.1)});
+return t=>{wt.position.y=.55+Math.sin(t*2)*.02}}
+
+/* ===== JOGADOR e CÂMERA ===== */
+const pm=person({uni:0x2b7bd2,hat:'cap'});scene.add(pm);let yaw=0,pitch=.38;const camT=new V(),camP=new V();
+function constrain(){P.x=clamp(P.x,-27.3,27.3);P.z=clamp(P.z,-17,18.6);for(const c of cols){const dx=P.x-c.x,dz=P.z-c.z,d=Math.hypot(dx,dz),m=c.r+.35;if(d<m&&d>0){P.x=c.x+dx/d*m;P.z=c.z+dz/d*m}}}
+function updPlayer(dt,t){if(holds.size){P.vx=P.vz=0;return}
+const l=Math.hypot(IN.x,IN.z);let mv=false;
+if(l>.05){mv=true;const k=Math.max(l,1),r=IN.x/k,f=IN.z/k,mx=r*Math.cos(yaw)+f*Math.sin(yaw),mz=-r*Math.sin(yaw)+f*Math.cos(yaw);P.vx=mx*5;P.vz=mz*5;pm.rotation.y=Math.atan2(mx,mz)}else{P.vx*=Math.pow(.001,dt);P.vz*=Math.pow(.001,dt)}
+P.x+=P.vx*dt;P.z+=P.vz*dt;constrain();
+if(IN.jump&&P.g){P.vy=6.5;P.g=false}IN.jump=false;P.vy-=18*dt;P.y+=P.vy*dt;if(P.y<=0){P.y=0;P.vy=0;P.g=true}
+anim(pm,t,mv&&P.g,false,0);pm.position.set(P.x,P.y,P.z)}
+function updCam(dt){camT.lerp(new V(P.x,P.y+1.4,P.z),1-Math.exp(-8*dt));const hd=7.5*Math.cos(pitch),vd=7.5*Math.sin(pitch);
+camP.set(P.x+Math.sin(yaw)*hd,P.y+1.6+vd,P.z+Math.cos(yaw)*hd);camP.x=clamp(camP.x,-29,29);camP.z=clamp(camP.z,-19.4,19.4);camP.y=Math.min(camP.y,9.5);
+cam.position.lerp(camP,1-Math.exp(-8*dt));cam.lookAt(camT)}
+let drag=null;const cv=ren.domElement;cv.addEventListener('pointerdown',e=>{drag={id:e.pointerId,x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;yaw-=(e.clientX-drag.x)*.006;pitch=clamp(pitch-(e.clientY-drag.y)*.004,.05,.75);drag.x=e.clientX;drag.y=e.clientY});
+['pointerup','pointercancel'].forEach(v=>cv.addEventListener(v,()=>drag=null));
+
+/* ===== CONTROLES ===== */
+{const z=$('joy'),k=$('knob');let on=null,c;const mv=(x,y)=>{let dx=x-c.x,dy=y-c.y;const m=75,d=Math.hypot(dx,dy);if(d>m){dx*=m/d;dy*=m/d}IN.x=dx/m;IN.z=dy/m;k.style.transform=`translate(${dx}px,${dy}px)`};
+const end=()=>{on=null;IN.x=IN.z=0;k.style.transform='none'};
+z.onpointerdown=e=>{z.setPointerCapture(e.pointerId);on=e.pointerId;const r=z.getBoundingClientRect();c={x:r.left+75,y:r.top+75};mv(e.clientX,e.clientY)};
+z.onpointermove=e=>{if(e.pointerId===on)mv(e.clientX,e.clientY)};z.onpointerup=z.onpointercancel=end;
+const ks={};addEventListener('keydown',e=>{ks[e.key.toLowerCase()]=1;if(e.key===' '){e.preventDefault();IN.jump=true}if(e.key==='e'||e.key==='Enter')interact();if(e.key==='Escape')closeAll()});
+addEventListener('keyup',e=>ks[e.key.toLowerCase()]=0);
+setInterval(()=>{if(on!==null)return;const x=(ks.d||ks.arrowright?1:0)-(ks.a||ks.arrowleft?1:0),y=(ks.s||ks.arrowdown?1:0)-(ks.w||ks.arrowup?1:0),l=Math.hypot(x,y)||1;IN.x=x/l;IN.z=y/l},16)}
+$('jump').onpointerdown=e=>{e.preventDefault();IN.jump=true};$('act').onclick=()=>interact();
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();ren.setSize(innerWidth,innerHeight)});
+
+/* ===== INTERAÇÃO e PAINÉIS ===== */
+function updNear(){near=null;let nd=1e9;for(const i of iacts){const d=Math.hypot(P.x-i.x,P.z-i.z);if(d<i.r&&d<nd){nd=d;near=i}}
+const h=$('hint'),a=$('act');if(near&&!holds.size){h.style.display='block';h.textContent=near.icon+' '+near.label+' · toque 💬 / E';a.classList.add('on')}else{h.style.display='none';a.classList.remove('on')}}
+function interact(){if(holds.size||!near)return;near.fn()}
+function closeAll(){if($('game').classList.contains('on'))closeGame();else closePanel()}
+function panel(head,nodes){$('phead').innerHTML=head;const b=$('pbody');b.innerHTML='';nodes.forEach(n=>b.append(n));$('panel').classList.add('on');holds.add('ui')}
+function closePanel(){$('panel').classList.remove('on');holds.delete('ui');dlg=null}
+const btn=(h,c,f)=>{const b=el('button','b '+c,h);b.onclick=f;return b};
+const FRAME=location.hostname.endsWith('github.io'),go=u=>{const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';document.body.append(a);a.click();a.remove()};
+function openLink(s,url,tab){if(tab||!FRAME){go(url);return}closePanel();openGame(s,url)}
+function shopPanel(s,v='main'){dlg=s.id;const L=s.links,hd=`<span style="font-size:34px">${s.emoji}</span><div><b>${s.npc}</b><small>${s.role} · ${s.name}</small></div>`,back=btn('← Voltar','',()=>shopPanel(s));
+if(v==='main')panel(hd,[el('div','q','“'+s.greet+'”'),btn('ℹ️ Informações','',()=>shopPanel(s,'info')),btn('📋 '+s.mt.replace(/^\S+\s*/,''),'g',()=>shopPanel(s,'menu')),btn('💼 Seja dono / Vaga','v',()=>shopPanel(s,'job')),btn('🎮 '+(s.play?s.play.label:'Gameplay (em breve)'),'y',()=>s.play?shopPanel(s,'play'):toast('Gameplay em breve')),btn('Sair','',closePanel)]);
+else if(v==='info')panel(hd,[el('div','q',s.info),back]);
+else if(v==='menu'){const n=[el('div','sec',s.mt)];s.menu.forEach(m=>n.push(el('div','row',`<span>${m[0]}</span><b>${m[1]}</b>`)));if(L.menu)n.push(btn('Abrir cardápio completo ↗','g',()=>go(L.menu)));n.push(back);panel(hd,n)}
+else if(v==='job'){const n=[el('div','q',L.job?'Vaga aberta! Seja dono desta loja ou jogue o expediente.':'Jogue o expediente rápido desta loja.')];if(L.job)n.push(btn('🏪 Seja dono','v',()=>openLink(s,L.job)));if(s.items.length)n.push(btn('▶ Expediente rápido','y',()=>{closePanel();openGame(s)}));if(!L.job&&!s.items.length)n.push(el('div','note','Em breve.'));n.push(back);panel(hd,n)}
+else panel(hd,[el('div','q',s.play.txt),btn('▶ Jogar','y',()=>openLink(s,s.play.url,s.play.tab)),back])}
+function wayTo(x,z,name){wpt={x,z,name};beam.visible=true;beam.position.set(x,15,z);closePanel();toast('📍 Marcado: '+name)}
+function totemPanel(){const n=[el('div','sec','Lojas e serviços')];
+SHOPS.forEach(s=>{const r=el('div','row',`<span>${s.emoji} ${s.sign}</span>`),d=el('span');const a=el('button','','📍'),b=el('button','','💬');a.onclick=()=>wayTo(s.door[0],s.door[1],s.sign);b.onclick=()=>shopPanel(s);d.append(a,b);r.append(d);n.push(r)});
+n.push(btn('🎭 Mudar tema','',()=>{cycleTheme();closePanel()}),btn('Fechar','',closePanel));panel('<span style="font-size:30px">ℹ️</span><div><b>Diretório do Shopping 137</b><small>Escolha onde ir</small></div>',n)}
+
+/* ===== JOGOS: iframe ou simulador simples ===== */
+let mgStop=null;
+function openGame(s,url){holds.add('game');$('gt').textContent=s.emoji+' '+s.name;const b=$('gbody');b.innerHTML='';$('game').classList.add('on');
+if(url){const f=el('iframe');f.allow='fullscreen;autoplay;accelerometer;gyroscope';f.src=url;b.append(f);return}
+const w=el('div','mg');w.append(el('div','note','Expediente rápido:'));if(s.items.length)miniGame(s,w);else w.append(btn('Voltar','',closeGame));b.append(w)}
+function closeGame(){$('game').classList.remove('on');$('gbody').innerHTML='';holds.delete('game');if(mgStop)mgStop()}
+$('gx').onclick=closeGame;
+function miniGame(s,w){const bx=el('div');w.append(bx);let sc=0,cb=0,tm=20,tg=pick(s.items),iv;
+const hd=()=>`<div class="sec">⏱ ${Math.ceil(tm)}s · 💰 R$ ${sc} · 🔥 x${cb}</div>`;
+const draw=()=>{bx.innerHTML=hd()+`<div class="big">${tg}</div><div class="note">Pegue o item que o cliente pediu!</div>`;const o=el('div','opts');[...s.items].sort(()=>Math.random()-.5).forEach(i=>{const b=el('button','',i);b.onclick=()=>{if(i===tg){cb++;sc+=5+cb}else{cb=0;sc=Math.max(0,sc-3)}tg=pick(s.items);draw()};o.append(b)});bx.append(o)};
+const end=()=>{clearInterval(iv);mgStop=null;bx.innerHTML=`<div class="big">${sc>=150?'🏆':sc>=80?'🎉':'🙂'}</div><b>Expediente encerrado!</b><div class="note">Faturamento: R$ ${sc}</div>`;bx.append(btn('🔁 Jogar de novo','g',()=>{w.removeChild(bx);miniGame(s,w)}),btn('Voltar ao shopping','',closeGame))};
+draw();iv=setInterval(()=>{tm-=.25;if(tm<=0)end();else{const h=bx.querySelector('.sec');if(h)h.textContent=`⏱ ${Math.ceil(tm)}s · 💰 R$ ${sc} · 🔥 x${cb}`}},250);mgStop=()=>clearInterval(iv)}
+
+/* ===== TEMA e WAYPOINT ===== */
+function setTheme(id,save){if(!THEMES[id])id='default';THEME=THEMES[id];if(save)LS.set('zyro_theme',id);scene.background=new THREE.Color(THEME.bg);scene.fog=new THREE.Fog(THEME.bg,45,110);hemi.color.set(THEME.tint);sun.color.set(THEME.tint);$('thm').textContent=THEME.e+' '+THEME.n;staff.forEach(s=>dress(s.g));dress(pm);toast(THEME.txt)}
+function cycleTheme(){const k=Object.keys(THEMES);setTheme(k[(k.indexOf(Object.keys(THEMES).find(i=>THEMES[i]===THEME))+1)%k.length],1)}
+$('thm').onclick=()=>{if(!holds.size)cycleTheme()};
+const beam=new THREE.Mesh(new THREE.CylinderGeometry(.25,.25,30,10,1,true),new THREE.MeshBasicMaterial({color:0xffd23f,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false}));beam.visible=false;scene.add(beam);
+function updWp(){const w=$('wp');if(!wpt){w.style.display='none';return}const d=Math.hypot(P.x-wpt.x,P.z-wpt.z);if(d<3){wpt=null;beam.visible=false;w.style.display='none';toast('✅ Você chegou!');return}w.style.display='block';w.textContent='📍 '+wpt.name+' · '+Math.round(d)+' m'}
+
+/* ===== LOOP (para de desenhar o shopping quando um jogo está aberto) ===== */
+const tick=build(),clock=new THREE.Clock();let T=0;
+function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.05);T+=dt;
+updPlayer(dt,T);updStaff(dt,T);tick(T);
+const ws=1+.5*Math.sin(T*.4);trees.forEach(t=>{t.g.rotation.z=Math.sin(T*1.4+t.ph)*.02*ws;t.top.rotation.z=Math.sin(T*2.2+t.ph)*.05*ws});
+updNear();updWp();updCam(dt);beam.rotation.y=T;if(!holds.has('game'))ren.render(scene,cam)}
+const qt=new URLSearchParams(location.search).get('tema'),sv=LS.get('zyro_theme');
+setTheme(THEMES[qt]?qt:(sv&&THEMES[sv])?sv:(AUTO[new Date().getMonth()]||'default'));
+cam.position.set(0,6,23);camT.set(0,1.4,14);loop();
+window.ZYRO={SHOPS,THEMES,setTheme};
+})();
+</script></body></html>

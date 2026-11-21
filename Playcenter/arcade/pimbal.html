@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Shopping 137 · Pinball 3D</title>
+<style>
+:root{--bg:#07101b;--panel:rgba(8,17,30,.88);--line:rgba(110,190,255,.25);--cyan:#55d8ff;--gold:#ffd166;--ink:#eef7ff}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+#scene{position:fixed;inset:0}canvas{display:block}
+.hud{position:fixed;z-index:3;left:12px;top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:none}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px;backdrop-filter:blur(12px);box-shadow:0 8px 30px #0005}
+.pill b{color:var(--gold)}
+.brand{font-weight:900;letter-spacing:.12em;color:var(--cyan)}
+.help{position:fixed;right:12px;top:12px;z-index:3;max-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:11px;line-height:1.45;color:#c7d9e8;pointer-events:none}
+.bottom{position:fixed;z-index:4;left:0;right:0;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:center;align-items:end;gap:16px;padding:0 14px;pointer-events:none}
+.control{pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px;backdrop-filter:blur(14px);box-shadow:0 12px 40px #0007}
+.controlTitle{font-size:10px;letter-spacing:.14em;color:#9bb5c9;text-align:center;margin-bottom:7px}
+.actions{display:flex;flex-direction:column;gap:8px;align-items:stretch;pointer-events:auto;position:relative;z-index:6}
+button{position:relative;z-index:7;pointer-events:auto;cursor:pointer;font:700 13px system-ui;color:#07101b;border:0;border-radius:13px;padding:13px 16px;min-width:116px;background:linear-gradient(180deg,#ffe39a,#e9a82f);box-shadow:0 5px 0 #93631c;touch-action:none}
+button:active,button.on{transform:translateY(3px);box-shadow:0 2px 0 #93631c}
+button.secondary{background:linear-gradient(180deg,#c5efff,#54b9dc);box-shadow:0 5px 0 #246b86}
+button.secondary:active{box-shadow:0 2px 0 #246b86}
+button.flip{min-width:104px;padding:30px 10px;font-size:14px}
+button:disabled{opacity:.45;filter:grayscale(.6)}
+#meter{height:6px;border-radius:4px;background:#0b1b2b;border:1px solid var(--line);overflow:hidden}
+#meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold))}
+#message{position:fixed;z-index:3;left:50%;top:76px;transform:translateX(-50%);background:#07101be8;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:12px;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:520px){.help{top:58px;right:10px;max-width:155px;font-size:10px}.bottom{justify-content:space-between;gap:6px;padding:0 8px}.control{padding:7px}button{min-width:92px;padding:12px 8px;font-size:11px}button.flip{min-width:78px;padding:30px 6px}.hud{max-width:65%}}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div class="hud">
+  <div class="pill brand">SHOPPING 137</div>
+  <div class="pill">CRÉDITOS <b id="credits">3</b></div>
+  <div class="pill">PONTOS <b id="score">0</b></div>
+  <div class="pill">BOLAS <b id="balls">0</b></div>
+</div>
+<div class="help">Use os botões laterais (ou ← → / Z M) para os flippers. Segure <b>LANÇAR</b> e solte para disparar a bola. Arraste a tela para girar a câmera.</div>
+<div id="message">Pinball 3D · máquina pronta</div>
+<div class="bottom">
+  <div class="control"><div class="controlTitle">FLIPPER ESQ</div><button id="fl" class="flip secondary">◀</button></div>
+  <div class="actions">
+    <button id="coin" class="secondary">INSERIR FICHA</button>
+    <div id="meter"><i id="meterFill"></i></div>
+    <button id="launch">INICIAR / LANÇAR</button>
+  </div>
+  <div class="control"><div class="controlTitle">FLIPPER DIR</div><button id="fr" class="flip secondary">▶</button></div>
+</div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const root=document.querySelector('#scene');
+window.addEventListener('error', e => { const m=document.querySelector('#message'); if(m) m.textContent='Erro 3D: '+(e.message||'falha ao iniciar'); });
+window.addEventListener('unhandledrejection', e => { const m=document.querySelector('#message'); if(m) m.textContent='Falha ao carregar módulo 3D. Abra com internet em navegador compatível.'; });
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x081321); scene.fog=new THREE.Fog(0x081321,9,22);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100); camera.position.set(0,2.35,2.1);
+const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; root.appendChild(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement); orbit.target.set(0,1.0,-.05); orbit.enableDamping=true; orbit.dampingFactor=.06; orbit.minDistance=1.5; orbit.maxDistance=7; orbit.maxPolarAngle=Math.PI*.48;
+scene.add(new THREE.HemisphereLight(0xb9e5ff,0x17202b,2.0));
+const key=new THREE.DirectionalLight(0xffffff,2.6); key.position.set(3,6,4); key.castShadow=true; key.shadow.mapSize.set(2048,2048);
+Object.assign(key.shadow.camera,{left:-2,right:2,top:2,bottom:-2}); scene.add(key);
+const fill=new THREE.PointLight(0x35bfff,35,10); fill.position.set(-3,3,2); scene.add(fill);
+const mat=(color,rough=.55,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const dark=mat(0x111c2b,.35,.35), blue=mat(0x087eaa,.3,.25), gold=mat(0xffc857,.32,.45), trim=mat(0x1d3448,.35,.45), floorMat=mat(0x182637,.8);
+function box(parent,w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function cylinder(parent,r1,r2,h,material,x,y,z,seg=24){const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m}
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),floorMat); floor.rotation.x=-Math.PI/2; floor.position.y=-.035; floor.receiveShadow=true; scene.add(floor);
+const pad=new THREE.Mesh(new THREE.CircleGeometry(1.0,48),new THREE.MeshBasicMaterial({color:0x02060b,transparent:true,opacity:.32}));pad.rotation.x=-Math.PI/2;pad.position.y=-.025;scene.add(pad);
+const signMat=new THREE.MeshStandardMaterial({color:0x48d9ff,emissive:0x087ca5,emissiveIntensity:1.4});
+
+// ---------- tabela (coordenadas locais do tampo: x direita, y para o fundo, z para cima) ----------
+const R=.017, G=2.5, FL=.085, FR=.009;
+const bumpers=[{x:-.09,y:.2,r:.035,f:0},{x:.09,y:.2,r:.035,f:0},{x:0,y:.08,r:.035,f:0}];
+const posts=[{x:-.19,y:-.04,r:.012},{x:.11,y:-.04,r:.012}];
+const segs=[]; // [ax,ay,bx,by,rad,e,pontos,tipo]
+const sling=[[-.215,-.12,-.135,-.23],[.175,-.12,.095,-.23]];
+segs.push([-.28,-.26,-.28,.22,.004,.4,0],[.28,-.5,.28,.22,.004,.4,0],[.232,-.5,.28,-.5,.004,.2,0],[.232,-.5,.232,.27,.004,.4,0]);
+segs.push([-.28,-.26,-.108,-.42,.004,.3,0],[.232,-.26,.108,-.42,.004,.3,0]);
+for(let i=0;i<24;i++){const a=i/24*Math.PI,b=(i+1)/24*Math.PI;segs.push([.28*Math.cos(a),.22+.28*Math.sin(a),.28*Math.cos(b),.22+.28*Math.sin(b),.004,.25,0])}
+for(const s of sling)segs.push([...s,.006,1.35,10]);
+
+const pf=new THREE.Group(); const TILT=.113; pf.position.set(0,.92,0); pf.rotation.x=-Math.PI/2+TILT; scene.add(pf);
+const machine=pf; 
+function pfTex(){const c=document.createElement('canvas');c.width=512;c.height=1024;const g=c.getContext('2d');
+ const X=x=>(x+.28)/.56*512,Y=y=>(.51-y)/1.04*1024,S=512/.56;
+ const gr=g.createLinearGradient(0,0,0,1024);gr.addColorStop(0,'#0d4a70');gr.addColorStop(1,'#07101b');g.fillStyle=gr;g.fillRect(0,0,512,1024);
+ g.fillStyle='rgba(255,209,102,.12)';g.fillRect(X(.232),0,X(.28)-X(.232),1024);
+ g.strokeStyle='rgba(85,216,255,.4)';g.lineWidth=3;
+ for(const b of bumpers)for(let k=1;k<=2;k++){g.beginPath();g.arc(X(b.x),Y(b.y),(b.r+k*.02)*S,0,7);g.stroke()}
+ g.textAlign='center';g.fillStyle='rgba(255,209,102,.55)';g.font='900 46px system-ui';g.fillText('SHOPPING',X(0),Y(-.2));g.fillText('137',X(0),Y(-.26));
+ g.fillStyle='rgba(85,216,255,.4)';g.font='900 30px system-ui';g.fillText('▲  ▲  ▲',X(0),Y(.36));
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t}
+const field=new THREE.Mesh(new THREE.PlaneGeometry(.56,1.04),new THREE.MeshStandardMaterial({map:pfTex(),roughness:.45}));field.position.set(0,-.01,0);field.receiveShadow=true;pf.add(field);
+// laterais, frente e fundo
+box(pf,.03,1.12,.22,blue,-.295,-.01,-.04); box(pf,.03,1.12,.22,blue,.295,-.01,-.04);
+box(pf,.62,.04,.22,blue,0,-.545,-.04); box(pf,.62,.04,.22,dark,0,.515,-.04);
+const glassMat=new THREE.MeshStandardMaterial({color:0x9adfff,transparent:true,opacity:.1,roughness:.05,side:THREE.DoubleSide,depthWrite:false});
+const glass=new THREE.Mesh(new THREE.PlaneGeometry(.56,1.04),glassMat);glass.position.set(0,-.01,.075);pf.add(glass);
+box(pf,.03,1.12,.012,trim,-.295,-.01,.075); box(pf,.03,1.12,.012,trim,.295,-.01,.075);
+// paredes
+function addSeg(a,b,c,d,th,h,m){const l=Math.hypot(c-a,d-b);const o=box(pf,l,th,h,m,(a+c)/2,(b+d)/2,h/2);o.rotation.z=Math.atan2(d-b,c-a);return o}
+for(const s of segs){const isSling=s[6]===10;addSeg(s[0],s[1],s[2],s[3],isSling?.014:.008,.045,isSling?mat(0xff5d8f,.4,.2):trim)}
+// bumpers
+for(const b of bumpers){cylinder(pf,b.r,b.r,.03,dark,b.x,b.y,.015).rotation.x=Math.PI/2;
+ const cap=new THREE.Mesh(new THREE.CylinderGeometry(b.r*.78,b.r*.78,.012,28),new THREE.MeshStandardMaterial({color:0xffc857,emissive:0x885000,emissiveIntensity:1}));cap.rotation.x=Math.PI/2;cap.position.set(b.x,b.y,.034);pf.add(cap);b.cap=cap}
+for(const p of posts){cylinder(pf,p.r,p.r,.04,gold,p.x,p.y,.02).rotation.x=Math.PI/2}
+// flippers
+const flips=[{x:-.1,y:-.425,dir:1,ang:-.7,rest:-.7,up:.48,w:0,on:false},{x:.1,y:-.425,dir:-1,ang:-.7,rest:-.7,up:.48,w:0,on:false}];
+for(const f of flips){f.g=new THREE.Group();f.g.position.set(f.x,f.y,.02);pf.add(f.g);box(f.g,FL+.02,.024,.03,gold,FL/2,0,0);cylinder(f.g,.016,.016,.03,gold,0,0,0).rotation.x=Math.PI/2}
+// plunger
+const rod=cylinder(pf,.01,.01,.12,mat(0xb8c9d5,.25,.7),.256,-.58,.02);const knob=new THREE.Mesh(new THREE.SphereGeometry(.022,16,12),mat(0xe33b4e,.25,.2));knob.position.set(.256,-.65,.02);pf.add(knob);
+// bola
+const ballMesh=new THREE.Mesh(new THREE.SphereGeometry(R,24,18),new THREE.MeshStandardMaterial({color:0xf2f8ff,roughness:.15,metalness:.4}));ballMesh.castShadow=true;pf.add(ballMesh);
+// pernas
+for(const x of [-.29,.29])for(const z of [-.5,.5])box(scene,.06,.88,.06,blue,x,.44,z);
+box(scene,.62,.05,.05,dark,0,.2,.5);box(scene,.62,.05,.05,dark,0,.2,-.5);
+// botões laterais
+const sideBtns=[-1,1].map(s=>{const b=cylinder(scene,.03,.03,.03,gold,s*.325,.88,.38);b.rotation.z=Math.PI/2;return b});
+// backbox
+const bb=new THREE.Group();scene.add(bb);
+box(bb,.64,.72,.14,dark,0,1.34,-.60);box(bb,.66,.1,.16,blue,0,1.74,-.60);box(bb,.56,.045,.02,signMat,0,1.74,-.515);
+const dc=document.createElement('canvas');dc.width=512;dc.height=320;const dg=dc.getContext('2d');const dtex=new THREE.CanvasTexture(dc);dtex.colorSpace=THREE.SRGBColorSpace;
+const disp=new THREE.Mesh(new THREE.PlaneGeometry(.56,.35),new THREE.MeshBasicMaterial({map:dtex}));disp.position.set(0,1.36,-.527);bb.add(disp);
+for(let i=0;i<3;i++){const lamp=new THREE.Mesh(new THREE.SphereGeometry(.03,12,10),new THREE.MeshStandardMaterial({color:[0x43d9ff,0xffc857,0xff5d8f][i],emissive:[0x087ca5,0x885000,0x85002f][i],emissiveIntensity:1.2}));lamp.position.set(-.27+i*.27,1.62,-.52);bb.add(lamp)}
+
+// ---------- jogo ----------
+let credits=3,score=0,balls=0,best=0,state='idle',charge=0,charging=false,nextBonus=5000,stuck=0;
+const ball={x:.256,y:-.479,vx:0,vy:0,live:false};
+const el=id=>document.getElementById(id);const say=t=>el('message').textContent=t;
+function drawDisplay(){dg.fillStyle='#050a11';dg.fillRect(0,0,512,320);dg.textAlign='center';dg.fillStyle='#55d8ff';dg.font='900 44px system-ui';dg.fillText('SHOPPING 137',256,60);
+ dg.fillStyle='#ffd166';dg.font='900 96px ui-monospace,monospace';dg.fillText(String(score).padStart(6,'0'),256,170);
+ dg.fillStyle='#9bb5c9';dg.font='700 32px system-ui';dg.fillText(state==='idle'?'INSIRA FICHA · RECORDE '+best:'BOLAS '+balls+'  ·  RECORDE '+best,256,250);dtex.needsUpdate=true}
+function updateHUD(){el('credits').textContent=credits;el('score').textContent=score;el('balls').textContent=balls;drawDisplay()}
+const inLane=()=>ball.x>.236&&ball.y<.3;
+function spawn(){ball.x=.256;ball.y=-.479;ball.vx=ball.vy=0;ball.live=true;stuck=0}
+function startGame(){if(credits<=0){say('Sem créditos. Insira uma ficha.');return}credits--;score=0;balls=3;nextBonus=5000;state='play';spawn();updateHUD();say('Segure LANÇAR e solte para disparar a bola!')}
+function lose(){ball.live=false;balls--;if(balls>0){say('Bola perdida! Restam '+balls+'.');spawn()}else{state='idle';best=Math.max(best,score);say('Fim de jogo! '+score+' pontos. Insira uma ficha para jogar de novo.')}updateHUD()}
+function add(p){score+=p;if(score>=nextBonus){nextBonus+=5000;balls++;say('Bônus! Bola extra!')}el('score').textContent=score;el('balls').textContent=balls;drawDisplay()}
+el('coin').addEventListener('click',()=>{credits++;updateHUD();say(state==='idle'?'Ficha inserida! Toque em INICIAR / LANÇAR.':'Ficha inserida.')});
+function pressLaunch(){if(state==='idle'){startGame();return}if(inLane()&&ball.live)charging=true}
+function releaseLaunch(){if(!charging)return;charging=false;if(inLane()&&ball.y<-.40){ball.vy=2.1+charge*1.5;say('Boa sorte!')}charge=0}
+const L=el('launch');L.addEventListener('pointerdown',e=>{e.preventDefault();pressLaunch()});
+['pointerup','pointercancel','pointerleave'].forEach(t=>L.addEventListener(t,releaseLaunch));
+function bindFlip(id,i){const b=el(id);b.addEventListener('pointerdown',e=>{e.preventDefault();flips[i].on=true;b.classList.add('on')});
+ ['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>{flips[i].on=false;b.classList.remove('on')}))}
+bindFlip('fl',0);bindFlip('fr',1);
+addEventListener('keydown',e=>{if(e.repeat)return;const k=e.key.toLowerCase();if(k==='arrowleft'||k==='z'||k==='a')flips[0].on=true;if(k==='arrowright'||k==='m'||k==='d')flips[1].on=true;if(k===' '){e.preventDefault();pressLaunch()}});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(k==='arrowleft'||k==='z'||k==='a')flips[0].on=false;if(k==='arrowright'||k==='m'||k==='d')flips[1].on=false;if(k===' ')releaseLaunch()});
+
+function hit(ax,ay,bx,by,rad,e,f){
+ const dx=bx-ax,dy=by-ay,l2=dx*dx+dy*dy;let t=((ball.x-ax)*dx+(ball.y-ay)*dy)/l2;t=Math.max(0,Math.min(1,t));
+ const cx=ax+dx*t,cy=ay+dy*t;let nx=ball.x-cx,ny=ball.y-cy;const d=Math.hypot(nx,ny),m=R+rad;
+ if(d>=m||d===0)return null;
+ nx/=d;ny/=d;ball.x+=nx*(m-d);ball.y+=ny*(m-d);
+ let sx=0,sy=0;if(f){sx=-f.w*(cy-f.y);sy=f.w*(cx-f.x)}
+ let rx=ball.vx-sx,ry=ball.vy-sy;const vn=rx*nx+ry*ny;
+ if(vn<0){rx-=(1+e)*vn*nx;ry-=(1+e)*vn*ny;const tx=-ny,ty=nx,vt=(rx*tx+ry*ty)*.04;rx-=vt*tx;ry-=vt*ty;ball.vx=rx+sx;ball.vy=ry+sy}
+ return {nx,ny,vn}}
+function step(h){
+ for(const f of flips){const tgt=f.on?f.up:f.rest;const old=f.ang;const dA=18*h;f.ang=Math.abs(tgt-old)<dA?tgt:old+Math.sign(tgt-old)*dA;f.w=f.dir*(f.ang-old)/h}
+ if(!ball.live)return;
+ ball.vy-=G*h;const dr=1-.12*h;ball.vx*=dr;ball.vy*=dr;ball.x+=ball.vx*h;ball.y+=ball.vy*h;
+ for(const s of segs){const r=hit(s[0],s[1],s[2],s[3],s[4],s[5]);if(r&&s[6]&&r.vn<-.3)add(s[6])}
+ for(const p of posts){const r=hit(p.x,p.y,p.x+1e-4,p.y,p.r,.6);if(r&&r.vn<-.3)add(5)}
+ for(const b of bumpers){const r=hit(b.x,b.y,b.x+1e-4,b.y,b.r,.9);if(r){const k=Math.max(0,1.8-(ball.vx*r.nx+ball.vy*r.ny));ball.vx+=r.nx*k;ball.vy+=r.ny*k;b.f=1;add(100)}}
+ for(const f of flips){hit(f.x,f.y,f.x+f.dir*FL*Math.cos(f.ang),f.y+FL*Math.sin(f.ang),FR,.35,f)}
+ const sp=Math.hypot(ball.vx,ball.vy);if(sp>4.5){ball.vx*=4.5/sp;ball.vy*=4.5/sp}
+ if(ball.y<-.54)lose()}
+const clock=new THREE.Clock();
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);orbit.update();
+ const sp0=Math.hypot(ball.vx,ball.vy),N=Math.min(40,Math.max(12,Math.ceil(sp0*dt/(R*.25))));for(let i=0;i<N;i++)step(dt/N);
+ if(charging)charge=Math.min(1,charge+dt/1.0);
+ el('meterFill').style.width=(charge*100)+'%';
+ rod.position.y=-.58-charge*.04;knob.position.y=-.65-charge*.04;
+ if(ball.live&&!inLane()){if(Math.hypot(ball.vx,ball.vy)<.05){stuck+=dt;if(stuck>3){ball.vy+=.9;ball.vx+=(Math.random()-.5)*.8;stuck=0}}else stuck=0}
+ ballMesh.visible=ball.live;ballMesh.position.set(ball.x,ball.y,R);
+ for(const f of flips)f.g.rotation.z=f.dir>0?f.ang:Math.PI-f.ang;
+ sideBtns.forEach((b,i)=>{b.position.x=(i?1:-1)*(flips[i].on?.31:.325)});
+ for(const b of bumpers){b.f=Math.max(0,b.f-dt*4);b.cap.material.emissiveIntensity=1+b.f*3;b.cap.scale.setScalar(1+b.f*.12)}
+ renderer.render(scene,camera)}
+animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+updateHUD();say('Máquina em espera. Toque em INICIAR / LANÇAR para começar (3 créditos).');
+</script>
+</body></html>

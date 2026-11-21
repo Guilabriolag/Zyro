@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Shopping 137 · Fliperama Arcade 3D</title>
+<style>
+:root{--bg:#07101b;--panel:rgba(8,17,30,.88);--line:rgba(110,190,255,.25);--cyan:#55d8ff;--gold:#ffd166;--ink:#eef7ff}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+#scene{position:fixed;inset:0}canvas{display:block}
+.hud{position:fixed;z-index:3;left:12px;top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:none}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12px;backdrop-filter:blur(12px);box-shadow:0 8px 30px #0005}
+.pill b{color:var(--gold)}
+.brand{font-weight:900;letter-spacing:.12em;color:var(--cyan)}
+.help{position:fixed;right:12px;top:12px;z-index:3;max-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-size:11px;line-height:1.45;color:#c7d9e8;pointer-events:none}
+.bottom{position:fixed;z-index:4;left:0;right:0;bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:center;align-items:end;gap:14px;padding:0 12px;pointer-events:none}
+.control{pointer-events:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px;backdrop-filter:blur(14px);box-shadow:0 12px 40px #0007}
+.controlTitle{font-size:10px;letter-spacing:.14em;color:#9bb5c9;text-align:center;margin-bottom:7px}
+#stickArea{width:124px;height:124px;border-radius:50%;position:relative;background:radial-gradient(circle,#1b344a 0 35%,#0b1b2b 36% 68%,#142a3c 69%);border:1px solid #6bbce866;touch-action:none}
+#stick{position:absolute;width:46px;height:46px;left:39px;top:39px;border-radius:50%;background:linear-gradient(145deg,#d7e8f5,#54758d 60%,#203b51);border:2px solid #d7f4ff;box-shadow:0 5px 12px #0009;transform:translate(0,0)}
+.actions{display:flex;flex-direction:column;gap:8px;align-items:stretch;pointer-events:auto;position:relative;z-index:6}
+.ab{display:flex;gap:8px;justify-content:center}
+button{position:relative;z-index:7;pointer-events:auto;cursor:pointer;font:700 13px system-ui;color:#07101b;border:0;border-radius:13px;padding:13px 16px;min-width:116px;background:linear-gradient(180deg,#ffe39a,#e9a82f);box-shadow:0 5px 0 #93631c;touch-action:none}
+button:active,button.on{transform:translateY(3px);box-shadow:0 2px 0 #93631c}
+button.secondary{background:linear-gradient(180deg,#c5efff,#54b9dc);box-shadow:0 5px 0 #246b86}
+button.secondary:active,button.secondary.on{box-shadow:0 2px 0 #246b86}
+button.round{min-width:0;width:62px;height:62px;border-radius:50%;padding:0;font-size:18px}
+#message{position:fixed;z-index:3;left:50%;top:76px;transform:translateX(-50%);background:#07101be8;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:12px;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#hint{font-size:10px;color:#91a9bb;text-align:center;margin-top:5px}
+@media(max-width:520px){.help{top:58px;right:10px;max-width:155px;font-size:10px}.bottom{justify-content:space-between;gap:6px;padding:0 8px}.control{padding:7px}#stickArea{width:104px;height:104px}#stick{left:29px;top:29px}button{min-width:88px;padding:12px 8px;font-size:11px}button.round{width:52px;height:52px}.hud{max-width:65%}}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div class="hud">
+  <div class="pill brand">SHOPPING 137</div>
+  <div class="pill">CRÉDITOS <b id="credits">3</b></div>
+  <div class="pill"><b id="gname">MENU</b></div>
+  <div class="pill">PONTOS <b id="score">0</b></div>
+</div>
+<div class="help">Insira uma ficha, escolha o jogo com o joystick (↑↓) e aperte <b>A</b>. <b>B</b> pausa. Arraste a tela para girar a câmera.</div>
+<div id="message">Fliperama 3D · máquina pronta</div>
+<div class="bottom">
+  <div class="control">
+    <div class="controlTitle">JOYSTICK</div>
+    <div id="stickArea"><div id="stick"></div></div>
+  </div>
+  <div class="actions">
+    <button id="coin" class="secondary">INSERIR FICHA</button>
+    <button id="cam">VER TELA</button>
+  </div>
+  <div class="control">
+    <div class="controlTitle">BOTÕES</div>
+    <div class="ab"><button id="bB" class="round secondary">B</button><button id="bA" class="round">A</button></div>
+  </div>
+</div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+// ===== JOGOS (cada jogo é um módulo: {id,name,make()} → {score,over,update(dt,I,D),draw(ctx)}) =====
+const W=224,H=288;
+const rnd=n=>Math.floor(Math.random()*n), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function txt(c,s,x,y,col='#fff',size=8,al='left'){c.fillStyle=col;c.font='bold '+size+'px ui-monospace,Menlo,monospace';c.textAlign=al;c.textBaseline='top';c.fillText(s,x,y)}
+function header(c,score,name,lives){c.fillStyle='#000';c.fillRect(0,0,W,H);txt(c,'PONTOS',8,5,'#55d8ff');txt(c,String(score).padStart(5,'0'),8,15,'#fff',10);txt(c,name,W/2,5,'#ffd166',8,'center');if(lives!=null){txt(c,'VIDAS',W-8,5,'#55d8ff',8,'right');txt(c,'♥'.repeat(Math.max(0,lives)),W-8,15,'#ff5d8f',10,'right')}}
+
+// ---------- COMECOCO (estilo Pac-Man) ----------
+const MAZE=[
+"###################",
+"#........#........#",
+"#o##.###.#.###.##o#",
+"#.................#",
+"#.##.#.#####.#.##.#",
+"#....#...#...#....#",
+"####.###.#.###.####",
+"####.#.......#.####",
+"####.#.##.##.#.####",
+"......#.....#......",
+"####.#.#####.#.####",
+"####.#.......#.####",
+"####.#.#####.#.####",
+"#........#........#",
+"#.##.###.#.###.##.#",
+"#o.#.....P.....#.o#",
+"##.#.#.#####.#.#.##",
+"#....#...#...#....#",
+"#.######.#.######.#",
+"#.................#",
+"###################"];
+function comecoco(){
+ const C=19,Rn=21,CW=11,OX=7,OY=34,dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+ let map,dots,score=0,lives=3,lvl=1,over=false,fright=0,ready=1.5,t=0,chain=0,pl,gs;
+ const free=(c,r)=>r>=0&&r<Rn&&map[r][((c%C)+C)%C]!=='#';
+ function reset(){pl={c:9,r:15,dx:0,dy:0,p:0,spd:5.8,want:[0,0],face:[-1,0]};
+  gs=['#ff3030','#ffb8ff','#30e0ff'].map((col,i)=>({c:8+i,r:9,dx:0,dy:0,p:0,spd:4.4,col,t:0}));ready=1.5;fright=0}
+ function load(){map=MAZE.map(r=>r.split(''));dots=0;for(let r=0;r<Rn;r++)for(let c=0;c<C;c++){const ch=map[r][c];if(ch==='.'||ch==='o')dots++;if(ch==='P')map[r][c]=' '}reset()}
+ function mover(e,dt,choose){let d=e.spd*dt,guard=0;
+  while(d>0&&guard++<8){if(!e.dx&&!e.dy){choose(e);if(!e.dx&&!e.dy)return}
+   const need=1-e.p;if(d<need){e.p+=d;d=0}else{d-=need;e.c=(e.c+e.dx+C)%C;e.r+=e.dy;e.p=0;choose(e);if(!e.dx&&!e.dy)return}}}
+ function chooseP(e){const ch=map[e.r][e.c];if(ch==='.'){map[e.r][e.c]=' ';dots--;score+=10}else if(ch==='o'){map[e.r][e.c]=' ';dots--;score+=50;fright=6;chain=0}
+  const w=e.want;if((w[0]||w[1])&&free(e.c+w[0],e.r+w[1])){e.dx=w[0];e.dy=w[1]}else if(!(e.dx||e.dy)||!free(e.c+e.dx,e.r+e.dy)){e.dx=0;e.dy=0}
+  if(e.dx||e.dy)e.face=[e.dx,e.dy]}
+ function chooseG(g){let o=dirs.filter(([x,y])=>free(g.c+x,g.r+y)&&!((g.dx||g.dy)&&x===-g.dx&&y===-g.dy));if(!o.length)o=dirs.filter(([x,y])=>free(g.c+x,g.r+y));
+  let pick=o[rnd(o.length)];if(fright>0){if(Math.random()<.6)pick=o.reduce((a,b)=>dd(g,b)>dd(g,a)?b:a)}else if(Math.random()<.7)pick=o.reduce((a,b)=>dd(g,b)<dd(g,a)?b:a);g.dx=pick[0];g.dy=pick[1]}
+ const dd=(g,d)=>Math.hypot(g.c+d[0]-pl.c,g.r+d[1]-pl.r);
+ load();
+ return{get score(){return score},get over(){return over},
+ update(dt,I,D){t+=dt;if(ready>0){ready-=dt;return}if(D[0]||D[1])pl.want=[D[0],D[1]];
+  if((pl.dx||pl.dy)&&pl.p>0&&pl.want[0]===-pl.dx&&pl.want[1]===-pl.dy){pl.c=(pl.c+pl.dx+C)%C;pl.r+=pl.dy;pl.p=1-pl.p;pl.dx=-pl.dx;pl.dy=-pl.dy;pl.face=[pl.dx,pl.dy]}
+  mover(pl,dt,chooseP);if(fright>0)fright-=dt;
+  for(const g of gs){if(g.t>0){g.t-=dt;if(g.t<=0){g.c=9;g.r=9;g.dx=g.dy=0;g.p=0}continue}g.spd=fright>0?3.2:Math.min(6,4.4+lvl*.3);mover(g,dt,chooseG)}
+  const px=pl.c+pl.dx*pl.p,py=pl.r+pl.dy*pl.p;
+  for(const g of gs){if(g.t>0)continue;if(Math.hypot(px-(g.c+g.dx*g.p),py-(g.r+g.dy*g.p))<.6){if(fright>0){g.t=3;chain++;score+=100*chain}else{lives--;if(lives<=0)over=true;else reset();return}}}
+  if(dots<=0){lvl++;score+=200;load()}},
+ draw(c){header(c,score,'COMECOCO',lives);
+  for(let r=0;r<Rn;r++)for(let q=0;q<C;q++){const ch=map[r][q],x=OX+q*CW,y=OY+r*CW;
+   if(ch==='#'){c.fillStyle='#2540e0';c.fillRect(x+1,y+1,CW-2,CW-2);c.fillStyle='#06092a';c.fillRect(x+3,y+3,CW-6,CW-6)}
+   else if(ch==='.'){c.fillStyle='#ffd9a0';c.fillRect(x+5,y+5,2,2)}
+   else if(ch==='o'&&((t*4)|0)%2===0){c.fillStyle='#ffd9a0';c.beginPath();c.arc(x+5.5,y+5.5,3.2,0,7);c.fill()}}
+  const sx=(e)=>OX+(e.c+e.dx*e.p+.5)*CW,sy=(e)=>OY+(e.r+e.dy*e.p+.5)*CW;
+  const x=sx(pl),y=sy(pl),m=.05+.3*Math.abs(Math.sin(t*14)),a=Math.atan2(pl.face[1],pl.face[0]);
+  c.fillStyle='#ffe000';c.beginPath();c.moveTo(x,y);c.arc(x,y,4.8,a+m,a+Math.PI*2-m);c.fill();
+  for(const g of gs){if(g.t>0)continue;const gx=sx(g),gy=sy(g),fr=fright>0,fl=fr&&fright<2&&((t*8)|0)%2;
+   c.fillStyle=fr?(fl?'#fff':'#2a3cff'):g.col;c.beginPath();c.arc(gx,gy-.5,4.8,Math.PI,0);c.lineTo(gx+4.8,gy+4.8);c.lineTo(gx+2.4,gy+3);c.lineTo(gx,gy+4.8);c.lineTo(gx-2.4,gy+3);c.lineTo(gx-4.8,gy+4.8);c.fill();
+   c.fillStyle='#fff';c.fillRect(gx-3,gy-2,2,2.5);c.fillRect(gx+1,gy-2,2,2.5)}
+  if(ready>0)txt(c,'PRONTO!',W/2,OY+11*CW-3,'#ffe000',10,'center')}}}
+
+// ---------- COBRINHA (Snake) ----------
+function cobrinha(){const C=16,R=18,S=14,OY=36;let body=[{x:8,y:9},{x:7,y:9},{x:6,y:9}],dir=[1,0],nd=[1,0],t=0,sp=.14,food,score=0,over=false;
+ const place=()=>{do{food={x:rnd(C),y:rnd(R)}}while(body.some(b=>b.x===food.x&&b.y===food.y))};place();
+ return{get score(){return score},get over(){return over},
+ update(dt,I,D){if((D[0]||D[1])&&!(D[0]&&D[0]===-dir[0])&&!(D[1]&&D[1]===-dir[1]))nd=[D[0],D[1]];t+=dt;
+  if(t>=sp){t-=sp;dir=nd;const h={x:body[0].x+dir[0],y:body[0].y+dir[1]};
+   if(h.x<0||h.y<0||h.x>=C||h.y>=R||body.slice(0,-1).some(b=>b.x===h.x&&b.y===h.y)){over=true;return}
+   body.unshift(h);if(h.x===food.x&&h.y===food.y){score+=10;sp=Math.max(.06,sp-.004);place()}else body.pop()}},
+ draw(c){header(c,score,'COBRINHA');c.fillStyle='#07140c';c.fillRect(0,OY,W,R*S);
+  for(let i=0;i<C*R;i++)if((i%C+((i/C)|0))%2===0){c.fillStyle='#0a1d11';c.fillRect((i%C)*S,OY+((i/C)|0)*S,S,S)}
+  c.fillStyle='#ff4d5e';c.beginPath();c.arc(food.x*S+7,OY+food.y*S+8,5.5,0,7);c.fill();c.fillStyle='#5ee06a';c.fillRect(food.x*S+7,OY+food.y*S+1,2,3);
+  body.forEach((b,i)=>{c.fillStyle=i===0?'#b6ff7a':'#4fd25a';c.fillRect(b.x*S+1,OY+b.y*S+1,S-2,S-2);if(i===0){c.fillStyle='#000';c.fillRect(b.x*S+3,OY+b.y*S+4,2,2);c.fillRect(b.x*S+9,OY+b.y*S+4,2,2)}})}}}
+
+// ---------- TIJOLINHO (Breakout) ----------
+function tijolinho(){const PW=36,PY=268;let px=W/2,bx=px,by=PY-6,vx=0,vy=0,stuck=true,lives=3,score=0,over=false,lvl=1,sp=140,bricks=[];
+ const cols=['#ff4d5e','#ff9a3d','#ffd166','#5ee06a','#55d8ff','#9a7dff'];
+ const build=()=>{bricks=[];for(let r=0;r<6;r++)for(let c=0;c<8;c++)bricks.push({x:8+c*26,y:50+r*11,r,a:true})};build();
+ return{get score(){return score},get over(){return over},
+ update(dt,I){px=clamp(px+I.jx*170*dt,PW/2+3,W-PW/2-3);
+  if(stuck){bx=px;by=PY-6;if(I.aP){stuck=false;vx=sp*.5*(Math.random()<.5?-1:1);vy=-sp*.87}return}
+  bx+=vx*dt;by+=vy*dt;if(bx<3){bx=3;vx=-vx}if(bx>W-3){bx=W-3;vx=-vx}if(by<32){by=32;vy=-vy}
+  if(vy>0&&by>=PY-5&&by<=PY+3&&Math.abs(bx-px)<PW/2+3){const a=clamp((bx-px)/(PW/2),-1,1)*1.05,s=Math.hypot(vx,vy);vx=Math.sin(a)*s;vy=-Math.cos(a)*s;by=PY-5}
+  for(const b of bricks){if(b.a&&bx>b.x-3&&bx<b.x+27&&by>b.y-3&&by<b.y+12){b.a=false;score+=(6-b.r)*10;const ox=Math.min(bx-(b.x-3),b.x+27-bx),oy=Math.min(by-(b.y-3),b.y+12-by);if(ox<oy)vx=-vx;else vy=-vy;const s=Math.hypot(vx,vy),n=Math.min(s+3,300);vx*=n/s;vy*=n/s;break}}
+  if(by>296){lives--;if(lives<=0)over=true;else stuck=true}
+  if(!bricks.some(b=>b.a)){lvl++;sp+=15;build();stuck=true}},
+ draw(c){header(c,score,'TIJOLINHO',lives);for(const b of bricks)if(b.a){c.fillStyle=cols[b.r];c.fillRect(b.x,b.y,24,9);c.fillStyle='rgba(255,255,255,.3)';c.fillRect(b.x,b.y,24,2)}
+  c.fillStyle='#c5efff';c.fillRect(px-PW/2,PY,PW,6);c.fillStyle='#55d8ff';c.fillRect(px-PW/2,PY+4,PW,2);
+  c.fillStyle='#fff';c.beginPath();c.arc(bx,by,3,0,7);c.fill();if(stuck)txt(c,'A = LANÇAR',W/2,200,'#ffd166',8,'center')}}}
+
+// ---------- INVASORES (Space Invaders) ----------
+function invasores(){const S0=["..####..",".######.","##.##.##","########","..#..#..",".#.##.#."],S1=["..####..",".######.","##.##.##","########",".#.##.#.","#......#"],cols=['#ff4d5e','#ff9a3d','#ffd166','#5ee06a','#55d8ff'];
+ let al=[],dir=1,stepT=0,fr=0,ox=20,oy=52,px=W/2,bul=null,bombs=[],cd=1,lives=3,score=0,over=false,wave=1;
+ const build=()=>{al=[];for(let r=0;r<5;r++)for(let c=0;c<8;c++)al.push({c,r,a:true});ox=20;oy=52;dir=1};build();
+ const AX=a=>ox+a.c*22,AY=a=>oy+a.r*16;
+ return{get score(){return score},get over(){return over},
+ update(dt,I){px=clamp(px+I.jx*110*dt,10,W-10);if(I.aP&&!bul)bul={x:px,y:262};
+  const live=al.filter(a=>a.a);if(!live.length){wave++;build();bombs=[];return}
+  if(bul){bul.y-=260*dt;if(bul.y<30)bul=null;else for(const a of live)if(bul.x>AX(a)&&bul.x<AX(a)+16&&bul.y>AY(a)&&bul.y<AY(a)+12){a.a=false;score+=(5-a.r)*10;bul=null;break}}
+  stepT+=dt;if(stepT>=Math.max(.07,.55*live.length/40/(1+wave*.1))){stepT=0;fr^=1;const mn=Math.min(...live.map(AX)),mx=Math.max(...live.map(AX))+16;if((dir>0&&mx+6>W-4)||(dir<0&&mn-6<4)){oy+=10;dir=-dir}else ox+=dir*6}
+  if(Math.max(...live.map(AY))+12>=252){over=true;return}
+  cd-=dt;if(cd<=0){cd=(.5+Math.random()*.8)/(1+wave*.1);const cs=[...new Set(live.map(a=>a.c))],c=cs[rnd(cs.length)],a=live.filter(q=>q.c===c).sort((p,q)=>q.r-p.r)[0];bombs.push({x:AX(a)+8,y:AY(a)+12})}
+  for(const b of bombs){b.y+=95*dt;if(b.y>256&&b.y<272&&Math.abs(b.x-px)<9){b.y=999;lives--;bombs=[];if(lives<=0)over=true;break}}
+  bombs=bombs.filter(b=>b.y<290)},
+ draw(c){header(c,score,'INVASORES',lives);for(const a of al)if(a.a){c.fillStyle=cols[a.r];(fr?S1:S0).forEach((row,j)=>{for(let i=0;i<8;i++)if(row[i]==='#')c.fillRect(AX(a)+i*2,AY(a)+j*2,2,2)})}
+  c.fillStyle='#5ee06a';c.fillRect(px-9,268,18,5);c.fillRect(px-2,263,4,5);c.fillRect(0,278,W,1);
+  if(bul){c.fillStyle='#fff';c.fillRect(bul.x-1,bul.y,2,6)}c.fillStyle='#ff4d5e';for(const b of bombs)c.fillRect(b.x-1,b.y,2,6)}}}
+
+const GAMES=[ // para adicionar outro jogo, basta incluir {id,name,make} aqui
+ {id:'comecoco',name:'COMECOCO',desc:'Coma tudo, fuja dos fantasmas',make:comecoco},
+ {id:'cobrinha',name:'COBRINHA',desc:'Cresça sem bater',make:cobrinha},
+ {id:'tijolinho',name:'TIJOLINHO',desc:'Quebre todos os tijolos',make:tijolinho},
+ {id:'invasores',name:'INVASORES',desc:'Defenda a Terra',make:invasores}];
+
+// ===== CENA 3D =====
+const root=document.querySelector('#scene');
+window.addEventListener('error', e => { const m=document.querySelector('#message'); if(m) m.textContent='Erro 3D: '+(e.message||'falha ao iniciar'); });
+window.addEventListener('unhandledrejection', e => { const m=document.querySelector('#message'); if(m) m.textContent='Falha ao carregar módulo 3D. Abra com internet em navegador compatível.'; });
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x081321); scene.fog=new THREE.Fog(0x081321,9,22);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100);
+const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace; root.appendChild(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement); orbit.enableDamping=true; orbit.dampingFactor=.06; orbit.minDistance=1.0; orbit.maxDistance=7; orbit.maxPolarAngle=Math.PI*.48;
+scene.add(new THREE.HemisphereLight(0xb9e5ff,0x17202b,2.0));
+const key=new THREE.DirectionalLight(0xffffff,2.6); key.position.set(3,6,4); key.castShadow=true; key.shadow.mapSize.set(1024,1024); Object.assign(key.shadow.camera,{left:-2,right:2,top:3,bottom:-1}); scene.add(key);
+const fill=new THREE.PointLight(0x35bfff,35,10); fill.position.set(-3,3,2); scene.add(fill);
+const glow=new THREE.PointLight(0x55d8ff,1.4,3); glow.position.set(0,1.4,.7); scene.add(glow);
+const mat=(color,rough=.55,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const dark=mat(0x111c2b,.35,.35), blue=mat(0x087eaa,.3,.25), gold=mat(0xffc857,.32,.45), trim=mat(0x1d3448,.35,.45), floorMat=mat(0x182637,.8);
+blue.side=THREE.DoubleSide;
+function box(parent,w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function cylinder(parent,r1,r2,h,material,x,y,z,seg=24){const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m}
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),floorMat); floor.rotation.x=-Math.PI/2; floor.position.y=-.035; floor.receiveShadow=true; scene.add(floor);
+const pad=new THREE.Mesh(new THREE.CircleGeometry(1.0,48),new THREE.MeshBasicMaterial({color:0x02060b,transparent:true,opacity:.32}));pad.rotation.x=-Math.PI/2;pad.position.y=-.025;scene.add(pad);
+
+// gabinete clássico: perfil lateral (z,y) extrudado
+const machine=new THREE.Group(); scene.add(machine);
+const PROF=[[-.42,0],[.38,0],[.38,.86],[.54,.90],[.54,.96],[.30,1.00],[.14,1.70],[.30,1.74],[.30,1.90],[-.42,1.90]];
+const sh=new THREE.Shape();PROF.forEach(([z,y],i)=>i?sh.lineTo(z,y):sh.moveTo(z,y));sh.closePath();
+const sg=new THREE.ExtrudeGeometry(sh,{depth:.04,bevelEnabled:false});
+for(const x of [-.31,.35]){const m=new THREE.Mesh(sg,blue);m.rotation.y=-Math.PI/2;m.position.x=x;m.castShadow=true;m.receiveShadow=true;machine.add(m)}
+box(machine,.62,1.9,.03,dark,0,.95,-.405);          // fundo
+box(machine,.62,.86,.03,dark,0,.43,.365);           // porta frontal
+box(machine,.62,.04,.72,dark,0,1.885,-.06);         // topo
+box(machine,.62,.04,.16,dark,0,.88,.46);            // sob o painel
+const panel=box(machine,.62,.04,.26,trim,0,.985,.42); panel.rotation.x=.165;
+box(machine,.62,.1,.02,blue,0,.91,.53);             // lábio do painel
+// porta de fichas
+box(machine,.2,.24,.02,gold,0,.6,.385);
+const slotMat=new THREE.MeshStandardMaterial({color:0x48d9ff,emissive:0x087ca5,emissiveIntensity:1.4});
+const slot=box(machine,.06,.014,.012,slotMat,0,.64,.398);
+box(machine,.1,.07,.012,dark,0,.55,.398);
+// tela inclinada
+const PHI=Math.atan2(.16,.70);
+const scr=new THREE.Group();scr.position.set(0,1.35,.22);scr.rotation.x=-PHI;machine.add(scr);
+box(scr,.62,.72,.02,dark,0,0,-.01);
+box(scr,.62,.06,.03,dark,0,.33,.005);box(scr,.62,.06,.03,dark,0,-.33,.005);box(scr,.077,.6,.03,dark,-.2715,0,.005);box(scr,.077,.6,.03,dark,.2715,0,.005);
+const sc=document.createElement('canvas');sc.width=224;sc.height=288;const g=sc.getContext('2d');
+const tex=new THREE.CanvasTexture(sc);tex.colorSpace=THREE.SRGBColorSpace;tex.magFilter=THREE.NearestFilter;tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;
+const screen=new THREE.Mesh(new THREE.PlaneGeometry(.467,.6),new THREE.MeshBasicMaterial({map:tex,toneMapped:false}));screen.position.z=.021;scr.add(screen);
+const oc=document.createElement('canvas');oc.width=224;oc.height=288;const og=oc.getContext('2d');
+for(let y=0;y<288;y+=2){og.fillStyle='rgba(0,0,0,.28)';og.fillRect(0,y,224,1)}
+const vg=og.createRadialGradient(112,144,60,112,144,200);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.55)');og.fillStyle=vg;og.fillRect(0,0,224,288);
+const ot=new THREE.CanvasTexture(oc);ot.colorSpace=THREE.SRGBColorSpace;ot.magFilter=THREE.NearestFilter;
+const over=new THREE.Mesh(new THREE.PlaneGeometry(.467,.6),new THREE.MeshBasicMaterial({map:ot,transparent:true,depthWrite:false}));over.position.z=.023;scr.add(over);
+// marquise
+const mc=document.createElement('canvas');mc.width=620;mc.height=160;const mg=mc.getContext('2d');
+const mgr=mg.createLinearGradient(0,0,620,0);mgr.addColorStop(0,'#06304a');mgr.addColorStop(.5,'#0a5d86');mgr.addColorStop(1,'#06304a');mg.fillStyle=mgr;mg.fillRect(0,0,620,160);
+mg.textAlign='center';mg.textBaseline='middle';mg.font='900 84px system-ui';mg.fillStyle='#55d8ff';mg.shadowColor='#55d8ff';mg.shadowBlur=24;mg.fillText('FLIPERAMA',250,70);
+mg.fillStyle='#ffd166';mg.shadowColor='#ffd166';mg.fillText('137',540,70);mg.shadowBlur=0;mg.fillStyle='#fff';mg.font='700 22px system-ui';mg.fillText('★  COMECOCO · COBRINHA · TIJOLINHO · INVASORES  ★',310,134);
+const mt=new THREE.CanvasTexture(mc);mt.colorSpace=THREE.SRGBColorSpace;
+const marq=new THREE.Mesh(new THREE.PlaneGeometry(.62,.16),new THREE.MeshBasicMaterial({map:mt,toneMapped:false}));marq.position.set(0,1.82,.303);machine.add(marq);
+// controles
+const stick=new THREE.Group();stick.position.set(-.16,.995,.42);machine.add(stick);
+cylinder(stick,.06,.07,.03,dark,0,0,0);cylinder(stick,.015,.02,.16,mat(0xb8c9d5,.25,.7),0,.09,0);
+const ball=new THREE.Mesh(new THREE.SphereGeometry(.05,24,16),mat(0xe33b4e,.25,.2));ball.position.y=.19;ball.castShadow=true;stick.add(ball);
+const btnA=cylinder(machine,.045,.045,.03,mat(0xffc857,.3,.2),.1,1.0,.43,32), btnB=cylinder(machine,.045,.045,.03,mat(0x54b9dc,.3,.2),.22,1.0,.39,32);
+
+// ===== SISTEMA DE FICHAS / INPUT / MENU =====
+const el=id=>document.getElementById(id);const say=t=>el('message').textContent=t;
+let credits=3,mode='menu',cur=null,curName='MENU',sel=0,paused=false,overT=0,prevDy=0,coinFlash=0,t0=0;
+const hi={};try{Object.assign(hi,JSON.parse(localStorage.getItem('s137_hi')||'{}'))}catch(e){}
+const I={jx:0,jy:0,aP:false,bP:false,a:false,b:false};const keys={};let sv={x:0,y:0};
+function updateHUD(){el('credits').textContent=credits;el('gname').textContent=mode==='menu'?'MENU':curName;el('score').textContent=cur&&mode!=='menu'?cur.score:0}
+function dom(){const ax=Math.abs(I.jx),ay=Math.abs(I.jy);if(Math.max(ax,ay)<.4)return[0,0];return ax>=ay?[Math.sign(I.jx),0]:[0,Math.sign(I.jy)]}
+function vec(){let x=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0),y=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0);if(x||y){I.jx=x;I.jy=y}else{I.jx=sv.x;I.jy=sv.y}}
+const press=(k)=>{if(k==='a'){if(!I.a)I.aP=true;I.a=true}else{if(!I.b)I.bP=true;I.b=true}};
+const rel=(k)=>{I[k]=false};
+function bindBtn(id,k){const b=el(id);b.addEventListener('pointerdown',e=>{e.preventDefault();press(k);b.classList.add('on')});['pointerup','pointercancel','pointerleave'].forEach(t=>b.addEventListener(t,()=>{rel(k);b.classList.remove('on')}))}
+bindBtn('bA','a');bindBtn('bB','b');
+const area=el('stickArea'),knob=el('stick');let pointer=null;
+function stickMove(e){const r=area.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=e.clientX-cx,dy=e.clientY-cy;const max=r.width*.28,len=Math.hypot(dx,dy);if(len>max){dx=dx/len*max;dy=dy/len*max}knob.style.transform=`translate(${dx}px,${dy}px)`;sv={x:dx/max,y:dy/max}}
+area.addEventListener('pointerdown',e=>{pointer=e.pointerId;area.setPointerCapture(pointer);stickMove(e)});
+area.addEventListener('pointermove',e=>{if(e.pointerId===pointer)stickMove(e)});
+function releaseStick(e){if(e.pointerId!==pointer)return;pointer=null;sv={x:0,y:0};knob.style.transform='translate(0,0)'}
+area.addEventListener('pointerup',releaseStick);area.addEventListener('pointercancel',releaseStick);
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(e.repeat)return;if(k.startsWith('arrow')||k===' ')e.preventDefault();keys[k]=true;if(k===' '||k==='z'||k==='enter')press('a');if(k==='x'||k==='shift')press('b');if(k==='c')toggleCam()});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();keys[k]=false;if(k===' '||k==='z'||k==='enter')rel('a');if(k==='x'||k==='shift')rel('b')});
+el('coin').addEventListener('click',()=>{credits++;coinFlash=.6;updateHUD();say('Ficha inserida! Escolha um jogo e aperte A.');setCam('screen')});
+
+// câmera: livre (órbita) ou enquadrando a tela
+const SC=new THREE.Vector3(0,1.35,.22),NRM=new THREE.Vector3(0,Math.sin(PHI),Math.cos(PHI));
+let camMode='free',camBlend=0;const freePos=new THREE.Vector3(1.0,1.75,2.7),freeTgt=new THREE.Vector3(0,1.0,0);
+camera.position.copy(freePos);orbit.target.copy(freeTgt);
+function screenGoal(){const asp=innerWidth/innerHeight,d=Math.max(.95,.34/(Math.tan(THREE.MathUtils.degToRad(21))*asp)),sh=new THREE.Vector3(0,asp<1?-.13:-.03,0);return{pos:SC.clone().add(sh).addScaledVector(NRM,d),tgt:SC.clone().add(sh)}}
+function setCam(m){if(m===camMode)return;if(m==='screen'){freePos.copy(camera.position);freeTgt.copy(orbit.target)}orbit.enabled=false;camMode=m;camBlend=0;el('cam').textContent=m==='screen'?'VER MÁQUINA':'VER TELA'}
+function toggleCam(){setCam(camMode==='screen'?'free':'screen')}
+el('cam').addEventListener('click',toggleCam);
+
+// desenho do menu
+function drawMenu(c,t){c.fillStyle='#000';c.fillRect(0,0,W,H);c.strokeStyle='rgba(85,216,255,.12)';for(let x=0;x<W;x+=16){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke()}for(let y=0;y<H;y+=16){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke()}
+ txt(c,'FLIPERAMA',W/2,22,'#55d8ff',24,'center');txt(c,'SHOPPING 137',W/2,52,'#ffd166',12,'center');
+ GAMES.forEach((gm,i)=>{const y=96+i*36,on=i===sel;if(on){c.fillStyle='rgba(85,216,255,.16)';c.fillRect(12,y-6,W-24,32)}
+  txt(c,(on&&((t*3)|0)%2===0?'► ':'  ')+gm.name,22,y,on?'#fff':'#7fa0b8',12);txt(c,gm.desc,36,y+14,on?'#ffd166':'#4f6a80',7);if(hi[gm.id])txt(c,'REC '+hi[gm.id],W-18,y,'#5ee06a',8,'right')});
+ txt(c,'CRÉDITOS  '+credits,W/2,252,credits>0?'#fff':'#ff5d8f',10,'center');
+ txt(c,credits>0?'↑↓ ESCOLHER  ·  A JOGAR':'INSIRA FICHA',W/2,268,((t*2)|0)%2?'#ffd166':'#9bb5c9',8,'center')}
+function overlay(c,l1,l2){c.fillStyle='rgba(0,0,0,.72)';c.fillRect(0,100,W,84);txt(c,l1,W/2,114,'#ffd166',16,'center');txt(c,l2,W/2,146,'#fff',8,'center')}
+function tick(dt){vec();const D=dom();
+ if(mode==='menu'){if(D[1]&&D[1]!==prevDy)sel=(sel+D[1]+GAMES.length)%GAMES.length;
+  if(I.aP){if(credits>0){credits--;cur=GAMES[sel].make();curName=GAMES[sel].name;mode='play';paused=false;say('Jogando '+curName+'!');setCam('screen')}else say('Sem créditos. Insira uma ficha.')}
+  drawMenu(g,t0);updateHUD()}
+ else if(mode==='play'){if(I.bP)paused=!paused;
+  if(paused){cur.draw(g);overlay(g,'PAUSA','B CONTINUAR  ·  A SAIR');if(I.aP){mode='menu';paused=false;updateHUD()}}
+  else{cur.update(dt,I,D);cur.draw(g);el('score').textContent=cur.score}
+  if(cur.over){mode='over';overT=0;const id=GAMES[sel].id;if(cur.score>(hi[id]||0)){hi[id]=cur.score;try{localStorage.setItem('s137_hi',JSON.stringify(hi))}catch(e){}say('Novo recorde: '+cur.score+'!')}else say('Fim de jogo! '+cur.score+' pontos.')}}
+ else{cur.draw(g);overlay(g,'FIM DE JOGO','PONTOS '+cur.score+'  ·  A VOLTAR');overT+=dt;if(overT>5||(I.aP&&overT>.5)){mode='menu';updateHUD()}}
+ prevDy=D[1];I.aP=I.bP=false;tex.needsUpdate=true}
+// animação
+const clock=new THREE.Clock();
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);t0+=dt;
+ if(camMode==='screen'){const gl=screenGoal(),k=1-Math.exp(-dt*4);camera.position.lerp(gl.pos,k);orbit.target.lerp(gl.tgt,k);camera.lookAt(orbit.target)}
+ else if(!orbit.enabled){camBlend+=dt;const k=1-Math.exp(-dt*4);camera.position.lerp(freePos,k);orbit.target.lerp(freeTgt,k);camera.lookAt(orbit.target);if(camBlend>1.2){orbit.enabled=true}}
+ else orbit.update();
+ tick(dt);
+ stick.rotation.z=THREE.MathUtils.damp(stick.rotation.z,-I.jx*.3,12,dt);stick.rotation.x=THREE.MathUtils.damp(stick.rotation.x,I.jy*.3,12,dt);
+ btnA.position.y=I.a?.988:1.0;btnB.position.y=I.b?.988:1.0;
+ coinFlash=Math.max(0,coinFlash-dt);slotMat.emissiveIntensity=1.4+coinFlash*5;
+ glow.intensity=1.3+Math.sin(t0*9)*.08;
+ renderer.render(scene,camera)}
+animate();
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+updateHUD();say('Máquina em espera. Toque em INSERIR FICHA para jogar.');
+</script>
+</body></html>

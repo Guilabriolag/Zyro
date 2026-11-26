@@ -1,0 +1,5141 @@
+{
+  "projeto": "UNIVERSO ZERO",
+  "documento": "Inventário Mestre de Objetos e Equipamentos",
+  "versao": "1.0",
+  "status": "base inicial para revisão e integração",
+  "regras": {
+    "hotel_residencia": "Disponível nas modalidades Hotel e Residência",
+    "hotel_premium_residencia": "Hotel premium e Residência",
+    "hotel_residencia_opcional": "Hotel e Residência, conforme configuração",
+    "hotel_premium_residencia_opcional": "Hotel premium e Residência, conforme configuração",
+    "residencia_opcional": "Somente Residência, conforme configuração"
+  },
+  "ambientes": [
+    {
+      "id": "AMB-001",
+      "nome": "Hall de entrada",
+      "descricao": "Entrada do apartamento"
+    },
+    {
+      "id": "AMB-002",
+      "nome": "Living",
+      "descricao": "Sala de estar"
+    },
+    {
+      "id": "AMB-003",
+      "nome": "Sala de jantar",
+      "descricao": "Área social"
+    },
+    {
+      "id": "AMB-004",
+      "nome": "Cozinha",
+      "descricao": "Área de preparo"
+    },
+    {
+      "id": "AMB-005",
+      "nome": "Varanda gourmet",
+      "descricao": "Área externa"
+    },
+    {
+      "id": "AMB-006",
+      "nome": "Suíte máster",
+      "descricao": "Dormitório principal"
+    },
+    {
+      "id": "AMB-007",
+      "nome": "Closet",
+      "descricao": "Área de roupas"
+    },
+    {
+      "id": "AMB-008",
+      "nome": "Banheiro máster",
+      "descricao": "Banheiro principal"
+    },
+    {
+      "id": "AMB-009",
+      "nome": "Suíte 2",
+      "descricao": "Dormitório"
+    },
+    {
+      "id": "AMB-010",
+      "nome": "Banheiro suíte 2",
+      "descricao": "Banheiro"
+    },
+    {
+      "id": "AMB-011",
+      "nome": "Suíte 3",
+      "descricao": "Dormitório"
+    },
+    {
+      "id": "AMB-012",
+      "nome": "Banheiro suíte 3",
+      "descricao": "Banheiro"
+    },
+    {
+      "id": "AMB-013",
+      "nome": "Lavabo",
+      "descricao": "Área social"
+    },
+    {
+      "id": "AMB-014",
+      "nome": "Área de serviço",
+      "descricao": "Lavanderia"
+    },
+    {
+      "id": "AMB-015",
+      "nome": "Escritório integrado",
+      "descricao": "Ambiente existente ou área adaptada"
+    },
+    {
+      "id": "AMB-016",
+      "nome": "Academia integrada",
+      "descricao": "Ambiente existente ou área adaptada"
+    },
+    {
+      "id": "AMB-017",
+      "nome": "Entretenimento integrado",
+      "descricao": "Living ou ambiente adaptado"
+    },
+    {
+      "id": "AMB-018",
+      "nome": "Área técnica",
+      "descricao": "Equipamentos e automação"
+    }
+  ],
+  "compatibilidades": [
+    {
+      "id": "COMP-01",
+      "nome": "Superfície",
+      "descricao": "Pode ser apoiado sobre mesa, bancada ou superfície compatível."
+    },
+    {
+      "id": "COMP-02",
+      "nome": "Armazenamento",
+      "descricao": "Pode ser guardado em compartimento ou móvel de armazenamento."
+    },
+    {
+      "id": "COMP-03",
+      "nome": "Gaveta",
+      "descricao": "Compatível com slots internos de gaveta."
+    },
+    {
+      "id": "COMP-04",
+      "nome": "Energia elétrica",
+      "descricao": "Exige alimentação elétrica."
+    },
+    {
+      "id": "COMP-05",
+      "nome": "Instalação hidráulica",
+      "descricao": "Exige ponto de água e/ou drenagem."
+    },
+    {
+      "id": "COMP-06",
+      "nome": "Instalação arquitetônica",
+      "descricao": "Depende de vão, parede, esquadria ou elemento construtivo."
+    },
+    {
+      "id": "COMP-07",
+      "nome": "Espaço de circulação",
+      "descricao": "Precisa de área livre para posicionamento ou circulação."
+    },
+    {
+      "id": "COMP-08",
+      "nome": "Assento",
+      "descricao": "Permite interação de sentar e levantar."
+    },
+    {
+      "id": "COMP-09",
+      "nome": "Uso corporal",
+      "descricao": "Permite interação física do personagem com o equipamento."
+    },
+    {
+      "id": "COMP-10",
+      "nome": "Rede e automação",
+      "descricao": "Exige conectividade ou integração com sistema inteligente."
+    }
+  ],
+  "grupos": {
+    "MOB": [
+      {
+        "id": "MOB-001",
+        "nome": "Cama king",
+        "grupo": "MOB",
+        "categoria": "cama",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "ocupada",
+          "em_uso"
+        ],
+        "atividades": [
+          "dormir",
+          "deitar",
+          "levantar"
+        ]
+      },
+      {
+        "id": "MOB-002",
+        "nome": "Cama super king",
+        "grupo": "MOB",
+        "categoria": "cama",
+        "ambientes": [
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "ocupada",
+          "em_uso"
+        ],
+        "atividades": [
+          "dormir",
+          "deitar",
+          "levantar"
+        ]
+      },
+      {
+        "id": "MOB-003",
+        "nome": "Criado-mudo",
+        "grupo": "MOB",
+        "categoria": "apoio",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-004",
+        "nome": "Cômoda",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "gavetas_abertas",
+          "gavetas_fechadas"
+        ],
+        "atividades": [
+          "guardar",
+          "retirar"
+        ]
+      },
+      {
+        "id": "MOB-005",
+        "nome": "Guarda-roupa",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar_roupa",
+          "retirar_roupa"
+        ]
+      },
+      {
+        "id": "MOB-006",
+        "nome": "Closet modulado",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "organizar_roupas"
+        ]
+      },
+      {
+        "id": "MOB-007",
+        "nome": "Penteadeira",
+        "grupo": "MOB",
+        "categoria": "apoio",
+        "ambientes": [
+          "AMB-006",
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-03"
+        ],
+        "estados": [],
+        "atividades": [
+          "cuidar_aparencia"
+        ]
+      },
+      {
+        "id": "MOB-008",
+        "nome": "Poltrona de leitura",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupada"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar",
+          "ler"
+        ]
+      },
+      {
+        "id": "MOB-009",
+        "nome": "Escrivaninha",
+        "grupo": "MOB",
+        "categoria": "trabalho",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "trabalhar",
+          "estudar"
+        ]
+      },
+      {
+        "id": "MOB-010",
+        "nome": "Cadeira de escritório",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupada"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar"
+        ]
+      },
+      {
+        "id": "MOB-011",
+        "nome": "Sofá modular",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupado"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar",
+          "socializar"
+        ]
+      },
+      {
+        "id": "MOB-012",
+        "nome": "Poltrona",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupada"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar"
+        ]
+      },
+      {
+        "id": "MOB-013",
+        "nome": "Mesa de centro",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-014",
+        "nome": "Mesa lateral",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-015",
+        "nome": "Rack",
+        "grupo": "MOB",
+        "categoria": "apoio",
+        "ambientes": [
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos",
+          "armazenar"
+        ]
+      },
+      {
+        "id": "MOB-016",
+        "nome": "Painel de TV",
+        "grupo": "MOB",
+        "categoria": "suporte",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [],
+        "atividades": [
+          "suportar_tv"
+        ]
+      },
+      {
+        "id": "MOB-017",
+        "nome": "Estante",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "slots_livres",
+          "slots_ocupados"
+        ],
+        "atividades": [
+          "guardar_livros",
+          "retirar_livros"
+        ]
+      },
+      {
+        "id": "MOB-018",
+        "nome": "Aparador",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-002",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-019",
+        "nome": "Buffet",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "portas_abertas",
+          "portas_fechadas"
+        ],
+        "atividades": [
+          "servir",
+          "guardar"
+        ]
+      },
+      {
+        "id": "MOB-020",
+        "nome": "Mesa de jantar",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "servir",
+          "comer"
+        ]
+      },
+      {
+        "id": "MOB-021",
+        "nome": "Cadeira de jantar",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupada"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar",
+          "comer"
+        ]
+      },
+      {
+        "id": "MOB-022",
+        "nome": "Ilha de cozinha",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "preparar_alimentos",
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-023",
+        "nome": "Bancada de cozinha",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "preparar_alimentos",
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-024",
+        "nome": "Armário planejado",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-004",
+          "AMB-008",
+          "AMB-010",
+          "AMB-012",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar",
+          "retirar"
+        ]
+      },
+      {
+        "id": "MOB-025",
+        "nome": "Gaveteiro",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-006",
+          "AMB-007",
+          "AMB-015",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-03"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar",
+          "retirar"
+        ]
+      },
+      {
+        "id": "MOB-026",
+        "nome": "Banqueta",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupada"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar"
+        ]
+      },
+      {
+        "id": "MOB-027",
+        "nome": "Mesa externa",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos",
+          "servir"
+        ]
+      },
+      {
+        "id": "MOB-028",
+        "nome": "Cadeira externa",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08"
+        ],
+        "estados": [
+          "livre",
+          "ocupada"
+        ],
+        "atividades": [
+          "sentar",
+          "levantar"
+        ]
+      },
+      {
+        "id": "MOB-029",
+        "nome": "Armário de lavanderia",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar_produtos",
+          "retirar_produtos"
+        ]
+      },
+      {
+        "id": "MOB-030",
+        "nome": "Bancada de lavanderia",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos",
+          "dobrar_roupas"
+        ]
+      },
+      {
+        "id": "MOB-031",
+        "nome": "Banco de cama",
+        "grupo": "MOB",
+        "categoria": "assento",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-08",
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "sentar",
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-032",
+        "nome": "Sapateira",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-007",
+          "AMB-001"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar_calcados",
+          "retirar_calcados"
+        ]
+      },
+      {
+        "id": "MOB-033",
+        "nome": "Mesa de apoio",
+        "grupo": "MOB",
+        "categoria": "superficie",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "apoiar_objetos"
+        ]
+      },
+      {
+        "id": "MOB-034",
+        "nome": "Prateleira",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-015",
+          "AMB-004",
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "fixa",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [],
+        "atividades": [
+          "armazenar"
+        ]
+      },
+      {
+        "id": "MOB-035",
+        "nome": "Louceiro",
+        "grupo": "MOB",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar_loucas",
+          "retirar_loucas"
+        ]
+      }
+    ],
+    "ELP": [
+      {
+        "id": "ELP-001",
+        "nome": "Geladeira French Door",
+        "grupo": "ELP",
+        "categoria": "refrigeracao",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "armazenar_alimentos",
+          "retirar_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-002",
+        "nome": "Geladeira Side by Side",
+        "grupo": "ELP",
+        "categoria": "refrigeracao",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "armazenar_alimentos",
+          "retirar_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-003",
+        "nome": "Frigobar",
+        "grupo": "ELP",
+        "categoria": "refrigeracao",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "armazenar_bebidas",
+          "retirar_bebidas"
+        ]
+      },
+      {
+        "id": "ELP-004",
+        "nome": "Freezer",
+        "grupo": "ELP",
+        "categoria": "refrigeracao",
+        "ambientes": [
+          "AMB-004",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "armazenar_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-005",
+        "nome": "Cooktop",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "em_uso"
+        ],
+        "atividades": [
+          "cozinhar"
+        ]
+      },
+      {
+        "id": "ELP-006",
+        "nome": "Forno multifunção",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "em_uso"
+        ],
+        "atividades": [
+          "assar",
+          "aquecer"
+        ]
+      },
+      {
+        "id": "ELP-007",
+        "nome": "Micro-ondas",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "em_uso"
+        ],
+        "atividades": [
+          "aquecer_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-008",
+        "nome": "Lava-louças",
+        "grupo": "ELP",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-05"
+        ],
+        "estados": [
+          "desligada",
+          "lavando",
+          "finalizada"
+        ],
+        "atividades": [
+          "lavar_loucas"
+        ]
+      },
+      {
+        "id": "ELP-009",
+        "nome": "Coifa",
+        "grupo": "ELP",
+        "categoria": "exaustao",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "remover_fumaca"
+        ]
+      },
+      {
+        "id": "ELP-010",
+        "nome": "Cafeteira de cápsulas",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-004",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "preparando"
+        ],
+        "atividades": [
+          "preparar_cafe"
+        ]
+      },
+      {
+        "id": "ELP-011",
+        "nome": "Cafeteira espresso",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "preparando"
+        ],
+        "atividades": [
+          "preparar_espresso",
+          "vaporizador_leite"
+        ]
+      },
+      {
+        "id": "ELP-012",
+        "nome": "Chaleira elétrica",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "aquecendo"
+        ],
+        "atividades": [
+          "aquecer_agua"
+        ]
+      },
+      {
+        "id": "ELP-013",
+        "nome": "Torradeira",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "em_uso"
+        ],
+        "atividades": [
+          "torrar_pao"
+        ]
+      },
+      {
+        "id": "ELP-014",
+        "nome": "Liquidificador",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "em_uso"
+        ],
+        "atividades": [
+          "bater_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-015",
+        "nome": "Mixer",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "em_uso"
+        ],
+        "atividades": [
+          "misturar_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-016",
+        "nome": "Adega 46 garrafas",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "armazenar_vinhos"
+        ]
+      },
+      {
+        "id": "ELP-017",
+        "nome": "Adega 54 garrafas",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "armazenar_vinhos"
+        ]
+      },
+      {
+        "id": "ELP-018",
+        "nome": "Adega e cervejeira combinada",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "armazenar_vinhos",
+          "armazenar_latas"
+        ]
+      },
+      {
+        "id": "ELP-019",
+        "nome": "Cervejeira",
+        "grupo": "ELP",
+        "categoria": "bebidas",
+        "ambientes": [
+          "AMB-005",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "armazenar_bebidas"
+        ]
+      },
+      {
+        "id": "ELP-020",
+        "nome": "Churrasqueira gourmet",
+        "grupo": "ELP",
+        "categoria": "preparo",
+        "ambientes": [
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "desligada",
+          "acesa",
+          "em_uso"
+        ],
+        "atividades": [
+          "grelhar_alimentos"
+        ]
+      },
+      {
+        "id": "ELP-021",
+        "nome": "Máquina de lavar",
+        "grupo": "ELP",
+        "categoria": "lavanderia",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-05"
+        ],
+        "estados": [
+          "desligada",
+          "lavando",
+          "finalizada"
+        ],
+        "atividades": [
+          "lavar_roupas"
+        ]
+      },
+      {
+        "id": "ELP-022",
+        "nome": "Secadora",
+        "grupo": "ELP",
+        "categoria": "lavanderia",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "desligada",
+          "secando",
+          "finalizada"
+        ],
+        "atividades": [
+          "secar_roupas"
+        ]
+      },
+      {
+        "id": "ELP-023",
+        "nome": "Lava e seca",
+        "grupo": "ELP",
+        "categoria": "lavanderia",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-05"
+        ],
+        "estados": [
+          "desligada",
+          "lavando",
+          "secando",
+          "finalizada"
+        ],
+        "atividades": [
+          "lavar_roupas",
+          "secar_roupas"
+        ]
+      },
+      {
+        "id": "ELP-024",
+        "nome": "Ferro de passar",
+        "grupo": "ELP",
+        "categoria": "lavanderia",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "desligado",
+          "aquecendo",
+          "pronto"
+        ],
+        "atividades": [
+          "passar_roupas"
+        ]
+      },
+      {
+        "id": "ELP-025",
+        "nome": "Ferro vertical",
+        "grupo": "ELP",
+        "categoria": "lavanderia",
+        "ambientes": [
+          "AMB-014",
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "desligado",
+          "aquecendo",
+          "pronto"
+        ],
+        "atividades": [
+          "passar_roupas"
+        ]
+      },
+      {
+        "id": "ELP-026",
+        "nome": "Robô aspirador",
+        "grupo": "ELP",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "parado",
+          "limpando",
+          "carregando"
+        ],
+        "atividades": [
+          "aspirar_piso"
+        ]
+      },
+      {
+        "id": "ELP-027",
+        "nome": "Robô aspirador com base autolimpante",
+        "grupo": "ELP",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "parado",
+          "limpando",
+          "autolimpando",
+          "carregando"
+        ],
+        "atividades": [
+          "aspirar_piso",
+          "passar_mop"
+        ]
+      },
+      {
+        "id": "ELP-028",
+        "nome": "Aquecedor/boiler",
+        "grupo": "ELP",
+        "categoria": "climatizacao",
+        "ambientes": [
+          "AMB-018",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-05"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "aquecer_agua"
+        ]
+      },
+      {
+        "id": "ELP-029",
+        "nome": "Secador de cabelo",
+        "grupo": "ELP",
+        "categoria": "cuidados_pessoais",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "secar_cabelo"
+        ]
+      },
+      {
+        "id": "ELP-030",
+        "nome": "Barbeador elétrico",
+        "grupo": "ELP",
+        "categoria": "cuidados_pessoais",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "fazer_barba"
+        ]
+      },
+      {
+        "id": "ELP-031",
+        "nome": "Escova elétrica",
+        "grupo": "ELP",
+        "categoria": "cuidados_pessoais",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "escovar_dentes"
+        ]
+      }
+    ],
+    "ILU": [
+      {
+        "id": "ILU-001",
+        "nome": "Luz central",
+        "grupo": "ILU",
+        "categoria": "luz_principal",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-003",
+          "AMB-004",
+          "AMB-006",
+          "AMB-007",
+          "AMB-008",
+          "AMB-009",
+          "AMB-010",
+          "AMB-011",
+          "AMB-012",
+          "AMB-013",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "dimerizada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-002",
+        "nome": "Abajur",
+        "grupo": "ILU",
+        "categoria": "luz_apoio",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-003",
+        "nome": "Arandela",
+        "grupo": "ILU",
+        "categoria": "luz_apoio",
+        "ambientes": [
+          "AMB-006",
+          "AMB-002",
+          "AMB-001"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-004",
+        "nome": "Pendente LED",
+        "grupo": "ILU",
+        "categoria": "luz_decorativa",
+        "ambientes": [
+          "AMB-002",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "dimerizado"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-005",
+        "nome": "Pendente decorativo",
+        "grupo": "ILU",
+        "categoria": "luz_decorativa",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-006",
+        "nome": "Lustre LED",
+        "grupo": "ILU",
+        "categoria": "luz_decorativa",
+        "ambientes": [
+          "AMB-002",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "dimerizado"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-007",
+        "nome": "Luminária de mesa",
+        "grupo": "ILU",
+        "categoria": "luz_apoio",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-008",
+        "nome": "Luminária de piso",
+        "grupo": "ILU",
+        "categoria": "luz_apoio",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-009",
+        "nome": "Fita LED",
+        "grupo": "ILU",
+        "categoria": "luz_ambiente",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-007",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "dimerizada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-010",
+        "nome": "Iluminação de closet",
+        "grupo": "ILU",
+        "categoria": "luz_funcional",
+        "ambientes": [
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-011",
+        "nome": "Espelho iluminado",
+        "grupo": "ILU",
+        "categoria": "luz_funcional",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-012",
+        "nome": "Iluminação externa",
+        "grupo": "ILU",
+        "categoria": "luz_externa",
+        "ambientes": [
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-013",
+        "nome": "Iluminação de bancada",
+        "grupo": "ILU",
+        "categoria": "luz_funcional",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      },
+      {
+        "id": "ILU-014",
+        "nome": "Iluminação cênica",
+        "grupo": "ILU",
+        "categoria": "luz_ambiente",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "dimerizada"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      }
+    ],
+    "ARQ": [
+      {
+        "id": "ARQ-001",
+        "nome": "Porta de entrada",
+        "grupo": "ARQ",
+        "categoria": "porta",
+        "ambientes": [
+          "AMB-001"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberta",
+          "fechada",
+          "trancada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar",
+          "trancar"
+        ]
+      },
+      {
+        "id": "ARQ-002",
+        "nome": "Porta interna",
+        "grupo": "ARQ",
+        "categoria": "porta",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-008",
+          "AMB-010",
+          "AMB-012",
+          "AMB-013",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-003",
+        "nome": "Porta de correr",
+        "grupo": "ARQ",
+        "categoria": "porta",
+        "ambientes": [
+          "AMB-002",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-004",
+        "nome": "Janela",
+        "grupo": "ARQ",
+        "categoria": "janela",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-005",
+        "nome": "Janela motorizada",
+        "grupo": "ARQ",
+        "categoria": "janela",
+        "ambientes": [
+          "AMB-006",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06",
+          "COMP-10"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-006",
+        "nome": "Cortina",
+        "grupo": "ARQ",
+        "categoria": "cortina",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-007",
+        "nome": "Cortina motorizada",
+        "grupo": "ARQ",
+        "categoria": "cortina",
+        "ambientes": [
+          "AMB-006",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06",
+          "COMP-10"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar",
+          "automatizar"
+        ]
+      },
+      {
+        "id": "ARQ-008",
+        "nome": "Persiana",
+        "grupo": "ARQ",
+        "categoria": "persiana",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-009",
+        "nome": "Fechadura digital",
+        "grupo": "ARQ",
+        "categoria": "fechadura",
+        "ambientes": [
+          "AMB-001"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "trancada",
+          "destrancada"
+        ],
+        "atividades": [
+          "trancar",
+          "destrancar"
+        ]
+      },
+      {
+        "id": "ARQ-010",
+        "nome": "Box de vidro",
+        "grupo": "ARQ",
+        "categoria": "box",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-011",
+        "nome": "Escada interna",
+        "grupo": "ARQ",
+        "categoria": "circulacao",
+        "ambientes": [
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07"
+        ],
+        "estados": [
+          "disponivel"
+        ],
+        "atividades": [
+          "subir",
+          "descer"
+        ]
+      },
+      {
+        "id": "ARQ-012",
+        "nome": "Guarda-corpo",
+        "grupo": "ARQ",
+        "categoria": "protecao",
+        "ambientes": [
+          "AMB-002",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [],
+        "atividades": []
+      },
+      {
+        "id": "ARQ-013",
+        "nome": "Porta de armário",
+        "grupo": "ARQ",
+        "categoria": "porta_armario",
+        "ambientes": [
+          "AMB-004",
+          "AMB-007",
+          "AMB-008",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar"
+        ]
+      },
+      {
+        "id": "ARQ-014",
+        "nome": "Gaveta",
+        "grupo": "ARQ",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-004",
+          "AMB-007",
+          "AMB-008",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-03"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar",
+          "guardar",
+          "retirar"
+        ]
+      },
+      {
+        "id": "ARQ-015",
+        "nome": "Porta de vidro automatizada",
+        "grupo": "ARQ",
+        "categoria": "porta",
+        "ambientes": [
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06",
+          "COMP-10"
+        ],
+        "estados": [
+          "aberta",
+          "fechada"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar",
+          "automatizar"
+        ]
+      }
+    ],
+    "OBJ": [
+      {
+        "id": "OBJ-001",
+        "nome": "Livro",
+        "grupo": "OBJ",
+        "categoria": "leitura",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-002",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "transportado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "carregar",
+          "ler",
+          "colocar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-002",
+        "nome": "Caderno",
+        "grupo": "OBJ",
+        "categoria": "papelaria",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardado",
+          "transportado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "anotar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-003",
+        "nome": "Caneta",
+        "grupo": "OBJ",
+        "categoria": "papelaria",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardada",
+          "transportada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "escrever",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-004",
+        "nome": "Lápis",
+        "grupo": "OBJ",
+        "categoria": "papelaria",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardado",
+          "transportado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "escrever",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-005",
+        "nome": "Calculadora",
+        "grupo": "OBJ",
+        "categoria": "papelaria",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "transportada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "calcular",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-006",
+        "nome": "Smartphone",
+        "grupo": "OBJ",
+        "categoria": "comunicacao",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-004",
+          "AMB-006",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "transportado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "ligar",
+          "mensagem",
+          "ligacao",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-007",
+        "nome": "Tablet",
+        "grupo": "OBJ",
+        "categoria": "tecnologia_portatil",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "transportado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "pesquisar",
+          "estudar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-008",
+        "nome": "Controle remoto",
+        "grupo": "OBJ",
+        "categoria": "controle",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "apoiado",
+          "transportado"
+        ],
+        "atividades": [
+          "pegar",
+          "controlar_tv",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-009",
+        "nome": "Carregador",
+        "grupo": "OBJ",
+        "categoria": "acessorio",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-006",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "guardado",
+          "conectado"
+        ],
+        "atividades": [
+          "conectar",
+          "desconectar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-010",
+        "nome": "Copo",
+        "grupo": "OBJ",
+        "categoria": "louca",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003",
+          "AMB-002",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "apoiado",
+          "transportado"
+        ],
+        "atividades": [
+          "pegar",
+          "beber",
+          "colocar",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-011",
+        "nome": "Xícara",
+        "grupo": "OBJ",
+        "categoria": "louca",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "apoiada",
+          "transportada"
+        ],
+        "atividades": [
+          "pegar",
+          "beber",
+          "colocar",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-012",
+        "nome": "Taça",
+        "grupo": "OBJ",
+        "categoria": "louca",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "apoiada",
+          "transportada"
+        ],
+        "atividades": [
+          "pegar",
+          "servir",
+          "beber",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-013",
+        "nome": "Prato",
+        "grupo": "OBJ",
+        "categoria": "louca",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "apoiado",
+          "transportado"
+        ],
+        "atividades": [
+          "pegar",
+          "servir",
+          "comer",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-014",
+        "nome": "Talheres",
+        "grupo": "OBJ",
+        "categoria": "utensilio",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardados",
+          "transportados"
+        ],
+        "atividades": [
+          "pegar",
+          "comer",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-015",
+        "nome": "Panela",
+        "grupo": "OBJ",
+        "categoria": "utensilio",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "cozinhar",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-016",
+        "nome": "Frigideira",
+        "grupo": "OBJ",
+        "categoria": "utensilio",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "cozinhar",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-017",
+        "nome": "Garrafa de bebida",
+        "grupo": "OBJ",
+        "categoria": "bebida",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "apoiada",
+          "aberta"
+        ],
+        "atividades": [
+          "pegar",
+          "servir",
+          "beber",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-018",
+        "nome": "Cápsula de café",
+        "grupo": "OBJ",
+        "categoria": "consumivel",
+        "ambientes": [
+          "AMB-004",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "armazenada",
+          "em_uso",
+          "consumida"
+        ],
+        "atividades": [
+          "pegar",
+          "inserir_cafeteira"
+        ]
+      },
+      {
+        "id": "OBJ-019",
+        "nome": "Alimentos",
+        "grupo": "OBJ",
+        "categoria": "consumivel",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "armazenados",
+          "em_preparo",
+          "consumidos"
+        ],
+        "atividades": [
+          "pegar",
+          "preparar",
+          "consumir",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-020",
+        "nome": "Pote hermético",
+        "grupo": "OBJ",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "vazio",
+          "ocupado",
+          "fechado",
+          "aberto"
+        ],
+        "atividades": [
+          "abrir",
+          "fechar",
+          "guardar_alimento"
+        ]
+      },
+      {
+        "id": "OBJ-021",
+        "nome": "Travessa",
+        "grupo": "OBJ",
+        "categoria": "louca",
+        "ambientes": [
+          "AMB-004",
+          "AMB-003"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "apoiada"
+        ],
+        "atividades": [
+          "pegar",
+          "servir",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-022",
+        "nome": "Tábua de corte",
+        "grupo": "OBJ",
+        "categoria": "utensilio",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "preparar_alimento",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-023",
+        "nome": "Abridor de garrafa",
+        "grupo": "OBJ",
+        "categoria": "utensilio",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "abrir_garrafa",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-024",
+        "nome": "Saca-rolhas",
+        "grupo": "OBJ",
+        "categoria": "utensilio",
+        "ambientes": [
+          "AMB-004",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "abrir_garrafa",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-025",
+        "nome": "Roupa",
+        "grupo": "OBJ",
+        "categoria": "vestuario",
+        "ambientes": [
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-007",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardada",
+          "vestida",
+          "lavando",
+          "seca"
+        ],
+        "atividades": [
+          "pegar",
+          "vestir",
+          "trocar",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-026",
+        "nome": "Cabide",
+        "grupo": "OBJ",
+        "categoria": "organizacao",
+        "ambientes": [
+          "AMB-007",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "livre",
+          "ocupado"
+        ],
+        "atividades": [
+          "pendurar",
+          "retirar"
+        ]
+      },
+      {
+        "id": "OBJ-027",
+        "nome": "Toalha",
+        "grupo": "OBJ",
+        "categoria": "higiene",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012",
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso",
+          "suja"
+        ],
+        "atividades": [
+          "pegar",
+          "usar",
+          "pendurar",
+          "lavar"
+        ]
+      },
+      {
+        "id": "OBJ-028",
+        "nome": "Roupão",
+        "grupo": "OBJ",
+        "categoria": "vestuario",
+        "ambientes": [
+          "AMB-006",
+          "AMB-008",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "vestido"
+        ],
+        "atividades": [
+          "pegar",
+          "vestir",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-029",
+        "nome": "Mala",
+        "grupo": "OBJ",
+        "categoria": "bagagem",
+        "ambientes": [
+          "AMB-001",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011",
+          "AMB-007"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "fechada",
+          "aberta"
+        ],
+        "atividades": [
+          "carregar",
+          "abrir",
+          "guardar_pertences",
+          "fechar"
+        ]
+      },
+      {
+        "id": "OBJ-030",
+        "nome": "Bolsa",
+        "grupo": "OBJ",
+        "categoria": "acessorio",
+        "ambientes": [
+          "AMB-001",
+          "AMB-006",
+          "AMB-007",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "transportada"
+        ],
+        "atividades": [
+          "pegar",
+          "carregar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-031",
+        "nome": "Chave",
+        "grupo": "OBJ",
+        "categoria": "acesso",
+        "ambientes": [
+          "AMB-001"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "disponivel",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "destrancar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-032",
+        "nome": "Controle de automação",
+        "grupo": "OBJ",
+        "categoria": "controle",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-10"
+        ],
+        "estados": [
+          "guardado",
+          "transportado"
+        ],
+        "atividades": [
+          "pegar",
+          "controlar_ambiente",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-033",
+        "nome": "Vela decorativa",
+        "grupo": "OBJ",
+        "categoria": "decoracao",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [
+          "apagada",
+          "acesa"
+        ],
+        "atividades": [
+          "acender",
+          "apagar",
+          "mover"
+        ]
+      },
+      {
+        "id": "OBJ-034",
+        "nome": "Difusor de aromas",
+        "grupo": "OBJ",
+        "categoria": "bem_estar",
+        "ambientes": [
+          "AMB-006",
+          "AMB-002",
+          "AMB-008"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "ligar",
+          "desligar",
+          "reabastecer"
+        ]
+      },
+      {
+        "id": "OBJ-035",
+        "nome": "Produto de limpeza",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014",
+          "AMB-004",
+          "AMB-008"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "armazenado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "usar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-036",
+        "nome": "Esponja",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-004",
+          "AMB-008"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso",
+          "molhada"
+        ],
+        "atividades": [
+          "pegar",
+          "limpar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-037",
+        "nome": "Detergente",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "usar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-038",
+        "nome": "Sabão líquido",
+        "grupo": "OBJ",
+        "categoria": "lavanderia",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "armazenado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "abastecer_maquina",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-039",
+        "nome": "Desinfetante",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014",
+          "AMB-008",
+          "AMB-010",
+          "AMB-012"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "armazenado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "limpar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-040",
+        "nome": "Saco de lixo",
+        "grupo": "OBJ",
+        "categoria": "descarte",
+        "ambientes": [
+          "AMB-004",
+          "AMB-014",
+          "AMB-008",
+          "AMB-010",
+          "AMB-012",
+          "AMB-013"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "novo",
+          "instalado",
+          "cheio"
+        ],
+        "atividades": [
+          "colocar_lixeira",
+          "retirar_lixo",
+          "descartar"
+        ]
+      },
+      {
+        "id": "OBJ-041",
+        "nome": "Pano de limpeza",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso",
+          "sujo"
+        ],
+        "atividades": [
+          "pegar",
+          "limpar",
+          "lavar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-042",
+        "nome": "Vassoura",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "varrer",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-043",
+        "nome": "Rodo",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "secar_piso",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-044",
+        "nome": "Mop",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "passar_mop",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-045",
+        "nome": "Pá de limpeza",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "recolher_sujeira",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-046",
+        "nome": "Balde",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "vazio",
+          "com_agua"
+        ],
+        "atividades": [
+          "pegar",
+          "encher",
+          "esvaziar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-047",
+        "nome": "Luvas de limpeza",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-014"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "guardadas",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "vestir",
+          "retirar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-048",
+        "nome": "Escova sanitária",
+        "grupo": "OBJ",
+        "categoria": "limpeza",
+        "ambientes": [
+          "AMB-008",
+          "AMB-010",
+          "AMB-012",
+          "AMB-013"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-02"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "limpar_sanitario",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-049",
+        "nome": "Tapete de yoga",
+        "grupo": "OBJ",
+        "categoria": "fitness",
+        "ambientes": [
+          "AMB-016",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-07"
+        ],
+        "estados": [
+          "enrolado",
+          "aberto",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "desenrolar",
+          "praticar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-050",
+        "nome": "Garrafa de água",
+        "grupo": "OBJ",
+        "categoria": "bebida",
+        "ambientes": [
+          "AMB-016",
+          "AMB-002",
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "cheia",
+          "parcial",
+          "vazia"
+        ],
+        "atividades": [
+          "pegar",
+          "beber",
+          "abastecer"
+        ]
+      },
+      {
+        "id": "OBJ-051",
+        "nome": "Halter portátil",
+        "grupo": "OBJ",
+        "categoria": "fitness",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "treinar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-052",
+        "nome": "Elástico de resistência",
+        "grupo": "OBJ",
+        "categoria": "fitness",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "treinar",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-053",
+        "nome": "Fone de ouvido",
+        "grupo": "OBJ",
+        "categoria": "tecnologia_portatil",
+        "ambientes": [
+          "AMB-015",
+          "AMB-016",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "pegar",
+          "ouvir_audio",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-054",
+        "nome": "Headset",
+        "grupo": "OBJ",
+        "categoria": "acessorio_informatica",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-10"
+        ],
+        "estados": [
+          "guardado",
+          "conectado"
+        ],
+        "atividades": [
+          "pegar",
+          "participar_chamada",
+          "guardar"
+        ]
+      },
+      {
+        "id": "OBJ-055",
+        "nome": "Teclado",
+        "grupo": "OBJ",
+        "categoria": "periferico",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "conectado",
+          "desconectado"
+        ],
+        "atividades": [
+          "digitar"
+        ]
+      },
+      {
+        "id": "OBJ-056",
+        "nome": "Mouse",
+        "grupo": "OBJ",
+        "categoria": "periferico",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "conectado",
+          "desconectado"
+        ],
+        "atividades": [
+          "interagir_com_computador"
+        ]
+      },
+      {
+        "id": "OBJ-057",
+        "nome": "Currículo impresso",
+        "grupo": "OBJ",
+        "categoria": "documento",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02"
+        ],
+        "estados": [
+          "guardado",
+          "apoiado"
+        ],
+        "atividades": [
+          "pegar",
+          "ler",
+          "organizar"
+        ]
+      },
+      {
+        "id": "OBJ-058",
+        "nome": "Documento pessoal",
+        "grupo": "OBJ",
+        "categoria": "documento",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "transportavel",
+        "manipulavel": true,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "guardado",
+          "transportado"
+        ],
+        "atividades": [
+          "pegar",
+          "consultar",
+          "guardar"
+        ]
+      }
+    ],
+    "TEC": [
+      {
+        "id": "TEC-001",
+        "nome": "Computador desktop",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "trabalhar",
+          "estudar",
+          "pesquisar",
+          "procurar_emprego",
+          "conversar",
+          "videochamada"
+        ]
+      },
+      {
+        "id": "TEC-002",
+        "nome": "Notebook",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015",
+          "AMB-006",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "trabalhar",
+          "estudar",
+          "pesquisar",
+          "procurar_emprego",
+          "conversar"
+        ]
+      },
+      {
+        "id": "TEC-003",
+        "nome": "Monitor adicional",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "exibir_conteudo"
+        ]
+      },
+      {
+        "id": "TEC-004",
+        "nome": "Webcam",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "videochamada"
+        ]
+      },
+      {
+        "id": "TEC-005",
+        "nome": "Microfone",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015",
+          "AMB-017"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "gravar_audio",
+          "conversar"
+        ]
+      },
+      {
+        "id": "TEC-006",
+        "nome": "Impressora",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligada",
+          "desligada",
+          "imprimindo"
+        ],
+        "atividades": [
+          "imprimir_documentos"
+        ]
+      },
+      {
+        "id": "TEC-007",
+        "nome": "Scanner",
+        "grupo": "TEC",
+        "categoria": "informatica",
+        "ambientes": [
+          "AMB-015"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado",
+          "digitalizando"
+        ],
+        "atividades": [
+          "digitalizar_documentos"
+        ]
+      },
+      {
+        "id": "TEC-008",
+        "nome": "Roteador Wi-Fi",
+        "grupo": "TEC",
+        "categoria": "rede",
+        "ambientes": [
+          "AMB-018"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "fornecer_rede"
+        ]
+      },
+      {
+        "id": "TEC-009",
+        "nome": "Nobreak",
+        "grupo": "TEC",
+        "categoria": "energia",
+        "ambientes": [
+          "AMB-015",
+          "AMB-018"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ativo",
+          "inativo"
+        ],
+        "atividades": [
+          "protejer_equipamentos"
+        ]
+      },
+      {
+        "id": "TEC-010",
+        "nome": "Televisão",
+        "grupo": "TEC",
+        "categoria": "entretenimento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "assistir_tv"
+        ]
+      },
+      {
+        "id": "TEC-011",
+        "nome": "Home theater",
+        "grupo": "TEC",
+        "categoria": "entretenimento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-017"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "reproduzir_audio"
+        ]
+      },
+      {
+        "id": "TEC-012",
+        "nome": "Videogame",
+        "grupo": "TEC",
+        "categoria": "entretenimento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-017"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01",
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "jogar"
+        ]
+      },
+      {
+        "id": "TEC-013",
+        "nome": "Projetor",
+        "grupo": "TEC",
+        "categoria": "entretenimento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-017"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "projetar_filme"
+        ]
+      },
+      {
+        "id": "TEC-014",
+        "nome": "Sistema de som",
+        "grupo": "TEC",
+        "categoria": "audio",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "ouvir_musica"
+        ]
+      },
+      {
+        "id": "TEC-015",
+        "nome": "Caixa acústica",
+        "grupo": "TEC",
+        "categoria": "audio",
+        "ambientes": [
+          "AMB-002",
+          "AMB-005"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligada",
+          "desligada"
+        ],
+        "atividades": [
+          "reproduzir_audio"
+        ]
+      },
+      {
+        "id": "TEC-016",
+        "nome": "Telefone residencial",
+        "grupo": "TEC",
+        "categoria": "comunicacao",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "disponivel",
+          "em_chamada"
+        ],
+        "atividades": [
+          "ligar",
+          "atender"
+        ]
+      },
+      {
+        "id": "TEC-017",
+        "nome": "Piano digital",
+        "grupo": "TEC",
+        "categoria": "instrumento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-017"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "tocar_instrumento"
+        ]
+      },
+      {
+        "id": "TEC-018",
+        "nome": "Violão",
+        "grupo": "TEC",
+        "categoria": "instrumento",
+        "ambientes": [
+          "AMB-002",
+          "AMB-017"
+        ],
+        "disponibilidade": "hotel_premium_residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "tocar_instrumento"
+        ]
+      },
+      {
+        "id": "TEC-019",
+        "nome": "Central de automação",
+        "grupo": "TEC",
+        "categoria": "automacao",
+        "ambientes": [
+          "AMB-018"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "online",
+          "offline"
+        ],
+        "atividades": [
+          "controlar_automacao"
+        ]
+      },
+      {
+        "id": "TEC-020",
+        "nome": "Hub Zigbee",
+        "grupo": "TEC",
+        "categoria": "automacao",
+        "ambientes": [
+          "AMB-018"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "online",
+          "offline"
+        ],
+        "atividades": [
+          "conectar_dispositivos"
+        ]
+      },
+      {
+        "id": "TEC-021",
+        "nome": "Painel de controle inteligente",
+        "grupo": "TEC",
+        "categoria": "automacao",
+        "ambientes": [
+          "AMB-001",
+          "AMB-006",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "controlar_iluminacao",
+          "controlar_cortinas",
+          "controlar_climatizacao"
+        ]
+      },
+      {
+        "id": "TEC-022",
+        "nome": "Sensor de presença",
+        "grupo": "TEC",
+        "categoria": "sensor",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-006",
+          "AMB-004"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ativo",
+          "inativo"
+        ],
+        "atividades": [
+          "detectar_presenca"
+        ]
+      },
+      {
+        "id": "TEC-023",
+        "nome": "Sensor de abertura",
+        "grupo": "TEC",
+        "categoria": "sensor",
+        "ambientes": [
+          "AMB-001",
+          "AMB-006",
+          "AMB-002"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "detectar_abertura"
+        ]
+      },
+      {
+        "id": "TEC-024",
+        "nome": "Controle de climatização",
+        "grupo": "TEC",
+        "categoria": "automacao",
+        "ambientes": [
+          "AMB-002",
+          "AMB-006",
+          "AMB-009",
+          "AMB-011"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ligado",
+          "desligado"
+        ],
+        "atividades": [
+          "regular_temperatura"
+        ]
+      },
+      {
+        "id": "TEC-025",
+        "nome": "Fechadura conectada",
+        "grupo": "TEC",
+        "categoria": "seguranca",
+        "ambientes": [
+          "AMB-001"
+        ],
+        "disponibilidade": "hotel_premium_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "trancada",
+          "destrancada"
+        ],
+        "atividades": [
+          "trancar",
+          "destrancar"
+        ]
+      },
+      {
+        "id": "TEC-026",
+        "nome": "Controle de iluminação",
+        "grupo": "TEC",
+        "categoria": "automacao",
+        "ambientes": [
+          "AMB-001",
+          "AMB-002",
+          "AMB-006"
+        ],
+        "disponibilidade": "hotel_residencia",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-10"
+        ],
+        "estados": [
+          "ativo",
+          "inativo"
+        ],
+        "atividades": [
+          "controlar_iluminacao"
+        ]
+      }
+    ],
+    "FIT": [
+      {
+        "id": "FIT-001",
+        "nome": "Esteira",
+        "grupo": "FIT",
+        "categoria": "cardio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "parada",
+          "caminhando",
+          "correndo"
+        ],
+        "atividades": [
+          "caminhar",
+          "correr"
+        ]
+      },
+      {
+        "id": "FIT-002",
+        "nome": "Bicicleta ergométrica",
+        "grupo": "FIT",
+        "categoria": "cardio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "parada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pedalar"
+        ]
+      },
+      {
+        "id": "FIT-003",
+        "nome": "Elíptico",
+        "grupo": "FIT",
+        "categoria": "cardio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "parado",
+          "em_uso"
+        ],
+        "atividades": [
+          "treinar_cardio"
+        ]
+      },
+      {
+        "id": "FIT-004",
+        "nome": "Remo ergométrico",
+        "grupo": "FIT",
+        "categoria": "cardio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "parado",
+          "em_uso"
+        ],
+        "atividades": [
+          "remar"
+        ]
+      },
+      {
+        "id": "FIT-005",
+        "nome": "Corda de pular",
+        "grupo": "FIT",
+        "categoria": "cardio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "pular_corda"
+        ]
+      },
+      {
+        "id": "FIT-006",
+        "nome": "Halteres",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardados",
+          "em_uso"
+        ],
+        "atividades": [
+          "levantar_peso"
+        ]
+      },
+      {
+        "id": "FIT-007",
+        "nome": "Barra olímpica",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "levantamento_peso"
+        ]
+      },
+      {
+        "id": "FIT-008",
+        "nome": "Anilhas",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardadas",
+          "instaladas"
+        ],
+        "atividades": [
+          "ajustar_carga"
+        ]
+      },
+      {
+        "id": "FIT-009",
+        "nome": "Banco de musculação",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "ocupado"
+        ],
+        "atividades": [
+          "supino",
+          "exercicio"
+        ]
+      },
+      {
+        "id": "FIT-010",
+        "nome": "Suporte de agachamento",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "em_uso"
+        ],
+        "atividades": [
+          "agachamento"
+        ]
+      },
+      {
+        "id": "FIT-011",
+        "nome": "Estação de cabos",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "em_uso"
+        ],
+        "atividades": [
+          "treinar_forca"
+        ]
+      },
+      {
+        "id": "FIT-012",
+        "nome": "Leg press",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "em_uso"
+        ],
+        "atividades": [
+          "treinar_pernas"
+        ]
+      },
+      {
+        "id": "FIT-013",
+        "nome": "Aparelho multifuncional",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-04",
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "livre",
+          "em_uso"
+        ],
+        "atividades": [
+          "treinar_forca"
+        ]
+      },
+      {
+        "id": "FIT-014",
+        "nome": "Kettlebell",
+        "grupo": "FIT",
+        "categoria": "musculacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "levantar_peso"
+        ]
+      },
+      {
+        "id": "FIT-015",
+        "nome": "Colchonete",
+        "grupo": "FIT",
+        "categoria": "alongamento",
+        "ambientes": [
+          "AMB-016",
+          "AMB-006"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardado",
+          "aberto",
+          "em_uso"
+        ],
+        "atividades": [
+          "alongar",
+          "abdominal"
+        ]
+      },
+      {
+        "id": "FIT-016",
+        "nome": "Bola de exercício",
+        "grupo": "FIT",
+        "categoria": "alongamento",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardada",
+          "em_uso"
+        ],
+        "atividades": [
+          "exercicio_funcional"
+        ]
+      },
+      {
+        "id": "FIT-017",
+        "nome": "Rolo de liberação miofascial",
+        "grupo": "FIT",
+        "categoria": "recuperacao",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-07",
+          "COMP-09"
+        ],
+        "estados": [
+          "guardado",
+          "em_uso"
+        ],
+        "atividades": [
+          "recuperacao_muscular"
+        ]
+      },
+      {
+        "id": "FIT-018",
+        "nome": "Espelho corporal",
+        "grupo": "FIT",
+        "categoria": "apoio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-06"
+        ],
+        "estados": [],
+        "atividades": [
+          "observar_postura"
+        ]
+      },
+      {
+        "id": "FIT-019",
+        "nome": "Suporte de toalhas",
+        "grupo": "FIT",
+        "categoria": "apoio",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "movel",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-01"
+        ],
+        "estados": [],
+        "atividades": [
+          "armazenar_toalhas"
+        ]
+      },
+      {
+        "id": "FIT-020",
+        "nome": "Armário de academia",
+        "grupo": "FIT",
+        "categoria": "armazenamento",
+        "ambientes": [
+          "AMB-016"
+        ],
+        "disponibilidade": "residencia_opcional",
+        "instalacao": "instalado",
+        "manipulavel": false,
+        "compatibilidade": [
+          "COMP-02",
+          "COMP-03"
+        ],
+        "estados": [
+          "aberto",
+          "fechado"
+        ],
+        "atividades": [
+          "guardar_equipamentos"
+        ]
+      }
+    ]
+  },
+  "resumo": {
+    "MOB": 35,
+    "ELP": 31,
+    "ILU": 14,
+    "ARQ": 15,
+    "OBJ": 58,
+    "TEC": 26,
+    "FIT": 20,
+    "total": 199
+  }
+}

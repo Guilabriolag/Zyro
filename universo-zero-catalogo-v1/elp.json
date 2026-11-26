@@ -1,0 +1,750 @@
+[
+  {
+    "id": "ELP-001",
+    "nome": "Geladeira French Door",
+    "grupo": "ELP",
+    "categoria": "refrigeracao",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "armazenar_alimentos",
+      "retirar_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-002",
+    "nome": "Geladeira Side by Side",
+    "grupo": "ELP",
+    "categoria": "refrigeracao",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "armazenar_alimentos",
+      "retirar_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-003",
+    "nome": "Frigobar",
+    "grupo": "ELP",
+    "categoria": "refrigeracao",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "armazenar_bebidas",
+      "retirar_bebidas"
+    ]
+  },
+  {
+    "id": "ELP-004",
+    "nome": "Freezer",
+    "grupo": "ELP",
+    "categoria": "refrigeracao",
+    "ambientes": [
+      "AMB-004",
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "armazenar_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-005",
+    "nome": "Cooktop",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "em_uso"
+    ],
+    "atividades": [
+      "cozinhar"
+    ]
+  },
+  {
+    "id": "ELP-006",
+    "nome": "Forno multifunção",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "em_uso"
+    ],
+    "atividades": [
+      "assar",
+      "aquecer"
+    ]
+  },
+  {
+    "id": "ELP-007",
+    "nome": "Micro-ondas",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "em_uso"
+    ],
+    "atividades": [
+      "aquecer_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-008",
+    "nome": "Lava-louças",
+    "grupo": "ELP",
+    "categoria": "limpeza",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-05"
+    ],
+    "estados": [
+      "desligada",
+      "lavando",
+      "finalizada"
+    ],
+    "atividades": [
+      "lavar_loucas"
+    ]
+  },
+  {
+    "id": "ELP-009",
+    "nome": "Coifa",
+    "grupo": "ELP",
+    "categoria": "exaustao",
+    "ambientes": [
+      "AMB-004",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "remover_fumaca"
+    ]
+  },
+  {
+    "id": "ELP-010",
+    "nome": "Cafeteira de cápsulas",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-004",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "preparando"
+    ],
+    "atividades": [
+      "preparar_cafe"
+    ]
+  },
+  {
+    "id": "ELP-011",
+    "nome": "Cafeteira espresso",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "preparando"
+    ],
+    "atividades": [
+      "preparar_espresso",
+      "vaporizador_leite"
+    ]
+  },
+  {
+    "id": "ELP-012",
+    "nome": "Chaleira elétrica",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "aquecendo"
+    ],
+    "atividades": [
+      "aquecer_agua"
+    ]
+  },
+  {
+    "id": "ELP-013",
+    "nome": "Torradeira",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "em_uso"
+    ],
+    "atividades": [
+      "torrar_pao"
+    ]
+  },
+  {
+    "id": "ELP-014",
+    "nome": "Liquidificador",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "em_uso"
+    ],
+    "atividades": [
+      "bater_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-015",
+    "nome": "Mixer",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "em_uso"
+    ],
+    "atividades": [
+      "misturar_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-016",
+    "nome": "Adega 46 garrafas",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-004",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "armazenar_vinhos"
+    ]
+  },
+  {
+    "id": "ELP-017",
+    "nome": "Adega 54 garrafas",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-004",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "armazenar_vinhos"
+    ]
+  },
+  {
+    "id": "ELP-018",
+    "nome": "Adega e cervejeira combinada",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-004",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "armazenar_vinhos",
+      "armazenar_latas"
+    ]
+  },
+  {
+    "id": "ELP-019",
+    "nome": "Cervejeira",
+    "grupo": "ELP",
+    "categoria": "bebidas",
+    "ambientes": [
+      "AMB-005",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "armazenar_bebidas"
+    ]
+  },
+  {
+    "id": "ELP-020",
+    "nome": "Churrasqueira gourmet",
+    "grupo": "ELP",
+    "categoria": "preparo",
+    "ambientes": [
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "desligada",
+      "acesa",
+      "em_uso"
+    ],
+    "atividades": [
+      "grelhar_alimentos"
+    ]
+  },
+  {
+    "id": "ELP-021",
+    "nome": "Máquina de lavar",
+    "grupo": "ELP",
+    "categoria": "lavanderia",
+    "ambientes": [
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-05"
+    ],
+    "estados": [
+      "desligada",
+      "lavando",
+      "finalizada"
+    ],
+    "atividades": [
+      "lavar_roupas"
+    ]
+  },
+  {
+    "id": "ELP-022",
+    "nome": "Secadora",
+    "grupo": "ELP",
+    "categoria": "lavanderia",
+    "ambientes": [
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "desligada",
+      "secando",
+      "finalizada"
+    ],
+    "atividades": [
+      "secar_roupas"
+    ]
+  },
+  {
+    "id": "ELP-023",
+    "nome": "Lava e seca",
+    "grupo": "ELP",
+    "categoria": "lavanderia",
+    "ambientes": [
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-05"
+    ],
+    "estados": [
+      "desligada",
+      "lavando",
+      "secando",
+      "finalizada"
+    ],
+    "atividades": [
+      "lavar_roupas",
+      "secar_roupas"
+    ]
+  },
+  {
+    "id": "ELP-024",
+    "nome": "Ferro de passar",
+    "grupo": "ELP",
+    "categoria": "lavanderia",
+    "ambientes": [
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "desligado",
+      "aquecendo",
+      "pronto"
+    ],
+    "atividades": [
+      "passar_roupas"
+    ]
+  },
+  {
+    "id": "ELP-025",
+    "nome": "Ferro vertical",
+    "grupo": "ELP",
+    "categoria": "lavanderia",
+    "ambientes": [
+      "AMB-014",
+      "AMB-007"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "desligado",
+      "aquecendo",
+      "pronto"
+    ],
+    "atividades": [
+      "passar_roupas"
+    ]
+  },
+  {
+    "id": "ELP-026",
+    "nome": "Robô aspirador",
+    "grupo": "ELP",
+    "categoria": "limpeza",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "parado",
+      "limpando",
+      "carregando"
+    ],
+    "atividades": [
+      "aspirar_piso"
+    ]
+  },
+  {
+    "id": "ELP-027",
+    "nome": "Robô aspirador com base autolimpante",
+    "grupo": "ELP",
+    "categoria": "limpeza",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "parado",
+      "limpando",
+      "autolimpando",
+      "carregando"
+    ],
+    "atividades": [
+      "aspirar_piso",
+      "passar_mop"
+    ]
+  },
+  {
+    "id": "ELP-028",
+    "nome": "Aquecedor/boiler",
+    "grupo": "ELP",
+    "categoria": "climatizacao",
+    "ambientes": [
+      "AMB-018",
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-05"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "aquecer_agua"
+    ]
+  },
+  {
+    "id": "ELP-029",
+    "nome": "Secador de cabelo",
+    "grupo": "ELP",
+    "categoria": "cuidados_pessoais",
+    "ambientes": [
+      "AMB-008",
+      "AMB-010",
+      "AMB-012"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "secar_cabelo"
+    ]
+  },
+  {
+    "id": "ELP-030",
+    "nome": "Barbeador elétrico",
+    "grupo": "ELP",
+    "categoria": "cuidados_pessoais",
+    "ambientes": [
+      "AMB-008",
+      "AMB-010",
+      "AMB-012"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "fazer_barba"
+    ]
+  },
+  {
+    "id": "ELP-031",
+    "nome": "Escova elétrica",
+    "grupo": "ELP",
+    "categoria": "cuidados_pessoais",
+    "ambientes": [
+      "AMB-008",
+      "AMB-010",
+      "AMB-012"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "escovar_dentes"
+    ]
+  }
+]

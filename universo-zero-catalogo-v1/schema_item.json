@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Universo Zero - Registro de inventário",
+  "type": "object",
+  "required": [
+    "id",
+    "nome",
+    "grupo",
+    "categoria",
+    "ambientes",
+    "disponibilidade",
+    "instalacao",
+    "manipulavel",
+    "compatibilidade",
+    "estados",
+    "atividades"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(MOB|ELP|ILU|ARQ|OBJ|TEC|FIT)-[0-9]{3}$"
+    },
+    "nome": {
+      "type": "string"
+    },
+    "grupo": {
+      "type": "string"
+    },
+    "categoria": {
+      "type": "string"
+    },
+    "ambientes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^AMB-[0-9]{3}$"
+      },
+      "uniqueItems": true
+    },
+    "disponibilidade": {
+      "type": "string",
+      "enum": [
+        "hotel_residencia",
+        "hotel_premium_residencia",
+        "hotel_residencia_opcional",
+        "hotel_premium_residencia_opcional",
+        "residencia_opcional"
+      ]
+    },
+    "instalacao": {
+      "type": "string",
+      "enum": [
+        "movel",
+        "fixa",
+        "instalado",
+        "transportavel"
+      ]
+    },
+    "manipulavel": {
+      "type": "boolean"
+    },
+    "compatibilidade": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^COMP-[0-9]{2}$"
+      }
+    },
+    "estados": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "atividades": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observacoes": {
+      "type": "string"
+    }
+  }
+}

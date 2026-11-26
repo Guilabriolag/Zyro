@@ -1,0 +1,381 @@
+[
+  {
+    "id": "ARQ-001",
+    "nome": "Porta de entrada",
+    "grupo": "ARQ",
+    "categoria": "porta",
+    "ambientes": [
+      "AMB-001"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberta",
+      "fechada",
+      "trancada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar",
+      "trancar"
+    ]
+  },
+  {
+    "id": "ARQ-002",
+    "nome": "Porta interna",
+    "grupo": "ARQ",
+    "categoria": "porta",
+    "ambientes": [
+      "AMB-001",
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-008",
+      "AMB-010",
+      "AMB-012",
+      "AMB-013",
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-003",
+    "nome": "Porta de correr",
+    "grupo": "ARQ",
+    "categoria": "porta",
+    "ambientes": [
+      "AMB-002",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-004",
+    "nome": "Janela",
+    "grupo": "ARQ",
+    "categoria": "janela",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-002",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-005",
+    "nome": "Janela motorizada",
+    "grupo": "ARQ",
+    "categoria": "janela",
+    "ambientes": [
+      "AMB-006",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06",
+      "COMP-10"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-006",
+    "nome": "Cortina",
+    "grupo": "ARQ",
+    "categoria": "cortina",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-007",
+    "nome": "Cortina motorizada",
+    "grupo": "ARQ",
+    "categoria": "cortina",
+    "ambientes": [
+      "AMB-006",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06",
+      "COMP-10"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar",
+      "automatizar"
+    ]
+  },
+  {
+    "id": "ARQ-008",
+    "nome": "Persiana",
+    "grupo": "ARQ",
+    "categoria": "persiana",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-009",
+    "nome": "Fechadura digital",
+    "grupo": "ARQ",
+    "categoria": "fechadura",
+    "ambientes": [
+      "AMB-001"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "trancada",
+      "destrancada"
+    ],
+    "atividades": [
+      "trancar",
+      "destrancar"
+    ]
+  },
+  {
+    "id": "ARQ-010",
+    "nome": "Box de vidro",
+    "grupo": "ARQ",
+    "categoria": "box",
+    "ambientes": [
+      "AMB-008",
+      "AMB-010",
+      "AMB-012"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-011",
+    "nome": "Escada interna",
+    "grupo": "ARQ",
+    "categoria": "circulacao",
+    "ambientes": [
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07"
+    ],
+    "estados": [
+      "disponivel"
+    ],
+    "atividades": [
+      "subir",
+      "descer"
+    ]
+  },
+  {
+    "id": "ARQ-012",
+    "nome": "Guarda-corpo",
+    "grupo": "ARQ",
+    "categoria": "protecao",
+    "ambientes": [
+      "AMB-002",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [],
+    "atividades": []
+  },
+  {
+    "id": "ARQ-013",
+    "nome": "Porta de armário",
+    "grupo": "ARQ",
+    "categoria": "porta_armario",
+    "ambientes": [
+      "AMB-004",
+      "AMB-007",
+      "AMB-008",
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar"
+    ]
+  },
+  {
+    "id": "ARQ-014",
+    "nome": "Gaveta",
+    "grupo": "ARQ",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-004",
+      "AMB-007",
+      "AMB-008",
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-03"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar",
+      "guardar",
+      "retirar"
+    ]
+  },
+  {
+    "id": "ARQ-015",
+    "nome": "Porta de vidro automatizada",
+    "grupo": "ARQ",
+    "categoria": "porta",
+    "ambientes": [
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06",
+      "COMP-10"
+    ],
+    "estados": [
+      "aberta",
+      "fechada"
+    ],
+    "atividades": [
+      "abrir",
+      "fechar",
+      "automatizar"
+    ]
+  }
+]

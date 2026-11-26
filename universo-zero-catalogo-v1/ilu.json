@@ -1,0 +1,345 @@
+[
+  {
+    "id": "ILU-001",
+    "nome": "Luz central",
+    "grupo": "ILU",
+    "categoria": "luz_principal",
+    "ambientes": [
+      "AMB-001",
+      "AMB-002",
+      "AMB-003",
+      "AMB-004",
+      "AMB-006",
+      "AMB-007",
+      "AMB-008",
+      "AMB-009",
+      "AMB-010",
+      "AMB-011",
+      "AMB-012",
+      "AMB-013",
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "dimerizada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-002",
+    "nome": "Abajur",
+    "grupo": "ILU",
+    "categoria": "luz_apoio",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-003",
+    "nome": "Arandela",
+    "grupo": "ILU",
+    "categoria": "luz_apoio",
+    "ambientes": [
+      "AMB-006",
+      "AMB-002",
+      "AMB-001"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-004",
+    "nome": "Pendente LED",
+    "grupo": "ILU",
+    "categoria": "luz_decorativa",
+    "ambientes": [
+      "AMB-002",
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "dimerizado"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-005",
+    "nome": "Pendente decorativo",
+    "grupo": "ILU",
+    "categoria": "luz_decorativa",
+    "ambientes": [
+      "AMB-004",
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-006",
+    "nome": "Lustre LED",
+    "grupo": "ILU",
+    "categoria": "luz_decorativa",
+    "ambientes": [
+      "AMB-002",
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "dimerizado"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-007",
+    "nome": "Luminária de mesa",
+    "grupo": "ILU",
+    "categoria": "luz_apoio",
+    "ambientes": [
+      "AMB-015",
+      "AMB-006"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-008",
+    "nome": "Luminária de piso",
+    "grupo": "ILU",
+    "categoria": "luz_apoio",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-009",
+    "nome": "Fita LED",
+    "grupo": "ILU",
+    "categoria": "luz_ambiente",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-007",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "dimerizada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-010",
+    "nome": "Iluminação de closet",
+    "grupo": "ILU",
+    "categoria": "luz_funcional",
+    "ambientes": [
+      "AMB-007"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-011",
+    "nome": "Espelho iluminado",
+    "grupo": "ILU",
+    "categoria": "luz_funcional",
+    "ambientes": [
+      "AMB-008",
+      "AMB-010",
+      "AMB-012"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-012",
+    "nome": "Iluminação externa",
+    "grupo": "ILU",
+    "categoria": "luz_externa",
+    "ambientes": [
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-013",
+    "nome": "Iluminação de bancada",
+    "grupo": "ILU",
+    "categoria": "luz_funcional",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  },
+  {
+    "id": "ILU-014",
+    "nome": "Iluminação cênica",
+    "grupo": "ILU",
+    "categoria": "luz_ambiente",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "dimerizada"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  }
+]

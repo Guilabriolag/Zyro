@@ -1,0 +1,643 @@
+[
+  {
+    "id": "TEC-001",
+    "nome": "Computador desktop",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015",
+      "AMB-006"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "trabalhar",
+      "estudar",
+      "pesquisar",
+      "procurar_emprego",
+      "conversar",
+      "videochamada"
+    ]
+  },
+  {
+    "id": "TEC-002",
+    "nome": "Notebook",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015",
+      "AMB-006",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "trabalhar",
+      "estudar",
+      "pesquisar",
+      "procurar_emprego",
+      "conversar"
+    ]
+  },
+  {
+    "id": "TEC-003",
+    "nome": "Monitor adicional",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "exibir_conteudo"
+    ]
+  },
+  {
+    "id": "TEC-004",
+    "nome": "Webcam",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "videochamada"
+    ]
+  },
+  {
+    "id": "TEC-005",
+    "nome": "Microfone",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015",
+      "AMB-017"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "gravar_audio",
+      "conversar"
+    ]
+  },
+  {
+    "id": "TEC-006",
+    "nome": "Impressora",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligada",
+      "desligada",
+      "imprimindo"
+    ],
+    "atividades": [
+      "imprimir_documentos"
+    ]
+  },
+  {
+    "id": "TEC-007",
+    "nome": "Scanner",
+    "grupo": "TEC",
+    "categoria": "informatica",
+    "ambientes": [
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado",
+      "digitalizando"
+    ],
+    "atividades": [
+      "digitalizar_documentos"
+    ]
+  },
+  {
+    "id": "TEC-008",
+    "nome": "Roteador Wi-Fi",
+    "grupo": "TEC",
+    "categoria": "rede",
+    "ambientes": [
+      "AMB-018"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "fornecer_rede"
+    ]
+  },
+  {
+    "id": "TEC-009",
+    "nome": "Nobreak",
+    "grupo": "TEC",
+    "categoria": "energia",
+    "ambientes": [
+      "AMB-015",
+      "AMB-018"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ativo",
+      "inativo"
+    ],
+    "atividades": [
+      "protejer_equipamentos"
+    ]
+  },
+  {
+    "id": "TEC-010",
+    "nome": "Televisão",
+    "grupo": "TEC",
+    "categoria": "entretenimento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "assistir_tv"
+    ]
+  },
+  {
+    "id": "TEC-011",
+    "nome": "Home theater",
+    "grupo": "TEC",
+    "categoria": "entretenimento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-017"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "reproduzir_audio"
+    ]
+  },
+  {
+    "id": "TEC-012",
+    "nome": "Videogame",
+    "grupo": "TEC",
+    "categoria": "entretenimento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-017"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "jogar"
+    ]
+  },
+  {
+    "id": "TEC-013",
+    "nome": "Projetor",
+    "grupo": "TEC",
+    "categoria": "entretenimento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-017"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "projetar_filme"
+    ]
+  },
+  {
+    "id": "TEC-014",
+    "nome": "Sistema de som",
+    "grupo": "TEC",
+    "categoria": "audio",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "ouvir_musica"
+    ]
+  },
+  {
+    "id": "TEC-015",
+    "nome": "Caixa acústica",
+    "grupo": "TEC",
+    "categoria": "audio",
+    "ambientes": [
+      "AMB-002",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligada",
+      "desligada"
+    ],
+    "atividades": [
+      "reproduzir_audio"
+    ]
+  },
+  {
+    "id": "TEC-016",
+    "nome": "Telefone residencial",
+    "grupo": "TEC",
+    "categoria": "comunicacao",
+    "ambientes": [
+      "AMB-001",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "disponivel",
+      "em_chamada"
+    ],
+    "atividades": [
+      "ligar",
+      "atender"
+    ]
+  },
+  {
+    "id": "TEC-017",
+    "nome": "Piano digital",
+    "grupo": "TEC",
+    "categoria": "instrumento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-017"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "tocar_instrumento"
+    ]
+  },
+  {
+    "id": "TEC-018",
+    "nome": "Violão",
+    "grupo": "TEC",
+    "categoria": "instrumento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-017"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [
+      "guardado",
+      "em_uso"
+    ],
+    "atividades": [
+      "tocar_instrumento"
+    ]
+  },
+  {
+    "id": "TEC-019",
+    "nome": "Central de automação",
+    "grupo": "TEC",
+    "categoria": "automacao",
+    "ambientes": [
+      "AMB-018"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "online",
+      "offline"
+    ],
+    "atividades": [
+      "controlar_automacao"
+    ]
+  },
+  {
+    "id": "TEC-020",
+    "nome": "Hub Zigbee",
+    "grupo": "TEC",
+    "categoria": "automacao",
+    "ambientes": [
+      "AMB-018"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "online",
+      "offline"
+    ],
+    "atividades": [
+      "conectar_dispositivos"
+    ]
+  },
+  {
+    "id": "TEC-021",
+    "nome": "Painel de controle inteligente",
+    "grupo": "TEC",
+    "categoria": "automacao",
+    "ambientes": [
+      "AMB-001",
+      "AMB-006",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "controlar_iluminacao",
+      "controlar_cortinas",
+      "controlar_climatizacao"
+    ]
+  },
+  {
+    "id": "TEC-022",
+    "nome": "Sensor de presença",
+    "grupo": "TEC",
+    "categoria": "sensor",
+    "ambientes": [
+      "AMB-001",
+      "AMB-002",
+      "AMB-006",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ativo",
+      "inativo"
+    ],
+    "atividades": [
+      "detectar_presenca"
+    ]
+  },
+  {
+    "id": "TEC-023",
+    "nome": "Sensor de abertura",
+    "grupo": "TEC",
+    "categoria": "sensor",
+    "ambientes": [
+      "AMB-001",
+      "AMB-006",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "detectar_abertura"
+    ]
+  },
+  {
+    "id": "TEC-024",
+    "nome": "Controle de climatização",
+    "grupo": "TEC",
+    "categoria": "automacao",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ligado",
+      "desligado"
+    ],
+    "atividades": [
+      "regular_temperatura"
+    ]
+  },
+  {
+    "id": "TEC-025",
+    "nome": "Fechadura conectada",
+    "grupo": "TEC",
+    "categoria": "seguranca",
+    "ambientes": [
+      "AMB-001"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "trancada",
+      "destrancada"
+    ],
+    "atividades": [
+      "trancar",
+      "destrancar"
+    ]
+  },
+  {
+    "id": "TEC-026",
+    "nome": "Controle de iluminação",
+    "grupo": "TEC",
+    "categoria": "automacao",
+    "ambientes": [
+      "AMB-001",
+      "AMB-002",
+      "AMB-006"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-10"
+    ],
+    "estados": [
+      "ativo",
+      "inativo"
+    ],
+    "atividades": [
+      "controlar_iluminacao"
+    ]
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "AMB-001",
+    "nome": "Hall de entrada",
+    "descricao": "Entrada do apartamento"
+  },
+  {
+    "id": "AMB-002",
+    "nome": "Living",
+    "descricao": "Sala de estar"
+  },
+  {
+    "id": "AMB-003",
+    "nome": "Sala de jantar",
+    "descricao": "Área social"
+  },
+  {
+    "id": "AMB-004",
+    "nome": "Cozinha",
+    "descricao": "Área de preparo"
+  },
+  {
+    "id": "AMB-005",
+    "nome": "Varanda gourmet",
+    "descricao": "Área externa"
+  },
+  {
+    "id": "AMB-006",
+    "nome": "Suíte máster",
+    "descricao": "Dormitório principal"
+  },
+  {
+    "id": "AMB-007",
+    "nome": "Closet",
+    "descricao": "Área de roupas"
+  },
+  {
+    "id": "AMB-008",
+    "nome": "Banheiro máster",
+    "descricao": "Banheiro principal"
+  },
+  {
+    "id": "AMB-009",
+    "nome": "Suíte 2",
+    "descricao": "Dormitório"
+  },
+  {
+    "id": "AMB-010",
+    "nome": "Banheiro suíte 2",
+    "descricao": "Banheiro"
+  },
+  {
+    "id": "AMB-011",
+    "nome": "Suíte 3",
+    "descricao": "Dormitório"
+  },
+  {
+    "id": "AMB-012",
+    "nome": "Banheiro suíte 3",
+    "descricao": "Banheiro"
+  },
+  {
+    "id": "AMB-013",
+    "nome": "Lavabo",
+    "descricao": "Área social"
+  },
+  {
+    "id": "AMB-014",
+    "nome": "Área de serviço",
+    "descricao": "Lavanderia"
+  },
+  {
+    "id": "AMB-015",
+    "nome": "Escritório integrado",
+    "descricao": "Ambiente existente ou área adaptada"
+  },
+  {
+    "id": "AMB-016",
+    "nome": "Academia integrada",
+    "descricao": "Ambiente existente ou área adaptada"
+  },
+  {
+    "id": "AMB-017",
+    "nome": "Entretenimento integrado",
+    "descricao": "Living ou ambiente adaptado"
+  },
+  {
+    "id": "AMB-018",
+    "nome": "Área técnica",
+    "descricao": "Equipamentos e automação"
+  }
+]

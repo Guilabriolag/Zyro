@@ -1,0 +1,815 @@
+[
+  {
+    "id": "MOB-001",
+    "nome": "Cama king",
+    "grupo": "MOB",
+    "categoria": "cama",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "ocupada",
+      "em_uso"
+    ],
+    "atividades": [
+      "dormir",
+      "deitar",
+      "levantar"
+    ]
+  },
+  {
+    "id": "MOB-002",
+    "nome": "Cama super king",
+    "grupo": "MOB",
+    "categoria": "cama",
+    "ambientes": [
+      "AMB-006"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "ocupada",
+      "em_uso"
+    ],
+    "atividades": [
+      "dormir",
+      "deitar",
+      "levantar"
+    ]
+  },
+  {
+    "id": "MOB-003",
+    "nome": "Criado-mudo",
+    "grupo": "MOB",
+    "categoria": "apoio",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-004",
+    "nome": "Cômoda",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-007"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "gavetas_abertas",
+      "gavetas_fechadas"
+    ],
+    "atividades": [
+      "guardar",
+      "retirar"
+    ]
+  },
+  {
+    "id": "MOB-005",
+    "nome": "Guarda-roupa",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar_roupa",
+      "retirar_roupa"
+    ]
+  },
+  {
+    "id": "MOB-006",
+    "nome": "Closet modulado",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-007"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "organizar_roupas"
+    ]
+  },
+  {
+    "id": "MOB-007",
+    "nome": "Penteadeira",
+    "grupo": "MOB",
+    "categoria": "apoio",
+    "ambientes": [
+      "AMB-006",
+      "AMB-007"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-03"
+    ],
+    "estados": [],
+    "atividades": [
+      "cuidar_aparencia"
+    ]
+  },
+  {
+    "id": "MOB-008",
+    "nome": "Poltrona de leitura",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupada"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar",
+      "ler"
+    ]
+  },
+  {
+    "id": "MOB-009",
+    "nome": "Escrivaninha",
+    "grupo": "MOB",
+    "categoria": "trabalho",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "trabalhar",
+      "estudar"
+    ]
+  },
+  {
+    "id": "MOB-010",
+    "nome": "Cadeira de escritório",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-015",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupada"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar"
+    ]
+  },
+  {
+    "id": "MOB-011",
+    "nome": "Sofá modular",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupado"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar",
+      "socializar"
+    ]
+  },
+  {
+    "id": "MOB-012",
+    "nome": "Poltrona",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupada"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar"
+    ]
+  },
+  {
+    "id": "MOB-013",
+    "nome": "Mesa de centro",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-014",
+    "nome": "Mesa lateral",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011",
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-015",
+    "nome": "Rack",
+    "grupo": "MOB",
+    "categoria": "apoio",
+    "ambientes": [
+      "AMB-002"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-02"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos",
+      "armazenar"
+    ]
+  },
+  {
+    "id": "MOB-016",
+    "nome": "Painel de TV",
+    "grupo": "MOB",
+    "categoria": "suporte",
+    "ambientes": [
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04"
+    ],
+    "estados": [],
+    "atividades": [
+      "suportar_tv"
+    ]
+  },
+  {
+    "id": "MOB-017",
+    "nome": "Estante",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-015"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02"
+    ],
+    "estados": [
+      "slots_livres",
+      "slots_ocupados"
+    ],
+    "atividades": [
+      "guardar_livros",
+      "retirar_livros"
+    ]
+  },
+  {
+    "id": "MOB-018",
+    "nome": "Aparador",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-002",
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-019",
+    "nome": "Buffet",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01",
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "portas_abertas",
+      "portas_fechadas"
+    ],
+    "atividades": [
+      "servir",
+      "guardar"
+    ]
+  },
+  {
+    "id": "MOB-020",
+    "nome": "Mesa de jantar",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "servir",
+      "comer"
+    ]
+  },
+  {
+    "id": "MOB-021",
+    "nome": "Cadeira de jantar",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupada"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar",
+      "comer"
+    ]
+  },
+  {
+    "id": "MOB-022",
+    "nome": "Ilha de cozinha",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "preparar_alimentos",
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-023",
+    "nome": "Bancada de cozinha",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-004",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "preparar_alimentos",
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-024",
+    "nome": "Armário planejado",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-004",
+      "AMB-008",
+      "AMB-010",
+      "AMB-012",
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar",
+      "retirar"
+    ]
+  },
+  {
+    "id": "MOB-025",
+    "nome": "Gaveteiro",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-006",
+      "AMB-007",
+      "AMB-015",
+      "AMB-004"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-03"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar",
+      "retirar"
+    ]
+  },
+  {
+    "id": "MOB-026",
+    "nome": "Banqueta",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-004",
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupada"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar"
+    ]
+  },
+  {
+    "id": "MOB-027",
+    "nome": "Mesa externa",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos",
+      "servir"
+    ]
+  },
+  {
+    "id": "MOB-028",
+    "nome": "Cadeira externa",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-005"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08"
+    ],
+    "estados": [
+      "livre",
+      "ocupada"
+    ],
+    "atividades": [
+      "sentar",
+      "levantar"
+    ]
+  },
+  {
+    "id": "MOB-029",
+    "nome": "Armário de lavanderia",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar_produtos",
+      "retirar_produtos"
+    ]
+  },
+  {
+    "id": "MOB-030",
+    "nome": "Bancada de lavanderia",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-014"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos",
+      "dobrar_roupas"
+    ]
+  },
+  {
+    "id": "MOB-031",
+    "nome": "Banco de cama",
+    "grupo": "MOB",
+    "categoria": "assento",
+    "ambientes": [
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-08",
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "sentar",
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-032",
+    "nome": "Sapateira",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-007",
+      "AMB-001"
+    ],
+    "disponibilidade": "hotel_premium_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar_calcados",
+      "retirar_calcados"
+    ]
+  },
+  {
+    "id": "MOB-033",
+    "nome": "Mesa de apoio",
+    "grupo": "MOB",
+    "categoria": "superficie",
+    "ambientes": [
+      "AMB-001",
+      "AMB-002",
+      "AMB-006",
+      "AMB-009",
+      "AMB-011"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "apoiar_objetos"
+    ]
+  },
+  {
+    "id": "MOB-034",
+    "nome": "Prateleira",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-002",
+      "AMB-015",
+      "AMB-004",
+      "AMB-007"
+    ],
+    "disponibilidade": "hotel_residencia",
+    "instalacao": "fixa",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02"
+    ],
+    "estados": [],
+    "atividades": [
+      "armazenar"
+    ]
+  },
+  {
+    "id": "MOB-035",
+    "nome": "Louceiro",
+    "grupo": "MOB",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-003"
+    ],
+    "disponibilidade": "hotel_premium_residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar_loucas",
+      "retirar_loucas"
+    ]
+  }
+]

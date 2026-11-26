@@ -1,0 +1,52 @@
+[
+  {
+    "id": "COMP-01",
+    "nome": "Superfície",
+    "descricao": "Pode ser apoiado sobre mesa, bancada ou superfície compatível."
+  },
+  {
+    "id": "COMP-02",
+    "nome": "Armazenamento",
+    "descricao": "Pode ser guardado em compartimento ou móvel de armazenamento."
+  },
+  {
+    "id": "COMP-03",
+    "nome": "Gaveta",
+    "descricao": "Compatível com slots internos de gaveta."
+  },
+  {
+    "id": "COMP-04",
+    "nome": "Energia elétrica",
+    "descricao": "Exige alimentação elétrica."
+  },
+  {
+    "id": "COMP-05",
+    "nome": "Instalação hidráulica",
+    "descricao": "Exige ponto de água e/ou drenagem."
+  },
+  {
+    "id": "COMP-06",
+    "nome": "Instalação arquitetônica",
+    "descricao": "Depende de vão, parede, esquadria ou elemento construtivo."
+  },
+  {
+    "id": "COMP-07",
+    "nome": "Espaço de circulação",
+    "descricao": "Precisa de área livre para posicionamento ou circulação."
+  },
+  {
+    "id": "COMP-08",
+    "nome": "Assento",
+    "descricao": "Permite interação de sentar e levantar."
+  },
+  {
+    "id": "COMP-09",
+    "nome": "Uso corporal",
+    "descricao": "Permite interação física do personagem com o equipamento."
+  },
+  {
+    "id": "COMP-10",
+    "nome": "Rede e automação",
+    "descricao": "Exige conectividade ou integração com sistema inteligente."
+  }
+]

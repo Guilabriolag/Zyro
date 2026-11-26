@@ -1,0 +1,465 @@
+[
+  {
+    "id": "FIT-001",
+    "nome": "Esteira",
+    "grupo": "FIT",
+    "categoria": "cardio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "parada",
+      "caminhando",
+      "correndo"
+    ],
+    "atividades": [
+      "caminhar",
+      "correr"
+    ]
+  },
+  {
+    "id": "FIT-002",
+    "nome": "Bicicleta ergométrica",
+    "grupo": "FIT",
+    "categoria": "cardio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "parada",
+      "em_uso"
+    ],
+    "atividades": [
+      "pedalar"
+    ]
+  },
+  {
+    "id": "FIT-003",
+    "nome": "Elíptico",
+    "grupo": "FIT",
+    "categoria": "cardio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "parado",
+      "em_uso"
+    ],
+    "atividades": [
+      "treinar_cardio"
+    ]
+  },
+  {
+    "id": "FIT-004",
+    "nome": "Remo ergométrico",
+    "grupo": "FIT",
+    "categoria": "cardio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "parado",
+      "em_uso"
+    ],
+    "atividades": [
+      "remar"
+    ]
+  },
+  {
+    "id": "FIT-005",
+    "nome": "Corda de pular",
+    "grupo": "FIT",
+    "categoria": "cardio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardada",
+      "em_uso"
+    ],
+    "atividades": [
+      "pular_corda"
+    ]
+  },
+  {
+    "id": "FIT-006",
+    "nome": "Halteres",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardados",
+      "em_uso"
+    ],
+    "atividades": [
+      "levantar_peso"
+    ]
+  },
+  {
+    "id": "FIT-007",
+    "nome": "Barra olímpica",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardada",
+      "em_uso"
+    ],
+    "atividades": [
+      "levantamento_peso"
+    ]
+  },
+  {
+    "id": "FIT-008",
+    "nome": "Anilhas",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardadas",
+      "instaladas"
+    ],
+    "atividades": [
+      "ajustar_carga"
+    ]
+  },
+  {
+    "id": "FIT-009",
+    "nome": "Banco de musculação",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "ocupado"
+    ],
+    "atividades": [
+      "supino",
+      "exercicio"
+    ]
+  },
+  {
+    "id": "FIT-010",
+    "nome": "Suporte de agachamento",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "em_uso"
+    ],
+    "atividades": [
+      "agachamento"
+    ]
+  },
+  {
+    "id": "FIT-011",
+    "nome": "Estação de cabos",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "em_uso"
+    ],
+    "atividades": [
+      "treinar_forca"
+    ]
+  },
+  {
+    "id": "FIT-012",
+    "nome": "Leg press",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "em_uso"
+    ],
+    "atividades": [
+      "treinar_pernas"
+    ]
+  },
+  {
+    "id": "FIT-013",
+    "nome": "Aparelho multifuncional",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-04",
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "livre",
+      "em_uso"
+    ],
+    "atividades": [
+      "treinar_forca"
+    ]
+  },
+  {
+    "id": "FIT-014",
+    "nome": "Kettlebell",
+    "grupo": "FIT",
+    "categoria": "musculacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardado",
+      "em_uso"
+    ],
+    "atividades": [
+      "levantar_peso"
+    ]
+  },
+  {
+    "id": "FIT-015",
+    "nome": "Colchonete",
+    "grupo": "FIT",
+    "categoria": "alongamento",
+    "ambientes": [
+      "AMB-016",
+      "AMB-006"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardado",
+      "aberto",
+      "em_uso"
+    ],
+    "atividades": [
+      "alongar",
+      "abdominal"
+    ]
+  },
+  {
+    "id": "FIT-016",
+    "nome": "Bola de exercício",
+    "grupo": "FIT",
+    "categoria": "alongamento",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardada",
+      "em_uso"
+    ],
+    "atividades": [
+      "exercicio_funcional"
+    ]
+  },
+  {
+    "id": "FIT-017",
+    "nome": "Rolo de liberação miofascial",
+    "grupo": "FIT",
+    "categoria": "recuperacao",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-07",
+      "COMP-09"
+    ],
+    "estados": [
+      "guardado",
+      "em_uso"
+    ],
+    "atividades": [
+      "recuperacao_muscular"
+    ]
+  },
+  {
+    "id": "FIT-018",
+    "nome": "Espelho corporal",
+    "grupo": "FIT",
+    "categoria": "apoio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-06"
+    ],
+    "estados": [],
+    "atividades": [
+      "observar_postura"
+    ]
+  },
+  {
+    "id": "FIT-019",
+    "nome": "Suporte de toalhas",
+    "grupo": "FIT",
+    "categoria": "apoio",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "movel",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-01"
+    ],
+    "estados": [],
+    "atividades": [
+      "armazenar_toalhas"
+    ]
+  },
+  {
+    "id": "FIT-020",
+    "nome": "Armário de academia",
+    "grupo": "FIT",
+    "categoria": "armazenamento",
+    "ambientes": [
+      "AMB-016"
+    ],
+    "disponibilidade": "residencia_opcional",
+    "instalacao": "instalado",
+    "manipulavel": false,
+    "compatibilidade": [
+      "COMP-02",
+      "COMP-03"
+    ],
+    "estados": [
+      "aberto",
+      "fechado"
+    ],
+    "atividades": [
+      "guardar_equipamentos"
+    ]
+  }
+]

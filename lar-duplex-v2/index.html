@@ -16,7 +16,6 @@ canvas{display:block;position:absolute;inset:0;touch-action:none}
 h1{margin:0;font:700 14px ui-monospace,monospace;letter-spacing:.14em;color:var(--ac)}
 h1 small{display:block;font-size:10px;color:#93a5bc;letter-spacing:.06em;margin-top:2px}
 #loc-badge{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--ac);font:700 11px ui-monospace,monospace;color:var(--gold)}
-
 #controls-top{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:14px;z-index:15;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:56vw}
 button{border:1px solid var(--ac);background:var(--panel);color:var(--fg);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation}
 button.on{background:var(--ac);color:#04121c}
@@ -36,37 +35,52 @@ button:active{transform:scale(.96)}
 #legend{position:absolute;left:14px;bottom:calc(154px + env(safe-area-inset-bottom,0px));z-index:8;background:var(--panel);border:1px solid rgba(95,208,160,.3);border-radius:12px;padding:8px 10px;font-size:10px;line-height:1.45;color:#bfd0e4;pointer-events:none}
 #legend b{color:var(--gold);display:block;margin-bottom:2px;font-family:ui-monospace,monospace}
 @media(max-width:640px){#legend{display:none}}
+
+/* ===== STATUS DO INVENTÁRIO MESTRE ===== */
+#uz-catalog-status{
+  position:absolute;
+  top:calc(78px + env(safe-area-inset-top,0px));
+  left:14px;
+  z-index:20;
+  max-width:75vw;
+  padding:7px 11px;
+  border-radius:9px;
+  background:rgba(8,14,24,.94);
+  border:1px solid rgba(95,208,160,.4);
+  color:#f5c518;
+  font:700 10px ui-monospace,monospace;
+  pointer-events:none;
+}
 </style>
+
 </head>
 <body>
-
 <div id="hud-top">
   <h1>LAR DUPLEX · V2<small>PLANTA COMPLETA · 8 AMBIENTES · PRÉDIO + ELEVADOR</small></h1>
   <div id="loc-badge">TÉRREO · ENTRADA DO PRÉDIO</div>
 </div>
-
 <div id="controls-top">
   <button id="btn-cam" class="on">CÂMERA: 3ª PESSOA</button>
   <button id="btn-lbl" class="on">RÓTULOS: ON</button>
   <button id="btn-go-lobby">TÉRREO</button>
   <button id="btn-go-apt">APARTAMENTO</button>
 </div>
-
 <div id="legend">
   <b>CONTROLES</b>
   WASD / Setas ou Analógico: Andar<br>
   Arrastar tela: Girar câmera · Scroll/Pinça: Zoom<br>
   Tecla E ou Botão Dourado: Porta / Elevador
 </div>
-
 <div id="joy"><div id="knob"></div></div>
-
 <div id="act-wrap">
   <div id="st">CAMINHE ATÉ A PORTA DO PRÉDIO</div>
   <button id="act" disabled>LIVRE</button>
 </div>
-
 <div id="fade">ELEVADOR PRIVATIVO · SUBINDO...</div>
+
+<div id="uz-catalog-status">
+  INVENTÁRIO: AGUARDANDO CARREGAMENTO...
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="catalogo_loader.js"></script>
@@ -671,6 +685,41 @@ function updateLocationBadge(){
   cam.lookAt(camTarget.x,0.9,camTarget.z);
 
   renderer.render(scene,cam);
+})();
+
+/* ===== CONFIRMAÇÃO DO INVENTÁRIO MESTRE ===== */
+(function(){
+  const status = document.getElementById('uz-catalog-status');
+
+  function atualizar(texto, cor){
+    status.textContent = texto;
+    status.style.color = cor;
+  }
+
+  if(!window.UZCatalogReady){
+    atualizar(
+      'ERRO: CARREGADOR NÃO ENCONTRADO',
+      '#ff5555'
+    );
+    return;
+  }
+
+  window.UZCatalogReady
+    .then(function(catalogo){
+      atualizar(
+        'INVENTÁRIO CARREGADO: ' +
+        catalogo.total +
+        ' ITENS | V' +
+        catalogo.versao,
+        '#55dd88'
+      );
+    })
+    .catch(function(erro){
+      atualizar(
+        'ERRO NO INVENTÁRIO: ' + erro.message,
+        '#ff5555'
+      );
+    });
 })();
 </script>
 </body>

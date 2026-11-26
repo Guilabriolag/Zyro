@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UNIVERSO ZERO · LAR DUPLEX V2 · Planta Baixa Completa</title>
+<style>
+:root{
+  --bg1:#0c1524;--bg2:#05080f;--fg:#e8f6ff;--ac:#5fd0a0;--gold:#f5c518;
+  --panel:rgba(8,14,24,.92);--chip:rgba(95,208,160,.15);
+}
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none}
+html,body{height:100%;margin:0;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--fg);background:radial-gradient(circle at 50% 35%,var(--bg1),var(--bg2))}
+canvas{display:block;position:absolute;inset:0;touch-action:none}
+#hud-top{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));left:14px;z-index:10;pointer-events:none}
+h1{margin:0;font:700 14px ui-monospace,monospace;letter-spacing:.14em;color:var(--ac)}
+h1 small{display:block;font-size:10px;color:#93a5bc;letter-spacing:.06em;margin-top:2px}
+#loc-badge{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--ac);font:700 11px ui-monospace,monospace;color:var(--gold)}
+#controls-top{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:14px;z-index:15;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:56vw}
+button{border:1px solid var(--ac);background:var(--panel);color:var(--fg);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:600;cursor:pointer;touch-action:manipulation}
+button.on{background:var(--ac);color:#04121c}
+button:active{transform:scale(.96)}
+
+#joy{position:absolute;z-index:10;left:calc(18px + env(safe-area-inset-left,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;background:var(--chip);border:2px solid var(--ac);touch-action:none}
+#knob{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px 0 0 -25px;border-radius:50%;background:var(--ac);opacity:.9}
+
+#act-wrap{position:absolute;z-index:10;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#st{font:11px ui-monospace,monospace;color:var(--ac);background:var(--panel);padding:5px 10px;border-radius:10px;border:1px solid rgba(95,208,160,.35);text-align:right;max-width:65vw}
+#act{width:76px;height:76px;border-radius:50%;background:var(--gold);color:#04121c;border:2px solid #fff;font-weight:800;font-size:11px;box-shadow:0 4px 16px rgba(0,0,0,.45)}
+#act:disabled{opacity:.45;background:#263242;color:#93a5bc;border-color:#44556b}
+
+#fade{position:fixed;inset:0;z-index:40;background:#040810;opacity:0;pointer-events:none;transition:opacity .35s ease;display:flex;align-items:center;justify-content:center;font:700 14px ui-monospace,monospace;letter-spacing:.15em;color:var(--ac)}
+#fade.on{opacity:1;pointer-events:auto}
+
+#legend{position:absolute;left:14px;bottom:calc(154px + env(safe-area-inset-bottom,0px));z-index:8;background:var(--panel);border:1px solid rgba(95,208,160,.3);border-radius:12px;padding:8px 10px;font-size:10px;line-height:1.45;color:#bfd0e4;pointer-events:none}
+#legend b{color:var(--gold);display:block;margin-bottom:2px;font-family:ui-monospace,monospace}
+@media(max-width:640px){#legend{display:none}}
+
+/* ===== STATUS DO INVENTÁRIO MESTRE ===== */
+#uz-catalog-status{
+  position:absolute;
+  top:calc(78px + env(safe-area-inset-top,0px));
+  left:14px;
+  z-index:20;
+  max-width:75vw;
+  padding:7px 11px;
+  border-radius:9px;
+  background:rgba(8,14,24,.94);
+  border:1px solid rgba(95,208,160,.4);
+  color:#f5c518;
+  font:700 10px ui-monospace,monospace;
+  pointer-events:none;
+}
+</style>
+
+</head>
+<body>
+<div id="hud-top">
+  <h1>LAR DUPLEX · V2<small>PLANTA COMPLETA · 8 AMBIENTES · PRÉDIO + ELEVADOR</small></h1>
+  <div id="loc-badge">TÉRREO · ENTRADA DO PRÉDIO</div>
+</div>
+<div id="controls-top">
+  <button id="btn-cam" class="on">CÂMERA: 3ª PESSOA</button>
+  <button id="btn-lbl" class="on">RÓTULOS: ON</button>
+  <button id="btn-go-lobby">TÉRREO</button>
+  <button id="btn-go-apt">APARTAMENTO</button>
+</div>
+<div id="legend">
+  <b>CONTROLES</b>
+  WASD / Setas ou Analógico: Andar<br>
+  Arrastar tela: Girar câmera · Scroll/Pinça: Zoom<br>
+  Tecla E ou Botão Dourado: Porta / Elevador
+</div>
+<div id="joy"><div id="knob"></div></div>
+<div id="act-wrap">
+  <div id="st">CAMINHE ATÉ A PORTA DO PRÉDIO</div>
+  <button id="act" disabled>LIVRE</button>
+</div>
+<div id="fade">ELEVADOR PRIVATIVO · SUBINDO...</div>
+
+<div id="uz-catalog-status">
+  INVENTÁRIO: AGUARDANDO CARREGAMENTO...
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="catalogo_loader.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const lerp=(a,b,k)=>a+(b-a)*k;
+
+/* ===== CENA E RENDERER ===== */
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+document.body.prepend(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x09111e);
+scene.fog=new THREE.Fog(0x09111e,45,120);
+
+const cam=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,180);
+const hemi=new THREE.HemisphereLight(0xe6f2ff,0x243042,1.05);
+const sun=new THREE.DirectionalLight(0xfff5e4,1.15);
+sun.position.set(18,32,20);
+const fill=new THREE.DirectionalLight(0x7cc6ff,0.45);
+fill.position.set(-18,20,-16);
+scene.add(hemi,sun,fill);
+
+const mat=(c,r=0.75,m=0.05,op=1)=>{
+  const o=new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+  if(op<1){o.transparent=true;o.opacity=op;}
+  return o;
+};
+const box=(w,h,d,m,x=0,y=0,z=0)=>{
+  const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
+  o.position.set(x,y,z);
+  return o;
+};
+
+/* ===== CHÃO GERAL ===== */
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),mat(0x131c28,0.95));
+ground.rotation.x=-Math.PI/2;
+ground.position.y=-0.02;
+scene.add(ground);
+
+const grid=new THREE.GridHelper(140,70,0x1f3a52,0x142436);
+grid.position.y=0.005;
+scene.add(grid);
+
+/* ===== SISTEMA DE PAREDES, COLISÕES, PORTAS E RÓTULOS ===== */
+const WALLS=[];
+const COLLIDERS=[];
+const DOORS=[];
+const LABELS=[];
+const POIS=[];
+
+function addLabel(text,x,y,z,sub=""){
+  const c=document.createElement('canvas');
+  c.width=512;c.height=96;
+  const g=c.getContext('2d');
+  g.fillStyle='rgba(7,14,24,0.84)';
+  g.strokeStyle='#5fd0a0';
+  g.lineWidth=3;
+  g.beginPath();
+  g.roundRect(16,10,480,76,18);
+  g.fill();g.stroke();
+  g.fillStyle='#f5c518';
+  g.font='700 25px ui-monospace, monospace';
+  g.textAlign='center';
+  g.fillText(text.toUpperCase(),256,sub?44:56);
+  if(sub){
+    g.fillStyle='#a8c0d8';
+    g.font='500 17px system-ui, sans-serif';
+    g.fillText(sub,256,72);
+  }
+  const tex=new THREE.CanvasTexture(c);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  sp.scale.set(4.1,0.76,1);
+  sp.position.set(x,y,z);
+  sp.renderOrder=10;
+  scene.add(sp);
+  LABELS.push(sp);
+  return sp;
+}
+
+function addWall(parent,x,z,w,d,h=2.8,color=0xd9e1e8,collide=true){
+  const wm=mat(color,0.8,0.05,1);
+  const m=box(w,h,d,wm,x,h/2,z);
+  const edges=new THREE.LineSegments(
+    new THREE.EdgesGeometry(m.geometry),
+    new THREE.LineBasicMaterial({color:0x4b627a,transparent:true,opacity:0.45})
+  );
+  m.add(edges);
+  parent.add(m);
+  const col=collide?{x0:x-w/2,z0:z-d/2,x1:x+w/2,z1:z+d/2,active:true}:null;
+  if(col)COLLIDERS.push(col);
+  WALLS.push({mesh:m,mat:wm,h,x,z,w,d});
+  return {mesh:m,col};
+}
+
+function addDoor(parent,hingeX,hingeZ,width,height,axis='x',dir=1,color=0x3a6b8c){
+  const pivot=new THREE.Group();
+  pivot.position.set(hingeX,0,hingeZ);
+  parent.add(pivot);
+
+  const leafW=axis==='x'?width:0.09;
+  const leafD=axis==='z'?width:0.09;
+  const offX=axis==='x'?(width/2)*dir:0;
+  const offZ=axis==='z'?(width/2)*dir:0;
+
+  const leaf=box(leafW,height,leafD,mat(color,0.45,0.2),offX,height/2,offZ);
+  const handle=box(0.06,0.14,0.06,mat(0xf5c518,0.3,0.7),
+    axis==='x'?(width-0.14)*dir:0.06,
+    1.0,
+    axis==='z'?(width-0.14)*dir:0.06
+  );
+  pivot.add(leaf,handle);
+
+  const cx=hingeX+offX, cz=hingeZ+offZ;
+  const col={
+    x0:cx-(axis==='x'?width/2:0.14),
+    z0:cz-(axis==='z'?width/2:0.14),
+    x1:cx+(axis==='x'?width/2:0.14),
+    z1:cz+(axis==='z'?width/2:0.14),
+    active:true
+  };
+  COLLIDERS.push(col);
+
+  const dObj={pivot,open:false,ang:0,col,dir};
+  DOORS.push(dObj);
+  return dObj;
+}
+
+/* =====================================================================
+   BLOCO 1: TÉRREO DO PRÉDIO (ENTRADA + HALL + ELEVADOR) -> Centro em (0, 0)
+   ===================================================================== */
+const lobbyG=new THREE.Group();
+scene.add(lobbyG);
+
+lobbyG.add(box(12,0.06,4,mat(0x283444,0.9),0,0.03,7));
+lobbyG.add(box(10,0.08,10,mat(0xc8d2dc,0.6),0,0.04,0));
+lobbyG.add(box(2.4,0.09,4.2,mat(0x2d6e5e,0.85),0,0.045,2.8));
+
+addWall(lobbyG,-2.85,5,4.3,0.24,3.2,0x8ea0b2);
+addWall(lobbyG,2.85,5,4.3,0.24,3.2,0x8ea0b2);
+addWall(lobbyG,0,5,1.4,0.24,0.9,0x8ea0b2,false).mesh.position.y=2.75;
+
+addWall(lobbyG,-5,0,0.24,10.24,3.2,0x8ea0b2);
+addWall(lobbyG,5,0,0.24,10.24,3.2,0x8ea0b2);
+addWall(lobbyG,0,-5,10.24,0.24,3.2,0x8ea0b2);
+
+const entryDoor=addDoor(lobbyG,-0.7,5,1.4,2.25,'x',1,0x3c8dad);
+
+addWall(lobbyG,-1.3,-3.7,0.2,2.2,3.2,0x495869);
+addWall(lobbyG,1.3,-3.7,0.2,2.2,3.2,0x495869);
+addWall(lobbyG,0,-4.7,2.4,0.2,3.2,0x495869);
+lobbyG.add(box(2.2,0.1,2.0,mat(0x3a4756,0.4,0.5),0,0.06,-3.7));
+
+const elevDoorL=addDoor(lobbyG,-0.7,-2.6,0.7,2.2,'x',1,0x7d8fa1);
+const elevDoorR=addDoor(lobbyG,0.7,-2.6,0.7,2.2,'x',-1,0x7d8fa1);
+elevDoorR.dir=-1;
+
+lobbyG.add(box(0.24,0.42,0.08,mat(0x162230,0.3,0.6),1.15,1.35,-2.52));
+lobbyG.add(box(0.08,0.08,0.04,new THREE.MeshBasicMaterial({color:0x5fd0a0}),1.15,1.35,-2.48));
+
+addLabel("Entrada do Prédio",0,3.6,5.3,"Térreo · Acesso Principal");
+addLabel("Elevador · Térreo",0,3.5,-3.6,"Subir para o Lar Duplex");
+
+/* =====================================================================
+   BLOCO 2: LAR DUPLEX V2 — PLANTA COMPLETA (8 AMBIENTES)
+   Centro de referência em (38, 0)
+   Faixa de X: 28 a 48 (20m de largura)
+   Faixa de Z: -9 a +8 (17m de profundidade)
+
+   Setor Esquerdo / Oeste (X: 28..35.5):
+   - Hall Privativo & Elevador : X 28..32,   Z -9..-5.5
+   - Suíte Máster + Closet + Banho: X 28..35.5, Z -5.5..+0.5
+   - Varanda Gourmet           : X 28..35.5, Z +0.5..+8.0
+
+   Setor Central (X: 32..39.5, Z -9..-5.5):
+   - Lavabo                     : X 32..35.5, Z -9..-5.5
+   - Suíte 2 (+ Banho privativo): X 35.5..39.5, Z -9..-5.5
+
+   Setor Principal / Centro-Sul (X: 35.5..43.5):
+   - Living / Jantar            : X 35.5..43.5, Z -5.5..+4.5
+
+   Setor Direito / Leste (X: 43.5..48):
+   - Suíte 3 (+ Banho privativo): X 39.5..48,   Z -9..-3.5
+   - Cozinha                    : X 43.5..48,   Z -3.5..+2.5
+   - Área de Serviço            : X 43.5..48,   Z +2.5..+8.0
+   ===================================================================== */
+const aptG=new THREE.Group();
+scene.add(aptG);
+
+// Laje geral da unidade
+aptG.add(box(20.4,0.12,17.4,mat(0x1e2938,0.85),38, -0.04, -0.5));
+
+const floorTile=(x,z,w,d,col)=>aptG.add(box(w,0.05,d,mat(col,0.75),x,0.025,z));
+
+// Pisos por ambiente (com Galeria/Circulação livre conectando tudo sem becos sem saída)
+floorTile(30.0,-7.25,3.8,3.3,0xbec8d1); // Hall Privativo
+floorTile(33.75,-7.25,3.3,3.3,0xd6dee6); // Lavabo
+floorTile(37.5,-7.25,3.8,3.3,0xc7ac86); // Suíte 2
+floorTile(43.75,-6.6,8.3,4.6,0xc5aa84);  // Suíte 3
+floorTile(35.5,-4.5,15.0,1.9,0xd0d8e0); // Galeria / Circulação interna
+floorTile(31.75,-1.0,7.3,4.8,0xc2a47c);  // Suíte Máster + Closet + Banho
+floorTile(39.5,0.5,7.8,7.8,0xc9ae88);   // Living / Jantar
+floorTile(31.75,4.75,7.3,6.3,0x9fb8c4);  // Varanda Gourmet
+floorTile(45.75,-1.0,4.3,6.2,0xdce4ea);  // Cozinha
+floorTile(45.75,5.0,4.3,5.8,0xb8cad6);   // Área de Serviço
+
+const WH=2.7, EXT=0.22, INT=0.16;
+const C_EXT=0xd8e0e8, C_INT=0xe9eff5;
+
+// --- PAREDES EXTERNAS GERAIS (X: 28..48, Z: -9..+8) ---
+addWall(aptG,38,-9,20.22,EXT,WH,C_EXT);    // Norte (fundos)
+addWall(aptG,41.75,8,12.72,EXT,WH,C_EXT);  // Sul (Living / Cozinha / Serviço)
+addWall(aptG,28,-4.75,EXT,8.72,WH,C_EXT);  // Oeste superior (Hall + Suíte Máster)
+addWall(aptG,48,-0.5,EXT,17.22,WH,C_EXT);  // Leste (direita)
+
+// --- 1. HALL PRIVATIVO & ELEVADOR (X: 28..32, Z: -9..-5.5) ---
+addWall(aptG,31.4,-8.2,INT,1.4,WH,0x495869);
+const aptElevL=addDoor(aptG,29.6,-7.4,0.7,2.2,'x',1,0x7d8fa1);
+const aptElevR=addDoor(aptG,31.0,-7.4,0.7,2.2,'x',-1,0x7d8fa1);
+aptElevR.dir=-1;
+
+// Parede leste do Hall (X=32, Z: -9..-5.5)
+addWall(aptG,32,-7.25,INT,3.5,WH,C_INT);
+// Parede sul do Hall (Z=-5.5, X: 28..32) com abertura ampla de 1.5m para a Galeria
+addWall(aptG,28.6, -5.5, 1.2, INT, WH, C_INT);
+addWall(aptG,31.4, -5.5, 1.2, INT, WH, C_INT);
+addWall(aptG,30.0, -5.5, 1.6, 0.5, WH, C_INT, false).mesh.position.y=2.45;
+const hallDoor=addDoor(aptG,29.2,-5.5,1.6,2.2,'x',1,0x8a5a2b);
+
+// --- 2. LAVABO (X: 32..35.5, Z: -9..-5.5) ---
+addWall(aptG,35.5,-7.25,INT,3.5,WH,C_INT);
+addWall(aptG,32.55,-5.5,1.1,INT,WH,C_INT);
+addWall(aptG,34.85,-5.5,0.9,INT,WH,C_INT);
+addWall(aptG,33.75,-5.5,1.4,0.5,WH,C_INT,false).mesh.position.y=2.45;
+const lavaboDoor=addDoor(aptG,33.1,-5.5,1.3,2.2,'x',1,0x8a5a2b);
+
+// --- 3. SUÍTE 2 (X: 35.5..39.5, Z: -9..-5.5) ---
+addWall(aptG,39.5,-7.25,INT,3.5,WH,C_INT);
+addWall(aptG,36.1,-5.5,1.2,INT,WH,C_INT);
+addWall(aptG,38.8,-5.5,1.2,INT,WH,C_INT);
+addWall(aptG,37.45,-5.5,1.5,0.5,WH,C_INT,false).mesh.position.y=2.45;
+const suite2Door=addDoor(aptG,36.7,-5.5,1.5,2.2,'x',1,0x8a5a2b);
+
+// --- 4. SUÍTE 3 (X: 39.5..48, Z: -9..-4.2) ---
+// Divisória horizontal Z=-4.2 entre Suíte 3 e Galeria/Cozinha
+addWall(aptG,40.4,-4.2,1.8,INT,WH,C_INT);
+addWall(aptG,45.2,-4.2,5.6,INT,WH,C_INT);
+addWall(aptG,41.8,-4.2,1.0,0.5,WH,C_INT,false).mesh.position.y=2.45;
+const suite3Door=addDoor(aptG,41.3,-4.2,1.0,2.2,'x',1,0x8a5a2b);
+
+// --- 5. SUÍTE MÁSTER + CLOSET + BANHEIRO (X: 28..35.5, Z: -3.5..+1.5) ---
+// Parede norte da Suíte Máster em Z=-3.5 (deixando a Galeria Z=-5.5..-3.5 livre!)
+addWall(aptG,28.8,-3.5,1.6,INT,WH,C_INT);
+addWall(aptG,33.5,-3.5,4.0,INT,WH,C_INT);
+addWall(aptG,30.55,-3.5,1.9,0.5,WH,C_INT,false).mesh.position.y=2.45;
+const masterDoor=addDoor(aptG,29.6,-3.5,1.9,2.2,'x',1,0x8a5a2b);
+
+// Banheiro interno da Suíte Máster (X: 28..30.3, Z: -3.5..-0.5)
+addWall(aptG,30.3,-2.0,INT,3.0,WH,C_INT);
+addWall(aptG,29.15,-0.5,2.3,INT,WH,C_INT);
+
+// Divisória sul da Suíte Máster em Z=+1.5 (abertura ampla para a Varanda Gourmet)
+addWall(aptG,29.2,1.5,2.4,INT,WH,C_INT);
+addWall(aptG,34.4,1.5,2.2,INT,WH,C_INT);
+
+// --- 6. LIVING / JANTAR (X: 35.5..43.5, Z: -3.5..+4.5) ---
+// Divisória vertical X=35.5 entre Suíte Máster/Varanda e Living (com vão amplo de 3.2m em Z: -1.2..+2.0)
+addWall(aptG,35.5,-2.35,INT,2.3,WH,C_INT);
+addWall(aptG,35.5,3.25,INT,2.5,WH,C_INT);
+
+// Parede sul do Living em Z=+4.5 (com vão aberto para Varanda Gourmet em X: 35.5..38.0)
+addWall(aptG,40.75,4.5,5.5,INT,WH,C_INT);
+
+// --- 7. VARANDA GOURMET (X: 28..35.5, Z: +1.5..+8.0) ---
+addWall(aptG,31.75,8.0,7.5,0.16,1.05,0x6495b8);
+addWall(aptG,28.0,4.75,0.16,6.5,1.05,0x6495b8);
+
+// --- 8. COZINHA (X: 43.5..48, Z: -4.2..+2.2) E ÁREA DE SERVIÇO (X: 43.5..48, Z: +2.2..+8.0) ---
+// Divisória X=43.5 entre Living e Cozinha/Serviço (com passagem aberta em Z: -2.0..+1.2)
+addWall(aptG,43.5,-3.1,INT,2.2,WH,C_INT);
+addWall(aptG,43.5,2.6,INT,2.8,WH,C_INT);
+addWall(aptG,43.5,6.5,INT,3.0,WH,C_INT);
+
+// Divisória Z=+2.2 entre Cozinha e Área de Serviço (com porta de 1.3m)
+addWall(aptG,44.2,2.2,1.4,INT,WH,C_INT);
+addWall(aptG,47.2,2.2,1.6,INT,WH,C_INT);
+addWall(aptG,45.65,2.2,1.5,0.5,WH,C_INT,false).mesh.position.y=2.45;
+const serviceDoor=addDoor(aptG,44.9,2.2,1.5,2.2,'x',1,0x8a5a2b);
+
+// Rótulos dos ambientes
+addLabel("Hall Privativo",30.0,3.1,-6.8,"Elevador Social");
+addLabel("Lavabo",33.75,3.1,-7.2,"Social");
+addLabel("Suíte 2",37.5,3.1,-7.2,"Dormitório + Banho");
+addLabel("Suíte 3",43.75,3.1,-6.5,"Dormitório + Banho");
+addLabel("Suíte Máster + Closet",32.5,3.1,-1.2,"Dormitório + Banheira");
+addLabel("Living / Jantar",39.5,3.1,0.5,"Estar + Jantar 8 Lugares");
+addLabel("Varanda Gourmet",31.75,3.1,4.8,"Churrasqueira + Mesa");
+addLabel("Cozinha",45.75,3.1,-1.0,"Ilha + Indução");
+addLabel("Área de Serviço",45.75,3.1,5.0,"Tanque + Lavanderia");
+
+/* =====================================================================
+   PONTOS DE INTERAÇÃO (PORTAS E ELEVADORES)
+   ===================================================================== */
+function toggleDoorObj(d,labelOn,labelOff){
+  d.open=!d.open;
+  d.col.active=!d.open;
+  setStatus(d.open?labelOn:labelOff);
+}
+
+let transitioning=false;
+function useElevator(targetFloor){
+  if(transitioning)return;
+  transitioning=true;
+  const fade=$('fade');
+  fade.textContent=targetFloor==='apt'
+    ?'ELEVADOR PRIVATIVO · SUBINDO PARA O LAR DUPLEX V2...'
+    :'ELEVADOR PRIVATIVO · DESCENDO PARA O TÉRREO...';
+  fade.classList.add('on');
+  setStatus('ELEVADOR EM MOVIMENTO...');
+
+  setTimeout(()=>{
+    if(targetFloor==='apt'){
+      player.x=30.3;
+      player.z=-6.2;
+      player.rot=0;
+      aptElevL.open=true;aptElevL.col.active=false;
+      aptElevR.open=true;aptElevR.col.active=false;
+      $('loc-badge').textContent='LAR DUPLEX V2 · HALL PRIVATIVO';
+      setStatus('CHEGOU AO LAR DUPLEX V2 · EXPLORE OS 8 AMBIENTES');
+    }else{
+      player.x=0;
+      player.z=-1.6;
+      player.rot=0;
+      elevDoorL.open=true;elevDoorL.col.active=false;
+      elevDoorR.open=true;elevDoorR.col.active=false;
+      $('loc-badge').textContent='TÉRREO · HALL DO PRÉDIO';
+      setStatus('CHEGOU AO TÉRREO');
+    }
+    camTarget.x=player.x;
+    camTarget.z=player.z;
+    setTimeout(()=>{
+      fade.classList.remove('on');
+      transitioning=false;
+    },320);
+  },650);
+}
+
+POIS.push(
+  {x:0,z:5.0,r:1.5,label:'PORTA PRÉDIO',fn:()=>toggleDoorObj(entryDoor,'PORTA DO PRÉDIO ABERTA','PORTA DO PRÉDIO FECHADA')},
+  {x:0,z:-2.2,r:1.4,label:'SUBIR ELEVADOR',fn:()=>useElevator('apt')},
+  {x:30.3,z:-6.5,r:1.4,label:'DESCER TÉRREO',fn:()=>useElevator('lobby')},
+  {x:30.0,z:-5.5,r:1.4,label:'PORTA HALL',fn:()=>toggleDoorObj(hallDoor,'PORTA DO HALL ABERTA','PORTA DO HALL FECHADA')},
+  {x:33.75,z:-5.5,r:1.4,label:'PORTA LAVABO',fn:()=>toggleDoorObj(lavaboDoor,'PORTA DO LAVABO ABERTA','PORTA DO LAVABO FECHADA')},
+  {x:37.45,z:-5.5,r:1.4,label:'PORTA SUÍTE 2',fn:()=>toggleDoorObj(suite2Door,'PORTA DA SUÍTE 2 ABERTA','PORTA DA SUÍTE 2 FECHADA')},
+  {x:41.8,z:-4.2,r:1.4,label:'PORTA SUÍTE 3',fn:()=>toggleDoorObj(suite3Door,'PORTA DA SUÍTE 3 ABERTA','PORTA DA SUÍTE 3 FECHADA')},
+  {x:30.55,z:-3.5,r:1.5,label:'PORTA MÁSTER',fn:()=>toggleDoorObj(masterDoor,'PORTA DA SUÍTE MÁSTER ABERTA','PORTA DA SUÍTE MÁSTER FECHADA')},
+  {x:45.65,z:2.2,r:1.4,label:'PORTA SERVIÇO',fn:()=>toggleDoorObj(serviceDoor,'PORTA DA ÁREA DE SERVIÇO ABERTA','PORTA DA ÁREA DE SERVIÇO FECHADA')}
+);
+
+/* =====================================================================
+   PERSONAGEM SIMPLES (TIC-TAC MINIMALISTA)
+   ===================================================================== */
+const avatar=new THREE.Group();
+scene.add(avatar);
+const bodyM=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.28,0.95,24),mat(0x5fd0a0,0.4));
+bodyM.position.y=0.75;
+const headTop=new THREE.Mesh(new THREE.SphereGeometry(0.28,24,16),mat(0x5fd0a0,0.4));
+headTop.position.y=1.225;
+const headBot=new THREE.Mesh(new THREE.SphereGeometry(0.28,24,16),mat(0x5fd0a0,0.4));
+headBot.position.y=0.275;
+const visor=box(0.32,0.12,0.12,mat(0x09111e,0.2),0,1.15,0.24);
+avatar.add(bodyM,headTop,headBot,visor);
+
+const player={x:0,z:7.2,rot:Math.PI,radius:0.34,speed:4.5};
+avatar.position.set(player.x,0,player.z);
+
+function resolveCollisions(){
+  const r=player.radius;
+  for(const c of COLLIDERS){
+    if(!c.active)continue;
+    const cx=Math.max(c.x0,Math.min(player.x,c.x1));
+    const cz=Math.max(c.z0,Math.min(player.z,c.z1));
+    const dx=player.x-cx, dz=player.z-cz;
+    const d=Math.hypot(dx,dz);
+    if(d<r){
+      if(d>1e-5){
+        player.x+=dx/d*(r-d);
+        player.z+=dz/d*(r-d);
+      }else{
+        const pen=[player.x-c.x0,c.x1-player.x,player.z-c.z0,c.z1-player.z];
+        const m=Math.min(...pen);
+        const i=pen.indexOf(m);
+        if(i===0)player.x=c.x0-r;
+        else if(i===1)player.x=c.x1+r;
+        else if(i===2)player.z=c.z0-r;
+        else player.z=c.z1+r;
+      }
+    }
+  }
+}
+
+/* =====================================================================
+   CONTROLES
+   ===================================================================== */
+const keys={w:0,a:0,s:0,d:0};
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(k==='w'||k==='arrowup')keys.w=1;
+  if(k==='s'||k==='arrowdown')keys.s=1;
+  if(k==='a'||k==='arrowleft')keys.a=1;
+  if(k==='d'||k==='arrowright')keys.d=1;
+  if(k==='e')triggerNearest();
+});
+addEventListener('keyup',e=>{
+  const k=e.key.toLowerCase();
+  if(k==='w'||k==='arrowup')keys.w=0;
+  if(k==='s'||k==='arrowdown')keys.s=0;
+  if(k==='a'||k==='arrowleft')keys.a=0;
+  if(k==='d'||k==='arrowright')keys.d=0;
+});
+
+const joy=$('joy'),knob=$('knob');
+let jv={x:0,y:0},jid=null;
+function moveJoy(e){
+  const r=joy.getBoundingClientRect();
+  let dx=e.clientX-(r.left+r.width/2);
+  let dy=e.clientY-(r.top+r.height/2);
+  const max=r.width/2-25;
+  const m=Math.hypot(dx,dy);
+  if(m>max){dx*=max/m;dy*=max/m;}
+  knob.style.transform=`translate(${dx}px,${dy}px)`;
+  jv.x=dx/max;jv.y=dy/max;
+}
+joy.onpointerdown=e=>{jid=e.pointerId;joy.setPointerCapture(jid);moveJoy(e);};
+joy.onpointermove=e=>{if(e.pointerId===jid)moveJoy(e);};
+const endJoy=e=>{if(e.pointerId===jid){jid=null;jv.x=0;jv.y=0;knob.style.transform='';}};
+joy.onpointerup=endJoy;joy.onpointercancel=endJoy;
+
+let yaw=0,pitch=0.68,dist=15,pinch=null;
+const ptrs=new Map();
+const cvs=renderer.domElement;
+cvs.addEventListener('pointerdown',e=>{cvs.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,[e.clientX,e.clientY]);});
+cvs.addEventListener('pointermove',e=>{
+  if(!ptrs.has(e.pointerId))return;
+  const p=ptrs.get(e.pointerId);
+  if(ptrs.size===1){
+    yaw-=(e.clientX-p[0])*0.007;
+    pitch=Math.max(0.18,Math.min(1.44,pitch+(e.clientY-p[1])*0.005));
+  }
+  ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+  if(ptrs.size===2){
+    const [a,b]=[...ptrs.values()];
+    const d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+    if(pinch)dist=Math.max(5,Math.min(34,dist*pinch/d));
+    pinch=d;
+  }
+});
+const endPtr=e=>{ptrs.delete(e.pointerId);pinch=null;};
+cvs.addEventListener('pointerup',endPtr);cvs.addEventListener('pointercancel',endPtr);
+cvs.addEventListener('wheel',e=>{dist=Math.max(5,Math.min(34,dist+e.deltaY*0.008));});
+
+let topView=false,showLabels=true,nearestPoi=null;
+function setStatus(t){$('st').textContent=t;}
+
+$('btn-cam').onclick=()=>{
+  topView=!topView;
+  $('btn-cam').textContent=topView?'CÂMERA: PLANTA TOPO':'CÂMERA: 3ª PESSOA';
+  if(topView){pitch=1.44;dist=24;}else{pitch=0.68;dist=15;}
+};
+$('btn-lbl').onclick=()=>{
+  showLabels=!showLabels;
+  $('btn-lbl').textContent='RÓTULOS: '+(showLabels?'ON':'OFF');
+  LABELS.forEach(l=>l.visible=showLabels);
+};
+$('btn-go-lobby').onclick=()=>{
+  player.x=0;player.z=6.8;player.rot=Math.PI;
+  camTarget.x=player.x;camTarget.z=player.z;
+  $('loc-badge').textContent='TÉRREO · ENTRADA DO PRÉDIO';
+  setStatus('TELEPORTADO PARA O TÉRREO');
+};
+$('btn-go-apt').onclick=()=>{
+  player.x=30.3;player.z=-6.2;player.rot=0;
+  camTarget.x=player.x;camTarget.z=player.z;
+  $('loc-badge').textContent='LAR DUPLEX V2 · HALL PRIVATIVO';
+  setStatus('TELEPORTADO PARA O APARTAMENTO');
+};
+
+function triggerNearest(){
+  if(nearestPoi && !transitioning)nearestPoi.fn();
+}
+$('act').onclick=triggerNearest;
+
+addEventListener('resize',()=>{
+  renderer.setSize(innerWidth,innerHeight);
+  cam.aspect=innerWidth/innerHeight;
+  cam.updateProjectionMatrix();
+});
+
+const clock=new THREE.Clock();
+const camTarget={x:player.x,z:player.z};
+
+function updateLocationBadge(){
+  if(player.x>25){
+    let room='HALL PRIVATIVO';
+    if(player.z<-5.5 && player.x<32)room='HALL PRIVATIVO';
+    else if(player.z<-5.5 && player.x>=32 && player.x<35.5)room='LAVABO';
+    else if(player.z<-5.5 && player.x>=35.5 && player.x<39.5)room='SUÍTE 2';
+    else if(player.z<-4.2 && player.x>=39.5)room='SUÍTE 3';
+    else if(player.z>=-5.5 && player.z<-3.5 && player.x<43.5)room='CIRCULAÇÃO / GALERIA';
+    else if(player.z>=-3.5 && player.z<1.5 && player.x<35.5)room='SUÍTE MÁSTER + CLOSET';
+    else if(player.z>=1.5 && player.x<35.5)room='VARANDA GOURMET';
+    else if(player.z>=-3.5 && player.z<4.5 && player.x>=35.5 && player.x<43.5)room='LIVING / JANTAR';
+    else if(player.z>=-4.2 && player.z<2.2 && player.x>=43.5)room='COZINHA';
+    else if(player.z>=2.2 && player.x>=43.5)room='ÁREA DE SERVIÇO';
+    $('loc-badge').textContent='LAR DUPLEX V2 · '+room;
+  }else{
+    const inLobby=(player.x>-5 && player.x<5 && player.z>-5 && player.z<5);
+    $('loc-badge').textContent=inLobby?'TÉRREO · HALL DO PRÉDIO':'TÉRREO · CALÇADA EXTERNA';
+  }
+}
+
+(function loop(){
+  requestAnimationFrame(loop);
+  const dt=Math.min(clock.getDelta(),0.05);
+
+  if(!transitioning){
+    let ix=jv.x+keys.d-keys.a;
+    let iy=jv.y+keys.s-keys.w;
+    const mag=Math.hypot(ix,iy);
+    if(mag>1){ix/=mag;iy/=mag;}
+
+    if(mag>0.05){
+      const sy=Math.sin(yaw),cy=Math.cos(yaw);
+      const vx=cy*ix+sy*iy;
+      const vz=-sy*ix+cy*iy;
+      player.x+=vx*player.speed*dt;
+      player.z+=vz*player.speed*dt;
+      resolveCollisions();
+      const targetRot=Math.atan2(vx,vz);
+      const diff=((targetRot-player.rot+Math.PI*3)%(Math.PI*2))-Math.PI;
+      player.rot+=diff*Math.min(1,dt*14);
+      avatar.position.y=Math.abs(Math.sin(performance.now()*0.012))*0.06;
+    }else{
+      avatar.position.y=lerp(avatar.position.y,0,dt*10);
+    }
+  }
+
+  avatar.position.x=player.x;
+  avatar.position.z=player.z;
+  avatar.rotation.y=player.rot;
+  updateLocationBadge();
+
+  for(const d of DOORS){
+    const targetAng=d.open?(-1.45*(d.dir||1)):0;
+    d.ang=lerp(d.ang,targetAng,Math.min(1,dt*8));
+    d.pivot.rotation.y=d.ang;
+  }
+
+  const insideLobby=(player.x>-5 && player.x<5 && player.z>-5 && player.z<5);
+  const insideApt=(player.x>28 && player.x<48 && player.z>-9 && player.z<8);
+  for(const w of WALLS){
+    const isAptWall=w.x>20;
+    const dim=(isAptWall && insideApt) || (!isAptWall && insideLobby) || topView;
+    const targetH=topView?0.45:w.h;
+    w.mesh.scale.y=lerp(w.mesh.scale.y,targetH/w.h,Math.min(1,dt*10));
+    w.mesh.position.y=(w.h*w.mesh.scale.y)/2;
+    const targetOp=dim?0.34:1.0;
+    if(Math.abs(w.mat.opacity-targetOp)>0.01){
+      w.mat.transparent=targetOp<0.99;
+      w.mat.opacity=lerp(w.mat.opacity,targetOp,Math.min(1,dt*10));
+      w.mat.needsUpdate=true;
+    }
+  }
+
+  nearestPoi=null;
+  let bestD=1e9;
+  for(const p of POIS){
+    const d=Math.hypot(player.x-p.x,player.z-p.z);
+    if(d<=p.r && d<bestD){bestD=d;nearestPoi=p;}
+  }
+  const actBtn=$('act');
+  if(nearestPoi){
+    actBtn.disabled=false;
+    actBtn.textContent=nearestPoi.label;
+    if(!transitioning)setStatus('APERTE [E] OU TOQUE PARA: '+nearestPoi.label);
+  }else{
+    actBtn.disabled=true;
+    actBtn.textContent='LIVRE';
+  }
+
+  const kc=1-Math.exp(-dt*7);
+  camTarget.x+=(player.x-camTarget.x)*kc;
+  camTarget.z+=(player.z-camTarget.z)*kc;
+
+  cam.position.set(
+    camTarget.x+Math.sin(yaw)*Math.cos(pitch)*dist,
+    1.1+Math.sin(pitch)*dist,
+    camTarget.z+Math.cos(yaw)*Math.cos(pitch)*dist
+  );
+  cam.lookAt(camTarget.x,0.9,camTarget.z);
+
+  renderer.render(scene,cam);
+})();
+
+/* ===== CONFIRMAÇÃO DO INVENTÁRIO MESTRE ===== */
+(function(){
+  const status = document.getElementById('uz-catalog-status');
+
+  function atualizar(texto, cor){
+    status.textContent = texto;
+    status.style.color = cor;
+  }
+
+  if(!window.UZCatalogReady){
+    atualizar(
+      'ERRO: CARREGADOR NÃO ENCONTRADO',
+      '#ff5555'
+    );
+    return;
+  }
+
+  window.UZCatalogReady
+    .then(function(catalogo){
+      atualizar(
+        'INVENTÁRIO CARREGADO: ' +
+        catalogo.total +
+        ' ITENS | V' +
+        catalogo.versao,
+        '#55dd88'
+      );
+    })
+    .catch(function(erro){
+      atualizar(
+        'ERRO NO INVENTÁRIO: ' + erro.message,
+        '#ff5555'
+      );
+    });
+})();
+</script>
+</body>
+</html>
